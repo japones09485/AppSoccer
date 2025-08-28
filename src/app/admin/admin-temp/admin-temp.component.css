@@ -1,0 +1,17 @@
+.logo{
+    max-height: 70px;
+    max-width: 70px;
+}
+
+
+
+.offcanvas-body {
+  overflow-x: hidden;
+}
+
+.offcanvas .nav-link,
+.offcanvas .btn,
+.offcanvas-body > * {
+  max-width: 100%;
+  box-sizing: border-box;
+}

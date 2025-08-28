@@ -1,0 +1,98 @@
+<div class="container-fluid fondo-inscripcion d-flex align-items-center justify-content-center vh-100 position-relative flex-column">
+
+  <div class="z-3 mb-n3" style="margin-bottom: 20px;">
+    <button type="button" class="btn btn-success" [routerLink]="'/home'">
+      <i class="fa fa-home"></i>
+    </button>
+  </div>
+
+
+
+  <div class="card shadow-lg p-4 border bg-success" style="max-width: 600px; width: 100%;">
+    <h3 class="text-center mb-4 text-light">
+      <i class="fa fa-trophy" aria-hidden="true"></i> Crear Club
+    </h3>
+
+    <form [formGroup]="EquipoForm" (ngSubmit)="saveEquipo()" enctype="multipart/form-data">
+      <!-- Nombre -->
+      <div class="mb-3 row">
+        <label for="name" class="col-sm-4 col-form-label text-light">Nombre</label>
+        <div class="col-sm-8">
+          <input type="text" id="name" formControlName="name" class="form-control"
+            placeholder="Ingrese el nombre del torneo" required>
+        </div>
+      </div>
+
+      <!-- Email -->
+      <div class="mb-3 row">
+        <label for="mail" class="col-sm-4 col-form-label text-light">Correo Electrónico</label>
+        <div class="col-sm-8">
+          <input type="email" id="mail" formControlName="mail" class="form-control"
+            placeholder="Ingrese su correo electrónico" required>
+        </div>
+      </div>
+
+
+      <div class="mb-3 row">
+        <label for="mail" class="col-sm-4 col-form-label text-light">Telefono contacto 1</label>
+        <div class="col-sm-8">
+          <input type="number" id="tel1" formControlName="tel1" class="form-control"
+            placeholder="Ingrese su telefono de contacto" required>
+        </div>
+      </div>
+
+
+      <div class="mb-3 row">
+        <label for="mail" class="col-sm-4 col-form-label text-light">Telefono contacto 2</label>
+        <div class="col-sm-8">
+          <input type="number" id="tel2" formControlName="tel2" class="form-control"
+            placeholder="Ingrese su telefono de contacto 2" required>
+        </div>
+      </div>
+
+
+      <!-- Logo equipo -->
+      <div class="mb-3 row">
+        <label for="image1" class="col-sm-4 col-form-label text-light">Logo equipo</label>
+        <div class="col-sm-8">
+          <input type="file" id="image1" (change)="uploadImage($event, 1)" class="form-control" required>
+        </div>
+      </div>
+
+      <!-- Imagen 2 -->
+      <div class="mb-3 row">
+        <label for="image2" class="col-sm-4 col-form-label text-light">Imagen 2</label>
+        <div class="col-sm-8">
+          <input type="file" id="image2" (change)="uploadImage($event, 2)" class="form-control" required>
+        </div>
+      </div>
+
+
+      <div class="mb-3 row">
+        <label for="image2" class="col-sm-4 col-form-label text-light">TARJETA ENTRENADOR COCED</label>
+        <div class="col-sm-8">
+          <input type="file" id="image3" (change)="uploadImage($event, 3)" class="form-control" required>
+        </div>
+      </div>
+
+
+    
+
+      <!-- Botones -->
+      <div class="d-flex justify-content-end">
+        <button type="submit" class="btn btn-warning text-dark m-2" *ngIf="EquipoForm.valid">
+          <i class="fa fa-floppy-o" aria-hidden="true"></i> Guardar
+        </button>
+        <button type="button" class="btn btn-secondary m-2" (click)="cancel()">
+          <i class="fa fa-ban" aria-hidden="true"></i> Cancelar
+        </button>
+      </div>
+
+      <!-- Spinner -->
+      <div *ngIf="isLoading" class="d-flex flex-column align-items-center mt-3">
+        <img src="../../../assets/img/balon.png" alt="Cargando..." width="40" height="40" class="balon-girando" />
+        <span class="mt-2 text-warning fw-bold">Procesando, por favor espera...</span>
+      </div>
+    </form>
+  </div>
+</div>

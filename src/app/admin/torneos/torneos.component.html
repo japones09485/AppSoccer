@@ -1,0 +1,345 @@
+<div id="table" *ngIf="!this.creando">
+
+  <h1 class="text-center text-success"><i class="fa fa-trophy" aria-hidden="true"></i> Torneos</h1>
+  <div style="overflow-x: auto;">
+    <table class="table table-bordered">
+      <thead>
+        <tr class="text-center">
+          <th class="bg-success text-light" scope="col"><button (click)="addTorneos()" type="button"
+              class="btn btn-info" data-bs-toggle="tooltip" data-bs-placement="top" title="Nuevo">
+              <i class="fa fa-plus"></i>
+            </button>
+          </th>
+          <th class="bg-success text-light" scope="col">Img 1</th>
+          <th class="bg-success text-light" scope="col">Id</th>
+          <th class="bg-success text-light" scope="col">Nombre</th>
+          <th class="bg-success text-light" scope="col">Descripcion</th>
+          <th class="bg-success text-light" scope="col">Control Edad</th>
+          <th class="bg-success text-light" scope="col">Categoria</th>
+          <th class="bg-success text-light" scope="col">Numero de grupos F1</th>
+          <th class="bg-success text-light" scope="col">Numero de fases</th>
+          <th class="bg-success text-light" scope="col">Estado</th>
+
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let tr of torneos" class="text-center">
+          <th scope="row">
+            <button (click)="editTorneo(tr.id)" type="button" class="btn btn-warning m-1" data-bs-toggle="tooltip"
+              data-bs-placement="top" title="editar"> <i class="fa fa-edit"></i></button>
+            <button (click)="deleteTorneo(tr.id)" type="button" class="btn btn-danger m-1"> <i class="fa fa-trash"
+                aria-hidden="true" data-bs-toggle="tooltip" data-bs-placement="top" title="Eliminar"></i></button>
+            <button (click)="goToInfo(tr.id)" type="button" class="btn btn-success m-1"> <i class="fa fa-info"
+                aria-hidden="true" data-bs-toggle="tooltip" data-bs-placement="top" title="Informacion"></i></button>
+
+
+          </th>
+          <td>
+            <a *ngIf="tr.img1" (click)="openModal(pathIm + tr.img1,tr.nombre)">
+              <img [src]="pathIm + tr.img1" alt="Imagen 1" class="img-thumbnail d-block mx-auto shadow"
+                style="width: 48px; height: 48px; object-fit: cover; border-radius: 0.375rem;">
+            </a>
+            <img *ngIf="!tr.img1" src="../../../../assets/img/nofoto.png" alt="Imagen 1"
+              class="img-thumbnail d-block mx-auto shadow"
+              style="width: 48px; height: 48px; object-fit: cover; border-radius: 0.375rem;">
+          </td>
+
+          <td>{{tr.id}}</td>
+          <td>{{tr.nombre}}</td>
+          <td >
+            <span *ngIf="!tr.expanded">
+              {{ tr.descripcion | slice:0:300 }}<span *ngIf="tr.descripcion.length > 300">...</span>
+            </span>
+
+            <span *ngIf="tr.expanded">
+              {{ tr.descripcion }}
+            </span>
+
+            <button *ngIf="tr.descripcion.length > 100" 
+                    class="btn btn-link p-0 ms-1"
+                    (click)="tr.expanded = !tr.expanded">
+              {{ tr.expanded ? 'Leer menos' : 'Leer más' }}
+            </button>
+          </td>
+
+          <td>{{tr.control_edad}}</td>
+          <td>{{getNombreCategoria(tr.categoria)}}</td>
+          <td>{{tr.num_gruposF1}}</td>
+          <td>{{tr.num_fases}}</td>
+
+          <td>
+            <select class="form-select" [ngModel]="tr.estado" (ngModelChange)="CambiarEstadoT($event, tr)">
+              <option [value]="0">Inactivo</option>
+              <option [value]="1">En proceso</option>
+              <option [value]="2">Finalizado</option>
+            </select>
+          </td>
+
+
+
+        </tr>
+
+      </tbody>
+    </table>
+  </div>
+
+</div>
+
+
+<div class="container d-flex justify-content-center align-items-center min-vh-100" *ngIf="this.creando">
+  <div class="col-12 col-md-8 col-lg-6">
+    <div class="card shadow-lg p-4 border bg-success">
+      <h3 class="text-center mb-4 text-light"><i class="fa fa-trophy" aria-hidden="true"></i> Crear Torneo</h3>
+      <form [formGroup]="TorneoForm" (ngSubmit)="saveTorneo()" enctype="multipart/form-data">
+
+        <!-- Nombre -->
+        <div class="mb-3 row">
+          <label for="name" class="col-sm-3 col-form-label text-light">Nombre</label>
+          <div class="col-sm-9">
+            <input type="text" id="name" formControlName="name" class="form-control"
+              placeholder="Ingrese el nombre del torneo">
+          </div>
+        </div>
+
+        <!-- Descripción -->
+        <div class="mb-3 row">
+          <label for="descripcion" class="col-sm-3 col-form-label text-light">Descripción</label>
+          <div class="col-sm-9">
+            <textarea id="descripcion" formControlName="descripcion" class="form-control"
+              placeholder="Ingrese una descripción" rows="4"></textarea>
+          </div>
+        </div>
+
+
+        <div class="mb-3 row">
+          <label for="name" class="col-sm-3 col-form-label text-light">Fecha Inicio</label>
+          <div class="col-sm-9">
+            <input type="date" id="Finicio" formControlName="Finicio" class="form-control"
+              placeholder="Fecha Inicio del torneo">
+          </div>
+        </div>
+
+        <div class="mb-3 row">
+          <label for="name" class="col-sm-3 col-form-label text-light">Fecha Fin</label>
+          <div class="col-sm-9">
+            <input type="date" id="Ffin" formControlName="Ffin" class="form-control" placeholder="Fecha Fin del torneo">
+          </div>
+        </div>
+
+
+        <div class="mb-3 row">
+          <label for="controlEdad" class="col-sm-3 col-form-label text-light">Control Edad</label>
+          <div class="col-sm-9">
+            <select id="controlEdad" formControlName="controlEdad" class="form-select"
+              (change)="onControlEdadChange($event)">
+              <option [value]=true>Sí</option>
+              <option [value]=false>No</option>
+            </select>
+          </div>
+        </div>
+
+
+        <div *ngIf="controlEdad" class="mb-3 row">
+          <label for="categorias" class="col-sm-3 col-form-label text-light">Categoria</label>
+          <div class="col-sm-9">
+            <select id="categoria" formControlName="categoria" class="form-select">
+              <option *ngFor="let cat of categoriasDisponibles" [ngValue]="cat.id">{{cat.nombre}}</option>
+
+            </select>
+          </div>
+        </div>
+
+
+        <!-- Mostrar campos solo si controlEdad es true -->
+        <div *ngIf="controlEdad" class="mb-3 row">
+          <label for="Rninas" class="col-sm-3 col-form-label text-light">Rango edad niñas</label>
+          <div class="col-sm-9">
+            <input type="number" formControlName="Rninas" class="form-control"
+              placeholder="Rango edad niñas">
+          </div>
+        </div>
+
+
+        <div class="mb-3 row">
+          <label for="name" class="col-sm-3 col-form-label text-light">Fecha Limite Nomina</label>
+          <div class="col-sm-9">
+            <input type="date" id="fecha_limite" formControlName="fecha_limite" class="form-control"
+              placeholder="Ingrese Fecha Limite Nomina">
+          </div>
+        </div>
+
+
+
+        <!-- numero max jugadoores -->
+        <div class="mb-3 row">
+          <label for="name" class="col-sm-3 col-form-label text-light">Numero maximo jugadores</label>
+          <div class="col-sm-9">
+            <input type="number" id="numero_maximo_jug" formControlName="numero_maximo_jug" class="form-control"
+              placeholder="Ingrese Numero mnaximo jugadores">
+          </div>
+        </div>
+
+
+
+
+        <div class="mb-3 row">
+          <label for="edadInicial" class="col-sm-3 col-form-label text-light">Numero de Fases</label>
+          <div class="col-sm-9">
+            <input [(ngModel)]="cantFase" type="number" id="num_fases" formControlName="num_fases" class="form-control"
+              placeholder="Ingrese cantidad de fases">
+          </div>
+        </div>
+
+
+        <div class="mb-3 row" *ngIf="cantFase > 0">
+          <label for="edadInicial" class="col-sm-3 col-form-label text-light">Numero de Grupos Fase 1</label>
+          <div class="col-sm-9">
+            <input type="number" id="num_gruposF1" formControlName="num_gruposF1" class="form-control"
+              placeholder="Ingrese cantidad de fases">
+          </div>
+        </div>
+
+        <div class="mb-3 row" *ngIf="cantFase > 1">
+          <label for="edadInicial" class="col-sm-3 col-form-label text-light">Numero de Grupos Fase 2</label>
+          <div class="col-sm-9">
+            <input type="number" id="num_gruposF2" formControlName="num_gruposF2" class="form-control"
+              placeholder="Ingrese cantidad de fases">
+          </div>
+        </div>
+
+
+
+        <div class="mb-3 row" *ngIf="cantFase > 2">
+          <label for="edadInicial" class="col-sm-3 col-form-label text-light">Numero de Grupos Fase 3</label>
+          <div class="col-sm-9">
+            <input type="number" id="num_gruposF3" formControlName="num_gruposF3" class="form-control"
+              placeholder="Ingrese cantidad de fases">
+          </div>
+        </div>
+
+
+        <div class="mb-3 row" *ngIf="cantFase > 3">
+          <label for="edadInicial" class="col-sm-3 col-form-label text-light">Numero de Grupos Fase 4</label>
+          <div class="col-sm-9">
+            <input type="number" id="num_gruposF4" formControlName="num_gruposF4" class="form-control"
+              placeholder="Ingrese cantidad de fases">
+          </div>
+        </div>
+
+
+
+        <div class="mb-3 row" *ngIf="cantFase > 4">
+          <label for="edadInicial" class="col-sm-3 col-form-label text-light">Numero de Grupos Fase 5</label>
+          <div class="col-sm-9">
+            <input type="number" id="num_gruposF5" formControlName="num_gruposF5" class="form-control"
+              placeholder="Ingrese cantidad de fases">
+          </div>
+        </div>
+
+
+
+        <div class="mb-3 row" *ngIf="cantFase > 5">
+          <label for="edadInicial" class="col-sm-3 col-form-label text-light">Numero de Grupos Fase 6</label>
+          <div class="col-sm-9">
+            <input type="number" id="num_gruposF6" formControlName="num_gruposF6" class="form-control"
+              placeholder="Ingrese cantidad de fases">
+          </div>
+        </div>
+
+
+        <div class="mb-3 row" *ngIf="cantFase > 6">
+          <label for="edadInicial" class="col-sm-3 col-form-label text-light">Numero de Grupos Fase 7</label>
+          <div class="col-sm-9">
+            <input type="number" id="num_gruposF7" formControlName="num_gruposF7" class="form-control"
+              placeholder="Ingrese cantidad de fases">
+          </div>
+        </div>
+
+
+
+
+
+        <!-- Imagen 1 -->
+        <div class="mb-3 row">
+          <label for="image1" class="col-sm-3 col-form-label text-light">Imagen 1</label>
+          <div class="col-sm-9">
+            <input type="file" id="image1" (change)="uploadImage($event, 1)" class="form-control">
+          </div>
+        </div>
+
+        <!-- Imagen 2 -->
+        <div class="mb-3 row">
+          <label for="image2" class="col-sm-3 col-form-label text-light">Imagen 2</label>
+          <div class="col-sm-9">
+            <input type="file" id="image2" (change)="uploadImage($event, 2)" class="form-control">
+          </div>
+        </div>
+
+
+        <div *ngIf="editForm && (torneoSelect.img1 || torneoSelect.img2)" id="carouselExample"
+          class="carousel slide mt-4">
+
+          <div class="carousel-inner">
+            <div class="carousel-item active" *ngIf="torneoSelect.img1">
+              <img [src]="pathIm + torneoSelect.img1" class="d-block w-100" alt="Imagen 1">
+            </div>
+            <div class="carousel-item" *ngIf="torneoSelect.img2">
+              <img [src]="pathIm + torneoSelect.img2" class="d-block w-100" alt="Imagen 2">
+            </div>
+          </div>
+
+          <button class="carousel-control-prev" type="button" data-bs-target="#carouselExample" data-bs-slide="prev">
+            <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+            <span class="visually-hidden">Previous</span>
+          </button>
+          <button class="carousel-control-next" type="button" data-bs-target="#carouselExample" data-bs-slide="next">
+            <span class="carousel-control-next-icon" aria-hidden="true"></span>
+            <span class="visually-hidden">Next</span>
+          </button>
+        </div>
+
+
+
+
+        <!-- Botones -->
+        <div class="d-flex justify-content-end">
+          <button type="submit" class="btn btn-warning text-dark m-2" *ngIf="TorneoForm.valid">
+            <i class="fa fa-floppy-o" aria-hidden="true"></i> Guardar
+          </button>
+
+          <button type="button" class="btn btn-secondary m-2" (click)="cancel()">
+            <i class="fa fa-ban" aria-hidden="true"></i> Cancelar
+          </button>
+        </div>
+
+
+
+        <!-- Spinner debajo de los botones -->
+        <div *ngIf="isLoading" class="d-flex flex-column align-items-center mt-3">
+          <img src="../../../assets/img/balon.png" alt="Cargando..." width="40" height="40" class="balon-girando" />
+          <span class="mt-2 text-warning fw-bold">Procesando, por favor espera...</span>
+        </div>
+
+
+      </form>
+    </div>
+  </div>
+</div>
+
+<!-- Modal -->
+<div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h1 class="modal-title fs-5" id="exampleModalLabel">{{this.TorneoVisi}}</h1>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body d-flex justify-content-center align-items-center">
+        <img [src]="this.imgVisi" alt="" class="img-fluid" style="max-height: 80vh;">
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+      </div>
+    </div>
+  </div>
+</div>

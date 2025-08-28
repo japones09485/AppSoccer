@@ -1,0 +1,138 @@
+<div class="container-fluid">
+  <div class="row">
+
+    <!-- Botón hamburguesa en móvil -->
+    <nav class="navbar navbar-dark bg-success d-md-none">
+      <div class="container-fluid">
+        <button class="navbar-toggler" type="button" data-bs-toggle="offcanvas" data-bs-target="#sidebarMenu">
+          <span class="navbar-toggler-icon"></span>
+        </button>
+      </div>
+    </nav>
+
+<!-- Contenedor principal con margen a la izquierda para escritorio -->
+<div class="container">
+  <div class="row">
+
+    <!-- Menú lateral fijo (visible solo en escritorio) -->
+    <div class="d-none d-md-flex flex-column col-md-2 bg-success text-white p-3 position-fixed" style="height: 100vh; z-index: 1030;">
+      <div class="text-center mb-3">
+        <img src="../../../assets/img/logo.png" alt="Logo" class="img-fluid" style="max-height: 100px;">
+        <p class="mt-2 fw-bold">Más que fútbol</p>
+      </div>
+
+      <ul class="nav flex-column flex-grow-1">
+        <li class="nav-item"><a class="nav-link text-white" href="#" (click)="activarComp('panelV'); $event.preventDefault()"><i class="fa fa-home"></i> Inicio</a></li>
+        <li class="nav-item"><a class="nav-link text-white" href="#" (click)="activarComp('categoriasV'); $event.preventDefault()"><i class="fa fa-trophy"></i> Categorias</a></li>
+        <li class="nav-item"><a class="nav-link text-white" href="#" (click)="activarComp('canchasV'); $event.preventDefault()"><i class="fa fa-flag"></i> Canchas</a></li>
+        <li class="nav-item"><a class="nav-link text-white" href="#" (click)="activarComp('juecesV'); $event.preventDefault()"><i class="fa fa-flag"></i> Jueces</a></li>
+        <li class="nav-item"><a class="nav-link text-white" href="#" (click)="activarComp('equiposV'); $event.preventDefault()"><i class="fa fa-cubes"></i> Clubes</a></li>
+        <li class="nav-item"><a class="nav-link text-white" href="#" (click)="activarComp('jugadoresV'); $event.preventDefault()"><i class="fa fa-users"></i> Jugadores</a></li>
+        <li class="nav-item"><a class="nav-link text-white" href="#" (click)="activarComp('userV'); $event.preventDefault()"><i class="fa fa-user"></i> Usuarios</a></li>
+        <li class="nav-item"><a class="nav-link text-white" href="#" (click)="activarComp('torneosV'); $event.preventDefault()"><i class="fa fa-trophy"></i> Torneos</a></li>
+      </ul>
+
+      <div class="mt-auto">
+        <a href="#" class="nav-link text-danger fw-bold bg-white rounded text-center" (click)="cerrarSesion(); $event.preventDefault()">
+          <i class="fa fa-sign-out"></i> Cerrar sesión
+        </a>
+      </div>
+    </div>
+
+    <!-- Contenido principal (debe tener margen en escritorio) -->
+    <div class="col-12 col-md-10 offset-md-2 p-4">
+      <!-- Botón para abrir el menú móvil -->
+     
+
+      <!-- Aquí va el resto del contenido dinámico -->
+      <ng-content></ng-content>
+    </div>
+  </div>
+</div>
+
+<!-- Menú móvil tipo offcanvas -->
+<div class="offcanvas offcanvas-top bg-success text-white" tabindex="-1" id="sidebarMenu" style="height: 100vh; width: 75%;">
+  <div class="offcanvas-header">
+    <h5 class="offcanvas-title">Menú</h5>
+    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="offcanvas"></button>
+  </div>
+  <div class="offcanvas-body p-3">
+    <div class="text-center mb-3">
+      <img src="../../../assets/img/logo.png" alt="Logo" class="img-fluid" style="max-height: 100px;">
+      <p class="mt-2 fw-bold">Más que fútbol</p>
+    </div>
+    <ul class="nav flex-column">
+      <li class="nav-item"><a class="nav-link text-white" href="#" (click)="activarComp('panelV'); $event.preventDefault()"><i class="fa fa-home"></i> Inicio</a></li>
+      <li class="nav-item"><a class="nav-link text-white" href="#" (click)="activarComp('categoriasV'); $event.preventDefault()"><i class="fa fa-trophy"></i> Categorias</a></li>
+      <li class="nav-item"><a class="nav-link text-white" href="#" (click)="activarComp('canchasV'); $event.preventDefault()"><i class="fa fa-flag"></i> Canchas</a></li>
+      <li class="nav-item"><a class="nav-link text-white" href="#" (click)="activarComp('juecesV'); $event.preventDefault()"><i class="fa fa-flag"></i> Jueces</a></li>
+      <li class="nav-item"><a class="nav-link text-white" href="#" (click)="activarComp('equiposV'); $event.preventDefault()"><i class="fa fa-cubes"></i> Clubes</a></li>
+      <li class="nav-item"><a class="nav-link text-white" href="#" (click)="activarComp('jugadoresV'); $event.preventDefault()"><i class="fa fa-users"></i> Jugadores</a></li>
+      <li class="nav-item"><a class="nav-link text-white" href="#" (click)="activarComp('userV'); $event.preventDefault()"><i class="fa fa-user"></i> Usuarios</a></li>
+      <li class="nav-item"><a class="nav-link text-white" href="#" (click)="activarComp('torneosV'); $event.preventDefault()"><i class="fa fa-trophy"></i> Torneos</a></li>
+    </ul>
+    <div class="mt-4 text-center">
+      <a href="#" class="btn btn-light text-danger fw-bold" (click)="cerrarSesion(); $event.preventDefault()">
+        <i class="fa fa-sign-out"></i> Cerrar sesión
+      </a>
+    </div>
+  </div>
+</div>
+
+
+
+    <!-- Contenido principal que se ajusta automáticamente -->
+    <div class="col-12 col-md-10 offset-md-2 p-3">
+      <!-- PANEL -->
+      <main *ngIf="estados['panelV']">
+        <h1 class="h2">Panel Principal</h1>
+        <div class="row">
+          <div class="col-md-4 mb-3">
+            <div class="card shadow-sm rounded">
+              <div class="card-body">
+                <h5 class="card-title">Estadísticas</h5>
+                <p class="card-text">Visualiza las métricas más importantes.</p>
+                <a href="#" class="btn btn-primary btn-sm">Ver más</a>
+              </div>
+            </div>
+          </div>
+          <!-- Más tarjetas -->
+        </div>
+      </main>
+
+      <!-- USUARIOS -->
+      <main *ngIf="estados['userV']">
+        <app-users></app-users>
+      </main>
+
+      <!-- TORNEOS -->
+      <main *ngIf="estados['torneosV']">
+        <app-torneos></app-torneos>
+      </main>
+
+      <!-- EQUIPOS -->
+      <main *ngIf="estados['equiposV']">
+        <app-equipos></app-equipos>
+      </main>
+
+      <!-- JUGADORES -->
+      <main *ngIf="estados['jugadoresV']">
+        <app-jugadores></app-jugadores>
+      </main>
+
+      <main *ngIf="estados['categoriasV']">
+        <app-categorias></app-categorias>
+      </main>
+
+      <main *ngIf="estados['canchasV']">
+        <app-canchas></app-canchas>
+      </main>
+
+      <main *ngIf="estados['juecesV']">
+        <app-jueces></app-jueces>
+      </main>
+
+    </div>
+
+  </div>
+</div>

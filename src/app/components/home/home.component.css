@@ -1,0 +1,90 @@
+.card {
+  cursor: pointer;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+.card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 8px 20px rgba(0,0,0,0.3);
+}
+
+.card-img-top {
+  height: 180px;
+  object-fit: cover;
+  border-top-left-radius: 1rem;
+  border-top-right-radius: 1rem;
+}
+
+.logo{
+    max-height: 100px;
+    max-width: 100px;
+}
+
+.btn-change-success:hover {
+  background-color: #2d4439 !important;
+  border-color: #2d4439 !important;
+}
+
+.titulo-principal {
+  font-size: 3rem;
+  font-weight: 800;
+  text-shadow: 2px 2px 5px rgba(0,0,0,0.3);
+  letter-spacing: 1px;
+}
+
+
+
+.video-background {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  z-index: -1;
+}
+
+.video-background video {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+
+.home-container {
+  position: relative;
+  z-index: 1;
+  min-height: 100vh;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1rem;
+  color: white; /* si lo necesitas para contraste */
+}
+
+.contenido-central {
+  width: 100%;
+  /* max-width: 700px; */ /* ❌ comenta o elimina esta línea */
+  max-width: 1140px; /* ✅ nuevo ancho recomendado */
+  background-color: rgba(255, 255, 255, 0.5);
+  padding: 1.5rem;
+  border-radius: 1rem;
+  box-shadow: 0 0 15px rgba(0, 0, 0, 0.2);
+}
+
+/* En pantallas pequeñas, da espacio arriba */
+@media (max-width: 767.98px) {
+  .home-container {
+    align-items: flex-start;
+    padding-top: 2rem;
+  }
+
+  .titulo-principal {
+    font-size: 1.5rem;
+    margin-bottom: 1rem;
+  }
+
+  .contenido-central {
+    padding: 1rem;
+  }
+}

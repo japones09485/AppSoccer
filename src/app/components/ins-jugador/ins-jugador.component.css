@@ -1,0 +1,10 @@
+.fondo-inscripcion {
+   background-image: url('../../../assets/img/fondoJp.jpg'); /* Ajusta la ruta si es necesario */
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  width: 100vw;
+  height: 100vh;
+  margin: 0;
+  padding: 0;
+}

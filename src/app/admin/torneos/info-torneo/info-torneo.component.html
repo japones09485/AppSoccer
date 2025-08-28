@@ -1,0 +1,2187 @@
+<div class="container-fluid  p-5" id="content">
+
+
+  <div class="row">
+    <!-- Columna izquierda: Imágenes del torneo (más estrecha) -->
+
+
+
+    <!-- Columna derecha: Información del torneo -->
+    <div *ngIf="this.VlInfo" class="col-12">
+      <!-- NAVBAR -->
+      <nav class="navbar navbar-expand-lg navbar-light bg-light border border-success rounded">
+        <div class="container-fluid">
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#tournamentNav"
+            aria-controls="tournamentNav" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+          </button>
+
+          <img src="../../../../assets/img/logo.png" id="Logo">
+
+          <div class="collapse navbar-collapse" id="tournamentNav">
+            <ul class="navbar-nav">
+              <li class="nav-item">
+                <a class="nav-link text-success hover-success" (click)="inicio()" aria-current="page">
+                  <i class="bi bi-info-circle me-1"></i> Inicio
+                </a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link text-success hover-success" (click)="opMenu(1)">
+                  <i class="bi bi-info-circle me-1"></i> Información
+                </a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link text-success hover-success" (click)="opMenu(2)">
+                  <i class="bi bi-calendar-event me-1"></i> Calendario
+                </a>
+              </li>
+            </ul>
+
+            <!-- Botón cerrar sesión alineado a la derecha -->
+            <div class="ms-auto">
+              <button class="btn btn-danger" (click)="cerrarSesion()">
+                <i class="fa fa-sign-out" aria-hidden="true"></i>
+              </button>
+            </div>
+          </div>
+        </div>
+      </nav>
+
+      <!-- TÍTULO -->
+      <div class="tournament-header mb-4">
+        <h1 class="card-title fw-bold text-center text-uppercase m-2 titulo-contorno">
+          {{ torneoSelect.nombre }}
+        </h1>
+
+
+      </div>
+
+      <!-- CONTENIDO EN DOS COLUMNAS -->
+      <div class="row">
+        <!-- IZQUIERDA -->
+        <div class="col-12 col-md-9">
+          <div class="row g-4">
+            <!-- Configuración Torneo -->
+            <div class="col-12 col-md-6">
+              <div class="card shadow-sm p-3 rounded">
+
+                <h5 class="text-white bg-primary p-2 rounded">Configuración Torneo</h5>
+
+                <ul class="list-group list-group-flush">
+                  <li class="list-group-item d-flex justify-content-between">
+                    <span>Número de Fases</span>
+                    <strong>{{ torneoSelect.num_fases}}</strong>
+                  </li>
+                  <li class="list-group-item d-flex justify-content-between">
+                    <span>Control de edad</span>
+                    <strong>{{ torneoSelect.control_edad ? 'SI' : 'NO' }}</strong>
+                  </li>
+                  <li class="list-group-item d-flex justify-content-between" *ngIf="torneoSelect.control_edad">
+                    <span>Categoria</span>
+                    <strong>{{ getNombreCategoria(torneoSelect.categoria) }}</strong>
+                  </li>
+                  <li class="list-group-item text-muted small">
+                    El 1º de cada grupo avanzará a la siguiente etapa
+                  </li>
+                </ul>
+              </div>
+            </div>
+
+            <!-- Detalles -->
+            <div class="col-12 col-md-6">
+              <div class="card shadow-sm p-3 rounded">
+                <h5 class="text-white bg-primary p-2 rounded">Detalles</h5>
+                <ul class="list-group list-group-flush">
+                  <li class="list-group-item d-flex justify-content-between">
+                    <span>Nombre</span>
+                    <strong>{{ torneoSelect?.nombre }}</strong>
+                  </li>
+                  <li class="list-group-item d-flex justify-content-between align-items-start">
+                    <span>Descripción</span>
+                    <div class="text-end">
+
+                      {{
+                      mostrarDescripcionCompleta
+                      ? torneoSelect?.descripcion
+                      : ((torneoSelect?.descripcion || '') | slice:0:300) + ((torneoSelect?.descripcion?.length || 0)
+                      > 300 ? '...' : '')
+                      }}
+
+                      <br>
+                      <a href="javascript:void(0)" *ngIf="(torneoSelect?.descripcion?.length || 0) > 300"
+                        (click)="mostrarDescripcionCompleta = !mostrarDescripcionCompleta">
+                        {{ mostrarDescripcionCompleta ? 'Leer menos' : 'Leer más' }}
+                      </a>
+                    </div>
+                  </li>
+                  <li class="list-group-item d-flex justify-content-between">
+                    <span>Inicio</span>
+                    <strong>{{ torneoSelect?.fecha_inicio }}</strong>
+                  </li>
+                  <li class="list-group-item d-flex justify-content-between">
+                    <span>Fin</span>
+                    <strong>{{ torneoSelect?.fecha_fin }}</strong>
+                  </li>
+                </ul>
+              </div>
+            </div>
+
+
+            <!--GRUPOS  fase 1-->
+            <div class="col-12">
+              <div class="card shadow-sm p-3 rounded">
+                <h5 class="text-white bg-primary p-2 rounded text-center">{{nameFase(1)}}
+                  <button *ngIf="this.perfilUsuario == 1" (click)="editNameFase(1)" type="button"
+                    class="btn btn-info m2-2" title="Editar nombre fase"><i class="fa fa-edit"></i></button>
+                </h5>
+                <div class="row justify-content-center">
+                  <div *ngFor="let gr of grupos" class="col-md-6 col-lg-4 mb-4">
+                    <div class="card h-100" *ngIf="gr.fase == 1">
+                      <div class="card-header d-flex flex-column bg-success">
+                        <h5 class="card-title text-center">
+                          <button *ngIf="torneoSelect.estado== 0 && this.perfilUsuario == 1" (click)="addEquipo(gr.id)"
+                            type="button" class="btn btn-info" title="Agregar Equipo a grupo {{ gr.nombre }}">+</button>
+                          GRUPO {{ gr.nombre }}
+                        </h5>
+                      </div>
+                      <div class="card-body d-flex flex-column">
+                        <div class="table-responsive">
+                          <table class="table table-striped mb-0 text-center">
+                            <thead>
+                              <tr>
+                                <th></th>
+                                <th></th>
+                                <th>PTS</th>
+                                <th>PJ</th>
+                                <th>PG</th>
+                                <th>PE</th>
+                                <th>PP</th>
+                                <th>GF</th>
+                                <th>GC</th>
+                                <th>DIF</th>
+                                <th>JL</th>
+
+                              </tr>
+                            </thead>
+                            <tbody>
+                              <tr *ngFor="let equipo of gr.detalle" [title]="equipo.nombre + ' - ' + equipo.categoria">
+                                <td>
+                                  <button *ngIf="torneoSelect.ValidF1== 0 && this.perfilUsuario == 1"
+                                    (click)="deleteEqGr(gr.id, equipo.id)" type="button"
+                                    class="btn btn-outline-danger btn-sm" style="padding: 2px 6px;">X</button>
+                                </td>
+                                <td>
+                                  <img alt="Imagen" class="rounded-circle border"
+                                    style="width: 50px; height: 50px; object-fit: cover;" [src]="pathIm + equipo.img1">
+                                </td>
+                                <td>{{ equipo.pts }}</td>
+                                <td>{{ equipo.pj }}</td>
+                                <td>{{ equipo.pg }}</td>
+                                <td>{{ equipo.pe }}</td>
+                                <td>{{ equipo.pp }}</td>
+                                <td>{{ equipo.gf }}</td>
+                                <td>{{ equipo.gc }}</td>
+                                <td>{{ equipo.dif }}</td>
+                                <td>{{ equipo.jl }}</td>
+                              </tr>
+                            </tbody>
+                          </table>
+                        </div>
+                      </div>
+                    </div>
+                  </div> <!-- /grupo -->
+                </div>
+              </div>
+
+              <div class="text-center">
+                <button (click)="CerrarFase(1)" *ngIf="torneoSelect.ValidF1 == 0 && this.perfilUsuario == 1"
+                  type="button" class="btn btn-warning m-3 text-white hover-red w-100 fs-2">
+                  Validar Fase 1
+                </button>
+              </div>
+
+            </div>
+
+            <!--GRUPOS  FASE 2 -->
+            <div>
+              <!-- Fase 2 - Editable -->
+              <div class="col-12" *ngIf="this.numero_fases>=2 && torneoSelect.ValidF1!=0 ">
+                <h5 class="text-white bg-primary p-2 rounded text-center">{{nameFase(2)}} <button
+                    *ngIf="this.perfilUsuario == 1" (click)="editNameFase(2)" type="button" class="btn btn-info m2-2"
+                    title="Editar nombre fase"><i class="fa fa-edit"></i></button></h5>
+                <div class="d-flex justify-content-center flex-wrap">
+                  <ng-container *ngFor="let gr of grupos">
+                    <div *ngIf="gr.fase == 2" class="m-3" style="flex: 0 1 320px;">
+                      <div class="card h-100 w-100 shadow-sm">
+                        <div class="card-header bg-success text-center">
+                          <h5 class="card-title m-0">
+                            <button *ngIf="torneoSelect.ValidF2 == 0 && this.perfilUsuario == 1"
+                              (click)="addAfases(gr.id,2,gr.nombre)" type="button" class="btn btn-info mb-2"
+                              title="Agregar Equipo a grupo {{ gr.nombre }}">+</button>
+                            <br>
+                            <button *ngIf="this.perfilUsuario == 1" (click)="editNameGrupo(gr.id)" type="button"
+                              class="btn btn-outline-info m2-2" title="Editar nombre grupo"><i
+                                class="fa fa-edit"></i></button>
+                            {{ gr.nombre }}
+                          </h5>
+                        </div>
+                        <div class="card-body d-flex flex-column align-items-center justify-content-center">
+                          <div class="table-responsive w-100">
+                            <table class="table table-striped mb-0 text-center">
+                              <thead>
+                                <tr>
+                                  <th *ngIf="torneoSelect.ValidF2 == 0 && this.perfilUsuario == 1">Accion</th>
+                                  <th>Eq 1</th>
+                                  <th></th>
+                                  <th>Eq 2</th>
+                                </tr>
+                              </thead>
+                              <tbody>
+                                <tr *ngFor="let cal of this.calendarioPre[2]">
+                                  <td
+                                    *ngIf="gr.id == cal.fk_grupo && torneoSelect.ValidF2 == 0 && this.perfilUsuario == 1">
+                                    <button (click)="deletecalenPr(cal.id)" type="button"
+                                      class="btn btn-outline-danger btn-sm px-2">X</button>
+                                  </td>
+                                  <td *ngIf="gr.id == cal.fk_grupo">
+                                    {{ cal.fk_grupo_nombre_eq1 }} - {{ cal.posicion_eq1 }}
+                                  </td>
+                                  <td *ngIf="gr.id == cal.fk_grupo">VS</td>
+                                  <td *ngIf="gr.id == cal.fk_grupo">
+                                    {{ cal.fk_grupo_nombre_eq2 }} - {{ cal.posicion_eq2 }}
+                                  </td>
+                                </tr>
+                              </tbody>
+                            </table>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </ng-container>
+                </div>
+
+                <div class="text-center">
+                  <button (click)="CerrarFase(2)"
+                    *ngIf="torneoSelect.ValidF1 == 1 && torneoSelect.ValidF2== 0 && this.perfilUsuario == 1"
+                    type="button" class="btn btn-warning m-3 text-white hover-red w-100 fs-2">
+                    Validar Fase 2
+                  </button>
+                </div>
+              </div>
+
+              <!-- Fase 2 - Validada -->
+              <div class="col-12" *ngIf="this.torneoSelect.ValidF2==2 && torneoSelect.ValidF1!=0">
+                <div class="card shadow-sm p-3 rounded">
+                  <h5 class="text-center text-primary mb-3">Grupos Fase 2</h5>
+                  <div class="d-flex justify-content-center flex-wrap">
+                    <ng-container *ngFor="let gr of grupos">
+                      <div *ngIf="gr.fase == 2" class="m-3" style="flex: 0 1 320px;">
+                        <div class="card h-100 shadow-sm">
+                          <div class="card-header d-flex flex-column bg-success">
+                            <h5 class="card-title text-center">
+                              GRUPO {{ gr.nombre }}
+                            </h5>
+                          </div>
+                          <div class="card-body d-flex flex-column">
+                            <div class="table-responsive">
+                              <table class="table table-striped mb-0 text-center">
+                                <thead>
+                                  <tr>
+                                    <th></th>
+                                    <th>PTS</th>
+                                    <th>PJ</th>
+                                    <th>PG</th>
+                                    <th>PE</th>
+                                    <th>PP</th>
+                                    <th>GF</th>
+                                    <th>GC</th>
+                                    <th>DIF</th>
+                                    <th>JL</th>
+                                  </tr>
+                                </thead>
+                                <tbody>
+                                  <tr *ngFor="let equipo of gr.detalle"
+                                    [title]="equipo.nombre + ' - ' + equipo.categoria">
+                                    <td>
+                                      <img alt="Imagen" class="rounded-circle border"
+                                        style="width: 50px; height: 50px; object-fit: cover;"
+                                        [src]="pathIm + equipo.img1">
+                                    </td>
+                                    <td>{{ equipo.pts }}</td>
+                                    <td>{{ equipo.pj }}</td>
+                                    <td>{{ equipo.pg }}</td>
+                                    <td>{{ equipo.pe }}</td>
+                                    <td>{{ equipo.pp }}</td>
+                                    <td>{{ equipo.gf }}</td>
+                                    <td>{{ equipo.gc }}</td>
+                                    <td>{{ equipo.dif }}</td>
+                                    <td>{{ equipo.jl }}</td>
+                                  </tr>
+                                </tbody>
+                              </table>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </ng-container>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+
+            <!--GRUPOS  FASE 3 -->
+
+            <div>
+              <!-- Fase 3 - Editable -->
+              <div class="col-12" *ngIf="this.numero_fases>=3 && torneoSelect.ValidF2!=0">
+                <h5 class="text-white bg-primary p-2 rounded text-center">{{nameFase(3)}} <button
+                    *ngIf="this.perfilUsuario == 1" (click)="editNameFase(3)" type="button" class="btn btn-info m2-2"
+                    title="Editar nombre fase"><i class="fa fa-edit"></i></button></h5>
+                <div class="d-flex justify-content-center flex-wrap">
+                  <ng-container *ngFor="let gr of grupos">
+                    <div *ngIf="gr.fase == 3" class="m-3" style="flex: 0 1 320px;">
+                      <div class="card h-100 w-100 shadow-sm">
+                        <div class="card-header bg-success text-center">
+                          <h5 class="card-title m-0">
+                            <button *ngIf="torneoSelect.ValidF3 == 0 && this.perfilUsuario == 1"
+                              (click)="addAfases(gr.id,3,gr.nombre)" type="button" class="btn btn-info mb-2"
+                              title="Agregar Equipo a grupo {{ gr.nombre }}">+</button>
+                            <br>
+
+                            <button *ngIf="this.perfilUsuario == 1" (click)="editNameGrupo(gr.id)" type="button"
+                              class="btn btn-outline-info m2-2" title="Editar nombre grupo"><i
+                                class="fa fa-edit"></i></button>
+
+                            {{ gr.nombre }}
+                          </h5>
+                        </div>
+                        <div class="card-body d-flex flex-column align-items-center justify-content-center">
+                          <div class="table-responsive w-100">
+                            <table class="table table-striped mb-0 text-center">
+                              <thead>
+                                <tr>
+                                  <th *ngIf="torneoSelect.ValidF3 == 0 && this.perfilUsuario == 1">Accion</th>
+                                  <th>Eq 1</th>
+                                  <th>vs</th>
+                                  <th>Eq 2</th>
+                                </tr>
+                              </thead>
+                              <tbody>
+                                <tr *ngFor="let cal of this.calendarioPre[3]">
+                                  <td
+                                    *ngIf="gr.id == cal.fk_grupo && torneoSelect.ValidF3==0 && this.perfilUsuario == 1">
+                                    <button (click)="deletecalenPr(cal.id)" type="button"
+                                      class="btn btn-outline-danger btn-sm px-2">X</button>
+                                  </td>
+                                  <td *ngIf="gr.id == cal.fk_grupo">
+                                    {{ cal.fk_grupo_nombre_eq1 }} - {{ cal.posicion_eq1 }}
+                                  </td>
+                                  <td *ngIf="gr.id == cal.fk_grupo">VS</td>
+                                  <td *ngIf="gr.id == cal.fk_grupo">
+                                    {{ cal.fk_grupo_nombre_eq2 }} - {{ cal.posicion_eq2 }}
+                                  </td>
+                                </tr>
+                              </tbody>
+                            </table>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </ng-container>
+                </div>
+
+                <div class="text-center">
+                  <button (click)="CerrarFase(3)"
+                    *ngIf="torneoSelect.ValidF2 == 1 && torneoSelect.ValidF3==0 && this.perfilUsuario == 1"
+                    type="button" class="btn btn-warning m-3 text-white hover-red w-100 fs-2">
+                    Validar Fase 3
+                  </button>
+                </div>
+              </div>
+
+              <!-- Fase 3 - Validada -->
+              <div class="col-12" *ngIf="this.torneoSelect.ValidF3==2">
+                <div class="card shadow-sm p-3 rounded">
+                  <h5 class="text-center text-primary mb-3">Grupos Fase 3</h5>
+                  <div class="d-flex justify-content-center flex-wrap">
+                    <ng-container *ngFor="let gr of grupos">
+                      <div *ngIf="gr.fase == 3" class="m-3" style="flex: 0 1 320px;">
+                        <div class="card h-100 shadow-sm">
+                          <div class="card-header d-flex flex-column bg-success">
+                            <h5 class="card-title text-center">
+                              GRUPO {{ gr.nombre }}
+                            </h5>
+                          </div>
+                          <div class="card-body d-flex flex-column">
+                            <div class="table-responsive">
+                              <table class="table table-striped mb-0 text-center">
+                                <thead>
+                                  <tr>
+                                    <th></th>
+                                    <th>PTS</th>
+                                    <th>PJ</th>
+                                    <th>PG</th>
+                                    <th>PE</th>
+                                    <th>PP</th>
+                                    <th>GF</th>
+                                    <th>GC</th>
+                                    <th>DIF</th>
+                                    <th>JL</th>
+                                  </tr>
+                                </thead>
+                                <tbody>
+                                  <tr *ngFor="let equipo of gr.detalle"
+                                    [title]="equipo.nombre + ' - ' + equipo.categoria">
+                                    <td>
+                                      <img alt="Imagen" class="rounded-circle border"
+                                        style="width: 50px; height: 50px; object-fit: cover;"
+                                        [src]="pathIm + equipo.img1">
+                                    </td>
+                                    <td>{{ equipo.pts }}</td>
+                                    <td>{{ equipo.pj }}</td>
+                                    <td>{{ equipo.pg }}</td>
+                                    <td>{{ equipo.pe }}</td>
+                                    <td>{{ equipo.pp }}</td>
+                                    <td>{{ equipo.gf }}</td>
+                                    <td>{{ equipo.gc }}</td>
+                                    <td>{{ equipo.dif }}</td>
+                                    <td>{{ equipo.jl }}</td>
+                                  </tr>
+                                </tbody>
+                              </table>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </ng-container>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+
+            <!--GRUPOS  FASE 4 -->
+            <div>
+              <!-- Fase 4 - Editable -->
+              <div class="col-12" *ngIf="this.numero_fases>=4 && torneoSelect.ValidF3!=0">
+                <h5 class="text-white bg-primary p-2 rounded text-center">{{nameFase(4) }} <button
+                    *ngIf="this.perfilUsuario == 1" (click)="editNameFase(4)" type="button" class="btn btn-info m2-2"
+                    title="Editar nombre fase"><i class="fa fa-edit"></i></button></h5>
+                <div class="d-flex justify-content-center flex-wrap">
+                  <ng-container *ngFor="let gr of grupos">
+                    <div *ngIf="gr.fase == 4" class="m-3" style="flex: 0 1 320px;">
+                      <div class="card h-100 w-100 shadow-sm">
+                        <div class="card-header bg-success text-center">
+                          <h5 class="card-title m-0">
+                            <button *ngIf="torneoSelect.ValidF4 == 0 && this.perfilUsuario == 1"
+                              (click)="addAfases(gr.id,4,gr.nombre)" type="button" class="btn btn-info mb-2"
+                              title="Agregar Equipo a grupo {{ gr.nombre }}">+</button>
+                            <br>
+                            <button *ngIf="this.perfilUsuario == 1" (click)="editNameGrupo(gr.id)" type="button"
+                              class="btn btn-outline-info m2-2" title="Editar nombre grupo"><i
+                                class="fa fa-edit"></i></button>
+
+                            {{ gr.nombre }}
+                          </h5>
+                        </div>
+                        <div class="card-body d-flex flex-column align-items-center justify-content-center">
+                          <div class="table-responsive w-100">
+                            <table class="table table-striped mb-0 text-center">
+                              <thead>
+                                <tr>
+                                  <th *ngIf="torneoSelect.ValidF4 == 0 && this.perfilUsuario == 1">Accion</th>
+                                  <th>Eq 1</th>
+                                  <th>vs</th>
+                                  <th>Eq 2</th>
+                                </tr>
+                              </thead>
+                              <tbody>
+                                <tr *ngFor="let cal of this.calendarioPre[4]">
+                                  <td
+                                    *ngIf="gr.id == cal.fk_grupo && torneoSelect.ValidF4 == 0 && this.perfilUsuario == 1">
+                                    <button (click)="deletecalenPr(cal.id)" type="button"
+                                      class="btn btn-outline-danger btn-sm px-2">X</button>
+                                  </td>
+                                  <td *ngIf="gr.id == cal.fk_grupo">
+                                    {{ cal.fk_grupo_nombre_eq1 }} - {{ cal.posicion_eq1 }}
+                                  </td>
+                                  <td *ngIf="gr.id == cal.fk_grupo">VS</td>
+                                  <td *ngIf="gr.id == cal.fk_grupo">
+                                    {{ cal.fk_grupo_nombre_eq2 }} - {{ cal.posicion_eq2 }}
+                                  </td>
+                                </tr>
+                              </tbody>
+                            </table>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </ng-container>
+                </div>
+
+                <div class="text-center">
+                  <button (click)="CerrarFase(4)"
+                    *ngIf="torneoSelect.ValidF3 == 1 && torneoSelect.ValidF4==0 && this.perfilUsuario == 1"
+                    type="button" class="btn btn-warning m-3 text-white hover-red w-100 fs-2">
+                    Validar Fase 4
+                  </button>
+                </div>
+              </div>
+
+              <!-- Fase 4 - Validada -->
+              <div class="col-12" *ngIf="this.torneoSelect.ValidF4==2">
+                <div class="card shadow-sm p-3 rounded">
+                  <h5 class="text-center text-primary mb-3">Grupos Fase 4</h5>
+                  <div class="d-flex justify-content-center flex-wrap">
+                    <ng-container *ngFor="let gr of grupos">
+                      <div *ngIf="gr.fase == 4" class="m-3" style="flex: 0 1 320px;">
+                        <div class="card h-100 shadow-sm">
+                          <div class="card-header d-flex flex-column bg-success">
+                            <h5 class="card-title text-center">
+                              GRUPO {{ gr.nombre }}
+                            </h5>
+                          </div>
+                          <div class="card-body d-flex flex-column">
+                            <div class="table-responsive">
+                              <table class="table table-striped mb-0 text-center">
+                                <thead>
+                                  <tr>
+                                    <th></th>
+                                    <th>PTS</th>
+                                    <th>PJ</th>
+                                    <th>PG</th>
+                                    <th>PE</th>
+                                    <th>PP</th>
+                                    <th>GF</th>
+                                    <th>GC</th>
+                                    <th>DIF</th>
+                                    <th>JL</th>
+                                  </tr>
+                                </thead>
+                                <tbody>
+                                  <tr *ngFor="let equipo of gr.detalle"
+                                    [title]="equipo.nombre + ' - ' + equipo.categoria">
+                                    <td>
+                                      <img alt="Imagen" class="rounded-circle border"
+                                        style="width: 50px; height: 50px; object-fit: cover;"
+                                        [src]="pathIm + equipo.img1">
+                                    </td>
+                                    <td>{{ equipo.pts }}</td>
+                                    <td>{{ equipo.pj }}</td>
+                                    <td>{{ equipo.pg }}</td>
+                                    <td>{{ equipo.pe }}</td>
+                                    <td>{{ equipo.pp }}</td>
+                                    <td>{{ equipo.gf }}</td>
+                                    <td>{{ equipo.gc }}</td>
+                                    <td>{{ equipo.dif }}</td>
+                                    <td>{{ equipo.jl }}</td>
+                                  </tr>
+                                </tbody>
+                              </table>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </ng-container>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+
+            <!-- FASE 5 -->
+            <div>
+              <!-- Fase 5 - Editable -->
+              <div class="col-12" *ngIf="this.numero_fases>=5 && torneoSelect.ValidF4!=0">
+                <h5 class="text-white bg-primary p-2 rounded text-center">{{nameFase(5)}} <button
+                    *ngIf="this.perfilUsuario == 1" (click)="editNameFase(5)" type="button" class="btn btn-info m2-2"
+                    title="Editar nombre fase"><i class="fa fa-edit"></i></button></h5>
+                <div class="d-flex justify-content-center flex-wrap">
+                  <ng-container *ngFor="let gr of grupos">
+                    <div *ngIf="gr.fase == 5" class="m-3" style="flex: 0 1 320px;">
+                      <div class="card h-100 w-100 shadow-sm">
+                        <div class="card-header bg-success text-center">
+                          <h5 class="card-title m-0">
+                            <button *ngIf="torneoSelect.ValidF5 == 0 && this.perfilUsuario == 1"
+                              (click)="addAfases(gr.id,5,gr.nombre)" type="button" class="btn btn-info mb-2"
+                              title="Agregar Equipo a grupo {{ gr.nombre }}">+</button>
+                            <br>
+
+                            <button *ngIf="this.perfilUsuario == 1" (click)="editNameGrupo(gr.id)" type="button"
+                              class="btn btn-outline-info m2-2" title="Editar nombre grupo"><i
+                                class="fa fa-edit"></i></button>
+                            {{ gr.nombre }}
+                          </h5>
+                        </div>
+                        <div class="card-body d-flex flex-column align-items-center justify-content-center">
+                          <div class="table-responsive w-100">
+                            <table class="table table-striped mb-0 text-center">
+                              <thead>
+                                <tr>
+                                  <th *ngIf="torneoSelect.ValidF5 == 0 && this.perfilUsuario == 1">Accion</th>
+                                  <th>Eq 1</th>
+                                  <th>vs</th>
+                                  <th>Eq 2</th>
+                                </tr>
+                              </thead>
+                              <tbody>
+                                <tr *ngFor="let cal of this.calendarioPre[5]">
+                                  <td
+                                    *ngIf="gr.id == cal.fk_grupo && torneoSelect.ValidF5 == 0 && this.perfilUsuario == 1">
+                                    <button (click)="deletecalenPr(cal.id)" type="button"
+                                      class="btn btn-outline-danger btn-sm px-2">X</button>
+                                  </td>
+                                  <td *ngIf="gr.id == cal.fk_grupo">
+                                    {{ cal.fk_grupo_nombre_eq1 }} - {{ cal.posicion_eq1 }}
+                                  </td>
+                                  <td *ngIf="gr.id == cal.fk_grupo">VS</td>
+                                  <td *ngIf="gr.id == cal.fk_grupo">
+                                    {{ cal.fk_grupo_nombre_eq2 }} - {{ cal.posicion_eq2 }}
+                                  </td>
+                                </tr>
+                              </tbody>
+                            </table>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </ng-container>
+                </div>
+
+                <div class="text-center">
+                  <button (click)="CerrarFase(5)"
+                    *ngIf="torneoSelect.ValidF4 == 1 && torneoSelect.ValidF5==0 && this.perfilUsuario == 1"
+                    type="button" class="btn btn-warning m-3 text-white hover-red w-100 fs-2">
+                    Validar Fase 5
+                  </button>
+                </div>
+              </div>
+
+              <!-- Fase 5 - Validada -->
+              <div class="col-12" *ngIf="this.torneoSelect.ValidF5==2">
+                <div class="card shadow-sm p-3 rounded">
+                  <h5 class="text-center text-primary mb-3">Grupos Fase 5</h5>
+                  <div class="d-flex justify-content-center flex-wrap">
+                    <ng-container *ngFor="let gr of grupos">
+                      <div *ngIf="gr.fase == 5" class="m-3" style="flex: 0 1 320px;">
+                        <div class="card h-100 shadow-sm">
+                          <div class="card-header d-flex flex-column bg-success">
+                            <h5 class="card-title text-center">
+                              GRUPO {{ gr.nombre }}
+                            </h5>
+                          </div>
+                          <div class="card-body d-flex flex-column">
+                            <div class="table-responsive">
+                              <table class="table table-striped mb-0 text-center">
+                                <thead>
+                                  <tr>
+                                    <th></th>
+                                    <th>PTS</th>
+                                    <th>PJ</th>
+                                    <th>PG</th>
+                                    <th>PE</th>
+                                    <th>PP</th>
+                                    <th>GF</th>
+                                    <th>GC</th>
+                                    <th>DIF</th>
+                                    <th>JL</th>
+                                  </tr>
+                                </thead>
+                                <tbody>
+                                  <tr *ngFor="let equipo of gr.detalle"
+                                    [title]="equipo.nombre + ' - ' + equipo.categoria">
+                                    <td>
+                                      <img alt="Imagen" class="rounded-circle border"
+                                        style="width: 50px; height: 50px; object-fit: cover;"
+                                        [src]="pathIm + equipo.img1">
+                                    </td>
+                                    <td>{{ equipo.pts }}</td>
+                                    <td>{{ equipo.pj }}</td>
+                                    <td>{{ equipo.pg }}</td>
+                                    <td>{{ equipo.pe }}</td>
+                                    <td>{{ equipo.pp }}</td>
+                                    <td>{{ equipo.gf }}</td>
+                                    <td>{{ equipo.gc }}</td>
+                                    <td>{{ equipo.dif }}</td>
+                                    <td>{{ equipo.jl }}</td>
+                                  </tr>
+                                </tbody>
+                              </table>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </ng-container>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+
+
+            <!-- FASE 6 -->
+            <div>
+              <!-- Fase 6 - Editable -->
+              <div class="col-12" *ngIf="this.numero_fases>=6 && torneoSelect.ValidF5!=0">
+                <h5 class="text-white bg-primary p-2 rounded text-center">Grupos Fase 6 <button
+                    *ngIf="this.perfilUsuario == 1" (click)="editNameFase(6)" type="button" class="btn btn-info m2-2"
+                    title="Editar nombre fase"><i class="fa fa-edit"></i></button></h5>
+                <div class="d-flex justify-content-center flex-wrap">
+                  <ng-container *ngFor="let gr of grupos">
+                    <div *ngIf="gr.fase == 6" class="m-3" style="flex: 0 1 320px;">
+                      <div class="card h-100 w-100 shadow-sm">
+                        <div class="card-header bg-success text-center">
+                          <h5 class="card-title m-0">
+                            <button *ngIf="torneoSelect.ValidF6 == 0 && this.perfilUsuario == 1"
+                              (click)="addAfases(gr.id,6,gr.nombre)" type="button" class="btn btn-info mb-2"
+                              title="Agregar Equipo a grupo {{ gr.nombre }}">+</button>
+                            <br>
+
+                            <button *ngIf="this.perfilUsuario == 1" (click)="editNameGrupo(gr.id)" type="button"
+                              class="btn btn-outline-info m2-2" title="Editar nombre grupo"><i
+                                class="fa fa-edit"></i></button>
+
+                            {{ gr.nombre }}
+                          </h5>
+                        </div>
+                        <div class="card-body d-flex flex-column align-items-center justify-content-center">
+                          <div class="table-responsive w-100">
+                            <table class="table table-striped mb-0 text-center">
+                              <thead>
+                                <tr>
+                                  <th *ngIf="torneoSelect.ValidF6 == 0 && this.perfilUsuario == 1">Accion</th>
+                                  <th>Eq 1</th>
+                                  <th>vs</th>
+                                  <th>Eq 2</th>
+                                </tr>
+                              </thead>
+                              <tbody>
+                                <tr *ngFor="let cal of this.calendarioPre[6]">
+                                  <td
+                                    *ngIf="gr.id == cal.fk_grupo && torneoSelect.ValidF6 == 0 && this.perfilUsuario == 1">
+                                    <button (click)="deletecalenPr(cal.id)" type="button"
+                                      class="btn btn-outline-danger btn-sm px-2">X</button>
+                                  </td>
+                                  <td *ngIf="gr.id == cal.fk_grupo">
+                                    {{ cal.fk_grupo_nombre_eq1 }} - {{ cal.posicion_eq1 }}
+                                  </td>
+                                  <td *ngIf="gr.id == cal.fk_grupo">VS</td>
+                                  <td *ngIf="gr.id == cal.fk_grupo">
+                                    {{ cal.fk_grupo_nombre_eq2 }} - {{ cal.posicion_eq2 }}
+                                  </td>
+                                </tr>
+                              </tbody>
+                            </table>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </ng-container>
+                </div>
+
+                <div class="text-center">
+                  <button (click)="CerrarFase(6)"
+                    *ngIf="torneoSelect.ValidF5 == 1 && torneoSelect.ValidF6 == 0 && this.perfilUsuario == 1"
+                    type="button" class="btn btn-warning m-3 text-white hover-red w-100 fs-2">
+                    Validar Fase 6
+                  </button>
+                </div>
+              </div>
+
+              <!-- Fase 6 - Validada -->
+              <div class="col-12" *ngIf="this.torneoSelect.ValidF6==2">
+                <div class="card shadow-sm p-3 rounded">
+                  <h5 class="text-center text-primary mb-3">Grupos Fase 6</h5>
+                  <div class="d-flex justify-content-center flex-wrap">
+                    <ng-container *ngFor="let gr of grupos">
+                      <div *ngIf="gr.fase == 6" class="m-3" style="flex: 0 1 320px;">
+                        <div class="card h-100 shadow-sm">
+                          <div class="card-header d-flex flex-column bg-success">
+                            <h5 class="card-title text-center">
+                              GRUPO {{ gr.nombre }}
+                            </h5>
+                          </div>
+                          <div class="card-body d-flex flex-column">
+                            <div class="table-responsive">
+                              <table class="table table-striped mb-0 text-center">
+                                <thead>
+                                  <tr>
+                                    <th></th>
+                                    <th>PTS</th>
+                                    <th>PJ</th>
+                                    <th>PG</th>
+                                    <th>PE</th>
+                                    <th>PP</th>
+                                    <th>GF</th>
+                                    <th>GC</th>
+                                    <th>DIF</th>
+                                    <th>JL</th>
+                                  </tr>
+                                </thead>
+                                <tbody>
+                                  <tr *ngFor="let equipo of gr.detalle"
+                                    [title]="equipo.nombre + ' - ' + equipo.categoria">
+                                    <td>
+                                      <img alt="Imagen" class="rounded-circle border"
+                                        style="width: 50px; height: 50px; object-fit: cover;"
+                                        [src]="pathIm + equipo.img1">
+                                    </td>
+                                    <td>{{ equipo.pts }}</td>
+                                    <td>{{ equipo.pj }}</td>
+                                    <td>{{ equipo.pg }}</td>
+                                    <td>{{ equipo.pe }}</td>
+                                    <td>{{ equipo.pp }}</td>
+                                    <td>{{ equipo.gf }}</td>
+                                    <td>{{ equipo.gc }}</td>
+                                    <td>{{ equipo.dif }}</td>
+                                    <td>{{ equipo.jl }}</td>
+                                  </tr>
+                                </tbody>
+                              </table>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </ng-container>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- FASE 7 -->
+
+            <!-- FASE 7 -->
+            <div>
+              <!-- Fase 7 - Editable -->
+              <div class="col-12" *ngIf="this.numero_fases>=7 && torneoSelect.ValidF6!=0">
+                <h5 class="text-white bg-primary p-2 rounded text-center">{{nameFase(7)}} <button
+                    *ngIf="this.perfilUsuario == 1" (click)="editNameFase(7)" type="button" class="btn btn-info m2-2"
+                    title="Editar nombre fase"><i class="fa fa-edit"></i></button></h5>
+                <div class="d-flex justify-content-center flex-wrap">
+                  <ng-container *ngFor="let gr of grupos">
+                    <div *ngIf="gr.fase == 7" class="m-3" style="flex: 0 1 320px;">
+                      <div class="card h-100 w-100 shadow-sm">
+                        <div class="card-header bg-success text-center">
+                          <h5 class="card-title m-0">
+                            <button *ngIf="torneoSelect.ValidF7 == 2 && this.perfilUsuario == 1"
+                              (click)="addAfases(gr.id,7,gr.nombre)" type="button" class="btn btn-info mb-2"
+                              title="Agregar Equipo a grupo {{ gr.nombre }}">+</button>
+                            <br>
+
+                            <button *ngIf="this.perfilUsuario == 1" (click)="editNameGrupo(gr.id)" type="button"
+                              class="btn btn-outline-info m2-2" title="Editar nombre grupo"><i
+                                class="fa fa-edit"></i></button>
+
+                            {{ gr.nombre }}
+                          </h5>
+                        </div>
+                        <div class="card-body d-flex flex-column align-items-center justify-content-center">
+                          <div class="table-responsive w-100">
+                            <table class="table table-striped mb-0 text-center">
+                              <thead>
+                                <tr>
+                                  <th *ngIf="torneoSelect.ValidF7 == 2 && this.perfilUsuario == 1">Accion</th>
+                                  <th>Eq 1</th>
+                                  <th>vs</th>
+                                  <th>Eq 2</th>
+                                </tr>
+                              </thead>
+                              <tbody>
+                                <tr *ngFor="let cal of this.calendarioPre[7]">
+                                  <td
+                                    *ngIf="gr.id == cal.fk_grupo && torneoSelect.ValidF7 == 0 && this.perfilUsuario == 1">
+                                    <button (click)="deletecalenPr(cal.id)" type="button"
+                                      class="btn btn-outline-danger btn-sm px-2">X</button>
+                                  </td>
+                                  <td *ngIf="gr.id == cal.fk_grupo">
+                                    {{ cal.fk_grupo_nombre_eq1 }} - {{ cal.posicion_eq1 }}
+                                  </td>
+                                  <td *ngIf="gr.id == cal.fk_grupo">VS</td>
+                                  <td *ngIf="gr.id == cal.fk_grupo">
+                                    {{ cal.fk_grupo_nombre_eq2 }} - {{ cal.posicion_eq2 }}
+                                  </td>
+                                </tr>
+                              </tbody>
+                            </table>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </ng-container>
+                </div>
+
+                <div class="text-center">
+                  <button (click)="CerrarFase(7)"
+                    *ngIf="torneoSelect.ValidF6 == 1 && torneoSelect.ValidF7 == 0 && this.perfilUsuario == 1"
+                    type="button" class="btn btn-warning m-3 text-white hover-red w-100 fs-2">
+                    Validar Fase 7
+                  </button>
+                </div>
+              </div>
+
+              <!-- Fase 7 - Validada -->
+              <div class="col-12" *ngIf="this.torneoSelect.ValidF7 == 2 && this.perfilUsuario == 1">
+                <div class="card shadow-sm p-3 rounded">
+                  <h5 class="text-center text-primary mb-3">Grupos Fase 7</h5>
+                  <div class="d-flex justify-content-center flex-wrap">
+                    <ng-container *ngFor="let gr of grupos">
+                      <div *ngIf="gr.fase == 7" class="m-3" style="flex: 0 1 320px;">
+                        <div class="card h-100 shadow-sm">
+                          <div class="card-header d-flex flex-column bg-success">
+                            <h5 class="card-title text-center">
+                              GRUPO {{ gr.nombre }}
+                            </h5>
+                          </div>
+                          <div class="card-body d-flex flex-column">
+                            <div class="table-responsive">
+                              <table class="table table-striped mb-0 text-center">
+                                <thead>
+                                  <tr>
+                                    <th></th>
+                                    <th>PTS</th>
+                                    <th>PJ</th>
+                                    <th>PG</th>
+                                    <th>PE</th>
+                                    <th>PP</th>
+                                    <th>GF</th>
+                                    <th>GC</th>
+                                    <th>DIF</th>
+                                    <th>JL</th>
+                                  </tr>
+                                </thead>
+                                <tbody>
+                                  <tr *ngFor="let equipo of gr.detalle"
+                                    [title]="equipo.nombre + ' - ' + equipo.categoria">
+                                    <td>
+                                      <img alt="Imagen" class="rounded-circle border"
+                                        style="width: 50px; height: 50px; object-fit: cover;"
+                                        [src]="pathIm + equipo.img1">
+                                    </td>
+                                    <td>{{ equipo.pts }}</td>
+                                    <td>{{ equipo.pj }}</td>
+                                    <td>{{ equipo.pg }}</td>
+                                    <td>{{ equipo.pe }}</td>
+                                    <td>{{ equipo.pp }}</td>
+                                    <td>{{ equipo.gf }}</td>
+                                    <td>{{ equipo.gc }}</td>
+                                    <td>{{ equipo.dif }}</td>
+                                    <td>{{ equipo.jl }}</td>
+                                  </tr>
+                                </tbody>
+                              </table>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </ng-container>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+
+
+
+          </div> <!-- /row g-4 -->
+        </div>
+
+        <!-- DERECHA -->
+        <div class="col-12 col-md-3 mt-4 mt-md-0">
+          <div class="card shadow-sm p-3 rounded ">
+            <h5 class="text-white bg-success p-2 rounded text-center">Clasificación General</h5>
+            <div class="table-responsive">
+              <table class="table table-bordered table-striped text-center mb-0">
+                <thead class="table-success sticky-top">
+                  <tr>
+                    <th>Equipo</th>
+                    <th>PTS</th>
+                    <th>PJ</th>
+                    <th>PG</th>
+                    <th>PE</th>
+                    <th>PP</th>
+                    <th>GF</th>
+                    <th>GC</th>
+                    <th>DIF</th>
+                    <th>JL</th>
+                  </tr>
+                </thead>
+              </table>
+              <!-- Scroll solo al cuerpo -->
+              <div style="max-height: 450px; overflow-y: auto;">
+                <table class="table table-bordered table-striped text-center mb-0">
+                  <tbody>
+                    <tr *ngFor="let eq of clafGeneral; let i = index" [title]="eq.nombre + ' - ' + eq.categoria">
+                      <td>{{ i + 1 }}</td> <!-- Esta es la columna con el contador -->
+                      <td>
+                        <img [src]="pathIm + eq.img1" class="rounded-circle border mb-1"
+                          style="width: 30px; height: 30px; object-fit: cover;" />
+                        <br>
+                        <small>{{ eq.nombre }}</small>
+                      </td>
+                      <td>{{ eq.pts }}</td>
+                      <td>{{ eq.pj }}</td>
+                      <td>{{ eq.pg }}</td>
+                      <td>{{ eq.pe }}</td>
+                      <td>{{ eq.pp }}</td>
+                      <td>{{ eq.gf }}</td>
+                      <td>{{ eq.gc }}</td>
+                      <td>{{ eq.dif }}</td>
+                      <td>{{ eq.jl }}</td>
+                    </tr>
+
+                  </tbody>
+                </table>
+              </div>
+
+
+
+            </div>
+          </div>
+
+
+          <div class="card shadow-sm p-3 rounded ">
+            <h5 class="text-white bg-success p-2 rounded text-center">Goleadores</h5>
+            <div class="table-responsive">
+              <table class="table table-bordered table-striped text-center mb-0">
+                <thead class="table-success sticky-top">
+                  <tr>
+
+                    <th>Jugador</th>
+                    <th>Cantidad</th>
+                    <th>Equipo</th>
+
+                  </tr>
+                </thead>
+              </table>
+              <!-- Scroll solo al cuerpo -->
+              <div style="max-height: 450px; overflow-y: auto;">
+                <table class="table table-bordered table-striped text-center mb-0">
+                  <tbody>
+                    <tr *ngFor="let gol of goleadores" [title]="gol.nombre">
+                      <td>
+                        <img [src]="pathIm + gol.img1" class="rounded-circle border mb-1"
+                          style="width: 30px; height: 30px; object-fit: cover;" />
+
+                      </td>
+                      <td>{{ gol.nombre }}</td>
+                      <td>{{ gol.total_goles }}</td>
+                      <td><img [src]="pathIm + gol.imgeq" class="rounded-circle border mb-1"
+                          style="width: 30px; height: 30px; object-fit: cover;" />
+                      </td>
+
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+
+
+
+            </div>
+          </div>
+
+
+
+        </div>
+
+
+
+
+      </div> <!-- /row -->
+    </div>
+
+
+
+    <div *ngIf="this.VlCalif" class="col-12 col-lg-12">
+
+      <nav class="navbar navbar-expand-lg navbar-light bg-light border border-success rounded">
+        <div class="container-fluid">
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#tournamentNav"
+            aria-controls="tournamentNav" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+          </button>
+
+          <div class="collapse navbar-collapse" id="tournamentNav">
+            <ul class="navbar-nav">
+              <li class="nav-item">
+                <a class="nav-link text-success hover-success" (click)="inicio()" aria-current="page">
+                  <i class="bi bi-info-circle me-1"></i> Inicio
+                </a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link text-success hover-success" aria-current="page" (click)="opMenu(1)">
+                  <i class="bi bi-info-circle me-1"></i> Información
+                </a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link text-success hover-success" (click)="opMenu(2)">
+                  <i class="bi bi-calendar-event me-1"></i> Calendario
+                </a>
+              </li>
+
+            </ul>
+
+
+
+          </div>
+        </div>
+      </nav>
+
+      <div>
+        <!-- Spinner debajo de los botones -->
+        <div *ngIf="isLoading" class="d-flex flex-column align-items-center mt-3">
+          <img src="../../../assets/img/balon.png" alt="Cargando..." width="40" height="40" class="balon-girando" />
+          <span class="mt-2 text-warning fw-bold">Procesando, por favor espera...</span>
+        </div>
+      </div>
+
+      <!-- Botón alineado a la derecha con selector de formato -->
+      <div class="ms-auto d-flex align-items-center gap-3">
+
+        <!-- Grupo de radio buttons para elegir formato -->
+        <div *ngIf="!isLoading  && this.perfilUsuario == 1" class="ms-auto d-flex align-items-center gap-2">
+          <!-- Select pequeño y sutil -->
+          <div class="dropdown">
+            <select class="form-select form-select-sm shadow-sm" style="width: auto;" [(ngModel)]="formatoSeleccionado">
+              <option value="ida">Solo Ida</option>
+              <option value="idayvuelta">Ida y Vuelta</option>
+            </select>
+          </div>
+        </div>
+
+
+
+        <!-- Botón para generar calendario -->
+        <button *ngIf="!isLoading  && this.perfilUsuario == 1" type="button" class="btn btn-warning"
+          (click)="calendarioPartidos(formatoSeleccionado)">
+          Generar Calendario
+        </button>
+
+
+      </div>
+
+      <div *ngFor="let fase of calendarioData | keyvalue" class="mb-5">
+
+        <h3 class="text-white bg-primary p-2 rounded text-center m-3">
+          {{ nameFase(+fase.key) }}
+        </h3>
+
+
+        <div *ngFor="let grupo of (fase.value | keyvalue)" class="mb-5">
+
+
+
+          <h4 class="mb-3 text-center">
+            <button *ngIf="this.perfilUsuario == 1" (click)="NuevoPartido(grupo)" type="button" class="btn btn-info m-2"
+              title="Agregar Partido"><i class="fa fa-plus"></i></button>
+            Grupo {{ grupo.key }}
+          </h4>
+
+          <div class="table-responsive">
+            <table class="table table-bordered table-striped table-hover text-center align-middle">
+              <thead class="table-dark">
+                <tr>
+                  <th></th>
+                  <th>Codigo partido #</th>
+                  <th>Equipo 1</th>
+                  <th>Gl E1</th>
+                  <th>Equipo 2</th>
+                  <th>Gl E2</th>
+                  <th>Fecha</th>
+                  <th>Cancha</th>
+                  <th>Estado</th>
+                  <th *ngIf="this.perfilUsuario == 1 || this.perfilUsuario == 3">Acción</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr *ngFor="let partido of (grupo.value | ensureArray)">
+
+                  <td class="bg-success accion-columna">
+
+
+                    <!-- Botón Inscribir jugadores -->
+                    <button type="button" (click)="InscribirJugadoresPartido(partido)"
+                        *ngIf="(usuario?.perfil == 1 || usuario?.perfil == 3) && partido.estado != 3" class="btn btn-warning m-1"
+                      title="Inscribir jugadores">
+                      <i class="fa fa-plus"> . </i> <i class="fa fa-users"></i>
+                    </button>
+
+
+                    <!-- Botón ver resultados -->
+                    <button type="button" (click)="VerResultados(partido)" *ngIf="partido.estado >1 "
+                      class="btn btn-danger m-1" title="Resultado partido" data-bs-toggle="modal"
+                      [attr.data-bs-target]="'#Info' + partido.id">
+                      <i class="fa fa-search"></i>
+                    </button>
+
+
+                    <button type="button" (click)="VerTitulares(partido.id)"
+                      *ngIf="torneoSelect?.estado == 1 && usuario && usuario.fk_equipo && (partido.fk_equipo1 == usuario.fk_equipo || partido.fk_equipo2 == usuario.fk_equipo)"
+                      class="btn btn-warning m-1" title="jugadores titulares" data-bs-toggle="modal"
+                      [attr.data-bs-target]="'#modalVerJugadores'">
+                      <i class="fa fa-users"></i>
+                    </button>
+
+
+
+                    <button type="button" (click)="VerTitularesPartido(partido.id)"
+                      *ngIf="(usuario?.perfil == 1 || usuario?.perfil == 3)" class="btn btn-info m-1"
+                      title="jugadores partido" data-bs-toggle="modal" [attr.data-bs-target]="'#modalVerJugadoresIns'">
+                      <i class="fa fa-users"></i>
+                    </button>
+
+
+                    <!-- Modal info resultados -->
+                    <div class="modal fade" [id]="'Info' + partido.id" tabindex="-1"
+                      [attr.aria-labelledby]="'calenModalLabel' + partido.id" aria-hidden="true">
+                      <div class="modal-dialog modal-lg">
+                        <div class="modal-content">
+
+                          <!-- Modal Header -->
+                          <div class="modal-header flex-column align-items-center">
+                            <h3 class="text-center text-success w-100">Resultados partido</h3>
+                            <button type="button" class="btn-close position-absolute end-0 top-0 m-2"
+                              data-bs-dismiss="modal" aria-label="Close"></button>
+                          </div>
+
+                          <!-- Modal Body -->
+                          <div class="modal-body">
+
+                            <div class="container mt-4" *ngIf="ResultadosEq1 && ResultadosEq2">
+                              <div class="row">
+                                <!-- Equipo 1 -->
+                                <div class="col-md-6">
+                                  <div class="card border-success mb-4 shadow">
+                                    <div class="card-header bg-success text-white text-center fw-bold">
+                                      {{ ResultadosEq1.nombre }}
+                                    </div>
+                                    <div class="card-body text-center">
+                                      <img [src]="pathIm + ResultadosEq1.foto" alt="Foto equipo 1"
+                                        class="img-fluid rounded mb-3" style="max-height: 100px;">
+
+                                      <p><strong>Goles:</strong> {{ ResultadosEq1.resultado.goles }}</p>
+                                      <p><strong>Juego limpio:</strong> {{ ResultadosEq1.resultado.juego_limpio }}</p>
+
+                                      <!-- Goles -->
+                                      <div *ngIf="ResultadosEq1.goles.length > 0" class="mb-4 border-top pt-3">
+                                        <h6 class="text-success"><i class="fas fa-futbol"></i> Goleadores</h6>
+                                        <ul class="list-group">
+                                          <li *ngFor="let nombre of ResultadosEq1.goles" class="list-group-item">
+                                            ⚽ {{ nombre }}
+                                          </li>
+                                        </ul>
+                                      </div>
+
+                                      <!-- Ampliacion -->
+                                      <p><strong>Ampliacion por penaltis:</strong> {{
+                                        this.ResultadosEq1.resultado.ampli_penaltis }}</p>
+
+
+                                      <!-- Tarjetas -->
+                                      <div *ngIf="ResultadosEq1.amarillas.length > 0 || ResultadosEq1.rojas.length > 0"
+                                        class="border-top pt-3">
+
+                                        <div *ngIf="ResultadosEq1.amarillas.length > 0">
+                                          <strong class="text-warning">Amarillas:</strong>
+                                          <ul class="list-group mb-2">
+                                            <li *ngFor="let nombre of ResultadosEq1.amarillas" class="list-group-item">
+                                              🟨 {{ nombre }}
+                                            </li>
+                                          </ul>
+                                        </div>
+
+                                        <div *ngIf="ResultadosEq1.rojas.length > 0">
+                                          <strong class="text-danger">Rojas:</strong>
+                                          <ul class="list-group">
+                                            <li *ngFor="let nombre of ResultadosEq1.rojas" class="list-group-item">
+                                              🟥 {{ nombre }}
+                                            </li>
+                                          </ul>
+                                        </div>
+                                      </div>
+                                    </div>
+                                  </div>
+                                </div>
+
+                                <!-- Equipo 2 -->
+                                <div class="col-md-6">
+                                  <div class="card border-primary mb-4 shadow">
+                                    <div class="card-header bg-primary text-white text-center fw-bold">
+                                      {{ ResultadosEq2.nombre }}
+                                    </div>
+                                    <div class="card-body text-center">
+                                      <img [src]="pathIm + ResultadosEq2.foto" alt="Foto equipo 2"
+                                        class="img-fluid rounded mb-3" style="max-height: 100px;">
+
+                                      <p><strong>Goles:</strong> {{ ResultadosEq2.resultado.goles }}</p>
+                                      <p><strong>Juego limpio:</strong> {{ ResultadosEq2.resultado.juego_limpio }}</p>
+
+                                      <!-- Goles -->
+                                      <div *ngIf="ResultadosEq2.goles.length > 0" class="mb-4 border-top pt-3">
+                                        <h6 class="text-primary"><i class="fas fa-futbol"></i> Goleadores</h6>
+                                        <ul class="list-group">
+                                          <li *ngFor="let nombre of ResultadosEq2.goles" class="list-group-item">
+                                            ⚽ {{ nombre }}
+                                          </li>
+                                        </ul>
+                                      </div>
+
+                                      <!-- Ampliacion -->
+                                      <p><strong>Ampliacion por penaltis:</strong> {{
+                                        this.ResultadosEq1.resultado.ampli_penaltis }}</p>
+
+                                      <!-- Tarjetas -->
+                                      <div *ngIf="ResultadosEq2.amarillas.length > 0 || ResultadosEq2.rojas.length > 0"
+                                        class="border-top pt-3">
+                                        <h6 class="text-warning"><i class="fas fa-square"></i> Tarjetas</h6>
+
+                                        <div *ngIf="ResultadosEq2.amarillas.length > 0">
+                                          <strong class="text-warning">Amarillas:</strong>
+                                          <ul class="list-group mb-2">
+                                            <li *ngFor="let nombre of ResultadosEq2.amarillas" class="list-group-item">
+                                              🟨 {{ nombre }}
+                                            </li>
+                                          </ul>
+                                        </div>
+
+                                        <div *ngIf="ResultadosEq2.rojas.length > 0">
+                                          <strong class="text-danger">Rojas:</strong>
+                                          <ul class="list-group">
+                                            <li *ngFor="let nombre of ResultadosEq2.rojas" class="list-group-item">
+                                              🟥 {{ nombre }}
+                                            </li>
+                                          </ul>
+                                        </div>
+                                      </div>
+                                    </div>
+                                  </div>
+                                </div>
+                              </div>
+                            </div>
+
+
+
+                          </div>
+
+
+                        </div>
+                      </div>
+                    </div>
+
+                  </td>
+
+
+                  <td>
+                    {{ partido.id }}
+                  </td>
+
+                  <td class="bg-success text-center">
+                    <img [src]="pathIm + partido.foto_eq1" alt=""
+                      style="width: 40px; height: 40px; object-fit: cover; border-radius: 50%;">
+                    {{ partido.name_eq_1 }}
+                  </td>
+
+                  <td class="bg-danger text-center">{{ partido.resultado?.resul_equipo1 || '-' }}</td>
+
+                  <td class="bg-success text-center">
+                    <img [src]="pathIm + partido.foto_eq2" alt=""
+                      style="width: 40px; height: 40px; object-fit: cover; border-radius: 50%;">
+                    {{ partido.name_eq_2 }}
+                  </td>
+
+                  <td class="bg-danger text-center">{{ partido.resultado?.resul_equipo2 || '-' }}</td>
+
+                  <td class="bg-success text-center">
+                    {{ (partido.fecha && partido.hora) ? (partido.fecha + ' - ' + partido.hora) : '-' }}
+                  </td>
+
+                  <td class="bg-success text-center">{{ getNombreCancha(partido.cancha) || '-' }}</td>
+
+                  <td class="bg-secondary" *ngIf="partido.estado == 0">
+                    -
+                  </td>
+                  <td class="bg-success" *ngIf="partido.estado == 1">
+                    Programado
+                  </td>
+                  <td class="bg-primary" *ngIf="partido.estado == 2">
+                    Registrado
+                  </td>
+                  <td class="bg-warning" *ngIf="partido.estado == 3">
+                    Aprobado
+                  </td>
+                  <td class="bg-danger" *ngIf="partido.estado == 4">
+                    Anulado
+                  </td>
+
+                  <td class="bg-success accion-columna" *ngIf="this.perfilUsuario == 1 || this.perfilUsuario == 3 ">
+                    <!-- Botones de acciones, modales, etc. -->
+
+
+                    <!-- Botón que abre el modal (solo si partido.estado == 0) -->
+                    <button *ngIf="partido.estado < 2 && this.perfilUsuario != 0 " (click)="resetProgramacion()"
+                      type="button" class="btn btn-warning" data-bs-toggle="modal"
+                      [attr.data-bs-target]="'#calenModal' + partido.id">
+                      <i class="fa fa-calendar"></i>
+                    </button>
+
+                    <!-- Modal programacion -->
+                    <div class="modal fade" [id]="'calenModal' + partido.id" tabindex="-1"
+                      [attr.aria-labelledby]="'calenModalLabel' + partido.id" aria-hidden="true">
+                      <div class="modal-dialog">
+                        <div class="modal-content">
+
+                          <!-- Modal Header (opcional) -->
+                          <div class="modal-header">
+                            <h5 class="modal-title" [id]="'calenModalLabel' + partido.id">Programar Partido</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal"
+                              aria-label="Cerrar"></button>
+                          </div>
+
+                          <!-- Modal Body -->
+                          <div class="modal-body">
+
+                            <!-- Campo selección de cancha -->
+
+                            <div class="d-flex align-items-center mb-3">
+                              <label class="me-3 mb-0" style="min-width: 130px;">Fecha partido:</label>
+                              <input type="date" class="form-control" [(ngModel)]="fechaSeleccionada"
+                                placeholder="Fecha partido" style="max-width: 200px;">
+                            </div>
+
+
+                            <div class="d-flex align-items-center mb-3">
+                              <label class="me-3 mb-0" style="min-width: 130px;">Hora partido:</label>
+                              <input type="time" class="form-control" [(ngModel)]="horaSeleccionada"
+                                placeholder="Hora partido" style="max-width: 200px;">
+                            </div>
+
+
+                            <div class="d-flex align-items-center mb-3">
+                              <label class="me-3 mb-0" style="min-width: 130px;">Cancha: </label>
+                              <select class="form-select" [(ngModel)]="canchaSeleccionada">
+                                <option *ngFor="let can of canchas" [ngValue]="can.id">{{can.nombre}}</option>
+                              </select>
+                            </div>
+
+
+
+
+                            <div class="d-flex align-items-center mb-3">
+                              <label class="me-3 mb-0" style="min-width: 130px;">Juez: </label>
+                              <select class="form-select" [(ngModel)]="JuezSeleccionada">
+                                <option *ngFor="let can of jueces" [ngValue]="can.id">{{can.nombre}}</option>
+                              </select>
+                            </div>
+
+
+                            <div class="d-flex align-items-center mb-3">
+                              <label class="me-3 mb-0" style="min-width: 130px;">Delegado de cancha: </label>
+                              <select class="form-select" [(ngModel)]="DelegadoSeleocionada">
+                                <option *ngFor="let usu of Delegados" [ngValue]="usu.id">{{usu.nombre}}</option>
+                              </select>
+                            </div>
+
+
+
+                          </div>
+
+                          <!-- Modal Footer -->
+                          <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                            <button (click)="guardarProgramacion(partido.id)" type="button"
+                              class="btn btn-primary">Guardar</button>
+                          </div>
+
+                        </div>
+                      </div>
+                    </div>
+
+
+                    <button type="button" *ngIf="partido.estado <=2 && this.perfilUsuario != 0 "
+                      class="btn btn-danger m-1" data-bs-toggle="modal" (click)="resetearFormularioResul()"
+                      [attr.data-bs-target]="'#Resultado' + partido.id">
+                      <i class="fa fa-calendar"></i> Resultado
+                    </button>
+
+                    <!-- Modal resultado -->
+                    <div class="modal fade" [id]="'Resultado' + partido.id" tabindex="-1"
+                      [attr.aria-labelledby]="'calenModalLabel' + partido.id" aria-hidden="true">
+                      <div class="modal-dialog modal-lg">
+                        <div class="modal-content">
+
+                          <!-- Modal Header -->
+                          <div class="modal-header flex-column align-items-center">
+                            <h3 class="text-center text-success w-100">Resultados partido</h3>
+                            <button type="button" class="btn-close position-absolute end-0 top-0 m-2"
+                              data-bs-dismiss="modal" aria-label="Close"></button>
+                          </div>
+
+                          <!-- Modal Body -->
+                          <div class="modal-body">
+                            <!-- Equipos VS -->
+                            <div class="d-flex justify-content-between align-items-center mb-3 text-center">
+                              <img [src]="pathIm + partido.foto_eq1" alt="" class="logoC">
+                              <span class="text-danger fw-bold fs-4">VS</span>
+                              <img [src]="pathIm + partido.foto_eq2" alt="" class="logoC">
+                            </div>
+
+
+
+                            <!-- Marcador -->
+                            <div>
+                              <h5 class="text-center mb-3">Resultado</h5>
+                              <div class="d-flex justify-content-center gap-4 mb-4">
+                                <input type="number" class="form-control text-center border border-dark fw-bold"
+                                  [(ngModel)]="resultadoEq1"
+                                  (ngModelChange)="generarSelectsAnotadores(1, partido.fk_equipo1, partido.fk_categoria_eq_1)"
+                                  placeholder="Eq. 1" style="max-width: 80px;">
+                                <input type="number" class="form-control text-center border border-dark fw-bold"
+                                  [(ngModel)]="resultadoEq2"
+                                  (ngModelChange)="generarSelectsAnotadores(2, partido.fk_equipo2, partido.fk_categoria_eq_2)"
+                                  placeholder="Eq. 2" style="max-width: 80px;">
+                              </div>
+
+                            </div>
+
+
+                            <!-- Anotadores -->
+                            <div>
+                              <h5 class="text-center mb-3">Anotadores</h5>
+                              <div class="row">
+                                <div class="col-6">
+                                  <div class="card bg-light border-dark mb-3">
+                                    <div class="card-header bg-secondary text-white text-center p-2">
+                                      {{ partido.name_eq_1 }}
+                                    </div>
+                                    <div class="card-body p-2">
+                                      <div *ngFor="let s of anotadoresEq1; let i = index; trackBy: trackByIndex"
+                                        class="mb-2">
+                                        <select class="form-select text-center border border-dark fw-bold"
+                                          [(ngModel)]="anotadoresEq1[i]">
+                                          <option [ngValue]="null" disabled>Gol {{ i + 1 }} - Anotador</option>
+                                          <option *ngFor="let jugador of jugadoresEq1" [ngValue]="jugador.id">
+                                            {{ jugador.nombre }}
+                                          </option>
+                                        </select>
+                                      </div>
+                                    </div>
+                                  </div>
+                                </div>
+
+                                <div class="col-6">
+                                  <div class="card bg-light border-dark mb-3">
+                                    <div class="card-header bg-secondary text-white text-center p-2">
+                                      {{ partido.name_eq_2 }}
+                                    </div>
+                                    <div class="card-body p-2">
+                                      <div *ngFor="let s of anotadoresEq2; let i = index; trackBy: trackByIndex"
+                                        class="mb-2">
+                                        <select class="form-select text-center border border-dark fw-bold"
+                                          [(ngModel)]="anotadoresEq2[i]">
+                                          <option [ngValue]="null" disabled>Gol {{ i + 1 }} - Anotador</option>
+                                          <option *ngFor="let jugador of jugadoresEq2" [ngValue]="jugador.id">
+                                            {{ jugador.nombre }}
+                                          </option>
+                                        </select>
+                                      </div>
+                                    </div>
+                                  </div>
+                                </div>
+                              </div>
+                            </div>
+
+                            <!-- Tarjetas -->
+                            <div>
+                              <h5 class="text-center mt-4 mb-3">Tarjetas</h5>
+                              <div class="row">
+                                <!-- Equipo 1 -->
+                                <div class="col-6">
+                                  <div class="card border-dark mb-3">
+                                    <div class="card-header bg-secondary text-white text-center fw-bold p-2">
+                                      {{ partido.name_eq_1 }}
+                                    </div>
+                                    <div class="card-body p-2">
+                                      <!-- Amarillas -->
+                                      <label class="form-label">Tarjetas amarillas:</label>
+                                      <input type="number"
+                                        class="form-control text-center border border-warning fw-bold mb-2"
+                                        style="max-width: 80px; margin: 0 auto;" [(ngModel)]="cantidadAmarillasEq1"
+                                        (change)="generarTarjetas('eq1', 'amarilla')">
+                                      <div *ngFor="let t of tarjetasAmarillasEq1; let i = index; trackBy: trackByIndex"
+                                        class="mb-2">
+                                        <select class="form-select text-center border border-warning fw-bold"
+                                          [(ngModel)]="tarjetasAmarillasEq1[i]">
+                                          <option [ngValue]="null" disabled>Tarjeta Amarilla {{ i + 1 }}</option>
+                                          <option *ngFor="let jugador of jugadoresEq1" [ngValue]="jugador.id">
+                                            {{ jugador.nombre }}
+                                          </option>
+                                        </select>
+                                      </div>
+
+                                      <!-- Rojas -->
+                                      <label class="form-label mt-3">Tarjetas rojas:</label>
+                                      <input type="number"
+                                        class="form-control text-center border border-danger fw-bold mb-2"
+                                        style="max-width: 80px; margin: 0 auto;" [(ngModel)]="cantidadRojasEq1"
+                                        (change)="generarTarjetas('eq1', 'roja')">
+                                      <div *ngFor="let t of tarjetasRojasEq1; let i = index; trackBy: trackByIndex"
+                                        class="mb-2">
+                                        <select class="form-select text-center border border-danger fw-bold"
+                                          [(ngModel)]="tarjetasRojasEq1[i]">
+                                          <option [ngValue]="null" disabled>Tarjeta Roja {{ i + 1 }}</option>
+                                          <option *ngFor="let jugador of jugadoresEq1" [ngValue]="jugador.id">
+                                            {{ jugador.nombre }}
+                                          </option>
+                                        </select>
+                                      </div>
+                                    </div>
+                                  </div>
+                                </div>
+
+                                <!-- Equipo 2 -->
+                                <div class="col-6">
+                                  <div class="card border-dark mb-3">
+                                    <div class="card-header bg-secondary text-white text-center fw-bold p-2">
+                                      {{ partido.name_eq_2 }}
+                                    </div>
+                                    <div class="card-body p-2">
+                                      <!-- Amarillas -->
+                                      <label class="form-label">Tarjetas amarillas:</label>
+                                      <input type="number"
+                                        class="form-control text-center border border-warning fw-bold mb-2"
+                                        style="max-width: 80px; margin: 0 auto;" [(ngModel)]="cantidadAmarillasEq2"
+                                        (change)="generarTarjetas('eq2', 'amarilla')">
+                                      <div *ngFor="let t of tarjetasAmarillasEq2; let i = index; trackBy: trackByIndex"
+                                        class="mb-2">
+                                        <select class="form-select text-center border border-warning fw-bold"
+                                          [(ngModel)]="tarjetasAmarillasEq2[i]">
+                                          <option [ngValue]="null" disabled>Tarjeta Amarilla {{ i + 1 }}</option>
+                                          <option *ngFor="let jugador of jugadoresEq2" [ngValue]="jugador.id">
+                                            {{ jugador.nombre }}
+                                          </option>
+                                        </select>
+                                      </div>
+
+                                      <!-- Rojas -->
+                                      <label class="form-label mt-3">Tarjetas rojas:</label>
+                                      <input type="number"
+                                        class="form-control text-center border border-danger fw-bold mb-2"
+                                        style="max-width: 80px; margin: 0 auto;" [(ngModel)]="cantidadRojasEq2"
+                                        (change)="generarTarjetas('eq2', 'roja')">
+                                      <div *ngFor="let t of tarjetasRojasEq2; let i = index; trackBy: trackByIndex"
+                                        class="mb-2">
+                                        <select class="form-select text-center border border-danger fw-bold"
+                                          [(ngModel)]="tarjetasRojasEq2[i]">
+                                          <option [ngValue]="null" disabled>Tarjeta Roja {{ i + 1 }}</option>
+                                          <option *ngFor="let jugador of jugadoresEq2" [ngValue]="jugador.id">
+                                            {{ jugador.nombre }}
+                                          </option>
+                                        </select>
+                                      </div>
+                                    </div>
+                                  </div>
+                                </div>
+                              </div>
+                            </div>
+
+
+                            <div>
+                              <!-- Juego Limpio -->
+                              <h5 class="text-center mt-4 mb-3">Puntos de Juego Limpio</h5>
+
+                              <div class="row text-center">
+                                <!-- Columna Eq. 1 -->
+                                <div class="col-6">
+                                  <div class="d-flex justify-content-center mb-2">
+                                    <select class="form-control text-center border border-dark fw-bold"
+                                      style="max-width: 120px;" [(ngModel)]="JuegoLimpioEq1">
+                                      <option [value]="0">Seleccione una opción</option>
+                                      <option value="100">100 - Comportamiento de la barra</option>
+                                      <option value="200">200 - Vocabulario</option>
+                                      <option value="300">300 - Incumplimiento</option>
+                                    </select>
+
+                                  </div>
+
+                                </div>
+
+                                <!-- Columna Eq. 2 -->
+                                <div class="col-6">
+                                  <div class="d-flex justify-content-center mb-2">
+                                    <select class="form-control text-center border border-dark fw-bold"
+                                      style="max-width: 120px;" [(ngModel)]="JuegoLimpioEq2">
+                                      <option [value]="0">Seleccione una opción</option>
+                                      <option value="100">100 - Comportamiento de la barra</option>
+                                      <option value="200">200 - Vocabulario</option>
+                                      <option value="300">300 - Incumplimiento</option>
+                                    </select>
+
+                                  </div>
+
+                                </div>
+                              </div>
+
+                            </div>
+
+                            <h5 class="text-center mb-3">Ampliaciòn a penaltis?</h5>
+                            <div class="d-flex justify-content-center align-items-center mb-3">
+                              <select class="form-control text-center border border-dark fw-bold mx-auto"
+                                style="max-width: 120px;" [(ngModel)]="Ampliacion">
+                                <option value="S">SI</option>
+                                <option value="N">No</option>
+                              </select>
+                            </div>
+
+
+                            <div *ngIf="Ampliacion == 'S'">
+                              <h5 class="text-center mb-3">Resultado Penaltis</h5>
+                              <div class="d-flex justify-content-center gap-4 mb-4">
+                                <input type="number" class="form-control text-center border border-dark fw-bold"
+                                  [(ngModel)]="penaltisEq1" placeholder="Eq. 1" style="max-width: 80px;">
+                                <input type="number" class="form-control text-center border border-dark fw-bold"
+                                  [(ngModel)]="penaltisEq2" placeholder="Eq. 2" style="max-width: 80px;">
+                              </div>
+
+                            </div>
+
+
+
+
+                          </div>
+
+                          <!-- Modal Footer -->
+                          <div class="modal-footer flex-column">
+                            <div *ngIf="isLoading"
+                              class="d-flex flex-column align-items-center justify-content-center w-100 mb-2">
+                              <img src="../../../assets/img/balon.png" alt="Cargando..." width="40" height="40"
+                                class="balon-girando" />
+                              <span class="mt-2 text-success fw-bold">Procesando, por favor espera...</span>
+                            </div>
+
+                            <div *ngIf="!isLoading">
+                              <button type="button" class="btn btn-success btn-lg w-100 mt-3"
+                                (click)="guardarResultadoP(partido.id, idTorneo, partido.fk_grupo)"
+                                data-bs-dismiss="modal">
+                                <i class="fa fa-save"></i> Guardar
+                              </button>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+
+                    <button type="button" *ngIf="partido.estado != 3 && this.perfilUsuario != 0"
+                      (click)="ValidarResultado(partido.id, partido.estado, partido.fk_torneo,partido.fase)"
+                      class="btn btn-danger m-1">
+                      <i class="fa fa-check"></i> Validar Resultado
+                    </button>
+
+                    <button type="button" *ngIf="partido.estado == 3 && this.perfilUsuario == 1"
+                      (click)="ReversarResultado(partido.id, partido.estado, partido.fk_torneo)"
+                      class="btn btn-warning m-1">
+                      <i class="fa fa-check"></i> Reversar Resultado
+                    </button>
+
+                    <button type="button" *ngIf="partido.estado < 3 && this.perfilUsuario == 1"
+                      (click)="AnularPartido(partido.id, partido.fk_torneo,4) " class="btn btn-danger m-1">
+                      <i class="fa fa-close"></i> Anular Partido
+                    </button>
+
+                    <button type="button" *ngIf="partido.estado == 4 && this.perfilUsuario == 1"
+                      (click)="ActivarPartido(partido.id, partido.fk_torneo,0)" class="btn btn-info m-1">
+                      <i class="fa fa-plus"></i> Activar Partido
+                    </button>
+
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- BOTÓN POR FASE -->
+        <div class="d-flex justify-content-center">
+          <button *ngIf="getValidFase(torneoSelect, fase.key) == 1 " (click)="validarFase(idTorneo, (+fase.key) + 1 )"
+            type="button"
+            class="btn btn-warning text-dark fw-bold px-5 py-3 rounded-pill border border-primary hover-red"
+            style="width: 800px; font-size: 1.5rem;">
+            Generar partidos Fase {{ (+fase.key) + 1 }}
+          </button>
+
+        </div>
+
+
+
+      </div>
+
+
+    </div>
+
+  </div> <!-- /row -->
+
+
+</div>
+
+
+<div *ngIf="mdNamefases" class="modal fade" id="NamesFase" tabindex="-1" aria-labelledby="exampleModalLabel"
+  aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h1 class="modal-title fs-5" id="exampleModalLabel">Nuevo nombre fase</h1>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+
+      <div class="modal-body text-center">
+        <input type="text" class="form-control w-75 mx-auto" [(ngModel)]="nombreFaseEdit"
+          placeholder="Ingrese nombre fase">
+      </div>
+
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+        <button type="button" class="btn btn-primary" (click)="guardarNFase()">Guardar</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+
+<div *ngIf="mdNameGrupo" class="modal fade" id="NamesGrupo" tabindex="-1" aria-labelledby="exampleModalLabel"
+  aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h1 class="modal-title fs-5" id="exampleModalLabel">Nuevo nombre Grupo</h1>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+
+      <div class="modal-body text-center">
+        <input type="text" class="form-control w-75 mx-auto" [(ngModel)]="nombreGrupoEdit"
+          placeholder="Ingrese nombre grupo">
+      </div>
+
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+        <button type="button" class="btn btn-primary" (click)="guardarNGrupo()">Guardar</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+
+<div *ngIf="newPartido" class="modal fade" id="NuevoPartido" tabindex="-1" aria-labelledby="exampleModalLabel"
+  aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h1 class="modal-title fs-5" id="exampleModalLabel">Nuevo Partido</h1>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+
+      <div class="modal-body text-center">
+        <select class="form-select" [(ngModel)]="Nequipo1">
+          <option *ngFor="let eq of EquiposTorneo" [ngValue]="eq.id">{{eq.nombre}}</option>
+        </select>
+      </div>
+
+
+      <div class="modal-body text-center">
+        <select class="form-select" [(ngModel)]="Nequipo2">
+          <option *ngFor="let eq of EquiposTorneo" [ngValue]="eq.id">{{eq.nombre}}</option>
+        </select>
+      </div>
+
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+        <button type="button" class="btn btn-primary" (click)="guardarNPartido()">Guardar</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+
+<div *ngIf="AddEquipoG" class="modal fade" id="addModal" tabindex="-1" aria-labelledby="exampleModalLabel"
+  aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h1 class="modal-title fs-5" id="exampleModalLabel">Agregar Equipo</h1>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+
+      <div class="modal-body">
+        <label for="equipoBuscar" class="form-label">Buscar y seleccionar equipo</label>
+
+        <select class="form-select" [(ngModel)]="equipoSeleccionado">
+          <option *ngFor="let eq of equipos | filtroPorNombre:filtroEquipo" [ngValue]="eq.id">{{ eq.nombre }}</option>
+
+        </select>
+      </div>
+
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+        <button type="button" class="btn btn-primary" (click)="guardarEquipo()">Guardar</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<div *ngIf="addAfase" class="modal fade" id="addAfase" tabindex="-1" aria-labelledby="exampleModalLabel"
+  aria-hidden="true">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content border border-primary shadow-lg">
+      <div class="modal-header bg-primary text-white text-center">
+        <h1 class="modal-title fs-5 text-center" id="exampleModalLabel">
+          Agregar Entrenamiento fase {{ this.FaseActual }} : grupo {{this.nombreGrupoActual}}
+        </h1>
+        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+
+
+      <div class="modal-body">
+
+        <div class="row">
+          <!-- Lado izquierdo -->
+          <div class="col-md-6">
+            <div class="p-3 border border-secondary rounded mb-3 bg-card1">
+              <h5 class="text-center mb-3 text-primary">Equipo 1</h5>
+
+
+              <div class="mb-3 d-flex justify-content-center">
+                <select id="controlEdad" class="form-select w-auto m-3 text-center" (change)="onControlTipo1($event)"
+                  [(ngModel)]="tipo1Efr">
+                  <option value="">Seleccione tipo</option>
+                  <option value="grupo">Grupo</option>
+                  <option value="recla">Reclasificación</option>
+                </select>
+              </div>
+
+
+              <div class="mb-3" *ngIf="this.controlTipo1=='grupo'">
+                <label for="equipoBuscarIzq" class="form-label fw-bold">Seleccionar Grupo</label>
+                <select id="equipoBuscarIzq" class="form-select border border-dark" [(ngModel)]="Equipo1gr"
+                  (change)="actualizarOpciones()">
+                  <option [ngValue]="null" disabled selected>-- Seleccione Grupo --</option>
+                  <option *ngFor="let gr of gruposPorFase[this.FaseActual-1]" [ngValue]="gr.id">
+                    {{ gr.nombre }}
+                  </option>
+                </select>
+              </div>
+
+              <div class="mb-3" *ngIf="this.controlTipo1 == 'grupo' ">
+                <label for="posicion1gr" class="form-label fw-bold">Seleccionar Posición</label>
+                <select id="posicion1gr" class="form-select border border-dark" [(ngModel)]="Posicion1gr">
+                  <option [value]="null" disabled selected>-- Seleccione posición --</option>
+                  <option *ngFor="let op of opcionesPuestos" [value]="op.value">
+                    {{ op.texto }}
+                  </option>
+                </select>
+              </div>
+
+              <div class="mb-3" *ngIf="this.controlTipo1 == 'recla' ">
+                <label for="posicion1gr" class="form-label fw-bold">Seleccionar Posición</label>
+                <select id="posicion1gr" class="form-select border border-dark" [(ngModel)]="Posicion1gr">
+                  <option [value]="null" disabled selected>-- Seleccione posición --</option>
+                  <option *ngFor="let op of opcionesPuestosCL" [value]="op.value">
+                    {{ op.texto }}
+                  </option>
+                </select>
+              </div>
+
+
+            </div>
+          </div>
+
+          <!-- Lado derecho -->
+          <div class="col-md-6">
+            <div class="p-3 border border-secondary rounded mb-3 bg-card1">
+              <h5 class="text-center mb-3 text-primary">Equipo 2</h5>
+
+              <div class="mb-3 d-flex justify-content-center">
+                <select id="controlEdad" class="form-select w-auto m-3 text-center" (change)="onControlTipo2($event)"
+                  [(ngModel)]="tipo2Efr">
+                  <option value="">Seleccione tipo</option>
+                  <option value="grupo">Grupo</option>
+                  <option value="recla">Reclasificación</option>
+                </select>
+              </div>
+
+              <div class="mb-3" *ngIf="this.controlTipo2=='grupo'">
+                <label for="equipoBuscarDer" class="form-label fw-bold">Seleccionar Grupo</label>
+                <select id="equipoBuscarDer" class="form-select border border-dark" [(ngModel)]="Equipo2gr"
+                  (change)="actualizarOpciones()">
+                  <option [ngValue]="null" disabled selected>-- Seleccione un equipo --</option>
+                  <option *ngFor="let gr of gruposPorFase[this.FaseActual-1]" [ngValue]="gr.id">
+                    {{ gr.nombre }}
+                  </option>
+                </select>
+              </div>
+
+              <div class="mb-3" *ngIf="this.controlTipo2 == 'grupo' ">
+                <label for="posicion2gr" class="form-label fw-bold">Seleccionar Posición</label>
+                <select id="posicion2gr" class="form-select border border-dark" [(ngModel)]="Posicion2gr">
+                  <option [value]="null" disabled selected>-- Seleccione posición --</option>
+                  <option *ngFor="let op of opcionesPuestos" [value]="op.value">
+                    {{ op.texto }}
+                  </option>
+                </select>
+              </div>
+
+              <div class="mb-3" *ngIf="this.controlTipo2 == 'recla' ">
+                <label for="posicion1gr" class="form-label fw-bold">Seleccionar Posición</label>
+                <select id="posicion1gr" class="form-select border border-dark" [(ngModel)]="Posicion2gr">
+                  <option [value]="null" disabled selected>-- Seleccione posición --</option>
+                  <option *ngFor="let op of opcionesPuestosCL2" [value]="op.value">
+                    {{ op.texto }}
+                  </option>
+                </select>
+              </div>
+
+
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="modal-footer bg-light">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+        <button type="button" class="btn btn-success" (click)="guardarPrePartido()">Guardar</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+
+<div class="modal fade" id="modalVerJugadores" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-xl">
+    <div class="modal-content">
+      <div class="modal-header bg-success position-relative">
+        <h1 class="modal-title fs-5 text-center w-100 m-0 text-whiteexampleModalLabel">
+          Inscribir jugadores a partido
+        </h1>
+        <button type="button" class="btn-close position-absolute end-0 me-2" data-bs-dismiss="modal"
+          aria-label="Close"></button>
+      </div>
+
+      <div class="modal-body">
+        <div style="max-height: 350px; overflow-y: auto;">
+          <table class="table table-bordered mb-0 text-center">
+            <thead class="bg-success text-white sticky-top">
+              <tr>
+                <th></th>
+                <th>Nombre</th>
+                <th>Fecha de nacimiento</th>
+                <th>Edad</th>
+                <th>Posición</th>
+                <th>Acción</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let jugador of jugadoresEquipo">
+                <td>
+                  <img [src]="jugador.img1 ? (pathIm + jugador.img1) : '../../../assets/img/nd.png'" alt="Foto"
+                    width="30" height="30" class="rounded-circle">
+                </td>
+                <td>{{ jugador.nombre }}</td>
+                <td>{{ jugador.fecha_nacimiento }}</td>
+                <td>{{ jugador.fecha_nacimiento }}</td>
+                <td>
+                  <span *ngIf="jugador.posicion == 1">Arquero</span>
+                  <span *ngIf="jugador.posicion == 2">Defensa</span>
+                  <span *ngIf="jugador.posicion == 3">Volante</span>
+                  <span *ngIf="jugador.posicion == 4">Delantero</span>
+                </td>
+                <td>
+                  <select class="form-select form-select-sm shadow-sm" style="width: auto;" [(ngModel)]="jugador.rol">
+                    <option value="Suplente">Suplente</option>
+                    <option value="Titular">Titular</option>
+                  </select>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+      <div class="modal-footer">
+
+        <button type="button" class="btn btn-primary" (click)="guardarInscripcionJug()">Guardar</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<div class="modal fade" id="modalVerJugadoresIns" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-xl modal-dialog-centered modal-full-height">
+    <div class="modal-content">
+
+      <!-- Header -->
+      <div class="modal-header bg-success position-relative">
+        <h1 class="modal-title fs-5 text-center w-100 m-0 text-white">
+          Jugadores Inscritos
+        </h1>
+        <button type="button" class="btn-close position-absolute end-0 me-2" data-bs-dismiss="modal"
+          aria-label="Close"></button>
+      </div>
+
+      <!-- Body -->
+      <div class="modal-body">
+        <div class="row">
+          <!-- Recorremos cada equipo -->
+          <div class="col-md-6" *ngFor="let equipo of jugadoresInscritos">
+            <div class="card h-100">
+
+              <!-- Header equipo -->
+              <div class="card-header text-center fw-bold">
+                <img class="logo" [src]="pathIm + equipo[0]?.imgEq" alt="">
+                {{ equipo[0]?.nombreEq }}
+              </div>
+
+              <!-- Jugadores -->
+              <div class="card-body p-2 scroll-card d-flex flex-column">
+                <table class="table table-sm table-bordered text-center flex-grow-1">
+                  <thead>
+                    <tr>
+                      <th>Jugador</th>
+                      <th>Rol</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr *ngFor="let jugador of equipo">
+                      <td>
+                        <img class="logo" [src]="pathIm + jugador.img1" alt="">
+                        {{ jugador.nombre }}
+                      </td>
+                      <td>
+                        <select class="form-select form-select-sm shadow-sm" style="width: auto;"
+                          [(ngModel)]="jugador.rol">
+                          <option value="">-- Seleccione --</option>
+                          <option value="Suplente">Suplente</option>
+                          <option value="Titular">Titular</option>
+                        </select>
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+
+                <!-- Botón Guardar (centrado y con color Bootstrap) -->
+                <div class="text-center mt-2">
+                  <button type="button" class="btn btn-primary btn-sm" (click)="guardarInscripcionAll(equipo)">
+                    Guardar
+                  </button>
+                </div>
+              </div>
+
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>

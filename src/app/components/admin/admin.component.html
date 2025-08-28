@@ -1,0 +1,59 @@
+<div  class="d-flex justify-content-center align-items-center min-vh-100" style="background-image: url('../../../assets/img/fondoPR.jpg'); background-size: cover; background-position: center;">
+    
+   
+        
+  <div class="bg-white p-4 rounded shadow w-100" style="max-width: 400px;">
+      <!-- Logo -->
+
+       <div class="text-center mb-3">
+            <button type="button" class="btn btn-success" [routerLink]="'/home'">
+               <i class="fa fa-home"></i>
+            </button>
+        </div>
+        
+      <div class="text-center mb-4">
+        <img src="../../../assets/img/logo.png" alt="Logo" class="logo w-25">
+
+      </div>
+  
+      <!-- Formulario Reactivo -->
+      <form [formGroup]="loginForm" (ngSubmit)="onSubmit()">
+        <div class="mb-3">
+          <label for="usuario" class="form-label">Usuario</label>
+          <input
+            type="text"
+            id="usuario"
+            class="form-control"
+            formControlName="usuario"
+            [ngClass]="{'is-invalid': loginForm.get('usuario')?.invalid && loginForm.get('usuario')?.touched}"
+          />
+          <div *ngIf="loginForm.get('usuario')?.invalid && loginForm.get('usuario')?.touched" class="invalid-feedback">
+            El usuario es obligatorio
+          </div>
+        </div>
+  
+        <div class="mb-3">
+          <label for="password" class="form-label">Contraseña</label>
+          <input
+            type="password"
+            id="password"
+            class="form-control"
+            formControlName="password"
+            [ngClass]="{'is-invalid': loginForm.get('password')?.invalid && loginForm.get('password')?.touched}"
+          />
+          <div *ngIf="loginForm.get('password')?.invalid && loginForm.get('password')?.touched" class="invalid-feedback">
+            La contraseña es obligatoria
+          </div>
+        </div>
+  
+        <button
+          type="submit"
+          class="btn btn-success w-100 text-white"
+          [disabled]="loginForm.invalid"
+        >
+          Ingresar
+        </button>
+      </form>
+    </div>
+  </div>
+  

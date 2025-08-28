@@ -1,0 +1,78 @@
+/* Contenedor de tarjetas con hasta 4 por fila */
+.cards-container {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 1.5rem;
+  padding: 0 1rem;
+}
+
+/* Cada tarjeta (máximo 4 por fila en pantallas grandes) */
+.card-torneo {
+  flex: 1 1 250px; /* ancho base mínimo */
+  max-width: 300px;
+}
+
+/* Card visual */
+.card {
+  background-color: rgba(255, 255, 255, 0.5);
+  border-radius: 15px;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+}
+
+/* Imagen */
+.card-img-top {
+  height: 200px;
+  width: 100%;
+  object-fit: cover;
+  border-top-left-radius: 0.5rem;
+  border-top-right-radius: 0.5rem;
+  transition: transform 0.3s ease;
+}
+
+.card:hover .card-img-top {
+  transform: scale(1.02);
+}
+
+/* Globales */
+html, body {
+  margin: 0;
+  padding: 0;
+  height: 100%;
+  width: 100%;
+}
+
+#content {
+  background-image: url('../../../assets/img/fondoPR.jpg');
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-attachment: fixed;
+  min-height: 100vh;
+  font-family: 'Poppins', sans-serif;
+}
+
+.logo {
+  max-height: 100px;
+  max-width: 100px;
+}
+
+.titulo-principal {
+  font-size: 3rem;
+  font-weight: 800;
+  text-shadow: 2px 2px 5px rgba(0,0,0,0.3);
+  letter-spacing: 1px;
+}
+
+
+.titulo-second {
+  font-size: 1.8 rem;
+  font-weight: 400;
+  text-shadow: 2px 2px 5px rgba(0,0,0,0.3);
+  letter-spacing: 1px;
+}

@@ -1,0 +1,429 @@
+<div id="table" *ngIf="!this.creando" style="overflow-x: auto; margin: 2%;">
+
+    <h1 class="text-center text-success"><button (click)="Inicio()" type="button" class="btn btn-success m-2"
+            data-bs-toggle="tooltip" data-bs-placement="top" title="Inicio">
+            <i class="fa fa-arrow-left"></i>
+        </button> <i class="fa fa-users" aria-hidden="true"></i> Jugadores</h1>
+
+    <!-- FILTROS -->
+    <div class="row mb-3">
+        <div class="col-md-4">
+            <input type="text" [(ngModel)]="filtroNombre" (input)="aplicarFiltros()" class="form-control m-1"
+                placeholder="Filtrar por nombre">
+        </div>
+        <div class="col-md-4">
+            <input type="text" [(ngModel)]="filtroIdentificacion" (input)="aplicarFiltros()" class="form-control m-1"
+                placeholder="Filtrar por identificación">
+        </div>
+        <div class="col-md-4">
+            <input type="text" [(ngModel)]="filtroCorreo" (input)="aplicarFiltros()" class="form-control m-1"
+                placeholder="Filtrar por correo">
+        </div>
+    </div>
+    <div style="overflow-x: auto;">
+        <table class="table table-bordered">
+            <thead>
+                <tr class="text-center">
+                    <th class="bg-success text-light" scope="col">
+                        <button (click)="addJugador()" type="button" class="btn btn-danger" data-bs-toggle="tooltip"
+                            data-bs-placement="top" title="Nuevo">
+                            <i class="fa fa-plus m-1"></i> Nuevo
+                        </button>
+                    </th>
+                    <th class="bg-success text-light" scope="col">Id</th>
+                    <th class="bg-success text-light" scope="col">img 1</th>
+                    <th class="bg-success text-light" scope="col">img 2</th>
+                    <th class="bg-success text-light" scope="col">Nombre</th>
+                    <th class="bg-success text-light" scope="col">Fecha nacimiento</th>
+                    <th class="bg-success text-light" scope="col">Email</th>
+                    <th class="bg-success text-light" scope="col">Identificacion</th>
+                    <th class="bg-success text-light" scope="col">Genero</th>
+                    <th class="bg-success text-light" scope="col">Posicion</th>
+                    <th class="bg-success text-light" scope="col">Estado</th>
+                    <th *ngIf="this.UserLog.perfil== 1" class="bg-success text-light" scope="col">Doc 3</th>
+                    <th *ngIf="this.UserLog.perfil== 1" class="bg-success text-light" scope="col">Doc 4</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr *ngFor="let jug of jugadoresFiltrados" class="text-center">
+                    <th scope="row">
+                        <button (click)="editJugador(jug.id!)" type="button" class="btn btn-warning m-1"
+                            data-bs-toggle="tooltip" data-bs-placement="top" title="editar">
+                            <i class="fa fa-edit"></i>
+                        </button>
+                        <button *ngIf="this.UserLog.perfil== 1" (click)="deleteJugador(jug.id!)" type="button"
+                            class="btn btn-danger m-1">
+                            <i class="fa fa-trash" aria-hidden="true" data-bs-toggle="tooltip" data-bs-placement="top"
+                                title="Eliminar"></i>
+                        </button>
+                    </th>
+
+                    <td>
+                        {{jug.id}}
+                    </td>
+
+                    <td>
+                        <a *ngIf="jug.img1" (click)="openModal(pathIm + jug.img1,jug.nombre)">
+                            <img [src]="pathIm + jug.img1" alt="Imagen 1" class="img-thumbnail d-block mx-auto shadow"
+                                style="width: 48px; height: 48px; object-fit: cover; border-radius: 0.375rem;">
+                        </a>
+                        <img *ngIf="!jug.img1" src="../../../../assets/img/nofoto.png" alt="Imagen 1"
+                            class="img-thumbnail d-block mx-auto shadow"
+                            style="width: 48px; height: 48px; object-fit: cover; border-radius: 0.375rem;">
+                    </td>
+
+                    <td>
+                        <a *ngIf="jug.img2" (click)="openModal(pathIm + jug.img2,jug.nombre)">
+                            <img [src]="pathIm + jug.img2" alt="Imagen 2" class="img-thumbnail d-block mx-auto shadow"
+                                style="width: 48px; height: 48px; object-fit: cover; border-radius: 0.375rem;">
+                        </a>
+                        <img *ngIf="!jug.img2" src="../../../../assets/img/nofoto.png" alt="Imagen 2"
+                            class="img-thumbnail d-block mx-auto shadow"
+                            style="width: 48px; height: 48px; object-fit: cover; border-radius: 0.375rem;">
+                    </td>
+
+                    <td>{{jug.nombre}}</td>
+                    <td>{{jug.fecha_nacimiento}}</td>
+                    <td>{{jug.email}}</td>
+                    <td>{{jug.identificacion}}</td>
+                    <td>{{jug.genero}}</td>
+                    <td>
+                        <span *ngIf="jug.posicion == 1">Arquero</span>
+                        <span *ngIf="jug.posicion == 2">Defensa</span>
+                        <span *ngIf="jug.posicion == 3">Volante</span>
+                        <span *ngIf="jug.posicion == 4">Delantero</span>
+                    </td>
+                    <td>
+                        <span *ngIf="jug.estado == 0">Inactivo</span>
+                        <span *ngIf="jug.estado == 1">Activo</span>
+                    </td>
+                    <td *ngIf="this.UserLog.perfil== 1">
+                        <a [href]="pathIm + jug.img3" [download]="getFilename(jug.img3)" target="_blank">
+                            <i class="fa fa-file"> Descargar</i>
+                        </a>
+                    </td>
+                    <td *ngIf="this.UserLog.perfil== 1">
+                        <a [href]="pathIm + jug.img4" [download]="getFilename(jug.img4)" target="_blank">
+                            <i class="fa fa-file"> Descargar</i>
+                        </a>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+</div>
+
+
+
+<div class="container d-flex justify-content-center align-items-center min-vh-100" *ngIf="this.creando">
+    <div class="col-12 col-md-8 col-lg-6">
+        <div class="card shadow-lg p-4 border bg-success">
+            <h3 class="text-center mb-4 text-light"><i class="fa fa-users" aria-hidden="true"></i> Crear Jugador</h3>
+            <form [formGroup]="JugadorForm" (ngSubmit)="saveJugador()" enctype="multipart/form-data">
+
+                <!-- Nombre -->
+                <div class="mb-3 row">
+                    <label for="image1" class="col-sm-3 col-form-label text-white"
+                        style="font-size: 1.2rem; font-weight: bold; text-decoration: underline;">
+                        Nombre
+                    </label>
+                    <div class="col-sm-9">
+                        <input type="text" id="name" formControlName="name" class="form-control"
+                            placeholder="Ingrese el nombre del jugador" required>
+                    </div>
+                </div>
+
+
+
+                <!-- Email -->
+                <div class="mb-3 row">
+
+                    <label for="image1" class="col-sm-3 col-form-label text-white"
+                        style="font-size: 1.2rem; font-weight: bold; text-decoration: underline;">
+                        Correo Electronico
+                    </label>
+
+
+                    <div class="col-sm-9">
+                        <input type="mail" id="mail" formControlName="mail" class="form-control"
+                            placeholder="Ingrese su correo electronico" required>
+                    </div>
+                </div>
+
+                <div class="mb-3 row">
+
+                    <label for="image1" class="col-sm-3 col-form-label text-white"
+                        style="font-size: 1.2rem; font-weight: bold; text-decoration: underline;">
+                        Fecha nacimiento
+                    </label>
+
+
+
+                    <div class="col-sm-9">
+                        <input type="date" id="fch_nacimiento" formControlName="fch_nacimiento" class="form-control"
+                            (change)="onFechaNacimientoChange($event)" placeholder="Ingrese la fecha de nacimiento"
+                            required>
+                    </div>
+                </div>
+
+                <div class="mb-3 row">
+
+                    <label for="image1" class="col-sm-3 col-form-label text-white"
+                        style="font-size: 1.2rem; font-weight: bold; text-decoration: underline;">
+                        Posicion
+                    </label>
+
+
+                    <div class="col-sm-9">
+                        <select id="posicion" formControlName="posicion" class="form-select">
+                            <option [value]="1">Arquero</option>
+                            <option [value]="2">Defensa</option>
+                            <option [value]="3">Volante</option>
+                            <option [value]="4">Delantero</option>
+                        </select>
+                    </div>
+                </div>
+
+
+                <div class="mb-3 row">
+
+                    <label for="image1" class="col-sm-3 col-form-label text-white"
+                        style="font-size: 1.2rem; font-weight: bold; text-decoration: underline;">
+                        Tipo de documento
+                    </label>
+
+                    <div class="col-sm-9">
+                        <select id="estado" formControlName="TipoDoc" class="form-select"
+                            (change)="updateDocumento($event)">
+                            <option [value]="1">Registro civil</option>
+                            <option [value]="2">Tarjeta Identidad</option>
+                            <option [value]="3">Cedula de ciudadania</option>
+                            <option [value]="4">Cedula extranjeria</option>
+                            <option [value]="5">Pasaporte</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="mb-3 row" *ngIf="tipoDoc>0">
+
+                    <label for="image1" class="col-sm-3 col-form-label text-white"
+                        style="font-size: 1.2rem; font-weight: bold; text-decoration: underline;">
+                        Identificacion
+                    </label>
+
+                    <div class="col-sm-9">
+                        <input type="text" id="identificacion" formControlName="identificacion" class="form-control"
+                            placeholder="Ingrese la identificacion de jugador" required>
+                    </div>
+                </div>
+
+                <div class="mb-3 row">
+                    <label for="estado" class="col-sm-3 col-form-label text-white"
+                        style="font-size: 1.2rem; font-weight: bold; text-decoration: underline;">
+                        Género
+                    </label>
+                    <div class="col-sm-9">
+                        <select id="estado" formControlName="genero" class="form-select">
+                            <option value="Masculino">Masculino</option>
+                            <option value="Femenino">Femenino</option>
+                        </select>
+                    </div> 
+                </div>
+
+
+
+                <div class="mb-3 row" *ngIf="tipoDoc==1 || tipoDoc==2">
+
+                    <label for="image1" class="col-sm-3 col-form-label text-white"
+                        style="font-size: 1.2rem; font-weight: bold; text-decoration: underline;">
+                        Nombre madre
+                    </label>
+
+
+                    <div class="col-sm-9">
+                        <input type="text" id="nomMadre" formControlName="nomMadre" class="form-control"
+                            placeholder="Nombre madre">
+                    </div>
+                </div>
+
+
+                <div class="mb-3 row" *ngIf="tipoDoc==1 || tipoDoc==2">
+                    <label for="image1" class="col-sm-3 col-form-label text-white"
+                        style="font-size: 1.2rem; font-weight: bold; text-decoration: underline;">
+                        Telefono madre
+                    </label>
+                    <div class="col-sm-9">
+                        <input type="text" id="telMadre" formControlName="telMadre" class="form-control"
+                            placeholder="Telefono madre">
+                    </div>
+                </div>
+
+
+
+                <div class="mb-3 row" *ngIf="tipoDoc==1 || tipoDoc==2">
+                    <label for="image1" class="col-sm-3 col-form-label text-white"
+                        style="font-size: 1.2rem; font-weight: bold; text-decoration: underline;">
+                        Nombre padre
+                    </label>
+                    <div class="col-sm-9">
+                        <input type="text" id="nomPadre" formControlName="nomPadre" class="form-control"
+                            placeholder="Nombre padre">
+                    </div>
+                </div>
+
+
+                <div class="mb-3 row" *ngIf="tipoDoc==1 || tipoDoc==2">
+                    <label for="image1" class="col-sm-3 col-form-label text-white"
+                        style="font-size: 1.2rem; font-weight: bold; text-decoration: underline;">
+                        Telefono padre
+                    </label>
+                    <div class="col-sm-9">
+                        <input type="text" id="telPadre" formControlName="telPadre" class="form-control"
+                            placeholder="Telefono padre">
+                    </div>
+                </div>
+
+
+
+                <!-- Imagen 1 -->
+                <div class="mb-3 row" *ngIf="tipoDoc>0">
+                    <label for="image1" class="col-sm-3 col-form-label text-white"
+                        style="font-size: 1.2rem; font-weight: bold; text-decoration: underline;">
+                        {{ this.labedoc1 }}
+                    </label>
+
+
+                    <div class="col-sm-9">
+                        <input type="file" id="image1" (change)="uploadImage($event, 1)" class="form-control" required>
+                    </div>
+                </div>
+
+                <!-- Imagen 2 -->
+                <div class="mb-3 row" *ngIf="tipoDoc>0">
+
+                    <label for="image1" class="col-sm-3 col-form-label text-white"
+                        style="font-size: 1.2rem; font-weight: bold; text-decoration: underline;">
+                        {{ this.labedoc2 }}
+                    </label>
+
+
+                    <div class="col-sm-9">
+                        <input type="file" id="image2" (change)="uploadImage($event, 2)" class="form-control" required>
+                    </div>
+                </div>
+
+
+
+                <div class="mb-3 row" *ngIf="tipoDoc>0">
+
+                    <label for="image1" class="col-sm-3 col-form-label text-white"
+                        style="font-size: 1.2rem; font-weight: bold; text-decoration: underline;">
+                        {{ this.labedoc3 }}
+                    </label>
+                    <div class="col-sm-9">
+                        <input type="file" id="image3" (change)="uploadImage($event, 3)" class="form-control" required>
+                    </div>
+                </div>
+
+
+
+                <div class="mb-3 row" *ngIf="tipoDoc>0">
+
+                    <label for="image1" class="col-sm-3 col-form-label text-white"
+                        style="font-size: 1.2rem; font-weight: bold; text-decoration: underline;">
+                        {{ this.labedoc4 }}
+                    </label>
+                    <div class="col-sm-9">
+                        <input type="file" id="image4" (change)="uploadImage($event, 4)" class="form-control" required>
+                    </div>
+                </div>
+
+
+                <div class="mb-3 row">
+                    <label for="image1" class="col-sm-3 col-form-label text-white"
+                        style="font-size: 1.2rem; font-weight: bold; text-decoration: underline;">
+                        Estado
+                    </label>
+                    <div class="col-sm-9">
+                        <select id="estado" formControlName="estado" class="form-select">
+                            <option [value]="1">Activo</option>
+                            <option [value]="0">Inactivo</option>
+                        </select>
+                    </div>
+                </div>
+
+
+
+                <div *ngIf="editForm && (jugadorSelect.img1 || jugadorSelect.img2)" id="carouselExample"
+                    class="carousel slide mt-4">
+
+                    <div class="carousel-inner">
+                        <div class="carousel-item active" *ngIf="jugadorSelect.img1">
+                            <img [src]="pathIm + jugadorSelect.img1" class="d-block w-100" alt="Imagen 1">
+                        </div>
+                        <div class="carousel-item" *ngIf="jugadorSelect.img2">
+                            <img [src]="pathIm + jugadorSelect.img2" class="d-block w-100" alt="Imagen 2">
+                        </div>
+                    </div>
+
+                    <button class="carousel-control-prev" type="button" data-bs-target="#carouselExample"
+                        data-bs-slide="prev">
+                        <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                        <span class="visually-hidden">Previous</span>
+                    </button>
+                    <button class="carousel-control-next" type="button" data-bs-target="#carouselExample"
+                        data-bs-slide="next">
+                        <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                        <span class="visually-hidden">Next</span>
+                    </button>
+                </div>
+
+
+
+
+                <!-- Botones -->
+                <div class="d-flex justify-content-end">
+                    <button type="submit" class="btn btn-warning text-dark m-2" *ngIf="JugadorForm.valid">
+                        <i class="fa fa-floppy-o" aria-hidden="true"></i> Guardar
+                    </button>
+
+                    <button type="button" class="btn btn-secondary m-2" (click)="cancel()">
+                        <i class="fa fa-ban" aria-hidden="true"></i> Cancelar
+                    </button>
+                </div>
+
+
+
+                <!-- Spinner debajo de los botones -->
+                <div *ngIf="isLoading" class="d-flex flex-column align-items-center mt-3">
+                    <img src="../../../assets/img/balon.png" alt="Cargando..." width="40" height="40"
+                        class="balon-girando" />
+                    <span class="mt-2 text-warning fw-bold">Procesando, por favor espera...</span>
+                </div>
+
+
+            </form>
+        </div>
+    </div>
+
+
+</div>
+
+<!-- Modal -->
+<div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h1 class="modal-title fs-5" id="exampleModalLabel">{{this.JugadorVisi}}</h1>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body d-flex justify-content-center align-items-center">
+                <img [src]="this.imgVisi" alt="" class="img-fluid" style="max-height: 80vh;">
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,184 @@
+<div id="table" *ngIf="!this.creando">
+
+  <h1 class="text-center text-success"><i class="fa fa-users" aria-hidden="true"></i> Usuarios</h1>
+
+
+  <div class="row mb-3">
+    <div class="col-md-4">
+      <input type="text" [(ngModel)]="filtroNombre" (input)="aplicarFiltros()" class="form-control m-1"
+        placeholder="Filtrar por nombre">
+    </div>
+    <div class="col-md-4">
+      <input type="text" [(ngModel)]="filtroUsuario" (input)="aplicarFiltros()" class="form-control m-1"
+        placeholder="Filtrar por usuario">
+    </div>
+
+  </div>
+
+
+  <div style="overflow-x: auto;">
+    <table class="table table-bordered">
+      <thead>
+        <tr class="text-center">
+          <th class="bg-success text-light" scope="col"><button (click)="addUser()" type="button" class="btn btn-info"
+              data-bs-toggle="tooltip" data-bs-placement="top" title="Nuevo">
+              <i class="fa fa-plus"></i>
+            </button>
+          </th>
+          <th class="bg-success text-light" scope="col">usuario</th>
+          <th class="bg-success text-light" scope="col">nombre</th>
+          <th class="bg-success text-light" scope="col">Pass - Codigo</th>
+          <th class="bg-success text-light" scope="col">Perfil</th>
+          <th class="bg-success text-light" scope="col">Estado</th>
+
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let us of usersFiltrados" class="text-center">
+          <th scope="row">
+            <button (click)="editUser(us.id!)" type="button" class="btn btn-warning m-1" data-bs-toggle="tooltip"
+              data-bs-placement="top" title="editar"> <i class="fa fa-edit"></i></button>
+            <button (click)="deleteUser(us.id!)" type="button" class="btn btn-danger m-1"> <i class="fa fa-trash"
+                aria-hidden="true" data-bs-toggle="tooltip" data-bs-placement="top" title="Eliminar"></i></button>
+
+             <button (click)="MailContacto(us.id!)" type="button" class="btn btn-info m-1"> <i class="fa fa-envelope"
+                aria-hidden="true" data-bs-toggle="tooltip" data-bs-placement="top" title="Enviar correo password"></i></button
+                >   
+          </th>
+
+
+          <td>{{us.usuario}}</td>
+          <td>{{us.nombre}}</td>
+          <td>{{us.password}}</td>
+
+
+          <td>
+            <span *ngIf="us.perfil == 1" class="bg-danger">Administrador</span>
+            <span *ngIf="us.perfil == 2" class="bg-info">Administrador Equipo</span>
+            <span *ngIf="us.perfil == 3" class="bg-primary">Delegado de Cancha</span>
+            <span *ngIf="us.perfil == 4">Admin Equipo Categoria</span>
+          </td>
+
+          <td>
+            <span *ngIf="us.estado == 0">Inactivo</span>
+            <span *ngIf="us.estado == 1">Activo</span>
+            <span *ngIf="us.estado == 2">En curso</span>
+          </td>
+
+        </tr>
+
+      </tbody>
+    </table>
+  </div>
+
+</div>
+
+
+<div class="container d-flex justify-content-center align-items-center min-vh-100" *ngIf="this.creando">
+  <div class="col-12 col-md-8 col-lg-6">
+    <div class="card shadow-lg p-4 border bg-success">
+      <h3 class="text-center mb-4 text-light"><i class="fa fa-trophy" aria-hidden="true"></i>Crear Usuario</h3>
+      <form [formGroup]="UserForm" (ngSubmit)="saveUser()" enctype="multipart/form-data">
+
+
+        <!-- Email -->
+        <div class="mb-3 row">
+          <label for="name" class="col-sm-3 col-form-label text-light">Usuario (Email)</label>
+          <div class="col-sm-9">
+            <input type="mail" id="usuario" formControlName="usuario" class="form-control"
+              placeholder="Ingrese su usuario - Correo electronico" required>
+          </div>
+        </div>
+
+        <!-- Nombre -->
+        <div class="mb-3 row">
+          <label for="name" class="col-sm-3 col-form-label text-light">Nombre</label>
+          <div class="col-sm-9">
+            <input type="text" id="name" formControlName="name" class="form-control" placeholder="Ingrese nombre"
+              required>
+          </div>
+        </div>
+
+
+        <div class="mb-3 row">
+          <label for="perfil" class="col-sm-3 col-form-label text-light">Perfil</label>
+          <div class="col-sm-9">
+            <select id="perfil" formControlName="perfil" class="form-select">
+              <option [value]="1">Administrador</option>
+              <option [value]="2">Admin Equipo</option>
+              <option [value]="3">Delegado de Cancha</option>
+
+            </select>
+          </div>
+        </div>
+
+
+        <div class="mb-3 row" *ngIf="UserForm.get('perfil')?.value == 2 || UserForm.get('perfil')?.value == 4">
+          <label for="perfil" class="col-sm-3 col-form-label text-light">Equipo</label>
+          <div class="col-sm-9">
+            <select id="fk_equipo" formControlName="fk_equipo" class="form-select">
+              <option *ngFor="let eq of this.equipos" [value]="eq.id">{{eq.nombre}}</option>
+
+            </select>
+          </div>
+        </div>
+
+        <div class="mb-3 row" *ngIf="UserForm.get('perfil')?.value == 2">
+          <label for="categoria" class="col-sm-3 col-form-label text-light">Categorias</label>
+          <div class="col-sm-9">
+            <select id="fk_categoria" formControlName="fk_categoria" class="form-select">
+              <option *ngFor="let eq of this.categoriasDisponibles" [value]="eq.id">{{eq.nombre}}</option>
+
+            </select>
+          </div>
+        </div>
+
+
+        <!-- Password -->
+        <div class="mb-3 row">
+          <label for="name" class="col-sm-3 col-form-label text-light">Password o Codigo</label>
+          <div class="col-sm-9">
+            <input type="text" id="passw" formControlName="passw" class="form-control"
+              placeholder="Ingrese password o codigo" required>
+          </div>
+        </div>
+
+        <div class="mb-3 row">
+          <label for="estado" class="col-sm-3 col-form-label text-light">Estado</label>
+          <div class="col-sm-9">
+            <select id="estado" formControlName="estado" class="form-select">
+              <option [value]="1">Activo</option>
+              <option [value]="0">Inactivo</option>
+            </select>
+          </div>
+        </div>
+
+
+
+
+        <!-- Botones -->
+        <div class="d-flex justify-content-end">
+          <button type="submit" class="btn btn-warning text-dark m-2" *ngIf="UserForm.valid">
+            <i class="fa fa-floppy-o" aria-hidden="true"></i> Guardar
+          </button>
+
+          <button type="button" class="btn btn-secondary m-2" (click)="cancel()">
+            <i class="fa fa-ban" aria-hidden="true"></i> Cancelar
+          </button>
+        </div>
+
+
+
+        <!-- Spinner debajo de los botones -->
+        <div *ngIf="isLoading" class="d-flex flex-column align-items-center mt-3">
+          <img src="../../../assets/img/balon.png" alt="Cargando..." width="40" height="40" class="balon-girando" />
+          <span class="mt-2 text-warning fw-bold">Procesando, por favor espera...</span>
+        </div>
+
+
+      </form>
+    </div>
+  </div>
+
+
+</div>

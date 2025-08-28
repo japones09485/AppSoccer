@@ -1,0 +1,91 @@
+<!-- Contenedor principal con fondo -->
+<div id="content">
+  <div class="container-fluid py-5">
+
+    <!-- Botón cerrar sesión alineado a la derecha -->
+    <div class="d-flex justify-content-end mb-3">
+      <button class="btn btn-danger" (click)="cerrarSesion()">
+        <i class="fa fa-sign-out" aria-hidden="true"></i>
+      </button>
+    </div>
+
+    <!-- Encabezado -->
+    <div id="title" class="text-center mb-5">
+      <img src="../../../assets/img/logo.png" class="img-fluid mb-3 logo" alt="Logo">
+      <h1 class="titulo-principal text-white">
+        Eventos deportivos <br>
+        <span class="titulo-secundario">Soccer Melgar</span>
+      </h1>
+
+      <button class="btn btn-lg btn-info btn-icon m-2" title="Equipos" (click)="Equipos()">
+        <i class="fa fa-table fa-lg"></i>
+      </button>
+
+
+
+      <button class="btn btn-lg btn-warning btn-icon m-2" title="Jugadores" (click)="Jugadores()">
+        <i class="fa fa-user"></i>
+      </button>
+    </div>
+
+    <!-- Tarjetas de torneos -->
+    <div class="cards-container row g-4 justify-content-center">
+      <div class="col-sm-6 col-md-4 col-lg-3" *ngFor="let torneo of torneos">
+        <div class="card h-100 shadow-lg border-0 rounded-4 overflow-hidden position-relative">
+
+          <!-- Imagen -->
+          <img [src]="pathIm + torneo.img1" class="card-img-top img-fluid" alt="{{torneo.nombre}}">
+
+          <!-- Botón en la esquina superior derecha -->
+          <div class="position-absolute top-0 end-0 m-2 d-flex gap-1 flex-wrap">
+
+
+
+            <button class="btn btn-sm btn-info btn-icon" title="Información del torneo" (click)="InfoTorneo(torneo.id)">
+              <i class="fa fa-info"></i>
+            </button>
+
+
+
+
+          </div>
+
+
+          <!-- Contenido -->
+          <div class="card-body d-flex flex-column px-4 py-3">
+            <h5 class="titulo-second card-title text-success fw-bold text-center">{{ torneo.nombre }}</h5>
+            <hr class="my-2">
+
+            <div class="mb-2 text-muted small">
+                <span>Descripción</span>
+                    <div class="text-end">
+
+                      {{
+                      mostrarDescripcionCompleta
+                      ? torneo?.descripcion
+                      : ((torneo?.descripcion || '') | slice:0:100) + ((torneo?.descripcion?.length || 0)
+                      > 100 ? '...' : '')
+                      }}
+
+                      <br>
+                      <a href="javascript:void(0)" *ngIf="(torneo?.descripcion?.length || 0) > 100"
+                        (click)="mostrarDescripcionCompleta = !mostrarDescripcionCompleta">
+                        {{ mostrarDescripcionCompleta ? 'Leer menos' : 'Leer más' }}
+                      </a>
+                    </div>
+            </div>
+
+            <div class="mb-1"><strong>Inicio:</strong> {{ torneo.fecha_inicio }}</div>
+            <div class="mb-1"><strong>Fin:</strong> {{ torneo.fecha_fin }}</div>
+            <div class="mb-2"><strong>Fases:</strong> {{ torneo.num_fases }}</div>
+             <div class="mb-2"><strong>Categoria:</strong> {{ getNombreCategoria(torneo.categoria)  }}</div>
+
+            <div class="mb-2 text-primary" *ngIf="torneo.estado == 1"><strong>Estado:</strong> En proceso</div>
+            <div class="mb-2 text-success" *ngIf="torneo.estado == 2"><strong>Estado:</strong> Finalizado</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>

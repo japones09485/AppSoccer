@@ -1,0 +1,47 @@
+.balon-girando {
+    animation: girar 1.2s linear infinite;
+  }
+  
+  @keyframes girar {
+    from {
+      transform: rotate(0deg);
+    }
+    to {
+      transform: rotate(360deg);
+    }
+  }
+  
+
+
+/* Asegura que el dropdown del ng-select aparezca sobre el modal */
+.ng-dropdown-panel {
+  z-index: 1055 !important; /* El modal suele tener 1050, así que necesitamos un valor mayor */
+}
+
+/* Modal más grande */
+#modalSeleccionarJugador .modal-dialog {
+  max-width: 800px; /* o el ancho que prefieras */
+}
+
+/* Cuerpo del modal con scroll si es necesario */
+#modalSeleccionarJugador .modal-body {
+  min-height: 400px;
+  max-height: 70vh;
+  overflow-y: auto;
+}
+
+/* Estilo para el ng-select */
+.custom-ng-select .ng-dropdown-panel {
+  max-height: 300px;
+  overflow-y: auto;
+}
+
+/* Opcional: hacer los items del select más altos para mejor legibilidad */
+.custom-ng-select .ng-option {
+  padding: 8px 10px;
+}
+
+:host ::ng-deep .ng-dropdown-panel {
+  max-height: 100px !important;
+  overflow-y: auto;
+}

@@ -1,0 +1,140 @@
+<div id="table" *ngIf="!this.creando">
+
+    <h1 class="text-center text-success"><i class="fa fa-flag" aria-hidden="true"></i> Jueces </h1>
+
+    <table class="table table-bordered">
+        <thead>
+            <tr class="text-center">
+                <th class="bg-success text-light" scope="col"><button (click)="addJuez()" type="button"
+                        class="btn btn-info" data-bs-toggle="tooltip" data-bs-placement="top" title="Nuevo">
+                        <i class="fa fa-plus"></i>
+                    </button>
+                </th>
+               
+                <th class="bg-success text-light" scope="col">Foto</th>
+                <th class="bg-success text-light" scope="col">Nombre</th>
+                <th class="bg-success text-light" scope="col">Identificacion</th>
+                <th class="bg-success text-light" scope="col">Email</th>
+                 <th class="bg-success text-light" scope="col">Estado</th>
+              
+            </tr>
+        </thead>
+        <tbody> 
+            <tr *ngFor="let cat of jueces" class="text-center">
+                <th scope="row">
+                    <button (click)="editJuez(cat.id!)" type="button" class="btn btn-warning m-1"
+                        data-bs-toggle="tooltip" data-bs-placement="top" title="editar"> <i
+                            class="fa fa-edit"></i></button>
+                   
+                    <button (click)="deleteJuez(cat.id!)" type="button" class="btn btn-danger m-1">
+                    <i class="fa fa-trash" aria-hidden="true" data-bs-toggle="tooltip" data-bs-placement="top" title="Eliminar"></i>
+                    </button>
+                   
+
+
+
+                </th>
+
+                <td>
+                    <img *ngIf="cat.img1" [src]="pathIm +cat.img1" style="width: 48px; height: 48px; object-fit: cover; border-radius: 0.375rem;" alt="">
+                    N/A
+                </td>
+                <td>{{cat.nombre}}</td>
+                <td> {{cat.identificacion}}</td>
+                <td> {{cat.email}}</td>
+                <td>
+                    <span class="text-danger" *ngIf="cat.estado == 0">Inactivo</span>
+                    <span class="text-success" *ngIf="cat.estado == 1">Activo</span>
+                </td>
+
+
+            </tr>
+
+        </tbody>
+    </table>
+</div>
+
+
+<div class="container d-flex justify-content-center align-items-center min-vh-100" *ngIf="this.creando">
+    <div class="col-12 col-md-8 col-lg-6">
+        <div class="card shadow-lg p-4 border bg-success">
+            <h3 class="text-center mb-4 text-light"><i class="fa fa-users" aria-hidden="true"></i> Crear Juez</h3>
+            <form [formGroup]="JuezForm" (ngSubmit)="saveJuez()" enctype="multipart/form-data">
+
+                <!-- Nombre -->
+                <div class="mb-3 row">
+                    <label for="name" class="col-sm-3 col-form-label text-light">Nombre</label>
+                    <div class="col-sm-9">
+                        <input type="text" id="nombre" formControlName="nombre" class="form-control"
+                            placeholder="Ingrese el nombre del jugador" required>
+                    </div>
+                </div>
+
+
+                 <div class="mb-3 row">
+                    <label for="name" class="col-sm-3 col-form-label text-light">Identificacion</label>
+                    <div class="col-sm-9">
+                        <input type="text" id="identificacion" formControlName="identificacion" class="form-control"
+                            placeholder="Ingrese el nombre del jugador" required>
+                    </div>
+                </div>
+
+
+                <div class="mb-3 row">
+                    <label for="name" class="col-sm-3 col-form-label text-light">Email</label>
+                    <div class="col-sm-9">
+                        <input type="text" id="email" formControlName="email" class="form-control"
+                            placeholder="Ingrese el nombre del jugador" required>
+                        
+                    </div>
+                </div>
+
+                    <!-- Imagen 1 -->
+                <div class="mb-3 row">
+                    <label for="image1" class="col-sm-3 col-form-label text-light">Foto</label>
+                    <div class="col-sm-9">
+                        <input type="file" id="image1" (change)="uploadImage($event, 1)" class="form-control" required>
+                    </div>
+                </div>
+
+
+                
+
+                <div class="mb-3 row">
+                    <label for="estado" class="col-sm-3 col-form-label text-light">Estado</label>
+                    <div class="col-sm-9">
+                        <select id="estado" formControlName="estado" class="form-select">
+                            <option [value]="0">Inactivo</option>
+                            <option [value]="1">Activo</option>
+                           
+                        </select>
+                    </div>
+                </div>
+
+                <!-- Botones -->
+                <div class="d-flex justify-content-end">
+                    <button type="submit" class="btn btn-warning text-dark m-2" *ngIf="JuezForm.valid">
+                        <i class="fa fa-floppy-o" aria-hidden="true"></i> Guardar
+                    </button>
+
+                    <button type="button" class="btn btn-secondary m-2" (click)="cancel()">
+                        <i class="fa fa-ban" aria-hidden="true"></i> Cancelar
+                    </button>
+                </div>
+
+
+
+                <!-- Spinner debajo de los botones -->
+                <div *ngIf="isLoading" class="d-flex flex-column align-items-center mt-3">
+                    <img src="../../../assets/img/balon.png" alt="Cargando..." width="40" height="40"
+                        class="balon-girando" />
+                    <span class="mt-2 text-warning fw-bold">Procesando, por favor espera...</span>
+                </div>
+
+
+            </form>
+        </div>
+    </div>
+
+
+</div>

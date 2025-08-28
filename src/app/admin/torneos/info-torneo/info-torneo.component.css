@@ -1,0 +1,97 @@
+.card {
+  background-color: rgba(255, 255, 255, 0.75);
+  border-radius: 15px;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.card:hover {
+  transform: scale(1.01);
+}
+
+
+/* Efecto hover personalizado */
+.hover-success {
+  transition: all 0.3s ease;
+  border-radius: 0.25rem;
+  margin: 0 0.25rem;
+}
+
+.hover-success:hover {
+  background-color: var(--bs-success) !important;
+  color: white !important;
+}
+
+/* Ajuste para el ítem activo */
+.nav-link.active {
+  background-color: var(--bs-success) !important;
+  color: white !important;
+}
+
+.logo {
+  max-width: 40px;
+  max-height: 40px;
+}
+
+.balon-girando {
+  animation: girar 1.2s linear infinite;
+}
+
+@keyframes girar {
+  from {
+    transform: rotate(0deg);
+  }
+
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+#Logo {
+  height: 100px;
+  width: 100px;
+}
+
+.logoC {
+  width: 100px;
+  height: 100px;
+
+}
+
+td.accion-columna {
+  width: 1%;
+  white-space: nowrap;
+  vertical-align: middle;
+}
+
+
+.hover-red:hover {
+  background-color: red !important;
+  border-color: red !important;
+}
+
+
+.bg-card1 {
+  background-color: rgb(190, 200, 214, 0.5);
+}
+
+
+.bg-card2 {
+  background-color: rgb(250, 245, 225, 0.5);
+}
+
+
+#content {
+  background-image: url('../../../../assets/img/fondoPR.jpg');
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-attachment: fixed;
+  min-height: 100vh;
+  font-family: 'Poppins', sans-serif;
+}
+
+.titulo-contorno {
+  color: white; /* color de relleno */
+  -webkit-text-stroke: 2px green; /* grosor y color del borde */
+  text-stroke: 2px green; /* soporte estándar */
+}

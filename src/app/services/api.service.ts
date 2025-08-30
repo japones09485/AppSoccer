@@ -328,6 +328,10 @@ export class ApiService {
     return this.http.post(this.urlAPI + `Rest_api/guardarProgramacion`, { IdTorneo, idPartido, fecha, hora, juez, cancha, delegado });
   }
 
+  guardarProgramacionPre(IdTorneo: number, idPartido: number, fecha: string, hora: string, juez: number, cancha: number, delegado: number) {
+    return this.http.post(this.urlAPI + `Rest_api/guardarProgramacionPre`, { IdTorneo, idPartido, fecha, hora, juez, cancha, delegado });
+  }
+
   GoleadorTorneo(idTorneo: number) {
 
     return this.http.post(this.urlAPI + `Rest_api/GoleadorTorneo`, { idTorneo });

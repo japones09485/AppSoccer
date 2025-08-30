@@ -117,6 +117,9 @@ export class InfoTorneoComponent implements OnInit {
   GrupoSelect: any;
   Nequipo1!: any;
   Nequipo2!: any;
+  IdPreSelect!: number;
+  estadoSwitch = true;
+  ganadorW !: any;
 
 
   ordinales: string[] = [
@@ -194,6 +197,9 @@ export class InfoTorneoComponent implements OnInit {
 
       this.apiRest.getById_Grupos(this.idTorneo).subscribe((res: any) => {
         this.grupos = res.grupos;
+        console.log('Grupos');
+        console.log(this.grupos);
+        
 
 
 
@@ -595,6 +601,8 @@ export class InfoTorneoComponent implements OnInit {
     this.Ampliacion = '';
     this.penaltisEq1 = '';
     this.penaltisEq2 = '';
+    this.estadoSwitch = true
+
   }
 
 
@@ -606,134 +614,215 @@ export class InfoTorneoComponent implements OnInit {
 
   guardarResultadoP(partidoId: number, idTorneo: number, grupo: string): void {
 
-    const errores: string[] = [];
+
+    if (this.estadoSwitch) {
+      const errores: string[] = [];
 
 
-    if (
-      isNaN(this.resultadoEq1) || this.resultadoEq1 === '' || this.resultadoEq1 < 0 ||
-      isNaN(this.resultadoEq2) || this.resultadoEq2 === '' || this.resultadoEq2 < 0
-    ) {
-      errores.push('Debe ingresar un resultado valido');
-    }
-
-
-    // Validación de goles y anotadores
-    if (this.resultadoEq1 > 0) {
-      if (this.anotadoresEq1.length !== this.resultadoEq1 || this.anotadoresEq1.some(id => !id)) {
-        errores.push('Debes seleccionar todos los anotadores del equipo 1.');
+      if (
+        isNaN(this.resultadoEq1) || this.resultadoEq1 === '' || this.resultadoEq1 < 0 ||
+        isNaN(this.resultadoEq2) || this.resultadoEq2 === '' || this.resultadoEq2 < 0
+      ) {
+        errores.push('Debe ingresar un resultado valido');
       }
-    }
 
-    if (this.resultadoEq2 > 0) {
-      if (this.anotadoresEq2.length !== this.resultadoEq2 || this.anotadoresEq2.some(id => !id)) {
-        errores.push('Debes seleccionar todos los anotadores del equipo 2.');
+
+      // Validación de goles y anotadores
+      if (this.resultadoEq1 > 0) {
+        if (this.anotadoresEq1.length !== this.resultadoEq1 || this.anotadoresEq1.some(id => !id)) {
+          errores.push('Debes seleccionar todos los anotadores del equipo 1.');
+        }
       }
-    }
 
-    // Validación de tarjetas
-    if (this.cantidadAmarillasEq1 > 0 && this.tarjetasAmarillasEq1.some(id => !id)) {
-      errores.push('Faltan jugadores para tarjetas amarillas del equipo 1.');
-    }
+      if (this.resultadoEq2 > 0) {
+        if (this.anotadoresEq2.length !== this.resultadoEq2 || this.anotadoresEq2.some(id => !id)) {
+          errores.push('Debes seleccionar todos los anotadores del equipo 2.');
+        }
+      }
 
-    if (this.cantidadRojasEq1 > 0 && this.tarjetasRojasEq1.some(id => !id)) {
-      errores.push('Faltan jugadores para tarjetas rojas del equipo 1.');
-    }
+      // Validación de tarjetas
+      if (this.cantidadAmarillasEq1 > 0 && this.tarjetasAmarillasEq1.some(id => !id)) {
+        errores.push('Faltan jugadores para tarjetas amarillas del equipo 1.');
+      }
 
-    if (this.cantidadAmarillasEq2 > 0 && this.tarjetasAmarillasEq2.some(id => !id)) {
-      errores.push('Faltan jugadores para tarjetas amarillas del equipo 2.');
-    }
+      if (this.cantidadRojasEq1 > 0 && this.tarjetasRojasEq1.some(id => !id)) {
+        errores.push('Faltan jugadores para tarjetas rojas del equipo 1.');
+      }
 
-    if (this.Ampliacion == 'S' && this.penaltisEq1 == '' && this.penaltisEq2 == '') {
-      errores.push('Al activar ampliaciòn por penaltis debe ingresar los resultados.');
-    }
+      if (this.cantidadAmarillasEq2 > 0 && this.tarjetasAmarillasEq2.some(id => !id)) {
+        errores.push('Faltan jugadores para tarjetas amarillas del equipo 2.');
+      }
 
-    // Mostrar errores si hay y detener
-    if (errores.length > 0) {
+      if (this.Ampliacion == 'S' && this.penaltisEq1 == '' && this.penaltisEq2 == '') {
+        errores.push('Al activar ampliaciòn por penaltis debe ingresar los resultados.');
+      }
+
+      // Mostrar errores si hay y detener
+      if (errores.length > 0) {
+
+        this.resetearFormularioResul();
+        Swal.fire({
+          icon: 'error',
+          title: 'Errores encontrados',
+          html: errores.join('<br>')
+        });
+        return;
+      }
+
+      // Determinar resultado por equipo
+      let resEq1: 'G' | 'P' | 'E';
+      let resEq2: 'G' | 'P' | 'E';
+
+      if (this.resultadoEq1 > this.resultadoEq2) {
+        resEq1 = 'G';
+        resEq2 = 'P';
+      } else if (this.resultadoEq2 > this.resultadoEq1) {
+        resEq1 = 'P';
+        resEq2 = 'G';
+      } else {
+        resEq1 = resEq2 = 'E';
+      }
+
+      //calucular juego limpio
+
+      var puntosTAmarilla1 = this.cantidadAmarillasEq1 * 100;
+      var puntosTAmarilla2 = this.cantidadAmarillasEq2 * 100;
+      var puntosTRoja1 = this.cantidadRojasEq1 * 200;
+      var puntosTRoja2 = this.cantidadRojasEq2 * 200;
+
+
+      var toEq1 = puntosTAmarilla1 + puntosTRoja1 + Number(this.JuegoLimpioEq1);
+      var toEq2 = puntosTAmarilla2 + puntosTRoja2 + Number(this.JuegoLimpioEq2);
+
+      // Construir los datos finales
+      const resultado = {
+        partidoId,
+        idTorneo,
+        grupo,
+        tipo: 'N',
+        equipo1: {
+          idEquipo: this.equipo1,
+          goles: this.resultadoEq1,
+          anotadores: this.anotadoresEq1,
+          amarillas: this.tarjetasAmarillasEq1,
+          rojas: this.tarjetasRojasEq1,
+          ampliacionP: this.Ampliacion,
+          penaltisEq1: this.penaltisEq1,
+          juegoLimpio: toEq1,
+          res: resEq1
+        },
+        equipo2: {
+          idEquipo: this.equipo2,
+          goles: this.resultadoEq2,
+          anotadores: this.anotadoresEq2,
+          amarillas: this.tarjetasAmarillasEq2,
+          rojas: this.tarjetasRojasEq2,
+          ampliacionP: this.Ampliacion,
+          penaltisEq2: this.penaltisEq2,
+          juegoLimpio: toEq2,
+          res: resEq2
+        }
+      };
+
 
       this.resetearFormularioResul();
+
       Swal.fire({
-        icon: 'error',
-        title: 'Errores encontrados',
-        html: errores.join('<br>')
+        title: "¿Deseas insertar el resultado del partido?",
+        text: "Una vez guardado, no podrás modificarlo.",
+        icon: "warning",
+        showCancelButton: true,
+        confirmButtonText: "Sí, guardar",
+        cancelButtonText: "Cancelar",
+        reverseButtons: true
+      }).then((result) => {
+        if (result.isConfirmed) {
+          this.apiRest.guardarResultadoP(resultado).subscribe((res: any) => {
+
+            Swal.fire(res.msj);
+            this.calendarioData = res.calendarioData;
+
+          });
+        }
       });
-      return;
-    }
 
-    // Determinar resultado por equipo
-    let resEq1: 'G' | 'P' | 'E';
-    let resEq2: 'G' | 'P' | 'E';
-
-    if (this.resultadoEq1 > this.resultadoEq2) {
-      resEq1 = 'G';
-      resEq2 = 'P';
-    } else if (this.resultadoEq2 > this.resultadoEq1) {
-      resEq1 = 'P';
-      resEq2 = 'G';
     } else {
-      resEq1 = resEq2 = 'E';
+
+      if (!this.ganadorW) {
+        Swal.fire({
+          icon: 'error',
+          title: 'Error',
+          text: 'Debes seleccionar un ganador para W.'
+        });
+        return;
+      }
+
+      // Determinar ganador y perdedor
+      let resEq1: 'G' | 'P';
+      let resEq2: 'G' | 'P';
+      let golesEq1 = 0;
+      let golesEq2 = 0;
+
+      if (this.ganadorW == this.equipo1) {
+        resEq1 = 'G';
+        resEq2 = 'P';
+        golesEq1 = 1; // 🟢 Gol al ganador
+      } else {
+        resEq1 = 'P';
+        resEq2 = 'G';
+        golesEq2 = 1; // 🟢 Gol al ganador
+      }
+
+      // Construir resultado W
+      const resultado = {
+        partidoId,
+        idTorneo,
+        grupo,
+        tipo: 'W', // ⚡ para que backend sepa que es walkover
+        equipo1: {
+          idEquipo: this.equipo1,
+          goles: golesEq1,
+          anotadores: [],
+          amarillas: [],
+          rojas: [],
+          ampliacionP: 'N',
+          penaltisEq1: 0,
+          juegoLimpio: 0,
+          res: resEq1
+        },
+        equipo2: {
+          idEquipo: this.equipo2,
+          goles: golesEq2,
+          anotadores: [],
+          amarillas: [],
+          rojas: [],
+          ampliacionP: 'N',
+          penaltisEq2: 0,
+          juegoLimpio: 0,
+          res: resEq2
+        }
+      };
+
+      Swal.fire({
+        title: "¿Deseas guardar el resultado por W?",
+        text: "Una vez guardado, no podrás modificarlo.",
+        icon: "warning",
+        showCancelButton: true,
+        confirmButtonText: "Sí, guardar",
+        cancelButtonText: "Cancelar",
+        reverseButtons: true
+      }).then((result) => {
+        if (result.isConfirmed) {
+          this.apiRest.guardarResultadoP(resultado).subscribe((res: any) => {
+            Swal.fire(res.msj);
+            this.calendarioData = res.calendarioData;
+          });
+        }
+      });
+
+
     }
 
-    //calucular juego limpio
-
-    var puntosTAmarilla1 = this.cantidadAmarillasEq1 * 100;
-    var puntosTAmarilla2 = this.cantidadAmarillasEq2 * 100;
-    var puntosTRoja1 = this.cantidadRojasEq1 * 200;
-    var puntosTRoja2 = this.cantidadRojasEq2 * 200;
-
-
-    var toEq1 = puntosTAmarilla1 + puntosTRoja1 + Number(this.JuegoLimpioEq1);
-    var toEq2 = puntosTAmarilla2 + puntosTRoja2 + Number(this.JuegoLimpioEq2);
-
-    // Construir los datos finales
-    const resultado = {
-      partidoId,
-      idTorneo,
-      grupo,
-      equipo1: {
-        idEquipo: this.equipo1,
-        goles: this.resultadoEq1,
-        anotadores: this.anotadoresEq1,
-        amarillas: this.tarjetasAmarillasEq1,
-        rojas: this.tarjetasRojasEq1,
-        ampliacionP: this.Ampliacion,
-        penaltisEq1: this.penaltisEq1,
-        juegoLimpio: toEq1,
-        res: resEq1
-      },
-      equipo2: {
-        idEquipo: this.equipo2,
-        goles: this.resultadoEq2,
-        anotadores: this.anotadoresEq2,
-        amarillas: this.tarjetasAmarillasEq2,
-        rojas: this.tarjetasRojasEq2,
-        ampliacionP: this.Ampliacion,
-        penaltisEq2: this.penaltisEq2,
-        juegoLimpio: toEq2,
-        res: resEq2
-      }
-    };
-
-
-    this.resetearFormularioResul();
-
-    Swal.fire({
-      title: "¿Deseas insertar el resultado del partido?",
-      text: "Una vez guardado, no podrás modificarlo.",
-      icon: "warning",
-      showCancelButton: true,
-      confirmButtonText: "Sí, guardar",
-      cancelButtonText: "Cancelar",
-      reverseButtons: true
-    }).then((result) => {
-      if (result.isConfirmed) {
-        this.apiRest.guardarResultadoP(resultado).subscribe((res: any) => {
-
-          Swal.fire(res.msj);
-          this.calendarioData = res.calendarioData;
-
-        });
-      }
-    });
 
   }
 
@@ -847,11 +936,19 @@ export class InfoTorneoComponent implements OnInit {
 
         // Función auxiliar para buscar nombre por ID
         const buscarNombre = (id: number, jugadores: any[]) => {
+
+
+          console.log('autogol' + id);
+
           const jugador = jugadores.find(j => Number(j.id) === id || Number(j.fk_jugador) === id);
-          return jugador ? jugador.nombre : 'Desconocido';
+
+          if (id == -1) {
+            return jugador ? jugador.nombre : 'Autogol';
+          } else {
+            return jugador ? jugador.nombre : 'Desconocido';
+          }
+
         };
-
-
 
 
         const equipoA = {
@@ -1197,6 +1294,17 @@ export class InfoTorneoComponent implements OnInit {
 
   }
 
+  resetProgramacionPre(idPre: number) {
+    this.IdPreSelect = idPre;
+    this.canchaSeleccionada = 0;
+    this.fechaSeleccionada = '';
+    this.horaSeleccionada = '';
+    this.JuezSeleccionada = 0;
+    this.DelegadoSeleocionada = 0;
+
+  }
+
+
   guardarNPartido() {
     // Validar que no estén vacíos
     if (!this.Nequipo1 || !this.Nequipo2) {
@@ -1272,6 +1380,54 @@ export class InfoTorneoComponent implements OnInit {
 
   }
 
+  guardarProgramacionPre() {
+    if (
+      !this.fechaSeleccionada ||
+      !this.horaSeleccionada
+    ) {
+      Swal.fire({
+        icon: 'warning',
+        title: 'Campos incompletos',
+        text: 'Por favor complete todos los campos antes de guardar la programación.',
+      });
+      return;
+    }
+
+    // Confirmar con Swal
+    Swal.fire({
+      title: "¿Desea agregar esta programación?",
+      showDenyButton: true,
+      confirmButtonText: "Sí"
+    }).then((result) => {
+      if (result.isConfirmed) {
+        this.isLoading = true;
+
+        this.apiRest.guardarProgramacionPre(
+          this.idTorneo,
+          this.IdPreSelect,
+          this.fechaSeleccionada,
+          this.horaSeleccionada,
+          this.JuezSeleccionada,
+          this.canchaSeleccionada,
+          this.DelegadoSeleocionada
+        ).subscribe((res1: any) => {
+          if (res1.success === true) {
+            Swal.fire(res1.msj);
+            this.resetProgramacion();
+
+            this.apiRest.getPrePartido(this.idTorneo).subscribe((res: any) => {
+              this.calendarioPre = res.calendarioPre
+
+            });
+
+          }
+          this.isLoading = false;
+
+        });
+      }
+    });
+  }
+
 
   AnularPartido(idPartido: number, IdTorneo: number, estado: number) {
 
@@ -1294,8 +1450,8 @@ export class InfoTorneoComponent implements OnInit {
               this.calendarioData = res.calendarioData;
               this.router.navigate(['/InfoTorneo', this.idTorneo]);
             });
-          }else{
-             Swal.fire(res1.msj);
+          } else {
+            Swal.fire(res1.msj);
           }
 
 
@@ -1398,16 +1554,16 @@ export class InfoTorneoComponent implements OnInit {
     }));
 
     // También puedes obtener datos del equipo (ej: nombre, id)
-    const datosEquipo =  jugadoresConRol;
-    
+    const datosEquipo = jugadoresConRol;
 
-     this.apiRest.guardarInscripcionJug(this.idTorneo, this.idPartidoSelect, idEquipo, datosEquipo).subscribe((res: any) => {
+
+    this.apiRest.guardarInscripcionJug(this.idTorneo, this.idPartidoSelect, idEquipo, datosEquipo).subscribe((res: any) => {
       Swal.fire(res.msj);
     });
 
-    
 
-   
+
+
   }
 
 
@@ -1423,12 +1579,18 @@ export class InfoTorneoComponent implements OnInit {
           ? res.JugadoresRol
           : Object.values(res.JugadoresRol || {});
 
-        
+
         if (!this.jugadoresInscritos.length) {
           Swal.fire('No hay jugadores inscritos para este partido.');
 
         }
       });
+  }
+
+  cambiarEstadoW(partido: any) {
+    this.equipo1 = partido.fk_equipo1;
+    this.equipo2 = partido.fk_equipo2;
+
   }
 
 

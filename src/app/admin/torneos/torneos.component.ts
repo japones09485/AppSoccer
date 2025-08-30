@@ -34,6 +34,8 @@ export class TorneosComponent implements OnInit {
   TorneoVisi : String = '';
   categoriasDisponibles: any[] = [];
   cantFase!:number;
+  filtroNombre: string = '';
+  torneosFiltrados: any[] = [];
 
   constructor(private apiRest: ApiService,
     private fb: FormBuilder,
@@ -49,6 +51,7 @@ export class TorneosComponent implements OnInit {
       .subscribe((res: any) => {
         this.torneos = res.torneos;
         this.torneos = this.torneos.map(t => ({ ...t, expanded: false }));
+        this.torneosFiltrados = this.torneos;
 
       });
   }
@@ -248,7 +251,20 @@ export class TorneosComponent implements OnInit {
     // Aquí puedes agregar llamada al backend si lo necesitas
   }
 
+  
+filtrarTorneos() {
+  const filtro = this.filtroNombre.toLowerCase().trim();
 
+  if (!filtro) {
+    // si no hay filtro, mostramos todo
+    this.torneosFiltrados = this.torneos;
+  } else {
+    // filtramos por nombre
+    this.torneosFiltrados = this.torneos.filter(t =>
+      t.nombre.toLowerCase().includes(filtro)
+    );
+  }
 
+  }
 
 }

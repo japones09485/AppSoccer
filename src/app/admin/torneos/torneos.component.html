@@ -1,12 +1,23 @@
 <div id="table" *ngIf="!this.creando">
 
-  <h1 class="text-center text-success"><i class="fa fa-trophy" aria-hidden="true"></i> Torneos</h1>
+  <h1 class="text-center text-success">
+    <i class="fa fa-trophy" aria-hidden="true"></i> Torneos
+  </h1>
+
+  <!-- 🔍 Filtro por nombre -->
+  <div class="mb-3 text-start">
+    <input type="text" [(ngModel)]="filtroNombre" (input)="filtrarTorneos()" class="form-control w-25 d-inline"
+      placeholder="Filtrar por nombre de torneo...">
+  </div>
+
+
   <div style="overflow-x: auto;">
     <table class="table table-bordered">
       <thead>
         <tr class="text-center">
-          <th class="bg-success text-light" scope="col"><button (click)="addTorneos()" type="button"
-              class="btn btn-info" data-bs-toggle="tooltip" data-bs-placement="top" title="Nuevo">
+          <th class="bg-success text-light" scope="col">
+            <button (click)="addTorneos()" type="button" class="btn btn-info" data-bs-toggle="tooltip"
+              data-bs-placement="top" title="Nuevo">
               <i class="fa fa-plus"></i>
             </button>
           </th>
@@ -19,21 +30,24 @@
           <th class="bg-success text-light" scope="col">Numero de grupos F1</th>
           <th class="bg-success text-light" scope="col">Numero de fases</th>
           <th class="bg-success text-light" scope="col">Estado</th>
-
         </tr>
       </thead>
       <tbody>
-        <tr *ngFor="let tr of torneos" class="text-center">
+        <!-- ✅ Se filtran los torneos por nombre -->
+        <tr *ngFor="let tr of torneosFiltrados" class="text-center">
           <th scope="row">
             <button (click)="editTorneo(tr.id)" type="button" class="btn btn-warning m-1" data-bs-toggle="tooltip"
               data-bs-placement="top" title="editar"> <i class="fa fa-edit"></i></button>
-            <button (click)="deleteTorneo(tr.id)" type="button" class="btn btn-danger m-1"> <i class="fa fa-trash"
-                aria-hidden="true" data-bs-toggle="tooltip" data-bs-placement="top" title="Eliminar"></i></button>
-            <button (click)="goToInfo(tr.id)" type="button" class="btn btn-success m-1"> <i class="fa fa-info"
-                aria-hidden="true" data-bs-toggle="tooltip" data-bs-placement="top" title="Informacion"></i></button>
-
-
+            <button (click)="deleteTorneo(tr.id)" type="button" class="btn btn-danger m-1">
+              <i class="fa fa-trash" aria-hidden="true" data-bs-toggle="tooltip" data-bs-placement="top"
+                title="Eliminar"></i>
+            </button>
+            <button (click)="goToInfo(tr.id)" type="button" class="btn btn-success m-1">
+              <i class="fa fa-info" aria-hidden="true" data-bs-toggle="tooltip" data-bs-placement="top"
+                title="Informacion"></i>
+            </button>
           </th>
+
           <td>
             <a *ngIf="tr.img1" (click)="openModal(pathIm + tr.img1,tr.nombre)">
               <img [src]="pathIm + tr.img1" alt="Imagen 1" class="img-thumbnail d-block mx-auto shadow"
@@ -46,18 +60,13 @@
 
           <td>{{tr.id}}</td>
           <td>{{tr.nombre}}</td>
-          <td >
+          <td>
             <span *ngIf="!tr.expanded">
               {{ tr.descripcion | slice:0:300 }}<span *ngIf="tr.descripcion.length > 300">...</span>
             </span>
-
-            <span *ngIf="tr.expanded">
-              {{ tr.descripcion }}
-            </span>
-
-            <button *ngIf="tr.descripcion.length > 100" 
-                    class="btn btn-link p-0 ms-1"
-                    (click)="tr.expanded = !tr.expanded">
+            <span *ngIf="tr.expanded">{{ tr.descripcion }}</span>
+            <button *ngIf="tr.descripcion.length > 100" class="btn btn-link p-0 ms-1"
+              (click)="tr.expanded = !tr.expanded">
               {{ tr.expanded ? 'Leer menos' : 'Leer más' }}
             </button>
           </td>
@@ -66,7 +75,6 @@
           <td>{{getNombreCategoria(tr.categoria)}}</td>
           <td>{{tr.num_gruposF1}}</td>
           <td>{{tr.num_fases}}</td>
-
           <td>
             <select class="form-select" [ngModel]="tr.estado" (ngModelChange)="CambiarEstadoT($event, tr)">
               <option [value]="0">Inactivo</option>
@@ -74,16 +82,12 @@
               <option [value]="2">Finalizado</option>
             </select>
           </td>
-
-
-
         </tr>
-
       </tbody>
     </table>
   </div>
-
 </div>
+
 
 
 <div class="container d-flex justify-content-center align-items-center min-vh-100" *ngIf="this.creando">
@@ -154,8 +158,7 @@
         <div *ngIf="controlEdad" class="mb-3 row">
           <label for="Rninas" class="col-sm-3 col-form-label text-light">Rango edad niñas</label>
           <div class="col-sm-9">
-            <input type="number" formControlName="Rninas" class="form-control"
-              placeholder="Rango edad niñas">
+            <input type="number" formControlName="Rninas" class="form-control" placeholder="Rango edad niñas">
           </div>
         </div>
 

@@ -111,14 +111,17 @@ export class AdminEquipoComponent implements OnInit {
     
     this.IdTorneoSelect =torneo.IdTorneo;
     
-     console.log(torneo.categoria);
-    this.apiRest.jugadoresEquipo(this.usuario.fk_equipo,torneo.categoria)
+    this.apiRest.get_jugadores_categoriasId(torneo.categoria)
       .subscribe((res: any) => {
+
        
-        this.jugadoresDisponiblesClub = res.jugadores.map((j: any) => ({
+       
+        this.jugadoresDisponiblesClub = res.jugadoresDisponibles.map((j: any) => ({
           ...j,
           busqueda: `${j.nombre} ${j.identificacion}`
         }));
+
+       
       });
       
       

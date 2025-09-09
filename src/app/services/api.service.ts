@@ -90,9 +90,16 @@ export class ApiService {
 
   //equipos
 
+  get_All_equipos_torneo(IdTorneo:any) {
+    //trae los equipos que cumplan la categoria
+    return this.http.post(this.urlAPI + `Rest_api/get_All_equipos_torneo`, { IdTorneo });
+  }
+
+
   get_All_equipos() {
     return this.http.get(this.urlAPI + `Rest_api/get_All_equipos`);
   }
+
 
   add_equipo(payload: any) {
     return this.http.post(this.urlAPI + `Rest_api/add_equipo`, payload);
@@ -400,6 +407,18 @@ export class ApiService {
 
   InscribirJugadoresPartido(partido:any){
       return this.http.post(this.urlAPI + `Rest_api/InscribirJugadoresPartido`, {  partido });
+  }
+
+  cambiarEstadoPart(idTorneo:number, equipo:number , estadoActual:boolean){
+      return this.http.post(this.urlAPI + `Rest_api/cambiarEstadoPart`, {  idTorneo,equipo,estadoActual });
+  }
+
+  get_jugadores_categoriasId(categoria:number){
+      return this.http.post(this.urlAPI + `Rest_api/get_jugadores_categoriasId`, {  categoria });
+  }
+
+  anularFase(IdTorneo:number,fase:number){
+      return this.http.post(this.urlAPI + `Rest_api/anularFase`, {  IdTorneo,fase });
   }
 
 }

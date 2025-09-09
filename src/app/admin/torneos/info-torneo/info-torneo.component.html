@@ -35,6 +35,14 @@
                   <i class="bi bi-calendar-event me-1"></i> Calendario
                 </a>
               </li>
+
+
+              <li class="nav-item">
+                <a class="nav-link text-success hover-success" (click)="opMenu(3)">
+                  <i class="bi bi-calendar-event me-1"></i> Equipos participantes
+                </a>
+              </li>
+
             </ul>
 
             <!-- Botón cerrar sesión alineado a la derecha -->
@@ -130,9 +138,19 @@
             <!--GRUPOS  fase 1-->
             <div class="col-12">
               <div class="card shadow-sm p-3 rounded">
-                <h5 class="text-white bg-primary p-2 rounded text-center">{{nameFase(1)}}
+                <h5 class="text-white bg-primary p-2 rounded text-center">
+
+                  <button
+                    *ngIf="this.perfilUsuario == 1 && torneoSelect.ValidF1==2 && torneoSelect.ValidF2!=2 && torneoSelect.ValidF3!=2 && torneoSelect.ValidF4!=2 && torneoSelect.ValidF5!=2 && torneoSelect.ValidF6!=2 && torneoSelect.ValidF7!=2 "
+                    (click)="anularFase(1)" type="button" class="btn btn-danger m-1" title="Editar nombre fase"><i
+                      class="fa fa-arrow-left"></i>
+                  </button>
+
                   <button *ngIf="this.perfilUsuario == 1" (click)="editNameFase(1)" type="button"
-                    class="btn btn-info m2-2" title="Editar nombre fase"><i class="fa fa-edit"></i></button>
+                    class="btn btn-info m-1" title="Editar nombre fase"><i class="fa fa-edit"></i></button>
+                  {{nameFase(1)}}
+
+
                 </h5>
                 <div class="row justify-content-center">
                   <div *ngFor="let gr of grupos" class="col-md-6 col-lg-4 mb-4">
@@ -206,16 +224,29 @@
             <div>
               <!-- Fase 2 - Editable -->
               <div class="col-12" *ngIf="this.numero_fases>=2 && torneoSelect.ValidF1!=0 ">
-                <h5 class="text-white bg-primary p-2 rounded text-center">{{nameFase(2)}} <button
-                    *ngIf="this.perfilUsuario == 1" (click)="editNameFase(2)" type="button" class="btn btn-info m2-2"
-                    title="Editar nombre fase"><i class="fa fa-edit"></i></button></h5>
+
+
+                <h5 class="text-white bg-primary p-2 rounded text-center">
+
+                  <button
+                    *ngIf="this.perfilUsuario == 1 && torneoSelect.ValidF2==2 && torneoSelect.ValidF3!=2 && torneoSelect.ValidF4!=2 && torneoSelect.ValidF5!=2 && torneoSelect.ValidF6!=2 && torneoSelect.ValidF7!=2"
+                    (click)="anularFase(2)" type="button" class="btn btn-danger m-1" title="Anular fase"><i
+                      class="fa fa-arrow-left"></i>
+                  </button>
+
+                  <button *ngIf="this.perfilUsuario == 1" (click)="editNameFase(2)" type="button"
+                    class="btn btn-info m-1" title="Editar nombre fase"><i class="fa fa-edit"></i></button>
+
+
+                  {{nameFase(2)}}
+                </h5>
                 <div class="d-flex justify-content-center flex-wrap">
                   <ng-container *ngFor="let gr of grupos">
                     <div *ngIf="gr.fase == 2" class="m-3" style="flex: 0 1 480px;">
                       <div class="card h-100 w-100 shadow-sm">
                         <div class="card-header bg-success text-center">
                           <h5 class="card-title m-0">
-                            <button *ngIf="torneoSelect.ValidF2 == 0 && this.perfilUsuario == 1"
+                            <button *ngIf="torneoSelect.ValidF2 !=2 && this.perfilUsuario == 1"
                               (click)="addAfases(gr.id,2,gr.nombre)" type="button" class="btn btn-info mb-2"
                               title="Agregar Equipo a grupo {{ gr.nombre }}">+</button>
                             <br>
@@ -230,24 +261,27 @@
                             <table class="table table-striped mb-0 text-center">
                               <thead>
                                 <tr>
-                                  <th *ngIf="torneoSelect.ValidF2 == 0 && this.perfilUsuario == 1">Acciones</th>
+                                  <th>Acciones</th>
                                   <th>Eq 1</th>
                                   <th></th>
                                   <th>Eq 2</th>
                                   <th>Fecha</th>
                                   <th>Hora</th>
+                                  <th>Cancha</th>
                                 </tr>
                               </thead>
                               <tbody>
                                 <tr *ngFor="let cal of this.calendarioPre[2]">
-                                  <td
-                                    *ngIf="gr.id == cal.fk_grupo && torneoSelect.ValidF2 == 0 && this.perfilUsuario == 1">
-                                    <button (click)="deletecalenPr(cal.id)" type="button"
+                                  <td>
+                                    <button
+                                      *ngIf="gr.id == cal.fk_grupo  && this.perfilUsuario == 1 && torneoSelect.ValidF2 !=2"
+                                      (click)="deletecalenPr(cal.id)" type="button"
                                       class="btn btn-outline-danger m-1">X</button>
 
 
 
                                     <button (click)="resetProgramacionPre(cal.id)" type="button"
+                                      *ngIf="gr.id == cal.fk_grupo && this.perfilUsuario == 1"
                                       class="btn btn-warning m-1" data-bs-toggle="modal"
                                       [attr.data-bs-target]="'#calenModalPre'">
                                       <i class="fa fa-calendar"></i>
@@ -271,6 +305,10 @@
 
                                   <td class="bg-info" *ngIf="gr.id == cal.fk_grupo">
                                     {{ cal.hora }}
+                                  </td>
+
+                                  <td class="bg-success" *ngIf="gr.id == cal.fk_grupo">
+                                    {{ this.getNombreCancha(cal.cancha) }}
                                   </td>
 
                                 </tr>
@@ -358,16 +396,25 @@
             <div>
               <!-- Fase 3 - Editable -->
               <div class="col-12" *ngIf="this.numero_fases>=3 && torneoSelect.ValidF2!=0">
-                <h5 class="text-white bg-primary p-2 rounded text-center">{{nameFase(3)}} <button
-                    *ngIf="this.perfilUsuario == 1" (click)="editNameFase(3)" type="button" class="btn btn-info m2-2"
-                    title="Editar nombre fase"><i class="fa fa-edit"></i></button></h5>
+                <h5 class="text-white bg-primary p-2 rounded text-center">
+                  <button
+                    *ngIf="this.perfilUsuario == 1 && torneoSelect.ValidF3==2 &&  torneoSelect.ValidF4!=2 && torneoSelect.ValidF5!=2 && torneoSelect.ValidF6!=2 && torneoSelect.ValidF7!=2 "
+                    (click)="anularFase(3)" type="button" class="btn btn-danger m-1" title="Editar nombre fase"><i
+                      class="fa fa-arrow-left"></i>
+                  </button>
+
+                  <button *ngIf="this.perfilUsuario == 1" (click)="editNameFase(3)" type="button"
+                    class="btn btn-info m2-2" title="Editar nombre fase"><i class="fa fa-edit"></i></button>
+
+                  {{nameFase(3)}}
+                </h5>
                 <div class="d-flex justify-content-center flex-wrap">
                   <ng-container *ngFor="let gr of grupos">
                     <div *ngIf="gr.fase == 3" class="m-3" style="flex: 0 1 480px;">
                       <div class="card h-100 w-100 shadow-sm">
                         <div class="card-header bg-success text-center">
                           <h5 class="card-title m-0">
-                            <button *ngIf="torneoSelect.ValidF3 == 0 && this.perfilUsuario == 1"
+                            <button *ngIf="torneoSelect.ValidF3 !=2 && this.perfilUsuario == 1"
                               (click)="addAfases(gr.id,3,gr.nombre)" type="button" class="btn btn-info mb-2"
                               title="Agregar Equipo a grupo {{ gr.nombre }}">+</button>
                             <br>
@@ -384,24 +431,27 @@
                             <table class="table table-striped mb-0 text-center">
                               <thead>
                                 <tr>
-                                  <th *ngIf="torneoSelect.ValidF3 == 0 && this.perfilUsuario == 1">Accion</th>
+                                  <th>Accion</th>
                                   <th>Eq 1</th>
                                   <th>vs</th>
                                   <th>Eq 2</th>
                                   <th>Fecha</th>
                                   <th>Hora</th>
+                                  <th>Cancha</th>
+
                                 </tr>
                               </thead>
                               <tbody>
                                 <tr *ngFor="let cal of this.calendarioPre[3]">
-                                  <td
-                                    *ngIf="gr.id == cal.fk_grupo && torneoSelect.ValidF3==0 && this.perfilUsuario == 1">
-                                    <button (click)="deletecalenPr(cal.id)" type="button"
+                                  <td>
+                                    <button
+                                      *ngIf="gr.id == cal.fk_grupo && torneoSelect.ValidF3 !=2 && this.perfilUsuario == 1"
+                                      (click)="deletecalenPr(cal.id)" type="button"
                                       class="btn btn-outline-danger btn-sm px-2">X</button>
 
-                                    <button (click)="resetProgramacionPre(cal.id)" type="button"
-                                      class="btn btn-warning m-1" data-bs-toggle="modal"
-                                      [attr.data-bs-target]="'#calenModalPre'">
+                                    <button *ngIf="gr.id == cal.fk_grupo && this.perfilUsuario == 1"
+                                      (click)="resetProgramacionPre(cal.id)" type="button" class="btn btn-warning m-1"
+                                      data-bs-toggle="modal" [attr.data-bs-target]="'#calenModalPre'">
                                       <i class="fa fa-calendar"></i>
                                     </button>
 
@@ -420,6 +470,10 @@
 
                                   <td class="bg-info" *ngIf="gr.id == cal.fk_grupo">
                                     {{ cal.hora }}
+                                  </td>
+
+                                  <td class="bg-success" *ngIf="gr.id == cal.fk_grupo">
+                                    {{ this.getNombreCancha(cal.cancha) }}
                                   </td>
 
                                 </tr>
@@ -506,16 +560,25 @@
             <div>
               <!-- Fase 4 - Editable -->
               <div class="col-12" *ngIf="this.numero_fases>=4 && torneoSelect.ValidF3!=0">
-                <h5 class="text-white bg-primary p-2 rounded text-center">{{nameFase(4) }} <button
-                    *ngIf="this.perfilUsuario == 1" (click)="editNameFase(4)" type="button" class="btn btn-info m2-2"
-                    title="Editar nombre fase"><i class="fa fa-edit"></i></button></h5>
+                <h5 class="text-white bg-primary p-2 rounded text-center">
+                  <button
+                    *ngIf="this.perfilUsuario == 1 &&  torneoSelect.ValidF4==2 && torneoSelect.ValidF5!=2 && torneoSelect.ValidF6!=2 && torneoSelect.ValidF7!=2 "
+                    (click)="anularFase(4)" type="button" class="btn btn-danger m-1" title="Editar nombre fase"><i
+                      class="fa fa-arrow-left"></i>
+                  </button>
+
+                  <button *ngIf="this.perfilUsuario == 1" (click)="editNameFase(4)" type="button"
+                    class="btn btn-info m2-2" title="Editar nombre fase"><i class="fa fa-edit"></i></button>
+
+                  {{nameFase(4) }}
+                </h5>
                 <div class="d-flex justify-content-center flex-wrap">
                   <ng-container *ngFor="let gr of grupos">
                     <div *ngIf="gr.fase == 4" class="m-3" style="flex: 0 1 480px;">
                       <div class="card h-100 w-100 shadow-sm">
                         <div class="card-header bg-success text-center">
                           <h5 class="card-title m-0">
-                            <button *ngIf="torneoSelect.ValidF4 == 0 && this.perfilUsuario == 1"
+                            <button *ngIf="torneoSelect.ValidF4 !=2 && this.perfilUsuario == 1"
                               (click)="addAfases(gr.id,4,gr.nombre)" type="button" class="btn btn-info mb-2"
                               title="Agregar Equipo a grupo {{ gr.nombre }}">+</button>
                             <br>
@@ -531,22 +594,24 @@
                             <table class="table table-striped mb-0 text-center">
                               <thead>
                                 <tr>
-                                  <th *ngIf="torneoSelect.ValidF4 == 0 && this.perfilUsuario == 1">Accion</th>
+                                  <th>Accion</th>
                                   <th>Eq 1</th>
                                   <th>vs</th>
                                   <th>Eq 2</th>
                                   <th>Fecha</th>
                                   <th>Hora</th>
+                                  <th>Cancha</th>
                                 </tr>
                               </thead>
                               <tbody>
                                 <tr *ngFor="let cal of this.calendarioPre[4]">
-                                  <td
-                                    *ngIf="gr.id == cal.fk_grupo && torneoSelect.ValidF4 == 0 && this.perfilUsuario == 1">
+                                  <td>
                                     <button (click)="deletecalenPr(cal.id)" type="button"
+                                      *ngIf="gr.id == cal.fk_grupo && torneoSelect.ValidF4 !=2 && this.perfilUsuario == 1"
                                       class="btn btn-outline-danger btn-sm px-2">X</button>
 
                                     <button (click)="resetProgramacionPre(cal.id)" type="button"
+                                      *ngIf="gr.id == cal.fk_grupo && this.perfilUsuario == 1"
                                       class="btn btn-warning m-1" data-bs-toggle="modal"
                                       [attr.data-bs-target]="'#calenModalPre'">
                                       <i class="fa fa-calendar"></i>
@@ -568,6 +633,11 @@
                                   <td class="bg-info" *ngIf="gr.id == cal.fk_grupo">
                                     {{ cal.hora }}
                                   </td>
+
+                                  <td class="bg-success" *ngIf="gr.id == cal.fk_grupo">
+                                    {{ this.getNombreCancha(cal.cancha) }}
+                                  </td>
+
                                 </tr>
                               </tbody>
                             </table>
@@ -652,16 +722,27 @@
             <div>
               <!-- Fase 5 - Editable -->
               <div class="col-12" *ngIf="this.numero_fases>=5 && torneoSelect.ValidF4!=0">
-                <h5 class="text-white bg-primary p-2 rounded text-center">{{nameFase(5)}} <button
-                    *ngIf="this.perfilUsuario == 1" (click)="editNameFase(5)" type="button" class="btn btn-info m2-2"
-                    title="Editar nombre fase"><i class="fa fa-edit"></i></button></h5>
+                <h5 class="text-white bg-primary p-2 rounded text-center">
+
+                  <button
+                    *ngIf="this.perfilUsuario == 1 && torneoSelect.ValidF5==2 && torneoSelect.ValidF6!=2 && torneoSelect.ValidF7!=2 "
+                    (click)="anularFase(5)" type="button" class="btn btn-danger m-1" title="Editar nombre fase"><i
+                      class="fa fa-arrow-left"></i>
+                  </button>
+
+                  <button *ngIf="this.perfilUsuario == 1" (click)="editNameFase(5)" type="button"
+                    class="btn btn-info m2-2" title="Editar nombre fase"><i class="fa fa-edit"></i></button>
+
+
+                  {{nameFase(5)}}
+                </h5>
                 <div class="d-flex justify-content-center flex-wrap">
                   <ng-container *ngFor="let gr of grupos">
                     <div *ngIf="gr.fase == 5" class="m-3" style="flex: 0 1 480px;">
                       <div class="card h-100 w-100 shadow-sm">
                         <div class="card-header bg-success text-center">
                           <h5 class="card-title m-0">
-                            <button *ngIf="torneoSelect.ValidF5 == 0 && this.perfilUsuario == 1"
+                            <button *ngIf="torneoSelect.ValidF5 !=2 && this.perfilUsuario == 1"
                               (click)="addAfases(gr.id,5,gr.nombre)" type="button" class="btn btn-info mb-2"
                               title="Agregar Equipo a grupo {{ gr.nombre }}">+</button>
                             <br>
@@ -677,22 +758,24 @@
                             <table class="table table-striped mb-0 text-center">
                               <thead>
                                 <tr>
-                                  <th *ngIf="torneoSelect.ValidF5 == 0 && this.perfilUsuario == 1">Accion</th>
+                                  <th>Accion</th>
                                   <th>Eq 1</th>
                                   <th>vs</th>
                                   <th>Eq 2</th>
                                   <th>Fecha</th>
                                   <th>Hora</th>
+                                  <th>Cancha</th>
                                 </tr>
                               </thead>
                               <tbody>
                                 <tr *ngFor="let cal of this.calendarioPre[5]">
-                                  <td
-                                    *ngIf="gr.id == cal.fk_grupo && torneoSelect.ValidF5 == 0 && this.perfilUsuario == 1">
+                                  <td>
                                     <button (click)="deletecalenPr(cal.id)" type="button"
+                                      *ngIf="gr.id == cal.fk_grupo && torneoSelect.ValidF5 !=2 && this.perfilUsuario == 1"
                                       class="btn btn-outline-danger btn-sm px-2">X</button>
 
                                     <button (click)="resetProgramacionPre(cal.id)" type="button"
+                                      *ngIf="gr.id == cal.fk_grupo && this.perfilUsuario == 1"
                                       class="btn btn-warning m-1" data-bs-toggle="modal"
                                       [attr.data-bs-target]="'#calenModalPre'">
                                       <i class="fa fa-calendar"></i>
@@ -713,6 +796,10 @@
 
                                   <td class="bg-info" *ngIf="gr.id == cal.fk_grupo">
                                     {{ cal.hora }}
+                                  </td>
+
+                                  <td class="bg-success" *ngIf="gr.id == cal.fk_grupo">
+                                    {{ this.getNombreCancha(cal.cancha) }}
                                   </td>
                                 </tr>
                               </tbody>
@@ -799,16 +886,25 @@
             <div>
               <!-- Fase 6 - Editable -->
               <div class="col-12" *ngIf="this.numero_fases>=6 && torneoSelect.ValidF5!=0">
-                <h5 class="text-white bg-primary p-2 rounded text-center">Grupos Fase 6 <button
-                    *ngIf="this.perfilUsuario == 1" (click)="editNameFase(6)" type="button" class="btn btn-info m2-2"
-                    title="Editar nombre fase"><i class="fa fa-edit"></i></button></h5>
+                <h5 class="text-white bg-primary p-2 rounded text-center">
+
+                  <button *ngIf="this.perfilUsuario == 1  && torneoSelect.ValidF6==2 && torneoSelect.ValidF7!=2 "
+                    (click)="anularFase(6)" type="button" class="btn btn-danger m-1" title="Editar nombre fase"><i
+                      class="fa fa-arrow-left"></i>
+                  </button>
+
+                  <button *ngIf="this.perfilUsuario == 1" (click)="editNameFase(6)" type="button"
+                    class="btn btn-info m2-2" title="Editar nombre fase"><i class="fa fa-edit"></i></button>
+
+                  {{nameFase(6)}}
+                </h5>
                 <div class="d-flex justify-content-center flex-wrap">
                   <ng-container *ngFor="let gr of grupos">
                     <div *ngIf="gr.fase == 6" class="m-3" style="flex: 0 1 480px;">
                       <div class="card h-100 w-100 shadow-sm">
                         <div class="card-header bg-success text-center">
                           <h5 class="card-title m-0">
-                            <button *ngIf="torneoSelect.ValidF6 == 0 && this.perfilUsuario == 1"
+                            <button *ngIf="torneoSelect.ValidF6 !=2 && this.perfilUsuario == 1"
                               (click)="addAfases(gr.id,6,gr.nombre)" type="button" class="btn btn-info mb-2"
                               title="Agregar Equipo a grupo {{ gr.nombre }}">+</button>
                             <br>
@@ -825,22 +921,24 @@
                             <table class="table table-striped mb-0 text-center">
                               <thead>
                                 <tr>
-                                  <th *ngIf="torneoSelect.ValidF6 == 0 && this.perfilUsuario == 1">Accion</th>
+                                  <th>Accion</th>
                                   <th>Eq 1</th>
                                   <th>vs</th>
                                   <th>Eq 2</th>
                                   <th>Fecha</th>
                                   <th>Hora</th>
+                                  <th>Cancha</th>
                                 </tr>
                               </thead>
                               <tbody>
                                 <tr *ngFor="let cal of this.calendarioPre[6]">
-                                  <td
-                                    *ngIf="gr.id == cal.fk_grupo && torneoSelect.ValidF6 == 0 && this.perfilUsuario == 1">
+                                  <td>
                                     <button (click)="deletecalenPr(cal.id)" type="button"
+                                      *ngIf="gr.id == cal.fk_grupo && torneoSelect.ValidF6 !=2 && this.perfilUsuario == 1"
                                       class="btn btn-outline-danger btn-sm px-2">X</button>
 
                                     <button (click)="resetProgramacionPre(cal.id)" type="button"
+                                      *ngIf="gr.id == cal.fk_grupo && this.perfilUsuario == 1"
                                       class="btn btn-warning m-1" data-bs-toggle="modal"
                                       [attr.data-bs-target]="'#calenModalPre'">
                                       <i class="fa fa-calendar"></i>
@@ -861,6 +959,10 @@
 
                                   <td class="bg-info" *ngIf="gr.id == cal.fk_grupo">
                                     {{ cal.hora }}
+                                  </td>
+
+                                  <td class="bg-success" *ngIf="gr.id == cal.fk_grupo">
+                                    {{ this.getNombreCancha(cal.cancha) }}
                                   </td>
                                 </tr>
                               </tbody>
@@ -947,16 +1049,25 @@
             <div>
               <!-- Fase 7 - Editable -->
               <div class="col-12" *ngIf="this.numero_fases>=7 && torneoSelect.ValidF6!=0">
-                <h5 class="text-white bg-primary p-2 rounded text-center">{{nameFase(7)}} <button
-                    *ngIf="this.perfilUsuario == 1" (click)="editNameFase(7)" type="button" class="btn btn-info m2-2"
-                    title="Editar nombre fase"><i class="fa fa-edit"></i></button></h5>
+                <h5 class="text-white bg-primary p-2 rounded text-center">
+
+                  <button *ngIf="this.perfilUsuario == 1  && torneoSelect.ValidF7==2" (click)="anularFase(7)"
+                    type="button" class="btn btn-danger m-1" title="Editar nombre fase"><i class="fa fa-arrow-left"></i>
+                  </button>
+
+                  <button *ngIf="this.perfilUsuario == 1" (click)="editNameFase(7)" type="button"
+                    class="btn btn-info m2-2" title="Editar nombre fase"><i class="fa fa-edit"></i></button>
+
+
+                  {{nameFase(7)}}
+                </h5>
                 <div class="d-flex justify-content-center flex-wrap">
                   <ng-container *ngFor="let gr of grupos">
                     <div *ngIf="gr.fase == 7" class="m-3" style="flex: 0 1 480px;">
                       <div class="card h-100 w-100 shadow-sm">
                         <div class="card-header bg-success text-center">
                           <h5 class="card-title m-0">
-                            <button *ngIf="torneoSelect.ValidF7 == 2 && this.perfilUsuario == 1"
+                            <button *ngIf="torneoSelect.ValidF7 !=2 && this.perfilUsuario == 1"
                               (click)="addAfases(gr.id,7,gr.nombre)" type="button" class="btn btn-info mb-2"
                               title="Agregar Equipo a grupo {{ gr.nombre }}">+</button>
                             <br>
@@ -973,22 +1084,24 @@
                             <table class="table table-striped mb-0 text-center">
                               <thead>
                                 <tr>
-                                  <th *ngIf="torneoSelect.ValidF7 == 2 && this.perfilUsuario == 1">Accion</th>
+                                  <th>Accion</th>
                                   <th>Eq 1</th>
                                   <th>vs</th>
                                   <th>Eq 2</th>
                                   <th>Fecha</th>
                                   <th>Hora</th>
+                                  <th>Cancha</th>
                                 </tr>
                               </thead>
                               <tbody>
                                 <tr *ngFor="let cal of this.calendarioPre[7]">
-                                  <td
-                                    *ngIf="gr.id == cal.fk_grupo && torneoSelect.ValidF7 == 0 && this.perfilUsuario == 1">
+                                  <td>
                                     <button (click)="deletecalenPr(cal.id)" type="button"
+                                      *ngIf="gr.id == cal.fk_grupo && torneoSelect.ValidF7  !=2 && this.perfilUsuario == 1"
                                       class="btn btn-outline-danger btn-sm px-2">X</button>
 
                                     <button (click)="resetProgramacionPre(cal.id)" type="button"
+                                      *ngIf="gr.id == cal.fk_grupo && this.perfilUsuario == 1"
                                       class="btn btn-warning m-1" data-bs-toggle="modal"
                                       [attr.data-bs-target]="'#calenModalPre'">
                                       <i class="fa fa-calendar"></i>
@@ -1010,6 +1123,10 @@
 
                                   <td class="bg-info" *ngIf="gr.id == cal.fk_grupo">
                                     {{ cal.hora }}
+                                  </td>
+
+                                  <td class="bg-success" *ngIf="gr.id == cal.fk_grupo">
+                                    {{ this.getNombreCancha(cal.cancha) }}
                                   </td>
                                 </tr>
                               </tbody>
@@ -1102,8 +1219,13 @@
             <h5 class="text-white bg-success p-2 rounded text-center">Clasificación General</h5>
             <div class="table-responsive">
               <table class="table table-bordered table-striped text-center mb-0">
+                <colgroup>
+                  <col style="width: 50px;"> <!-- contador -->
+                  <col style="width: 150px;"> <!-- Equipo (fijo) -->
+                </colgroup>
                 <thead class="table-success sticky-top">
                   <tr>
+                    <th>#</th>
                     <th>Equipo</th>
                     <th>PTS</th>
                     <th>PJ</th>
@@ -1117,12 +1239,17 @@
                   </tr>
                 </thead>
               </table>
+
               <!-- Scroll solo al cuerpo -->
               <div style="max-height: 450px; overflow-y: auto;">
                 <table class="table table-bordered table-striped text-center mb-0">
+                  <colgroup>
+                    <col style="width: 50px;"> <!-- contador -->
+                    <col style="width: 150px;"> <!-- Equipo (fijo) -->
+                  </colgroup>
                   <tbody>
                     <tr *ngFor="let eq of clafGeneral; let i = index" [title]="eq.nombre + ' - ' + eq.categoria">
-                      <td>{{ i + 1 }}</td> <!-- Esta es la columna con el contador -->
+                      <td>{{ i + 1 }}</td> <!-- contador -->
                       <td>
                         <img [src]="pathIm + eq.img1" class="rounded-circle border mb-1"
                           style="width: 30px; height: 30px; object-fit: cover;" />
@@ -1139,13 +1266,9 @@
                       <td>{{ eq.dif }}</td>
                       <td>{{ eq.jl }}</td>
                     </tr>
-
                   </tbody>
                 </table>
               </div>
-
-
-
             </div>
           </div>
 
@@ -1154,41 +1277,48 @@
             <h5 class="text-white bg-success p-2 rounded text-center">Goleadores</h5>
             <div class="table-responsive">
               <table class="table table-bordered table-striped text-center mb-0">
+                <colgroup>
+                  <col style="width: 200px;"> <!-- Jugador -->
+                  <col style="width: 80px;"> <!-- Cantidad -->
+                  <col style="width: 120px;"> <!-- Equipo -->
+                </colgroup>
                 <thead class="table-success sticky-top">
                   <tr>
-
                     <th>Jugador</th>
                     <th>Cantidad</th>
                     <th>Equipo</th>
-
                   </tr>
                 </thead>
               </table>
+
               <!-- Scroll solo al cuerpo -->
               <div style="max-height: 450px; overflow-y: auto;">
                 <table class="table table-bordered table-striped text-center mb-0">
+                  <colgroup>
+                    <col style="width: 200px;"> <!-- Jugador -->
+                    <col style="width: 80px;"> <!-- Cantidad -->
+                    <col style="width: 120px;"> <!-- Equipo -->
+                  </colgroup>
                   <tbody>
                     <tr *ngFor="let gol of goleadores" [title]="gol.nombre">
                       <td>
                         <img [src]="pathIm + gol.img1" class="rounded-circle border mb-1"
                           style="width: 30px; height: 30px; object-fit: cover;" />
-
+                        <br>
+                        <small>{{ gol.nombre }}</small>
                       </td>
-                      <td>{{ gol.nombre }}</td>
                       <td>{{ gol.total_goles }}</td>
-                      <td><img [src]="pathIm + gol.imgeq" class="rounded-circle border mb-1"
+                      <td>
+                        <img [src]="pathIm + gol.imgeq" class="rounded-circle border mb-1"
                           style="width: 30px; height: 30px; object-fit: cover;" />
                       </td>
-
                     </tr>
                   </tbody>
                 </table>
               </div>
-
-
-
             </div>
           </div>
+
 
 
 
@@ -1204,6 +1334,7 @@
 
     <div *ngIf="this.VlCalif" class="col-12 col-lg-12">
 
+
       <nav class="navbar navbar-expand-lg navbar-light bg-light border border-success rounded">
         <div class="container-fluid">
           <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#tournamentNav"
@@ -1211,6 +1342,7 @@
             <span class="navbar-toggler-icon"></span>
           </button>
 
+          <img src="../../../../assets/img/logo.png" id="Logo">
           <div class="collapse navbar-collapse" id="tournamentNav">
             <ul class="navbar-nav">
               <li class="nav-item">
@@ -1226,6 +1358,12 @@
               <li class="nav-item">
                 <a class="nav-link text-success hover-success" (click)="opMenu(2)">
                   <i class="bi bi-calendar-event me-1"></i> Calendario
+                </a>
+              </li>
+
+              <li class="nav-item">
+                <a class="nav-link text-success hover-success" (click)="opMenu(3)">
+                  <i class="bi bi-calendar-event me-1"></i> Equipos participantes
                 </a>
               </li>
 
@@ -1310,11 +1448,14 @@
 
 
                     <!-- Botón Inscribir jugadores -->
+                    <!--
                     <button type="button" (click)="InscribirJugadoresPartido(partido)"
-                      *ngIf="(usuario?.perfil == 1 || usuario?.perfil == 3) && partido.estado != 3"
-                      class="btn btn-warning m-1" title="Inscribir jugadores">
+                            *ngIf="(usuario?.perfil == 1 || usuario?.perfil == 3) && partido.estado != 3"
+                            class="btn btn-warning m-1" title="Inscribir jugadores">
                       <i class="fa fa-plus"> . </i> <i class="fa fa-users"></i>
                     </button>
+                    -->
+
 
 
                     <!-- Botón ver resultados -->
@@ -1641,8 +1782,7 @@
 
                             <div class="d-flex justify-content-center mb-3">
                               <label class="switch">
-                                <input type="checkbox" [(ngModel)]="estadoSwitch"
-                                  (change)="cambiarEstadoW(partido)">
+                                <input type="checkbox" [(ngModel)]="estadoSwitch" (change)="cambiarEstadoW(partido)">
                                 <span class="slider">
                                   <span class="off-text">W</span>
                                   <span class="on-text">N</span>
@@ -1961,448 +2101,558 @@
 
     </div>
 
-  </div> <!-- /row -->
+    <div *ngIf="this.VlParticipante" class="col-12 col-lg-12">
 
+      <nav class="navbar navbar-expand-lg navbar-light bg-light border border-success rounded">
+        <div class="container-fluid">
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#tournamentNav"
+            aria-controls="tournamentNav" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+          </button>
 
-</div>
-
-
-<div *ngIf="mdNamefases" class="modal fade" id="NamesFase" tabindex="-1" aria-labelledby="exampleModalLabel"
-  aria-hidden="true">
-  <div class="modal-dialog">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h1 class="modal-title fs-5" id="exampleModalLabel">Nuevo nombre fase</h1>
-        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-      </div>
-
-      <div class="modal-body text-center">
-        <input type="text" class="form-control w-75 mx-auto" [(ngModel)]="nombreFaseEdit"
-          placeholder="Ingrese nombre fase">
-      </div>
-
-      <div class="modal-footer">
-        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
-        <button type="button" class="btn btn-primary" (click)="guardarNFase()">Guardar</button>
-      </div>
-    </div>
-  </div>
-</div>
-
-
-
-<div *ngIf="mdNameGrupo" class="modal fade" id="NamesGrupo" tabindex="-1" aria-labelledby="exampleModalLabel"
-  aria-hidden="true">
-  <div class="modal-dialog">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h1 class="modal-title fs-5" id="exampleModalLabel">Nuevo nombre Grupo</h1>
-        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-      </div>
-
-      <div class="modal-body text-center">
-        <input type="text" class="form-control w-75 mx-auto" [(ngModel)]="nombreGrupoEdit"
-          placeholder="Ingrese nombre grupo">
-      </div>
-
-      <div class="modal-footer">
-        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
-        <button type="button" class="btn btn-primary" (click)="guardarNGrupo()">Guardar</button>
-      </div>
-    </div>
-  </div>
-</div>
-
-
-
-<div *ngIf="newPartido" class="modal fade" id="NuevoPartido" tabindex="-1" aria-labelledby="exampleModalLabel"
-  aria-hidden="true">
-  <div class="modal-dialog">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h1 class="modal-title fs-5" id="exampleModalLabel">Nuevo Partido</h1>
-        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-      </div>
-
-      <div class="modal-body text-center">
-        <select class="form-select" [(ngModel)]="Nequipo1">
-          <option *ngFor="let eq of EquiposTorneo" [ngValue]="eq.id">{{eq.nombre}}</option>
-        </select>
-      </div>
-
-
-      <div class="modal-body text-center">
-        <select class="form-select" [(ngModel)]="Nequipo2">
-          <option *ngFor="let eq of EquiposTorneo" [ngValue]="eq.id">{{eq.nombre}}</option>
-        </select>
-      </div>
-
-      <div class="modal-footer">
-        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
-        <button type="button" class="btn btn-primary" (click)="guardarNPartido()">Guardar</button>
-      </div>
-    </div>
-  </div>
-</div>
-
-
-
-<div *ngIf="AddEquipoG" class="modal fade" id="addModal" tabindex="-1" aria-labelledby="exampleModalLabel"
-  aria-hidden="true">
-  <div class="modal-dialog">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h1 class="modal-title fs-5" id="exampleModalLabel">Agregar Equipo</h1>
-        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-      </div>
-
-      <div class="modal-body">
-        <label for="equipoBuscar" class="form-label">Buscar y seleccionar equipo</label>
-
-        <select class="form-select" [(ngModel)]="equipoSeleccionado">
-          <option *ngFor="let eq of equipos | filtroPorNombre:filtroEquipo" [ngValue]="eq.id">{{ eq.nombre }}</option>
-
-        </select>
-      </div>
-
-      <div class="modal-footer">
-        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
-        <button type="button" class="btn btn-primary" (click)="guardarEquipo()">Guardar</button>
-      </div>
-    </div>
-  </div>
-</div>
-
-
-<div *ngIf="addAfase" class="modal fade" id="addAfase" tabindex="-1" aria-labelledby="exampleModalLabel"
-  aria-hidden="true">
-  <div class="modal-dialog modal-lg">
-    <div class="modal-content border border-primary shadow-lg">
-      <div class="modal-header bg-primary text-white text-center">
-        <h1 class="modal-title fs-5 text-center" id="exampleModalLabel">
-          Agregar Entrenamiento fase {{ this.FaseActual }} : grupo {{this.nombreGrupoActual}}
-        </h1>
-        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
-      </div>
-
-
-      <div class="modal-body">
-
-        <div class="row">
-          <!-- Lado izquierdo -->
-          <div class="col-md-6">
-            <div class="p-3 border border-secondary rounded mb-3 bg-card1">
-              <h5 class="text-center mb-3 text-primary">Equipo 1</h5>
-
-
-              <div class="mb-3 d-flex justify-content-center">
-                <select id="controlEdad" class="form-select w-auto m-3 text-center" (change)="onControlTipo1($event)"
-                  [(ngModel)]="tipo1Efr">
-                  <option value="">Seleccione tipo</option>
-                  <option value="grupo">Grupo</option>
-                  <option value="recla">Reclasificación</option>
-                </select>
-              </div>
-
-
-              <div class="mb-3" *ngIf="this.controlTipo1=='grupo'">
-                <label for="equipoBuscarIzq" class="form-label fw-bold">Seleccionar Grupo</label>
-                <select id="equipoBuscarIzq" class="form-select border border-dark" [(ngModel)]="Equipo1gr"
-                  (change)="actualizarOpciones()">
-                  <option [ngValue]="null" disabled selected>-- Seleccione Grupo --</option>
-                  <option *ngFor="let gr of gruposPorFase[this.FaseActual-1]" [ngValue]="gr.id">
-                    {{ gr.nombre }}
-                  </option>
-                </select>
-              </div>
-
-              <div class="mb-3" *ngIf="this.controlTipo1 == 'grupo' ">
-                <label for="posicion1gr" class="form-label fw-bold">Seleccionar Posición</label>
-                <select id="posicion1gr" class="form-select border border-dark" [(ngModel)]="Posicion1gr">
-                  <option [value]="null" disabled selected>-- Seleccione posición --</option>
-                  <option *ngFor="let op of opcionesPuestos" [value]="op.value">
-                    {{ op.texto }}
-                  </option>
-                </select>
-              </div>
-
-              <div class="mb-3" *ngIf="this.controlTipo1 == 'recla' ">
-                <label for="posicion1gr" class="form-label fw-bold">Seleccionar Posición</label>
-                <select id="posicion1gr" class="form-select border border-dark" [(ngModel)]="Posicion1gr">
-                  <option [value]="null" disabled selected>-- Seleccione posición --</option>
-                  <option *ngFor="let op of opcionesPuestosCL" [value]="op.value">
-                    {{ op.texto }}
-                  </option>
-                </select>
-              </div>
-
-
-            </div>
-          </div>
-
-          <!-- Lado derecho -->
-          <div class="col-md-6">
-            <div class="p-3 border border-secondary rounded mb-3 bg-card1">
-              <h5 class="text-center mb-3 text-primary">Equipo 2</h5>
-
-              <div class="mb-3 d-flex justify-content-center">
-                <select id="controlEdad" class="form-select w-auto m-3 text-center" (change)="onControlTipo2($event)"
-                  [(ngModel)]="tipo2Efr">
-                  <option value="">Seleccione tipo</option>
-                  <option value="grupo">Grupo</option>
-                  <option value="recla">Reclasificación</option>
-                </select>
-              </div>
-
-              <div class="mb-3" *ngIf="this.controlTipo2=='grupo'">
-                <label for="equipoBuscarDer" class="form-label fw-bold">Seleccionar Grupo</label>
-                <select id="equipoBuscarDer" class="form-select border border-dark" [(ngModel)]="Equipo2gr"
-                  (change)="actualizarOpciones()">
-                  <option [ngValue]="null" disabled selected>-- Seleccione un equipo --</option>
-                  <option *ngFor="let gr of gruposPorFase[this.FaseActual-1]" [ngValue]="gr.id">
-                    {{ gr.nombre }}
-                  </option>
-                </select>
-              </div>
-
-              <div class="mb-3" *ngIf="this.controlTipo2 == 'grupo' ">
-                <label for="posicion2gr" class="form-label fw-bold">Seleccionar Posición</label>
-                <select id="posicion2gr" class="form-select border border-dark" [(ngModel)]="Posicion2gr">
-                  <option [value]="null" disabled selected>-- Seleccione posición --</option>
-                  <option *ngFor="let op of opcionesPuestos" [value]="op.value">
-                    {{ op.texto }}
-                  </option>
-                </select>
-              </div>
-
-              <div class="mb-3" *ngIf="this.controlTipo2 == 'recla' ">
-                <label for="posicion1gr" class="form-label fw-bold">Seleccionar Posición</label>
-                <select id="posicion1gr" class="form-select border border-dark" [(ngModel)]="Posicion2gr">
-                  <option [value]="null" disabled selected>-- Seleccione posición --</option>
-                  <option *ngFor="let op of opcionesPuestosCL2" [value]="op.value">
-                    {{ op.texto }}
-                  </option>
-                </select>
-              </div>
-
-
-            </div>
+          <img src="../../../../assets/img/logo.png" id="Logo">
+          <div class="collapse navbar-collapse" id="tournamentNav">
+            <ul class="navbar-nav">
+              <li class="nav-item">
+                <a class="nav-link text-success hover-success" (click)="inicio()">
+                  <i class="bi bi-info-circle me-1"></i> Inicio
+                </a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link text-success hover-success" (click)="opMenu(1)">
+                  <i class="bi bi-info-circle me-1"></i> Información
+                </a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link text-success hover-success" (click)="opMenu(2)">
+                  <i class="bi bi-calendar-event me-1"></i> Calendario
+                </a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link text-success hover-success" (click)="opMenu(3)">
+                  <i class="bi bi-people me-1"></i> Equipos participantes
+                </a>
+              </li>
+            </ul>
           </div>
         </div>
-      </div>
+      </nav>
 
-      <div class="modal-footer bg-light">
-        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
-        <button type="button" class="btn btn-success" (click)="guardarPrePartido()">Guardar</button>
+      <!-- Título fuera del nav -->
+      <h1 class="card-title fw-bold text-center text-uppercase mt-3 titulo-contorno">
+        {{ torneoSelect.nombre }}
+      </h1>
+
+      <table class="table table-bordered">
+        <thead>
+          <tr class="text-center">
+
+            <th class="bg-success text-light" scope="col">Logo</th>
+            <th class="bg-success text-light" scope="col">Nombre</th>
+            <th *ngIf="this.perfilUsuario == 1" class="bg-success text-light" scope="col">Email</th>
+            <th class="bg-success text-light" scope="col">Categorias</th>
+            <th *ngIf="this.perfilUsuario == 1" class="bg-success text-light" scope="col">Estado</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let eq of equiposTorneo" class="text-center"
+            [ngClass]="eq.estado ? 'table-success' : 'table-danger'">
+
+            <td>
+              <a *ngIf="eq.img1">
+                <img [src]="pathIm + eq.img1" alt="Imagen 1" class="img-thumbnail d-block mx-auto shadow"
+                  title="{{eq.nombre}}" style="width: 48px; height: 48px; object-fit: cover; border-radius: 0.375rem;">
+              </a>
+              <img *ngIf="!eq.img1" src="../../../../assets/img/nofoto.png" alt="Imagen 1"
+                class="img-thumbnail d-block mx-auto shadow"
+                style="width: 48px; height: 48px; object-fit: cover; border-radius: 0.375rem;">
+            </td>
+
+            <td>{{eq.nombre}}</td>
+
+            <td *ngIf="this.perfilUsuario == 1">{{eq.email}}</td>
+
+            <td>
+              <span *ngFor="let cat of eq.categorias" class="badge bg-primary me-1">
+                {{ getNombreCategoria(cat) }}
+              </span>
+            </td>
+
+            <td *ngIf="this.perfilUsuario == 1">
+              <button class="btn btn-sm" [ngClass]="eq.estado ? 'btn-success' : 'btn-danger'"
+                (click)="cambiarEstadoPart(eq.id,eq.estado)">
+                {{ eq.estado ? 'Activo' : 'Inactivo' }}
+              </button>
+            </td>
+
+          </tr>
+        </tbody>
+
+      </table>
+
+      <!-- Spinner -->
+      <div *ngIf="isLoading" class="d-flex flex-column align-items-center mt-3">
+        <img src="../../../assets/img/balon.png" alt="Cargando..." width="40" height="40" class="balon-girando" />
+        <span class="mt-2 text-warning fw-bold">Procesando, por favor espera...</span>
+      </div>
+    </div>
+
+  </div>
+
+
+  <div *ngIf="mdNamefases" class="modal fade" id="NamesFase" tabindex="-1" aria-labelledby="exampleModalLabel"
+    aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h1 class="modal-title fs-5" id="exampleModalLabel">Nuevo nombre fase</h1>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+
+        <div class="modal-body text-center">
+          <input type="text" class="form-control w-75 mx-auto" [(ngModel)]="nombreFaseEdit"
+            placeholder="Ingrese nombre fase">
+        </div>
+
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+          <button type="button" class="btn btn-primary" (click)="guardarNFase()">Guardar</button>
+        </div>
       </div>
     </div>
   </div>
-</div>
 
 
 
-<div class="modal fade" id="modalVerJugadores" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-  <div class="modal-dialog modal-xl">
-    <div class="modal-content">
-      <div class="modal-header bg-success position-relative">
-        <h1 class="modal-title fs-5 text-center w-100 m-0 text-whiteexampleModalLabel">
-          Inscribir jugadores a partido
-        </h1>
-        <button type="button" class="btn-close position-absolute end-0 me-2" data-bs-dismiss="modal"
-          aria-label="Close"></button>
+  <div *ngIf="mdNameGrupo" class="modal fade" id="NamesGrupo" tabindex="-1" aria-labelledby="exampleModalLabel"
+    aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h1 class="modal-title fs-5" id="exampleModalLabel">Nuevo nombre Grupo</h1>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+
+        <div class="modal-body text-center">
+          <input type="text" class="form-control w-75 mx-auto" [(ngModel)]="nombreGrupoEdit"
+            placeholder="Ingrese nombre grupo">
+        </div>
+
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+          <button type="button" class="btn btn-primary" (click)="guardarNGrupo()">Guardar</button>
+        </div>
       </div>
+    </div>
+  </div>
 
-      <div class="modal-body">
-        <div style="max-height: 350px; overflow-y: auto;">
-          <table class="table table-bordered mb-0 text-center">
-            <thead class="bg-success text-white sticky-top">
-              <tr>
-                <th></th>
-                <th>Nombre</th>
-                <th>Fecha de nacimiento</th>
-                <th>Edad</th>
-                <th>Posición</th>
-                <th>Acción</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr *ngFor="let jugador of jugadoresEquipo">
-                <td>
-                  <img [src]="jugador.img1 ? (pathIm + jugador.img1) : '../../../assets/img/nd.png'" alt="Foto"
-                    width="30" height="30" class="rounded-circle">
-                </td>
-                <td>{{ jugador.nombre }}</td>
-                <td>{{ jugador.fecha_nacimiento }}</td>
-                <td>{{ jugador.fecha_nacimiento }}</td>
-                <td>
-                  <span *ngIf="jugador.posicion == 1">Arquero</span>
-                  <span *ngIf="jugador.posicion == 2">Defensa</span>
-                  <span *ngIf="jugador.posicion == 3">Volante</span>
-                  <span *ngIf="jugador.posicion == 4">Delantero</span>
-                </td>
-                <td>
-                  <select class="form-select form-select-sm shadow-sm" style="width: auto;" [(ngModel)]="jugador.rol">
-                    <option value="Suplente">Suplente</option>
-                    <option value="Titular">Titular</option>
+
+
+  <div *ngIf="newPartido" class="modal fade" id="NuevoPartido" tabindex="-1" aria-labelledby="exampleModalLabel"
+    aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h1 class="modal-title fs-5" id="exampleModalLabel">Nuevo Partido</h1>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+
+        <div class="modal-body text-center">
+          <select class="form-select" [(ngModel)]="Nequipo1">
+            <option *ngFor="let eq of EquiposTorneo" [ngValue]="eq.id">{{eq.nombre}}</option>
+          </select>
+        </div>
+
+
+        <div class="modal-body text-center">
+          <select class="form-select" [(ngModel)]="Nequipo2">
+            <option *ngFor="let eq of EquiposTorneo" [ngValue]="eq.id">{{eq.nombre}}</option>
+          </select>
+        </div>
+
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+          <button type="button" class="btn btn-primary" (click)="guardarNPartido()">Guardar</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+
+
+  <div *ngIf="AddEquipoG" class="modal fade" id="addModal" tabindex="-1" aria-labelledby="exampleModalLabel"
+    aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h1 class="modal-title fs-5" id="exampleModalLabel">Agregar Equipo</h1>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+
+        <div class="modal-body">
+          <label for="equipoBuscar" class="form-label">Buscar y seleccionar equipo</label>
+
+          <select class="form-select" [(ngModel)]="equipoSeleccionado">
+            <option *ngFor="let eq of equipos | filtroPorNombre:filtroEquipo" [ngValue]="eq.id">{{ eq.nombre }}</option>
+
+          </select>
+        </div>
+
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+          <button type="button" class="btn btn-primary" (click)="guardarEquipo()">Guardar</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+
+  <div *ngIf="addAfase" class="modal fade" id="addAfase" tabindex="-1" aria-labelledby="exampleModalLabel"
+    aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+      <div class="modal-content border border-primary shadow-lg">
+        <div class="modal-header bg-primary text-white text-center">
+          <h1 class="modal-title fs-5 text-center" id="exampleModalLabel">
+            Agregar Entrenamiento fase {{ this.FaseActual }} : grupo {{this.nombreGrupoActual}}
+          </h1>
+          <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+
+
+        <div class="modal-body">
+
+          <div class="row">
+            <!-- Lado izquierdo -->
+            <div class="col-md-6">
+              <div class="p-3 border border-secondary rounded mb-3 bg-card1">
+                <h5 class="text-center mb-3 text-primary">Equipo 1</h5>
+
+
+                <div class="mb-3 d-flex justify-content-center">
+                  <select id="controlEdad" class="form-select w-auto m-3 text-center" (change)="onControlTipo1($event)"
+                    [(ngModel)]="tipo1Efr">
+                    <option value="">Seleccione tipo</option>
+                    <option value="grupo">Grupo</option>
+                    <option value="recla">Reclasificación</option>
                   </select>
-                </td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
-      </div>
-      <div class="modal-footer">
-
-        <button type="button" class="btn btn-primary" (click)="guardarInscripcionJug()">Guardar</button>
-      </div>
-    </div>
-  </div>
-</div>
-
-
-<div class="modal fade" id="modalVerJugadoresIns" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-  <div class="modal-dialog modal-xl modal-dialog-centered modal-full-height">
-    <div class="modal-content">
-
-      <!-- Header -->
-      <div class="modal-header bg-success position-relative">
-        <h1 class="modal-title fs-5 text-center w-100 m-0 text-white">
-          Jugadores Inscritos
-        </h1>
-        <button type="button" class="btn-close position-absolute end-0 me-2" data-bs-dismiss="modal"
-          aria-label="Close"></button>
-      </div>
-
-      <!-- Body -->
-      <div class="modal-body">
-        <div class="row">
-          <!-- Recorremos cada equipo -->
-          <div class="col-md-6" *ngFor="let equipo of jugadoresInscritos">
-            <div class="card h-100">
-
-              <!-- Header equipo -->
-              <div class="card-header text-center fw-bold">
-                <img class="logo" [src]="pathIm + equipo[0]?.imgEq" alt="">
-                {{ equipo[0]?.nombreEq }}
-              </div>
-
-              <!-- Jugadores -->
-              <div class="card-body p-2 scroll-card d-flex flex-column">
-                <table class="table table-sm table-bordered text-center flex-grow-1">
-                  <thead>
-                    <tr>
-                      <th>Jugador</th>
-                      <th>Rol</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    <tr *ngFor="let jugador of equipo">
-                      <td>
-                        <img class="logo" [src]="pathIm + jugador.img1" alt="">
-                        {{ jugador.nombre }}
-                      </td>
-                      <td>
-                        <select class="form-select form-select-sm shadow-sm" style="width: auto;"
-                          [(ngModel)]="jugador.rol">
-                          <option value="">-- Seleccione --</option>
-                          <option value="Suplente">Suplente</option>
-                          <option value="Titular">Titular</option>
-                        </select>
-                      </td>
-                    </tr>
-                  </tbody>
-                </table>
-
-                <!-- Botón Guardar (centrado y con color Bootstrap) -->
-                <div class="text-center mt-2">
-                  <button type="button" class="btn btn-primary btn-sm" (click)="guardarInscripcionAll(equipo)">
-                    Guardar
-                  </button>
                 </div>
+
+
+                <div class="mb-3" *ngIf="this.controlTipo1=='grupo'">
+                  <label for="equipoBuscarIzq" class="form-label fw-bold">Seleccionar Grupo</label>
+                  <select id="equipoBuscarIzq" class="form-select border border-dark" [(ngModel)]="Equipo1gr"
+                    (change)="actualizarOpciones()">
+                    <option [ngValue]="null" disabled selected>-- Seleccione Grupo --</option>
+                    <option *ngFor="let gr of gruposPorFase[this.FaseActual-1]" [ngValue]="gr.id">
+                      {{ gr.nombre }}
+                    </option>
+                  </select>
+                </div>
+
+                <div class="mb-3" *ngIf="this.controlTipo1 == 'grupo' ">
+                  <label for="posicion1gr" class="form-label fw-bold">Seleccionar Posición</label>
+                  <select id="posicion1gr" class="form-select border border-dark" [(ngModel)]="Posicion1gr">
+                    <option [value]="null" disabled selected>-- Seleccione posición --</option>
+                    <option *ngFor="let op of opcionesPuestos" [value]="op.value">
+                      {{ op.texto }}
+                    </option>
+                  </select>
+                </div>
+
+                <div class="mb-3" *ngIf="this.controlTipo1 == 'recla' ">
+                  <label for="posicion1gr" class="form-label fw-bold">Seleccionar Posición</label>
+                  <select id="posicion1gr" class="form-select border border-dark" [(ngModel)]="Posicion1gr">
+                    <option [value]="null" disabled selected>-- Seleccione posición --</option>
+                    <option *ngFor="let op of opcionesPuestosCL" [value]="op.value">
+                      {{ op.texto }}
+                    </option>
+                  </select>
+                </div>
+
+
+              </div>
+            </div>
+
+            <!-- Lado derecho -->
+            <div class="col-md-6">
+              <div class="p-3 border border-secondary rounded mb-3 bg-card1">
+                <h5 class="text-center mb-3 text-primary">Equipo 2</h5>
+
+                <div class="mb-3 d-flex justify-content-center">
+                  <select id="controlEdad" class="form-select w-auto m-3 text-center" (change)="onControlTipo2($event)"
+                    [(ngModel)]="tipo2Efr">
+                    <option value="">Seleccione tipo</option>
+                    <option value="grupo">Grupo</option>
+                    <option value="recla">Reclasificación</option>
+                  </select>
+                </div>
+
+                <div class="mb-3" *ngIf="this.controlTipo2=='grupo'">
+                  <label for="equipoBuscarDer" class="form-label fw-bold">Seleccionar Grupo</label>
+                  <select id="equipoBuscarDer" class="form-select border border-dark" [(ngModel)]="Equipo2gr"
+                    (change)="actualizarOpciones()">
+                    <option [ngValue]="null" disabled selected>-- Seleccione un equipo --</option>
+                    <option *ngFor="let gr of gruposPorFase[this.FaseActual-1]" [ngValue]="gr.id">
+                      {{ gr.nombre }}
+                    </option>
+                  </select>
+                </div>
+
+                <div class="mb-3" *ngIf="this.controlTipo2 == 'grupo' ">
+                  <label for="posicion2gr" class="form-label fw-bold">Seleccionar Posición</label>
+                  <select id="posicion2gr" class="form-select border border-dark" [(ngModel)]="Posicion2gr">
+                    <option [value]="null" disabled selected>-- Seleccione posición --</option>
+                    <option *ngFor="let op of opcionesPuestos" [value]="op.value">
+                      {{ op.texto }}
+                    </option>
+                  </select>
+                </div>
+
+                <div class="mb-3" *ngIf="this.controlTipo2 == 'recla' ">
+                  <label for="posicion1gr" class="form-label fw-bold">Seleccionar Posición</label>
+                  <select id="posicion1gr" class="form-select border border-dark" [(ngModel)]="Posicion2gr">
+                    <option [value]="null" disabled selected>-- Seleccione posición --</option>
+                    <option *ngFor="let op of opcionesPuestosCL2" [value]="op.value">
+                      {{ op.texto }}
+                    </option>
+                  </select>
+                </div>
+
+
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="modal-footer bg-light">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+          <button type="button" class="btn btn-success" (click)="guardarPrePartido()">Guardar</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+
+
+  <div class="modal fade" id="modalVerJugadores" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-xl">
+      <div class="modal-content">
+        <div class="modal-header bg-success position-relative">
+          <h1 class="modal-title fs-5 text-center w-100 m-0 text-whiteexampleModalLabel">
+            Inscribir jugadores a partido
+          </h1>
+          <button type="button" class="btn-close position-absolute end-0 me-2" data-bs-dismiss="modal"
+            aria-label="Close"></button>
+        </div>
+
+        <div class="modal-body">
+          <div style="max-height: 350px; overflow-y: auto;">
+            <table class="table table-bordered mb-0 text-center">
+              <thead class="bg-success text-white sticky-top">
+                <tr>
+                  <th></th>
+                  <th>Nombre</th>
+                  <th>Fecha de nacimiento</th>
+                  <th>Edad</th>
+                  <th>Posición</th>
+                  <th>Acción</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr *ngFor="let jugador of jugadoresEquipo">
+                  <td>
+                    <img [src]="jugador.img1 ? (pathIm + jugador.img1) : '../../../assets/img/nd.png'" alt="Foto"
+                      width="30" height="30" class="rounded-circle">
+                  </td>
+                  <td>{{ jugador.nombre }}</td>
+                  <td>{{ jugador.fecha_nacimiento }}</td>
+                  <td>{{ jugador.fecha_nacimiento }}</td>
+                  <td>
+                    <span *ngIf="jugador.posicion == 1">Arquero</span>
+                    <span *ngIf="jugador.posicion == 2">Defensa</span>
+                    <span *ngIf="jugador.posicion == 3">Volante</span>
+                    <span *ngIf="jugador.posicion == 4">Delantero</span>
+                  </td>
+                  <td>
+
+                    <!--
+                          <select class="form-select form-select-sm shadow-sm" style="width: auto;"
+                                  [(ngModel)]="jugador.rol">
+                            <option value="">-- Seleccione --</option>
+                            <option value="Suplente">Suplente</option>
+                            <option value="Titular">Titular</option>
+                          </select>
+                          -->
+
+                    <input type="text" class="form-control form-control-sm shadow-sm"
+                      style="width: 80px; text-align: center;" [(ngModel)]="jugador.num_jug" placeholder="N°" />
+
+
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+        <div class="modal-footer">
+
+          <button type="button" class="btn btn-primary" (click)="guardarInscripcionJug()">Guardar</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+
+  <div class="modal fade" id="modalVerJugadoresIns" tabindex="-1" aria-labelledby="exampleModalLabel"
+    aria-hidden="true">
+    <div class="modal-dialog modal-xl modal-dialog-centered modal-full-height">
+      <div class="modal-content">
+
+        <!-- Header -->
+        <div class="modal-header bg-success position-relative">
+          <h1 class="modal-title fs-5 text-center w-100 m-0 text-white">
+            Jugadores Inscritos
+          </h1>
+          <button type="button" class="btn-close position-absolute end-0 me-2" data-bs-dismiss="modal"
+            aria-label="Close"></button>
+        </div>
+
+        <!-- Body -->
+        <div class="modal-body">
+          <div class="row">
+            <!-- Recorremos cada equipo -->
+            <div class="col-md-6" *ngFor="let equipo of jugadoresInscritos">
+              <div class="card h-100">
+
+                <!-- Header equipo -->
+                <div class="card-header text-center fw-bold">
+                  <img class="logo" [src]="pathIm + equipo[0]?.imgEq" alt="">
+                  {{ equipo[0]?.nombreEq }}
+                </div>
+
+                <!-- Jugadores -->
+                <div class="card-body p-2 scroll-card d-flex flex-column">
+                  <table class="table table-sm table-bordered text-center flex-grow-1">
+                    <thead>
+                      <tr>
+                        <th>Jugador</th>
+                        <th># Camiseta</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr *ngFor="let jugador of equipo">
+                        <td>
+                          <img class="logo" [src]="pathIm + jugador.img1" alt="">
+                          {{ jugador.nombre }}
+                        </td>
+                        <td>
+
+                          <!--
+                          <select class="form-select form-select-sm shadow-sm" style="width: auto;"
+                                  [(ngModel)]="jugador.rol">
+                            <option value="">-- Seleccione --</option>
+                            <option value="Suplente">Suplente</option>
+                            <option value="Titular">Titular</option>
+                          </select>
+                          -->
+
+                          <input type="text" class="form-control form-control-sm shadow-sm"
+                            style="width: 80px; text-align: center;" [(ngModel)]="jugador.num_jug" placeholder="N°" />
+                        </td>
+                      </tr>
+                    </tbody>
+                  </table>
+
+                  <!-- Botón Guardar (centrado y con color Bootstrap) -->
+                  <div class="text-center mt-2">
+                    <button type="button" class="btn btn-primary btn-sm" (click)="guardarInscripcionAll(equipo)">
+                      Guardar
+                    </button>
+                  </div>
+                </div>
+
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+
+  <div class="modal fade" [id]="'calenModalPre' " tabindex="-1" [attr.aria-labelledby]="'calenModalLabel88' "
+    aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+
+        <div class="modal-dialog">
+          <div class="modal-content">
+
+            <!-- Modal Header (opcional) -->
+            <div class="modal-header">
+              <h5 class="modal-title">Programar Partido</h5>
+              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+            </div>
+
+            <!-- Modal Body -->
+            <div class="modal-body">
+
+              <!-- Campo selección de cancha -->
+
+              <div class="d-flex align-items-center mb-3">
+                <label class="me-3 mb-0" style="min-width: 130px;">Fecha partido:</label>
+                <input type="date" class="form-control" [(ngModel)]="fechaSeleccionada" placeholder="Fecha partido"
+                  style="max-width: 200px;">
               </div>
 
+
+              <div class="d-flex align-items-center mb-3">
+                <label class="me-3 mb-0" style="min-width: 130px;">Hora partido:</label>
+                <input type="time" class="form-control" [(ngModel)]="horaSeleccionada" placeholder="Hora partido"
+                  style="max-width: 200px;">
+              </div>
+
+
+              <div class="d-flex align-items-center mb-3">
+                <label class="me-3 mb-0" style="min-width: 130px;">Cancha: </label>
+                <select class="form-select" [(ngModel)]="canchaSeleccionada">
+                  <option *ngFor="let can of canchas" [ngValue]="can.id">{{can.nombre}}</option>
+                </select>
+              </div>
+
+
+
+
+              <div class="d-flex align-items-center mb-3">
+                <label class="me-3 mb-0" style="min-width: 130px;">Juez: </label>
+                <select class="form-select" [(ngModel)]="JuezSeleccionada">
+                  <option *ngFor="let can of jueces" [ngValue]="can.id">{{can.nombre}}</option>
+                </select>
+              </div>
+
+
+              <div class="d-flex align-items-center mb-3">
+                <label class="me-3 mb-0" style="min-width: 130px;">Delegado de cancha: </label>
+                <select class="form-select" [(ngModel)]="DelegadoSeleocionada">
+                  <option *ngFor="let usu of Delegados" [ngValue]="usu.id">{{usu.nombre}}</option>
+                </select>
+              </div>
+
+
+
             </div>
+
+            <!-- Modal Footer -->
+            <div class="modal-footer">
+
+              <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+              <button (click)="guardarProgramacionPre()" type="button" class="btn btn-primary">Guardar</button>
+            </div>
+
           </div>
         </div>
-      </div>
 
+      </div>
     </div>
   </div>
-</div>
-
-
-<div class="modal fade" [id]="'calenModalPre' " tabindex="-1" [attr.aria-labelledby]="'calenModalLabel88' "
-  aria-hidden="true">
-  <div class="modal-dialog">
-    <div class="modal-content">
-
-      <div class="modal-dialog">
-        <div class="modal-content">
-
-          <!-- Modal Header (opcional) -->
-          <div class="modal-header">
-            <h5 class="modal-title">Programar Partido</h5>
-            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
-          </div>
-
-          <!-- Modal Body -->
-          <div class="modal-body">
-
-            <!-- Campo selección de cancha -->
-
-            <div class="d-flex align-items-center mb-3">
-              <label class="me-3 mb-0" style="min-width: 130px;">Fecha partido:</label>
-              <input type="date" class="form-control" [(ngModel)]="fechaSeleccionada" placeholder="Fecha partido"
-                style="max-width: 200px;">
-            </div>
-
-
-            <div class="d-flex align-items-center mb-3">
-              <label class="me-3 mb-0" style="min-width: 130px;">Hora partido:</label>
-              <input type="time" class="form-control" [(ngModel)]="horaSeleccionada" placeholder="Hora partido"
-                style="max-width: 200px;">
-            </div>
-
-
-            <div class="d-flex align-items-center mb-3">
-              <label class="me-3 mb-0" style="min-width: 130px;">Cancha: </label>
-              <select class="form-select" [(ngModel)]="canchaSeleccionada">
-                <option *ngFor="let can of canchas" [ngValue]="can.id">{{can.nombre}}</option>
-              </select>
-            </div>
-
-
-
-
-            <div class="d-flex align-items-center mb-3">
-              <label class="me-3 mb-0" style="min-width: 130px;">Juez: </label>
-              <select class="form-select" [(ngModel)]="JuezSeleccionada">
-                <option *ngFor="let can of jueces" [ngValue]="can.id">{{can.nombre}}</option>
-              </select>
-            </div>
-
-
-            <div class="d-flex align-items-center mb-3">
-              <label class="me-3 mb-0" style="min-width: 130px;">Delegado de cancha: </label>
-              <select class="form-select" [(ngModel)]="DelegadoSeleocionada">
-                <option *ngFor="let usu of Delegados" [ngValue]="usu.id">{{usu.nombre}}</option>
-              </select>
-            </div>
-
-
-
-          </div>
-
-          <!-- Modal Footer -->
-          <div class="modal-footer">
-
-            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
-            <button (click)="guardarProgramacionPre()" type="button" class="btn btn-primary">Guardar</button>
-          </div>
-
-        </div>
-      </div>
-
-    </div>
-  </div>
-</div>

@@ -9,12 +9,22 @@
           <i class="fa fa-info-circle me-1"></i> Información del equipo
         </button>
       </li>
+      <!--
       <li class="nav-item" role="presentation">
-        <button   (click)="validMenu(2)"  class="nav-link" id="categorias-tab" data-bs-toggle="tab" data-bs-target="#categorias" type="button"
-          role="tab" aria-controls="categorias" aria-selected="false">
+        <button (click)="validMenu(2)" 
+                class="nav-link" 
+                id="categorias-tab" 
+                data-bs-toggle="tab" 
+                data-bs-target="#categorias" 
+                type="button"
+                role="tab" 
+                aria-controls="categorias" 
+                aria-selected="false">
           <i class="fa fa-users me-1"></i> Categorías
         </button>
       </li>
+      -->
+
       <li class="nav-item" role="presentation">
         <button (click)="validMenu(3)"  class="nav-link" id="torneos-tab" data-bs-toggle="tab" data-bs-target="#torneos" type="button"
           role="tab" aria-controls="torneos" aria-selected="false">
@@ -263,7 +273,17 @@
       <!-- Encabezado del modal -->
       <div class="modal-header bg-success text-white">
         <h5 class="modal-title" id="modalLabel">
-           <button (click)="AddAllJugadores()" type="button" class="btn btn-warning ml-2" title="Agregar todos los jugadores de la categoria"><i class="fa fa-plus"></i></button> Agregar jugador a Torneo
+          <!-- Botón para agregar todos los jugadores de la categoría -->
+<!-- 
+<button (click)="AddAllJugadores()" 
+        type="button" 
+        class="btn btn-warning ml-2" 
+        title="Agregar todos los jugadores de la categoria">
+  <i class="fa fa-plus"></i>
+</button> 
+-->
+
+Agregar jugador a Torneo
         </h5>
         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
       </div>

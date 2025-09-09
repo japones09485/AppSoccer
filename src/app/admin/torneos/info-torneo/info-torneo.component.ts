@@ -25,6 +25,7 @@ export class InfoTorneoComponent implements OnInit {
   usuario !: User;
   torneos: Torneos[] = [];
   equipos: Equipos[] = [];
+  equiposTorneo: Equipos[] = [];
   grupos: Grupos[] = [];
   jueces: Juez[] = [];
   Delegados: User[] = [];
@@ -44,6 +45,7 @@ export class InfoTorneoComponent implements OnInit {
   filtroEquipo: string = '';
   VlInfo !: boolean;
   VlCalif !: boolean;
+  VlParticipante!: boolean;
   formatoSeleccionado: string = 'ida';
   calendarioData: Record<string, Calendario[]> = {};
 
@@ -155,6 +157,7 @@ export class InfoTorneoComponent implements OnInit {
   ngOnInit(): void {
     this.VlInfo = true;
     this.VlCalif = false;
+    this.VlParticipante = false;
     this.isSuccess = false;
 
 
@@ -195,14 +198,17 @@ export class InfoTorneoComponent implements OnInit {
         this.equipos = res.equipos;
       });
 
+
+
+      this.apiRest.get_All_equipos_torneo(this.idTorneo).subscribe((res: any) => {
+
+        this.equiposTorneo = res.equiposTorneo;
+      });
+
+
+
       this.apiRest.getById_Grupos(this.idTorneo).subscribe((res: any) => {
         this.grupos = res.grupos;
-        console.log('Grupos');
-        console.log(this.grupos);
-        
-
-
-
 
         for (let i = 1; i <= 7; i++) {
           this.gruposPorFase[i] = this.grupos.filter((g: any) => Number(g.fase) === i);
@@ -215,7 +221,6 @@ export class InfoTorneoComponent implements OnInit {
 
       this.apiRest.get_Calendary(this.idTorneo).subscribe((res: any) => {
         this.calendarioData = res.calendarioData;
-        console.log(this.calendarioData);
 
       });
 
@@ -440,16 +445,19 @@ export class InfoTorneoComponent implements OnInit {
 
       this.VlInfo = true;
       this.VlCalif = false;
+      this.VlParticipante = false;
 
     } else if (opc == 2) {
 
       this.VlCalif = true;
       this.VlInfo = false;
+      this.VlParticipante = false;
 
     } else if (opc == 3) {
 
       this.VlInfo = false;
       this.VlCalif = false;
+      this.VlParticipante = true;
 
     }
 
@@ -1513,25 +1521,21 @@ export class InfoTorneoComponent implements OnInit {
         ...j,
         seleccionado: false // para control en "Individual"
       }));
+
+      console.log(this.jugadoresEquipo);
     });
   }
 
 
   guardarInscripcionJug() {
     // Validar que todos tengan rol
-    const faltantes = this.jugadoresEquipo.filter(j => !j.rol);
-
-    if (faltantes.length > 0) {
-
-      Swal.fire('Debes seleccionar el rol (Titular o Suplente) para todos los jugadores.');
-
-      return; // Detiene la función
-    }
-
+ 
     const datos = this.jugadoresEquipo.map(j => ({
       id_jugador: j.id,
-      rol: j.rol
+      rol: j.rol,
+      num_jug: j.num_jug || '' 
     }));
+
 
     this.apiRest.guardarInscripcionJug(this.idTorneo, this.idPartidoSelect, this.usuario.fk_equipo, datos).subscribe((res: any) => {
       Swal.fire(res.msj);
@@ -1545,14 +1549,14 @@ export class InfoTorneoComponent implements OnInit {
     // equipo es un arreglo de jugadores de ese equipo
     const idEquipo = equipo[0]?.fk_equipo;
 
-    console.log("equipo:", idEquipo);
 
     const jugadoresConRol = equipo.map(jugador => ({
       id_jugador: jugador.id,       // ajusta al nombre real en tu backend
       nombre: jugador.nombre,
-      rol: jugador.rol || ''       // si no selecciona nada, lo dejamos vacío
+      rol: jugador.rol || '',
+      num_jug: jugador.num_jug || ''       // si no selecciona nada, lo dejamos vacío
     }));
-
+    
     // También puedes obtener datos del equipo (ej: nombre, id)
     const datosEquipo = jugadoresConRol;
 
@@ -1573,6 +1577,7 @@ export class InfoTorneoComponent implements OnInit {
 
     this.apiRest.jugadoresPartidoRol(this.idTorneo, this.idPartidoSelect)
       .subscribe((res: any) => {
+        
 
         // Si el backend devuelve directamente un arreglo
         this.jugadoresInscritos = Array.isArray(res.JugadoresRol)
@@ -1592,6 +1597,77 @@ export class InfoTorneoComponent implements OnInit {
     this.equipo2 = partido.fk_equipo2;
 
   }
+
+  cambiarEstadoPart(equipoId: number, estadoActual: any): void {
+    const msj = estadoActual
+      ? '¿Desea excluir este equipo del torneo?'
+      : '¿Desea incluir este equipo en el torneo?';
+
+    Swal.fire({
+      title: msj,
+      showDenyButton: true,
+      confirmButtonText: "Sí",
+      denyButtonText: "No"
+    }).then((result) => {
+      if (result.isConfirmed) {
+        this.isLoading = true;
+
+        this.apiRest.cambiarEstadoPart(this.idTorneo, equipoId, estadoActual)
+          .subscribe({
+            next: (res: any) => {
+              Swal.fire(res.msj);
+
+              // Recargar equipos
+              this.apiRest.get_All_equipos_torneo(this.idTorneo).subscribe({
+                next: (res: any) => {
+                  this.equiposTorneo = res.equiposTorneo;
+                },
+                error: (err) => {
+                  console.error('Error al cargar equipos', err);
+                },
+                complete: () => {
+                  this.isLoading = false;
+                }
+              });
+            },
+            error: (err) => {
+              console.error('Error al cambiar estado', err);
+              this.isLoading = false;
+            }
+          });
+      }
+    });
+  }
+
+anularFase(fase: number) {
+  Swal.fire({
+    title: `¿Está seguro de reversar la fase ${fase}?`,
+    text: 'Se eliminarán los calendarios y estadísticas de esta fase.',
+    icon: 'warning',
+    showDenyButton: true,
+    confirmButtonText: "Sí",
+    denyButtonText: "No"
+  }).then((result) => {
+    if (result.isConfirmed) {
+      this.isLoading = true;
+
+      this.apiRest.anularFase(this.idTorneo, fase).subscribe({
+        next: (res: any) => {
+          Swal.fire(res.msj);
+        },
+        error: (err) => {
+          console.error('Error al anular fase:', err);
+          Swal.fire('Error al anular la fase');
+        },
+        complete: () => {
+          this.isLoading = false;
+          this.ngOnInit(); // recarga los datos al final
+        }
+      });
+    }
+  });
+}
+
 
 
 }

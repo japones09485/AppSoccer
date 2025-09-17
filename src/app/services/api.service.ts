@@ -65,9 +65,14 @@ export class ApiService {
 
 
   //Torneos
-  get_All_torneos() {
-    return this.http.get(this.urlAPI + `Rest_api/get_All_torneos`);
+  get_All_torneos(pagina ?: number) {
+    return this.http.post(this.urlAPI + `Rest_api/get_All_torneos`, { pagina });
   }
+
+  get_All_torneosFilt(nombre:string) {
+    return this.http.post(this.urlAPI + `Rest_api/get_All_torneosFilt`, { nombre });
+  }
+
 
   get_All_torneos_Dele() {
     return this.http.get(this.urlAPI + `Rest_api/get_All_torneos_Dele`);
@@ -95,9 +100,17 @@ export class ApiService {
     return this.http.post(this.urlAPI + `Rest_api/get_All_equipos_torneo`, { IdTorneo });
   }
 
+  get_All_eq() {
+     return this.http.get(this.urlAPI + `Rest_api/get_All_eq`);
+  }
 
-  get_All_equipos() {
-    return this.http.get(this.urlAPI + `Rest_api/get_All_equipos`);
+
+  get_All_equipos(pagina ?: number) {
+    return this.http.post(this.urlAPI + `Rest_api/get_All_equipos`, { pagina });
+  }
+
+  get_All_EquiposFilt(nombre:string,email:string) {
+    return this.http.post(this.urlAPI + `Rest_api/get_All_EquiposFilt`, { nombre,email });
   }
 
 
@@ -123,8 +136,14 @@ export class ApiService {
 
   //usuarios
 
-  get_All_users() {
-    return this.http.get(this.urlAPI + `Rest_api/get_All_users`);
+  get_All_users(pagina ?: number) {
+   
+     return this.http.post(this.urlAPI + `Rest_api/get_All_users`, { pagina });
+  }
+
+  get_All_usersFilt(nombre:string,usuario:string,perfil:string) {
+   
+     return this.http.post(this.urlAPI + `Rest_api/get_All_usersFilt`, { nombre,usuario,perfil });
   }
 
   add_user(payload: any) {
@@ -145,9 +164,14 @@ export class ApiService {
 
   //jugadores
 
-  get_All_jugadores() {
-    return this.http.get(this.urlAPI + `Rest_api/get_All_jugadores`);
+  get_All_jugadores(pagina  ?: number) {
+    return this.http.post(this.urlAPI + `Rest_api/get_All_jugadores`, { pagina });
   }
+
+  get_All_jugadoresFilt(nombre:string,identificacion:string,correo:string) {
+    return this.http.post(this.urlAPI + `Rest_api/get_All_jugadoresFilt`, { nombre,identificacion,correo});
+  }
+
 
   get_All_jugadoresAct() {
     return this.http.get(this.urlAPI + `Rest_api/get_All_jugadoresAct`);

@@ -2101,7 +2101,7 @@
 
     </div>
 
-    <div *ngIf="this.VlParticipante" class="col-12 col-lg-12">
+    <div *ngIf="this.VlParticipante && this.perfilUsuario == 1" class="col-12 col-lg-12">
 
       <nav class="navbar navbar-expand-lg navbar-light bg-light border border-success rounded">
         <div class="container-fluid">
@@ -2147,7 +2147,7 @@
         <thead>
           <tr class="text-center">
 
-            <th class="bg-success text-light" scope="col">Logo</th>
+            <th class="bg-success text-light" scope="col">Info</th>
             <th class="bg-success text-light" scope="col">Nombre</th>
             <th *ngIf="this.perfilUsuario == 1" class="bg-success text-light" scope="col">Email</th>
             <th class="bg-success text-light" scope="col">Categorias</th>
@@ -2159,13 +2159,27 @@
             [ngClass]="eq.estado ? 'table-success' : 'table-danger'">
 
             <td>
-              <a *ngIf="eq.img1">
-                <img [src]="pathIm + eq.img1" alt="Imagen 1" class="img-thumbnail d-block mx-auto shadow"
-                  title="{{eq.nombre}}" style="width: 48px; height: 48px; object-fit: cover; border-radius: 0.375rem;">
-              </a>
-              <img *ngIf="!eq.img1" src="../../../../assets/img/nofoto.png" alt="Imagen 1"
-                class="img-thumbnail d-block mx-auto shadow"
-                style="width: 48px; height: 48px; object-fit: cover; border-radius: 0.375rem;">
+              <div class="d-flex align-items-center justify-content-center">
+                <a *ngIf="eq.img1">
+                  <img [src]="pathIm + eq.img1" alt="Imagen 1" class="img-thumbnail shadow me-2" title="{{eq.nombre}}"
+                    style="width: 48px; height: 48px; object-fit: cover; border-radius: 0.375rem;">
+                </a>
+
+                <img *ngIf="!eq.img1" src="../../../../assets/img/nd.png" alt="Imagen 1"
+                  class="img-thumbnail shadow me-2"
+                  style="width: 48px; height: 48px; object-fit: cover; border-radius: 0.375rem;">
+
+
+
+                <!-- Button trigger modal -->
+                <button *ngIf="perfilUsuario == 1" (click)="JugadoresParticipante(eq.id)" type="button"
+                  class="btn btn-success" data-bs-toggle="modal" data-bs-target="#jugadoresParticipantes">
+                  <i class="fa fa-users me-1"></i> Jugadores
+                </button>
+
+
+
+              </div>
             </td>
 
             <td>{{eq.nombre}}</td>
@@ -2196,6 +2210,300 @@
         <span class="mt-2 text-warning fw-bold">Procesando, por favor espera...</span>
       </div>
     </div>
+
+
+
+    <div class="modal fade" id="jugadoresParticipantes" tabindex="-1" aria-labelledby="jugadoresParticipantesLabel"
+      aria-hidden="true">
+      <div class="modal-dialog modal-xl"> <!-- modal extra grande -->
+        <div class="modal-content">
+          <div class="modal-header">
+
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+          </div>
+          <div class="modal-body table-responsive"> <!-- scroll horizontal -->
+            <h1 class="text-center text-success fw-bold mb-4">Total de jugadores
+              {{this.jugadoresEquipoPar.length}}</h1>
+            <table class="table table-bordered text-nowrap bg-success">
+              <thead>
+                <tr class="text-center">
+                  <th class="bg-success text-light" scope="col">Id</th>
+                  <th class="bg-success text-light" scope="col">Img</th>
+                  <th class="bg-success text-light" scope="col">Nombre</th>
+                  <th class="bg-success text-light" scope="col">Fecha nacimiento</th>
+                  <th class="bg-success text-light" scope="col">Email</th>
+                  <th class="bg-success text-light" scope="col">Identificación</th>
+                  <th class="bg-success text-light" scope="col">Género</th>
+                  <th class="bg-success text-light" scope="col">Posición</th>
+                  <th class="bg-success text-light" scope="col">Estado</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr *ngFor="let jug of jugadoresEquipoPar; let i = index" class="text-center">
+                  <td>{{ i + 1 }}</td>
+                  <td>
+                    <img *ngIf="!jug.img1" src="../../../../assets/img/nd.png" alt="Imagen 1"
+                      class="img-thumbnail d-block mx-auto shadow"
+                      style="width: 48px; height: 48px; object-fit: cover; border-radius: 0.375rem;">
+
+                    <img [src]="pathIm + jug.img1" alt="Imagen 1" class="img-thumbnail d-block mx-auto shadow"
+                      style="width: 48px; height: 48px; object-fit: cover; border-radius: 0.375rem;">
+
+                  </td>
+
+                  <td>{{jug.nombre}}</td>
+                  <td>{{jug.fecha_nacimiento}}</td>
+                  <td>{{jug.email}}</td>
+                  <td>{{jug.identificacion}}</td>
+                  <td>{{jug.genero}}</td>
+                  <td>
+                    <span *ngIf="jug.posicion == 1">Arquero</span>
+                    <span *ngIf="jug.posicion == 2">Defensa</span>
+                    <span *ngIf="jug.posicion == 3">Volante</span>
+                    <span *ngIf="jug.posicion == 4">Delantero</span>
+                  </td>
+                  <td>
+                    <span *ngIf="jug.estado == 0" class="text-danger">Inactivo</span>
+                    <span *ngIf="jug.estado == 1" class="text-success">Activo</span>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+
+    <div *ngIf="this.VlParticipante && this.perfilUsuario == 2" class="col-12 col-lg-12">
+
+      <nav class="navbar navbar-expand-lg navbar-light bg-light border border-success rounded">
+        <div class="container-fluid">
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#tournamentNav"
+            aria-controls="tournamentNav" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+          </button>
+
+          <img src="../../../../assets/img/logo.png" id="Logo">
+          <div class="collapse navbar-collapse" id="tournamentNav">
+            <ul class="navbar-nav">
+              <li class="nav-item">
+                <a class="nav-link text-success hover-success" (click)="inicio()">
+                  <i class="bi bi-info-circle me-1"></i> Inicio
+                </a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link text-success hover-success" (click)="opMenu(1)">
+                  <i class="bi bi-info-circle me-1"></i> Información
+                </a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link text-success hover-success" (click)="opMenu(2)">
+                  <i class="bi bi-calendar-event me-1"></i> Calendario
+                </a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link text-success hover-success" (click)="opMenu(3)">
+                  <i class="bi bi-people me-1"></i> Equipos participantes
+                </a>
+              </li>
+            </ul>
+          </div>
+        </div>
+      </nav>
+
+      <!-- Título fuera del nav -->
+      <h1 class="card-title fw-bold text-center text-uppercase mt-3 titulo-contorno">
+        {{ torneoSelect.nombre }}
+      </h1>
+
+      <table class="table table-bordered">
+        <thead>
+          <tr class="text-center">
+
+            <th class="bg-success text-light" scope="col">Info</th>
+            <th class="bg-success text-light" scope="col">Nombre</th>
+            <th *ngIf="this.perfilUsuario == 1" class="bg-success text-light" scope="col">Email</th>
+            <th class="bg-success text-light" scope="col">Categorias</th>
+            <th *ngIf="this.perfilUsuario == 1" class="bg-success text-light" scope="col">Estado</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let eq of equiposTorneo" class="text-center"
+            [ngClass]="eq.estado ? 'table-success' : 'table-danger'">
+
+            <!-- Imagen + Botón centrados -->
+            <td *ngIf="eq.estado">
+              <div class="d-flex justify-content-center align-items-center gap-2">
+                <ng-container *ngIf="eq.img1; else sinFoto">
+                  <img [src]="pathIm + eq.img1" alt="Imagen 1" class="img-thumbnail shadow" title="{{eq.nombre}}"
+                    style="width: 48px; height: 48px; object-fit: cover; border-radius: 0.375rem;">
+                </ng-container>
+                <ng-template #sinFoto>
+                  <img src="../../../../assets/img/nd.png" alt="Imagen 1" class="img-thumbnail shadow"
+                    style="width: 48px; height: 48px; object-fit: cover; border-radius: 0.375rem;">
+                </ng-template>
+
+                <button *ngIf="perfilUsuario == 2 && eq.id == usuario.fk_equipo" (click)="JugadoresParticipante(eq.id)"
+                  type="button" class="btn btn-success btn-sm" data-bs-toggle="modal"
+                  data-bs-target="#jugadoresParticipantes">
+                  <i class="fa fa-users me-1"></i> Jugadores
+                </button>
+              </div>
+            </td>
+
+            <!-- Nombre -->
+            <td *ngIf="eq.estado">{{eq.nombre}}</td>
+
+            <!-- Email solo para perfil 1 -->
+            <td *ngIf="perfilUsuario == 1">{{eq.email}}</td>
+
+            <!-- Categorías -->
+            <td *ngIf="eq.estado">
+              <span *ngFor="let cat of eq.categorias" class="badge bg-primary me-1">
+                {{ getNombreCategoria(cat) }}
+              </span>
+            </td>
+
+            <!-- Estado solo para perfil 1 -->
+            <td *ngIf="perfilUsuario == 1">
+              <button class="btn btn-sm" [ngClass]="eq.estado ? 'btn-success' : 'btn-danger'"
+                (click)="cambiarEstadoPart(eq.id, eq.estado)">
+                {{ eq.estado ? 'Activo' : 'Inactivo' }}
+              </button>
+            </td>
+
+          </tr>
+        </tbody>
+
+
+      </table>
+
+      <!-- Spinner -->
+      <div *ngIf="isLoading" class="d-flex flex-column align-items-center mt-3">
+        <img src="../../../assets/img/balon.png" alt="Cargando..." width="40" height="40" class="balon-girando" />
+        <span class="mt-2 text-warning fw-bold">Procesando, por favor espera...</span>
+      </div>
+    </div>
+
+
+    <div *ngIf="this.VlParticipante && this.perfilUsuario == 3" class="col-12 col-lg-12">
+
+      <nav class="navbar navbar-expand-lg navbar-light bg-light border border-success rounded">
+        <div class="container-fluid">
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#tournamentNav"
+            aria-controls="tournamentNav" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+          </button>
+
+          <img src="../../../../assets/img/logo.png" id="Logo">
+          <div class="collapse navbar-collapse" id="tournamentNav">
+            <ul class="navbar-nav">
+              <li class="nav-item">
+                <a class="nav-link text-success hover-success" (click)="inicio()">
+                  <i class="bi bi-info-circle me-1"></i> Inicio
+                </a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link text-success hover-success" (click)="opMenu(1)">
+                  <i class="bi bi-info-circle me-1"></i> Información
+                </a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link text-success hover-success" (click)="opMenu(2)">
+                  <i class="bi bi-calendar-event me-1"></i> Calendario
+                </a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link text-success hover-success" (click)="opMenu(3)">
+                  <i class="bi bi-people me-1"></i> Equipos participantes
+                </a>
+              </li>
+            </ul>
+          </div>
+        </div>
+      </nav>
+
+      <!-- Título fuera del nav -->
+      <h1 class="card-title fw-bold text-center text-uppercase mt-3 titulo-contorno">
+        {{ torneoSelect.nombre }}
+      </h1>
+
+      <table class="table table-bordered">
+        <thead>
+          <tr class="text-center">
+
+            <th class="bg-success text-light" scope="col">Info</th>
+            <th class="bg-success text-light" scope="col">Nombre</th>
+            <th *ngIf="this.perfilUsuario == 1" class="bg-success text-light" scope="col">Email</th>
+            <th class="bg-success text-light" scope="col">Categorias</th>
+            <th *ngIf="this.perfilUsuario == 1" class="bg-success text-light" scope="col">Estado</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let eq of equiposTorneo" class="text-center"
+            [ngClass]="eq.estado ? 'table-success' : 'table-danger'">
+
+            <!-- Imagen + Botón centrados -->
+            <td *ngIf="eq.estado">
+              <div class="d-flex justify-content-center align-items-center gap-2">
+                <ng-container *ngIf="eq.img1; else sinFoto">
+                  <img [src]="pathIm + eq.img1" alt="Imagen 1" class="img-thumbnail shadow" title="{{eq.nombre}}"
+                    style="width: 48px; height: 48px; object-fit: cover; border-radius: 0.375rem;">
+                </ng-container>
+                <ng-template #sinFoto>
+                  <img src="../../../../assets/img/nd.png" alt="Imagen 1" class="img-thumbnail shadow"
+                    style="width: 48px; height: 48px; object-fit: cover; border-radius: 0.375rem;">
+                </ng-template>
+
+                <button *ngIf="perfilUsuario == 3 " (click)="JugadoresParticipante(eq.id)"
+                  type="button" class="btn btn-success btn-sm" data-bs-toggle="modal"
+                  data-bs-target="#jugadoresParticipantes">
+                  <i class="fa fa-users me-1"></i> Jugadores
+                </button>
+              </div>
+            </td>
+
+            <!-- Nombre -->
+            <td *ngIf="eq.estado">{{eq.nombre}}</td>
+
+            <!-- Email solo para perfil 1 -->
+            <td *ngIf="perfilUsuario == 1">{{eq.email}}</td>
+
+            <!-- Categorías -->
+            <td *ngIf="eq.estado">
+              <span *ngFor="let cat of eq.categorias" class="badge bg-primary me-1">
+                {{ getNombreCategoria(cat) }}
+              </span>
+            </td>
+
+            <!-- Estado solo para perfil 1 -->
+            <td *ngIf="perfilUsuario == 1">
+              <button class="btn btn-sm" [ngClass]="eq.estado ? 'btn-success' : 'btn-danger'"
+                (click)="cambiarEstadoPart(eq.id, eq.estado)">
+                {{ eq.estado ? 'Activo' : 'Inactivo' }}
+              </button>
+            </td>
+
+          </tr>
+        </tbody>
+
+
+      </table>
+
+      <!-- Spinner -->
+      <div *ngIf="isLoading" class="d-flex flex-column align-items-center mt-3">
+        <img src="../../../assets/img/balon.png" alt="Cargando..." width="40" height="40" class="balon-girando" />
+        <span class="mt-2 text-warning fw-bold">Procesando, por favor espera...</span>
+      </div>
+    </div>
+
+
+
+
 
   </div>
 

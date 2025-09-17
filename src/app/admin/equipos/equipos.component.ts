@@ -5,6 +5,7 @@ import { CommonModule } from '@angular/common';
 import { Equipos, User, Categoria } from '../../interfaces/interfaces';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule, FormArray} from '@angular/forms';
 import { FormsModule } from '@angular/forms';
+import { PaginacionComponent } from '../paginacion/paginacion.component';
 import { NgSelectModule } from '@ng-select/ng-select';
 import { environment } from "../../../environments/environment";
 import { Modal } from 'bootstrap';
@@ -14,7 +15,7 @@ import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-equipos',
-  imports: [CommonModule, ReactiveFormsModule, FormsModule,NgSelectModule],
+  imports: [CommonModule, ReactiveFormsModule, FormsModule,NgSelectModule,PaginacionComponent],
   templateUrl: './equipos.component.html',
   styleUrl: './equipos.component.css'
 })
@@ -47,11 +48,8 @@ export class EquiposComponent implements OnInit {
   idClub !:number;
   filtroNombre: string = '';
   filtroEmail: string = '';
+  paginas = 0;
   
-  
-  
-
-
   constructor(
     public apiRest: ApiService,
     private fb: FormBuilder,
@@ -85,9 +83,23 @@ export class EquiposComponent implements OnInit {
     this.apiRest.get_All_equipos()
       .subscribe((res: any) => {
         this.equipos = res.equipos;
-        this.equiposFiltrados = [...this.equipos];
+        this.paginas = res.cant_paginas;
+
         
       });
+  }
+
+    sigPag(pag: number) {
+
+    
+     this.apiRest.get_All_equipos(pag)
+      .subscribe((res: any) => {
+        this.equipos = res.equipos;
+        this.paginas = res.cant_paginas;
+
+        
+      });
+
   }
 
   uploadImage(ev: any, numFile: number) {
@@ -367,16 +379,18 @@ agregarJugadorSeleccionado() {
   
 }
 
+
+
 aplicarFiltros() {
   const nombre = this.filtroNombre?.toLowerCase() || '';
   const email = this.filtroEmail?.toLowerCase() || '';
 
-  this.equiposFiltrados = this.equipos.filter(eq => {
-    const coincideNombre = !nombre || eq.nombre?.toLowerCase().includes(nombre);
-    const coincideEmail = !email || eq.email?.toLowerCase().includes(email);
+  this.apiRest.get_All_EquiposFilt(nombre,email).subscribe((res: any) => {
+      this.equipos = res.equipos;
+      this.paginas = res.cant_paginas;
 
-    return coincideNombre && coincideEmail;
   });
+
 }
 
 

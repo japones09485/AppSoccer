@@ -1,20 +1,28 @@
 <div id="table" *ngIf="!this.creando && !this.Valcategorias" style="overflow-x: auto; margin: 2%;">
-  <h1 class="text-center text-success"><button (click)="Inicio()" type="button" class="btn btn-success m-2" data-bs-toggle="tooltip"
-                            data-bs-placement="top" title="Inicio">
-                           <i class="fa fa-arrow-left"></i>
-                        </button> <i class="fa fa-cubes" aria-hidden="true"></i> Clubes</h1>
+  <h1 class="text-center text-success"><button (click)="Inicio()" type="button" class="btn btn-success m-2"
+      data-bs-toggle="tooltip" data-bs-placement="top" title="Inicio">
+      <i class="fa fa-arrow-left"></i>
+    </button> <i class="fa fa-cubes" aria-hidden="true"></i> Clubes</h1>
 
   <div class="row mb-3">
     <div class="col-md-4">
-      <input type="text" [(ngModel)]="filtroNombre" (input)="aplicarFiltros()" class="form-control"
+      <input type="text" [(ngModel)]="filtroNombre"  class="form-control"
         placeholder="Filtrar por nombre">
     </div>
 
-     <div class="col-md-4">
-    <input type="text" [(ngModel)]="filtroEmail" (input)="aplicarFiltros()" class="form-control"
-      placeholder="Filtrar por email">
-  </div>
-  
+    <div class="col-md-4">
+      <input type="text" [(ngModel)]="filtroEmail" class="form-control"
+        placeholder="Filtrar por email">
+    </div>
+
+    <div class="col-md-3 d-flex align-items-center">
+      <button type="button" class="btn btn-success w-100 m-1" (click)="aplicarFiltros()">
+        <i class="fa fa-filter"></i> Aplicar filtros
+      </button>
+
+
+    </div>
+
 
   </div>
   <div style="overflow-x: auto;">
@@ -36,10 +44,10 @@
         </tr>
       </thead>
       <tbody>
-        <tr *ngFor="let eq of equiposFiltrados" class="text-center">
+        <tr *ngFor="let eq of equipos" class="text-center">
           <th scope="row">
-            <button *ngIf="UserLog.perfil== 1" (click)="editEquipo(eq.id)" type="button" class="btn btn-warning m-1" data-bs-toggle="tooltip"
-              data-bs-placement="top" title="editar">
+            <button *ngIf="UserLog.perfil== 1" (click)="editEquipo(eq.id)" type="button" class="btn btn-warning m-1"
+              data-bs-toggle="tooltip" data-bs-placement="top" title="editar">
               <i class="fa fa-edit"></i>
             </button>
             <button *ngIf="UserLog.perfil== 1" (click)="deleteEquipo(eq.id)" type="button" class="btn btn-danger m-1">
@@ -59,7 +67,7 @@
               <img [src]="pathIm + eq.img1" alt="Imagen 1" class="img-thumbnail d-block mx-auto shadow"
                 style="width: 48px; height: 48px; object-fit: cover; border-radius: 0.375rem;">
             </a>
-            <img *ngIf="!eq.img1" src="../../../../assets/img/nofoto.png" alt="Imagen 1"
+            <img *ngIf="!eq.img1" src="../../../../assets/img/nd.png" alt="Imagen 1"
               class="img-thumbnail d-block mx-auto shadow"
               style="width: 48px; height: 48px; object-fit: cover; border-radius: 0.375rem;">
           </td>
@@ -84,6 +92,8 @@
         </tr>
       </tbody>
     </table>
+
+    <app-paginacion *ngIf="equipos.length > 0" [nPaginas]="paginas" (irPagina)="sigPag($event)"></app-paginacion>
   </div>
 
 </div>
@@ -141,20 +151,20 @@
         </div>
 
 
-         <div class="mb-3 row">
+        <div class="mb-3 row">
           <label for="estado" class="col-sm-3 col-form-label text-light">Telefono 1</label>
           <div class="col-sm-9">
-           <input type="text" id="name" formControlName="tel1" class="form-control"
+            <input type="text" id="name" formControlName="tel1" class="form-control"
               placeholder="Ingrese el nombre del torneo" required>
           </div>
         </div>
 
 
 
-         <div class="mb-3 row">
+        <div class="mb-3 row">
           <label for="estado" class="col-sm-3 col-form-label text-light">Telefono 2</label>
           <div class="col-sm-9">
-          <input type="text" id="name" formControlName="tel2" class="form-control"
+            <input type="text" id="name" formControlName="tel2" class="form-control"
               placeholder="Ingrese el nombre del torneo" required>
           </div>
         </div>
@@ -305,31 +315,24 @@
       <div class="modal-body">
 
         <!-- Selector de jugador con búsqueda por nombre o identificación -->
-        <ng-select
-          id="jugadorSelect"
-          [items]="jugadoresDisponibles"
-          bindLabel="busqueda"
-          bindValue="id"
-          [(ngModel)]="jugadorSeleccionadoId"
-          placeholder="Buscar por nombre o identificación..."
-          [searchable]="true"
-          [clearable]="true"
-          [appendTo]="'#modalSeleccionarJugador .modal-content'"
-          class="w-100 custom-ng-select m-4"
+        <ng-select id="jugadorSelect" [items]="jugadoresDisponibles" bindLabel="busqueda" bindValue="id"
+          [(ngModel)]="jugadorSeleccionadoId" placeholder="Buscar por nombre o identificación..." [searchable]="true"
+          [clearable]="true" [appendTo]="'#modalSeleccionarJugador .modal-content'" class="w-100 custom-ng-select m-4"
           (change)="onSeleccionarJugador()">
 
           <!-- Plantilla personalizada para opciones -->
           <ng-template ng-option-tmp let-item="item">
             <div class="d-flex align-items-center">
               <img *ngIf="item.img1" [src]="pathIm + item.img1" class="rounded-circle me-2" width="30" height="30">
-              <img *ngIf="!item.img1" src="../../../assets/img/nd.png" class="rounded-circle me-2" width="30" height="30">
+              <img *ngIf="!item.img1" src="../../../assets/img/nd.png" class="rounded-circle me-2" width="30"
+                height="30">
               <span><strong>{{ item.identificacion }}</strong> - {{ item.nombre }}</span>
             </div>
           </ng-template>
 
         </ng-select>
 
-       
+
       </div>
 
       <!-- Footer -->

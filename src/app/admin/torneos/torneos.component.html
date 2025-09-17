@@ -5,10 +5,18 @@
   </h1>
 
   <!-- 🔍 Filtro por nombre -->
-  <div class="mb-3 text-start">
-    <input type="text" [(ngModel)]="filtroNombre" (input)="filtrarTorneos()" class="form-control w-25 d-inline"
-      placeholder="Filtrar por nombre de torneo...">
+  <div class="row mb-3 align-items-center">
+    <div class="col-md-6">
+      <input type="text" [(ngModel)]="filtroNombre" class="form-control" placeholder="Filtrar por nombre de torneo...">
+    </div>
+
+    <div class="col-md-3">
+      <button type="button" class="btn btn-success w-100" (click)="filtrarTorneos()">
+        <i class="fa fa-filter"></i> Aplicar filtros
+      </button>
+    </div>
   </div>
+
 
 
   <div style="overflow-x: auto;">
@@ -34,7 +42,7 @@
       </thead>
       <tbody>
         <!-- ✅ Se filtran los torneos por nombre -->
-        <tr *ngFor="let tr of torneosFiltrados" class="text-center">
+        <tr *ngFor="let tr of torneos" class="text-center">
           <th scope="row">
             <button (click)="editTorneo(tr.id)" type="button" class="btn btn-warning m-1" data-bs-toggle="tooltip"
               data-bs-placement="top" title="editar"> <i class="fa fa-edit"></i></button>
@@ -53,7 +61,7 @@
               <img [src]="pathIm + tr.img1" alt="Imagen 1" class="img-thumbnail d-block mx-auto shadow"
                 style="width: 48px; height: 48px; object-fit: cover; border-radius: 0.375rem;">
             </a>
-            <img *ngIf="!tr.img1" src="../../../../assets/img/nofoto.png" alt="Imagen 1"
+            <img *ngIf="!tr.img1" src="../../../../assets/img/nd.png" alt="Imagen 1"
               class="img-thumbnail d-block mx-auto shadow"
               style="width: 48px; height: 48px; object-fit: cover; border-radius: 0.375rem;">
           </td>
@@ -85,6 +93,8 @@
         </tr>
       </tbody>
     </table>
+
+    <app-paginacion *ngIf="torneos.length > 0" [nPaginas]="paginas" (irPagina)="sigPag($event)"></app-paginacion>
   </div>
 </div>
 

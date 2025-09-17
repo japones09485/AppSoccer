@@ -2,8 +2,9 @@ import { Component, OnInit } from '@angular/core';
 import Swal from 'sweetalert2';
 import { ApiService } from "../../services/api.service";
 import { CommonModule } from '@angular/common';
-import { Jugadores,User } from '../../interfaces/interfaces';
-import { FormBuilder, FormGroup, Validators, ReactiveFormsModule,FormsModule  } from '@angular/forms';
+import { Jugadores, User } from '../../interfaces/interfaces';
+import { PaginacionComponent } from '../paginacion/paginacion.component';
+import { FormBuilder, FormGroup, Validators, ReactiveFormsModule, FormsModule } from '@angular/forms';
 import { environment } from "../../../environments/environment";
 import { Modal } from 'bootstrap';
 import { Router } from '@angular/router';
@@ -12,7 +13,7 @@ import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-jugadores',
-  imports: [CommonModule, ReactiveFormsModule,FormsModule],
+  imports: [CommonModule, ReactiveFormsModule, FormsModule,PaginacionComponent],
   templateUrl: './jugadores.component.html',
   styleUrl: './jugadores.component.css'
 })
@@ -33,36 +34,40 @@ export class JugadoresComponent implements OnInit {
   modalImage: string = '';
   imgVisi: String = '';
   JugadorVisi: String = '';
-  EdadJugador!:number;
-  UserLog !:User;
-  tipoDoc=0;
-  labedoc1='Foto Jugador';
-  labedoc2='Adjunto adicional';
-  labedoc3='Adjunto adicional';
-  labedoc4='Adjunto adicional';
-  labedoc5='Adjunto adicional';
+  EdadJugador!: number;
+  UserLog !: User;
+  tipoDoc = 0;
+  labedoc1 = 'Foto Jugador';
+  labedoc2 = 'Adjunto adicional';
+  labedoc3 = 'Adjunto adicional';
+  labedoc4 = 'Adjunto adicional';
+  labedoc5 = 'Adjunto adicional';
   filtroNombre: string = '';
   filtroIdentificacion: string = '';
   filtroCorreo: string = '';
   jugadoresFiltrados: any[] = [];
   p = 1;
+  paginas = 0;
 
 
-
-  constructor(private apiRest: ApiService,private router: Router,
+  constructor(private apiRest: ApiService, private router: Router,
     private fb: FormBuilder,
   ) { }
 
- ngOnInit(): void {
-  this.UserLog = this.apiRest.getUser();
-  this.initForm();
-  this.creando = false;
+  ngOnInit(): void {
+    this.UserLog = this.apiRest.getUser();
+    console.log(this.UserLog.perfil);
+    
+    this.initForm();
+    this.creando = false;
 
-  this.apiRest.get_All_jugadores().subscribe((res: any) => {
-    this.jugadores = res.jugadores;
-    this.jugadoresFiltrados = [...this.jugadores]; // Copia profunda para no afectar el original
-  });
-}
+    this.apiRest.get_All_jugadores().subscribe((res: any) => {
+      this.jugadores = res.jugadores;
+      this.paginas = res.cant_paginas;
+
+    
+    });
+  }
 
   initForm() {
     this.JugadorForm = this.fb.group({
@@ -81,25 +86,36 @@ export class JugadoresComponent implements OnInit {
     });
   }
 
+  sigPag(pag: number) {
+
+    
+      this.apiRest.get_All_jugadores(pag).subscribe((res: any) => {
+        this.jugadores = res.jugadores;
+        this.paginas = res.cant_paginas;
+      });
+
+  }
+
   addJugador() {
+    this.initForm();
     this.creando = true;
   }
 
   saveJugador() {
 
-    
-     
-      this.JugadorForm.get('edad')?.setValue(this.EdadJugador);
-      this.frmGuardar.append('data', JSON.stringify(this.JugadorForm.value));
-      this.frmGuardar.append('operacion', this.operation);
-      this.frmGuardar.append('usuario', String(this.UserLog.id));
-      this.frmGuardar.append('idEdit', JSON.stringify(this.idEdit));
-  
-      this.isLoading = true;
 
-      Swal.fire({
-        title: "Aviso importante",
-        html: `
+
+    this.JugadorForm.get('edad')?.setValue(this.EdadJugador);
+    this.frmGuardar.append('data', JSON.stringify(this.JugadorForm.value));
+    this.frmGuardar.append('operacion', this.operation);
+    this.frmGuardar.append('usuario', String(this.UserLog.id));
+    this.frmGuardar.append('idEdit', JSON.stringify(this.idEdit));
+
+    this.isLoading = true;
+
+    Swal.fire({
+      title: "Aviso importante",
+      html: `
           <div style="text-align: left; font-size: 13px;">
             <strong>Veracidad de la información:</strong> Al completar este formulario, usted se compromete a proporcionar información verídica, completa y actualizada. En caso de detectar información falsa o incorrecta, nos reservamos el derecho de tomar las acciones legales correspondientes, incluyendo la presentación de la información a las autoridades competentes, como la Policía.<br><br>
             
@@ -109,53 +125,66 @@ export class JugadoresComponent implements OnInit {
             ¡Gracias por su colaboración y por ayudarnos a garantizar un proceso transparente y seguro!
           </div>
         `,
-        showDenyButton: true,
-        confirmButtonText: "Sí",
-        denyButtonText: "No"
-      }).then((result) => {
-        if (result.isConfirmed) {
-          this.apiRest.add_jugador(this.frmGuardar)
-            .subscribe((data: any) => {
-              if (data.success == true) {
-                this.jugadores = data.jugadores;
-                Swal.fire(data.msj);
-                this.isLoading = false;
-                this.initForm();
-                this.creando = false;
-              }else{
-                  Swal.fire(data.msj);
-                  this.isLoading = false;
-              }
-            });
-        }
-      });
+      showDenyButton: true,
+      confirmButtonText: "Sí",
+      denyButtonText: "No"
+    }).then((result) => {
+      if (result.isConfirmed) {
+        this.apiRest.add_jugador(this.frmGuardar)
+          .subscribe((data: any) => {
+            if (data.success == true) {
+              this.jugadores = data.jugadores;
+              Swal.fire(data.msj);
+              this.isLoading = false;
+              this.initForm();
+              this.creando = false;
+            } else {
+              Swal.fire(data.msj);
+              this.isLoading = false;
+            }
+          });
+      }
+    });
 
 
 
-     
-    }
 
-    uploadImage(ev: any, numFile: number) {
-      const inputFile = ev.target as HTMLInputElement;
-      if (inputFile.files && inputFile.files.length > 0) {
-        // Agregar el archivo al formulario
-        this.frmGuardar.append(`${numFile}`, inputFile.files[0]);
-  
-        // Obtener el label asociado y actualizar su texto
-        const fileName = inputFile.files[0].name;
-        const labelElement = document.getElementById(`labelFile${numFile}`);
-        if (labelElement) {
-          labelElement.textContent = fileName;
+  }
+
+  uploadImage(ev: any, numFile: number) {
+    const inputFile = ev.target as HTMLInputElement;
+    if (inputFile.files && inputFile.files.length > 0) {
+      const file = inputFile.files[0];
+
+      // Solo validar si el archivo es 1, 2 o 3
+      if (numFile !== 4 && numFile !== 5) {
+        const validTypes = ['image/jpeg', 'image/png'];
+        if (!validTypes.includes(file.type)) {
+          Swal.fire('Solo se permiten imagenes , archivos JPG o PNG');
+          inputFile.value = ''; // Limpia el input
+          return;
         }
       }
-    
-    }
 
-    cancel() {
-      this.creando = false;
-      this.isEditing = false;
-  
+      // Agregar el archivo al formulario
+      this.frmGuardar.append(`${numFile}`, file);
+
+      // Obtener el label asociado y actualizar su texto
+      const fileName = file.name;
+      const labelElement = document.getElementById(`labelFile${numFile}`);
+      if (labelElement) {
+        labelElement.textContent = fileName;
+      }
     }
+  }
+
+
+
+  cancel() {
+    this.creando = false;
+    this.isEditing = false;
+
+  }
 
   deleteJugador(id: number) {
 
@@ -186,7 +215,7 @@ export class JugadoresComponent implements OnInit {
       .subscribe((res: any) => {
         this.jugadorSelect = res.jugador;
         this.tipoDoc = Number(this.jugadorSelect.tipoDoc);
-     
+
         this.JugadorForm.setValue({
           name: this.jugadorSelect.nombre,
           identificacion: this.jugadorSelect.identificacion,
@@ -200,7 +229,7 @@ export class JugadoresComponent implements OnInit {
           telMadre: this.jugadorSelect.telefono_madre,
           nomPadre: this.jugadorSelect.nombre_padre,
           telPadre: this.jugadorSelect.telefono_padre
-        
+
         });
 
 
@@ -211,13 +240,13 @@ export class JugadoresComponent implements OnInit {
   }
 
 
-  openModal(path:String,equipo:String) {
+  openModal(path: String, equipo: String) {
 
-    this.imgVisi=path;
+    this.imgVisi = path;
     this.JugadorVisi = equipo;
 
     const modalElement = document.getElementById('exampleModal');
-    
+
     // Verificar que el elemento existe
     if (modalElement) {
       const modal = new Modal(modalElement); // Solo se crea el modal si el elemento existe
@@ -228,92 +257,93 @@ export class JugadoresComponent implements OnInit {
   }
 
   onFechaNacimientoChange(event: Event): void {
-  this.EdadJugador =0 ;
-  const input = event.target as HTMLInputElement;
-  const fechaNacimiento = input.value;
-  if (fechaNacimiento) {
-    const edad = this.calcularEdad(fechaNacimiento);
-    this.EdadJugador = edad;
+    this.EdadJugador = 0;
+    const input = event.target as HTMLInputElement;
+    const fechaNacimiento = input.value;
+    if (fechaNacimiento) {
+      const edad = this.calcularEdad(fechaNacimiento);
+      this.EdadJugador = edad;
+
+      // Aquí puedes guardar la edad en una variable, formControl o mostrarla
+    }
+  }
+
+  calcularEdad(fechaNacimiento: string): number {
+    const hoy = new Date();
+    const nacimiento = new Date(fechaNacimiento);
+    let edad = hoy.getFullYear() - nacimiento.getFullYear();
+    const mes = hoy.getMonth() - nacimiento.getMonth();
+
+    if (mes < 0 || (mes === 0 && hoy.getDate() < nacimiento.getDate())) {
+      edad--;
+    }
+
+    return edad;
+  }
+
+  getFilename(filePath: any) {
+    return filePath?.split('/').pop() || 'archivo';
+  }
+
+
+  updateDocumento(event: Event): void {
+    const selectElement = event.target as HTMLSelectElement;
+    const selectedValue = parseInt(selectElement.value, 10);
+    //activamos doicumentos
+    this.tipoDoc = selectedValue;
+
+
+    if (selectedValue == 1) {
+      // Registro civil
+      this.labedoc2 = 'Foto del Registro civil';
+      this.labedoc3 = 'Adjunto adicional';
+      this.labedoc4 = 'Adjunto adicional';
+
+    } else if (selectedValue == 2) {
+      //Tarjeta Identidad
+      this.labedoc2 = 'Foto Tarjeta Identidad Frontal';
+      this.labedoc3 = 'Foto Tarjeta Identidad Trasera';
+      this.labedoc4 = 'Foto de registro civil';
+      this.labedoc5 = 'Adjunto en pdf';
+
+
+    } else if (selectedValue == 3) {
+      //Cedula de ciudadania
+      this.labedoc2 = 'Foto Cedula de ciudadania Frontal';
+      this.labedoc3 = 'Foto Cedula de ciudadania Trasera';
+      this.labedoc4 = 'Adjunto adicional';
+
+    } else if (selectedValue == 4) {
+      //Cedula extranjeria
+      this.labedoc2 = 'Foto Cedula de extranjeria Frontal';
+      this.labedoc3 = 'Foto Cedula de extranjeria Trasera';
+      this.labedoc4 = 'Adjunto adicional';
+    } else if (selectedValue == 5) {
+      //Pasaporte
+      this.labedoc2 = 'Foto Pasaporte';
+      this.labedoc3 = 'Adjunto adicional';
+      this.labedoc4 = 'Adjunto adicional';
+
+    }
+
+  }
+
+  aplicarFiltros() {
+    const nombre = this.filtroNombre.toLowerCase();
+    const identificacion = this.filtroIdentificacion.toLowerCase();
+    const correo = this.filtroCorreo.toLowerCase();
+
+    this.apiRest.get_All_jugadoresFilt(nombre,identificacion,correo).subscribe((res: any) => {
+      this.jugadores = res.jugadores;
+      this.paginas = res.cant_paginas;
+    });
+
     
-    // Aquí puedes guardar la edad en una variable, formControl o mostrarla
-  }
-}
-
-calcularEdad(fechaNacimiento: string): number {
-  const hoy = new Date();
-  const nacimiento = new Date(fechaNacimiento);
-  let edad = hoy.getFullYear() - nacimiento.getFullYear();
-  const mes = hoy.getMonth() - nacimiento.getMonth();
-
-  if (mes < 0 || (mes === 0 && hoy.getDate() < nacimiento.getDate())) {
-    edad--;
   }
 
-  return edad;
-}
-
-getFilename(filePath: any) {
-  return filePath?.split('/').pop() || 'archivo';
-}
-
-
-updateDocumento(event: Event): void {
-  const selectElement = event.target as HTMLSelectElement;
-  const selectedValue = parseInt(selectElement.value, 10);
-//activamos doicumentos
-  this.tipoDoc=selectedValue;
-
-  
-  if(selectedValue ==1){
-    // Registro civil
-    this.labedoc2 = 'Foto del Registro civil';
-    this.labedoc3 ='Adjunto adicional';
-    this.labedoc4 ='Adjunto adicional';
-
-  }else if(selectedValue ==2){
-    //Tarjeta Identidad
-     this.labedoc2 = 'Foto Tarjeta Identidad Frontal';
-     this.labedoc3 = 'Foto Tarjeta Identidad Trasera';
-     this.labedoc4 ='Foto de registro civil';
-
-  }else if(selectedValue ==3){
-    //Cedula de ciudadania
-     this.labedoc2 = 'Foto Cedula de ciudadania Frontal';
-     this.labedoc3 = 'Foto Cedula de ciudadania Trasera';
-     this.labedoc4 ='Adjunto adicional';
-     
-  }else if(selectedValue ==4){
-    //Cedula extranjeria
-     this.labedoc2 = 'Foto Cedula de extranjeria Frontal';
-     this.labedoc3 = 'Foto Cedula de extranjeria Trasera';
-     this.labedoc4 ='Adjunto adicional';
-  }else if(selectedValue ==5){
-    //Pasaporte
-     this.labedoc2 = 'Foto Pasaporte';
-     this.labedoc3 ='Adjunto adicional';
-     this.labedoc4 ='Adjunto adicional';
-    
+  Inicio() {
+    this.router.navigate(['/DelegaCh']);
   }
-
-}
-
-aplicarFiltros() {
-  const nombre = this.filtroNombre.toLowerCase();
-  const identificacion = this.filtroIdentificacion.toLowerCase();
-  const correo = this.filtroCorreo.toLowerCase();
-
-  this.jugadoresFiltrados = this.jugadores.filter(jug => {
-    return (
-      (!nombre || jug.nombre?.toLowerCase().includes(nombre)) &&
-      (!identificacion || jug.identificacion?.toLowerCase().includes(identificacion)) &&
-      (!correo || jug.email?.toLowerCase().includes(correo))
-    );
-  });
-}
-
-Inicio(){
- this.router.navigate(['/DelegaCh']); 
-}
 
 
 

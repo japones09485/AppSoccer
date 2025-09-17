@@ -4,16 +4,31 @@
 
 
   <div class="row mb-3">
-    <div class="col-md-4">
-      <input type="text" [(ngModel)]="filtroNombre" (input)="aplicarFiltros()" class="form-control m-1"
-        placeholder="Filtrar por nombre">
-    </div>
-    <div class="col-md-4">
-      <input type="text" [(ngModel)]="filtroUsuario" (input)="aplicarFiltros()" class="form-control m-1"
-        placeholder="Filtrar por usuario">
+    <div class="col-md-3">
+      <input type="text" [(ngModel)]="filtroNombre" class="form-control m-1" placeholder="Filtrar por nombre">
     </div>
 
+    <div class="col-md-3">
+      <input type="text" [(ngModel)]="filtroUsuario" class="form-control m-1" placeholder="Filtrar por usuario">
+    </div>
+
+    <div class="col-md-3">
+      <select [(ngModel)]="filtroPerfil" class="form-control m-1">
+        <option value="">-- Seleccionar perfil --</option>
+        <option value="1">Administrador</option>
+        <option value="2">Admin Club</option>
+        <option value="3">Delegado de cancha</option>
+        <option value="4">Jugador</option>
+      </select>
+    </div>
+
+    <div class="col-md-3 d-flex align-items-center">
+      <button type="button" class="btn btn-success w-100 m-1" (click)="aplicarFiltros()">
+        <i class="fa fa-filter"></i> Aplicar filtros
+      </button>
+    </div>
   </div>
+
 
 
   <div style="overflow-x: auto;">
@@ -34,16 +49,16 @@
         </tr>
       </thead>
       <tbody>
-        <tr *ngFor="let us of usersFiltrados" class="text-center">
+        <tr *ngFor="let us of users" class="text-center">
           <th scope="row">
             <button (click)="editUser(us.id!)" type="button" class="btn btn-warning m-1" data-bs-toggle="tooltip"
               data-bs-placement="top" title="editar"> <i class="fa fa-edit"></i></button>
             <button (click)="deleteUser(us.id!)" type="button" class="btn btn-danger m-1"> <i class="fa fa-trash"
                 aria-hidden="true" data-bs-toggle="tooltip" data-bs-placement="top" title="Eliminar"></i></button>
 
-             <button (click)="MailContacto(us.id!)" type="button" class="btn btn-info m-1"> <i class="fa fa-envelope"
-                aria-hidden="true" data-bs-toggle="tooltip" data-bs-placement="top" title="Enviar correo password"></i></button
-                >   
+            <button (click)="MailContacto(us.id!)" type="button" class="btn btn-info m-1"> <i class="fa fa-envelope"
+                aria-hidden="true" data-bs-toggle="tooltip" data-bs-placement="top"
+                title="Enviar correo password"></i></button>
           </th>
 
 
@@ -69,6 +84,8 @@
 
       </tbody>
     </table>
+
+    <app-paginacion *ngIf="users.length > 0" [nPaginas]="paginas" (irPagina)="sigPag($event)"></app-paginacion>
   </div>
 
 </div>

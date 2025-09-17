@@ -3,6 +3,7 @@ import Swal from 'sweetalert2';
 import { ApiService } from "../../services/api.service";
 import { CommonModule } from '@angular/common';
 import { Equipos, User } from '../../interfaces/interfaces';
+import { PaginacionComponent } from '../paginacion/paginacion.component';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule,FormsModule } from '@angular/forms';
 import { environment } from "../../../environments/environment";
 import { Modal } from 'bootstrap';
@@ -11,7 +12,7 @@ import { Modal } from 'bootstrap';
 
 @Component({
   selector: 'app-users',
-  imports: [CommonModule, ReactiveFormsModule,FormsModule],
+  imports: [CommonModule, ReactiveFormsModule,FormsModule,PaginacionComponent],
   templateUrl: './users.component.html',
   styleUrl: './users.component.css'
 })
@@ -40,6 +41,7 @@ export class UsersComponent implements OnInit {
   filtroNombre: string = '';
   filtroUsuario: string = '';
   filtroPerfil: string = '';
+  paginas = 0;
 
   constructor(private apiRest: ApiService,
     private fb: FormBuilder) { }
@@ -49,7 +51,7 @@ export class UsersComponent implements OnInit {
     this.initForm();
     this.creando = false;
 
-    this.apiRest.get_All_equipos()
+    this.apiRest.get_All_eq()
       .subscribe((res: any) => {
         this.equipos = res.equipos;
 
@@ -68,9 +70,18 @@ export class UsersComponent implements OnInit {
     this.apiRest.get_All_users()
       .subscribe((res: any) => {
         this.users = res.users;
-        this.usersFiltrados = [...this.users];
-
+        this.paginas = res.cant_paginas;
       });
+  }
+
+  sigPag(pag: number) {
+
+    
+      this.apiRest.get_All_users(pag).subscribe((res: any) => {
+        this.users = res.users;
+        this.paginas = res.cant_paginas;
+      });
+
   }
 
   initForm() {
@@ -187,14 +198,14 @@ export class UsersComponent implements OnInit {
   aplicarFiltros() {
     const nombre = this.filtroNombre.toLowerCase();
     const usuario = this.filtroUsuario.toLowerCase();
-    const perfil = this.filtroPerfil.toLowerCase();
+    const perfil = this.filtroPerfil;
+    
+    this.apiRest.get_All_usersFilt(nombre,usuario,perfil)
+      .subscribe((res: any) => {
+        this.users = res.users;
+        this.paginas = res.cant_paginas;
+      });
 
-    this.usersFiltrados = this.users.filter(us => {
-      return (
-        (!nombre || us.nombre?.toLowerCase().includes(nombre)) &&
-        (!usuario || us.usuario?.toLowerCase().includes(usuario)) 
-      );
-    });
   }
 
 

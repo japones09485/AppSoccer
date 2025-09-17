@@ -7,20 +7,28 @@
 
     <!-- FILTROS -->
     <div class="row mb-3">
-        <div class="col-md-4">
-            <input type="text" [(ngModel)]="filtroNombre" (input)="aplicarFiltros()" class="form-control m-1"
-                placeholder="Filtrar por nombre">
+        <div class="col-md-3">
+            <input type="text" [(ngModel)]="filtroNombre" class="form-control m-1" placeholder="Filtrar por nombre">
         </div>
-        <div class="col-md-4">
-            <input type="text" [(ngModel)]="filtroIdentificacion" (input)="aplicarFiltros()" class="form-control m-1"
+        <div class="col-md-3">
+            <input type="text" [(ngModel)]="filtroIdentificacion" class="form-control m-1"
                 placeholder="Filtrar por identificación">
         </div>
-        <div class="col-md-4">
-            <input type="text" [(ngModel)]="filtroCorreo" (input)="aplicarFiltros()" class="form-control m-1"
-                placeholder="Filtrar por correo">
+        <div class="col-md-3">
+            <input type="text" [(ngModel)]="filtroCorreo" class="form-control m-1" placeholder="Filtrar por correo">
+        </div>
+        <div class="col-md-3 d-flex align-items-center">
+            <button type="button" class="btn btn-success w-100 m-1" (click)="aplicarFiltros()">
+                <i class="fa fa-filter"></i> Aplicar filtros
+            </button>
+
+
         </div>
     </div>
+
     <div style="overflow-x: auto;">
+
+
         <table class="table table-bordered">
             <thead>
                 <tr class="text-center">
@@ -42,10 +50,11 @@
                     <th class="bg-success text-light" scope="col">Estado</th>
                     <th *ngIf="this.UserLog.perfil== 1" class="bg-success text-light" scope="col">Doc 3</th>
                     <th *ngIf="this.UserLog.perfil== 1" class="bg-success text-light" scope="col">Doc 4</th>
+                    <th *ngIf="this.UserLog.perfil== 1" class="bg-success text-light" scope="col">Doc 5</th>
                 </tr>
             </thead>
             <tbody>
-                <tr *ngFor="let jug of jugadoresFiltrados" class="text-center">
+                <tr *ngFor="let jug of jugadores" class="text-center">
                     <th scope="row">
                         <button (click)="editJugador(jug.id!)" type="button" class="btn btn-warning m-1"
                             data-bs-toggle="tooltip" data-bs-placement="top" title="editar">
@@ -67,7 +76,7 @@
                             <img [src]="pathIm + jug.img1" alt="Imagen 1" class="img-thumbnail d-block mx-auto shadow"
                                 style="width: 48px; height: 48px; object-fit: cover; border-radius: 0.375rem;">
                         </a>
-                        <img *ngIf="!jug.img1" src="../../../../assets/img/nofoto.png" alt="Imagen 1"
+                        <img *ngIf="!jug.img1" src="../../../../assets/img/nd.png" alt="Imagen 1"
                             class="img-thumbnail d-block mx-auto shadow"
                             style="width: 48px; height: 48px; object-fit: cover; border-radius: 0.375rem;">
                     </td>
@@ -77,7 +86,7 @@
                             <img [src]="pathIm + jug.img2" alt="Imagen 2" class="img-thumbnail d-block mx-auto shadow"
                                 style="width: 48px; height: 48px; object-fit: cover; border-radius: 0.375rem;">
                         </a>
-                        <img *ngIf="!jug.img2" src="../../../../assets/img/nofoto.png" alt="Imagen 2"
+                        <img *ngIf="!jug.img2" src="../../../../assets/img/nd.png" alt="Imagen 2"
                             class="img-thumbnail d-block mx-auto shadow"
                             style="width: 48px; height: 48px; object-fit: cover; border-radius: 0.375rem;">
                     </td>
@@ -110,7 +119,19 @@
                 </tr>
             </tbody>
         </table>
+
+        <app-paginacion *ngIf="jugadores.length > 0" [nPaginas]="paginas" (irPagina)="sigPag($event)"></app-paginacion>
     </div>
+
+
+    <!-- tu tabla de jugadores -->
+    <div style="overflow-x: auto;">
+        <table class="table table-bordered">
+            <!-- ... aquí todo tu <thead> y <tbody> con los jugadores ... -->
+        </table>
+    </div>
+
+    <!-- componente de paginación -->
 
 </div>
 
@@ -126,12 +147,14 @@
                 <div class="mb-3 row">
                     <label for="image1" class="col-sm-3 col-form-label text-white"
                         style="font-size: 1.2rem; font-weight: bold; text-decoration: underline;">
-                        Nombre
+                        Nombres
                     </label>
                     <div class="col-sm-9">
                         <input type="text" id="name" formControlName="name" class="form-control"
-                            placeholder="Ingrese el nombre del jugador" required>
+                            placeholder="Ingrese el nombre del jugador" [readonly]="UserLog.perfil == 3">
                     </div>
+
+
                 </div>
 
 
@@ -147,7 +170,7 @@
 
                     <div class="col-sm-9">
                         <input type="mail" id="mail" formControlName="mail" class="form-control"
-                            placeholder="Ingrese su correo electronico" required>
+                            placeholder="Ingrese su correo electronico" [readonly]="UserLog.perfil == 3">
                     </div>
                 </div>
 
@@ -163,7 +186,7 @@
                     <div class="col-sm-9">
                         <input type="date" id="fch_nacimiento" formControlName="fch_nacimiento" class="form-control"
                             (change)="onFechaNacimientoChange($event)" placeholder="Ingrese la fecha de nacimiento"
-                            required>
+                            [readonly]="UserLog.perfil == 3">
                     </div>
                 </div>
 
@@ -176,7 +199,7 @@
 
 
                     <div class="col-sm-9">
-                        <select id="posicion" formControlName="posicion" class="form-select">
+                        <select id="posicion" formControlName="posicion" class="form-select" >
                             <option [value]="1">Arquero</option>
                             <option [value]="2">Defensa</option>
                             <option [value]="3">Volante</option>
@@ -214,7 +237,7 @@
 
                     <div class="col-sm-9">
                         <input type="text" id="identificacion" formControlName="identificacion" class="form-control"
-                            placeholder="Ingrese la identificacion de jugador" required>
+                            placeholder="Ingrese la identificacion de jugador" [readonly]="UserLog.perfil == 3">
                     </div>
                 </div>
 
@@ -228,7 +251,7 @@
                             <option value="Masculino">Masculino</option>
                             <option value="Femenino">Femenino</option>
                         </select>
-                    </div> 
+                    </div>
                 </div>
 
 
@@ -243,7 +266,7 @@
 
                     <div class="col-sm-9">
                         <input type="text" id="nomMadre" formControlName="nomMadre" class="form-control"
-                            placeholder="Nombre madre">
+                            placeholder="Nombre madre" [readonly]="UserLog.perfil == 3">
                     </div>
                 </div>
 
@@ -255,7 +278,7 @@
                     </label>
                     <div class="col-sm-9">
                         <input type="text" id="telMadre" formControlName="telMadre" class="form-control"
-                            placeholder="Telefono madre">
+                            placeholder="Telefono madre" [readonly]="UserLog.perfil == 3">
                     </div>
                 </div>
 
@@ -268,7 +291,7 @@
                     </label>
                     <div class="col-sm-9">
                         <input type="text" id="nomPadre" formControlName="nomPadre" class="form-control"
-                            placeholder="Nombre padre">
+                            placeholder="Nombre padre" [readonly]="UserLog.perfil == 3">
                     </div>
                 </div>
 
@@ -280,7 +303,7 @@
                     </label>
                     <div class="col-sm-9">
                         <input type="text" id="telPadre" formControlName="telPadre" class="form-control"
-                            placeholder="Telefono padre">
+                            placeholder="Telefono padre" [readonly]="UserLog.perfil == 3">
                     </div>
                 </div>
 
@@ -295,7 +318,7 @@
 
 
                     <div class="col-sm-9">
-                        <input type="file" id="image1" (change)="uploadImage($event, 1)" class="form-control" required>
+                        <input type="file" id="image1" (change)="uploadImage($event, 1)" class="form-control" [readonly]="UserLog.perfil == 3">
                     </div>
                 </div>
 
@@ -309,7 +332,7 @@
 
 
                     <div class="col-sm-9">
-                        <input type="file" id="image2" (change)="uploadImage($event, 2)" class="form-control" required>
+                        <input type="file" id="image2" (change)="uploadImage($event, 2)" class="form-control" [readonly]="UserLog.perfil == 3">
                     </div>
                 </div>
 
@@ -322,7 +345,7 @@
                         {{ this.labedoc3 }}
                     </label>
                     <div class="col-sm-9">
-                        <input type="file" id="image3" (change)="uploadImage($event, 3)" class="form-control" required>
+                        <input type="file" id="image3" (change)="uploadImage($event, 3)" class="form-control" [readonly]="UserLog.perfil == 3">
                     </div>
                 </div>
 
@@ -335,10 +358,20 @@
                         {{ this.labedoc4 }}
                     </label>
                     <div class="col-sm-9">
-                        <input type="file" id="image4" (change)="uploadImage($event, 4)" class="form-control" required>
+                        <input type="file" id="image4" (change)="uploadImage($event, 4)" class="form-control" [readonly]="UserLog.perfil == 3">
                     </div>
                 </div>
 
+                <div class="mb-3 row" *ngIf="tipoDoc>0">
+
+                    <label for="image1" class="col-sm-3 col-form-label text-white"
+                        style="font-size: 1.2rem; font-weight: bold; text-decoration: underline;">
+                        {{ this.labedoc5 }}
+                    </label>
+                    <div class="col-sm-9">
+                        <input type="file" id="image4" (change)="uploadImage($event, 5)" class="form-control" [readonly]="UserLog.perfil == 3">
+                    </div>
+                </div>
 
                 <div class="mb-3 row">
                     <label for="image1" class="col-sm-3 col-form-label text-white"
@@ -384,7 +417,7 @@
 
                 <!-- Botones -->
                 <div class="d-flex justify-content-end">
-                    <button type="submit" class="btn btn-warning text-dark m-2" *ngIf="JugadorForm.valid">
+                    <button type="submit" class="btn btn-warning text-dark m-2" *ngIf="JugadorForm.valid ">
                         <i class="fa fa-floppy-o" aria-hidden="true"></i> Guardar
                     </button>
 

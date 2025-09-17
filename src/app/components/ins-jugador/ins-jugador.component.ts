@@ -6,12 +6,12 @@ import { Jugadores, User } from '../../interfaces/interfaces';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
 import { environment } from "../../../environments/environment";
 import { Modal } from 'bootstrap';
-import { Router,RouterModule  } from '@angular/router';
+import { Router, RouterModule } from '@angular/router';
 
 
 @Component({
   selector: 'app-ins-jugador',
-  imports: [CommonModule, ReactiveFormsModule,RouterModule],
+  imports: [CommonModule, ReactiveFormsModule, RouterModule],
   templateUrl: './ins-jugador.component.html',
   styleUrl: './ins-jugador.component.css'
 })
@@ -24,11 +24,11 @@ export class InsJugadorComponent implements OnInit {
   EdadJugador!: number;
   operation = 'add';
   tipoDoc = 0;
-  labedoc1='Foto Jugador';
-  labedoc2='Adjunto adicional';
-  labedoc3='Adjunto adicional';
-  labedoc4='Adjunto adicional';
-  labedoc5='Adjunto adicional';
+  labedoc1 = 'Foto Jugador';
+  labedoc2 = 'Adjunto adicional';
+  labedoc3 = 'Adjunto adicional';
+  labedoc4 = 'Adjunto adicional';
+  labedoc5 = 'Adjunto adicional';
 
 
   constructor(private apiRest: ApiService,
@@ -86,10 +86,10 @@ export class InsJugadorComponent implements OnInit {
       if (result.isConfirmed) {
         this.apiRest.add_jugador(this.frmGuardar)
           .subscribe((data: any) => {
-            
+
             Swal.fire(data.msj);
-            if(data.success == true){
-              this.tipoDoc=0;
+            if (data.success == true) {
+              this.tipoDoc = 0;
               this.JugadorForm.reset();
               this.router.navigate(['/home']);
             }
@@ -116,18 +116,30 @@ export class InsJugadorComponent implements OnInit {
   uploadImage(ev: any, numFile: number) {
     const inputFile = ev.target as HTMLInputElement;
     if (inputFile.files && inputFile.files.length > 0) {
+      const file = inputFile.files[0];
+
+      // Solo validar si el archivo es 1, 2 o 3
+      if (numFile !== 4 && numFile !== 5) {
+        const validTypes = ['image/jpeg', 'image/png'];
+        if (!validTypes.includes(file.type)) {
+          Swal.fire('Solo se permiten imagenes , archivos JPG o PNG');
+          inputFile.value = ''; // Limpia el input
+          return;
+        }
+      }
+
       // Agregar el archivo al formulario
-      this.frmGuardar.append(`${numFile}`, inputFile.files[0]);
+      this.frmGuardar.append(`${numFile}`, file);
 
       // Obtener el label asociado y actualizar su texto
-      const fileName = inputFile.files[0].name;
+      const fileName = file.name;
       const labelElement = document.getElementById(`labelFile${numFile}`);
       if (labelElement) {
         labelElement.textContent = fileName;
       }
     }
-
   }
+
 
   calcularEdad(fechaNacimiento: string): number {
     const hoy = new Date();
@@ -142,45 +154,46 @@ export class InsJugadorComponent implements OnInit {
     return edad;
   }
 
-updateDocumento(event: Event): void {
-  const selectElement = event.target as HTMLSelectElement;
-  const selectedValue = parseInt(selectElement.value, 10);
-//activamos doicumentos
-  this.tipoDoc=selectedValue;
+  updateDocumento(event: Event): void {
+    const selectElement = event.target as HTMLSelectElement;
+    const selectedValue = parseInt(selectElement.value, 10);
+    //activamos doicumentos
+    this.tipoDoc = selectedValue;
 
-  
-  if(selectedValue ==1){
-    // Registro civil
-    this.labedoc2 = 'Foto del Registro civil';
-    this.labedoc3 ='Adjunto adicional';
-    this.labedoc4 ='Adjunto adicional';
 
-  }else if(selectedValue ==2){
-    //Tarjeta Identidad
-     this.labedoc2 = 'Foto Tarjeta Identidad Frontal';
-     this.labedoc3 = 'Foto Tarjeta Identidad Trasera';
-     this.labedoc4 ='Adjunto adicional';
+    if (selectedValue == 1) {
+      // Registro civil
+      this.labedoc2 = 'Foto del Registro civil';
+      this.labedoc3 = 'Adjunto adicional';
+      this.labedoc4 = 'Adjunto adicional';
 
-  }else if(selectedValue ==3){
-    //Cedula de ciudadania
-     this.labedoc2 = 'Foto Cedula de ciudadania Frontal';
-     this.labedoc3 = 'Foto Cedula de ciudadania Trasera';
-     this.labedoc4 ='Adjunto adicional';
-     
-  }else if(selectedValue ==4){
-    //Cedula extranjeria
-     this.labedoc2 = 'Foto Cedula de extranjeria Frontal';
-     this.labedoc3 = 'Foto Cedula de extranjeria Trasera';
-     this.labedoc4 ='Adjunto adicional';
-  }else if(selectedValue ==5){
-    //Pasaporte
-     this.labedoc2 = 'Foto Pasaporte';
-     this.labedoc3 ='Adjunto adicional';
-     this.labedoc4 ='Adjunto adicional';
-    
+    } else if (selectedValue == 2) {
+      //Tarjeta Identidad
+      this.labedoc2 = 'Foto Tarjeta Identidad Frontal';
+      this.labedoc3 = 'Foto Tarjeta Identidad Trasera';
+      this.labedoc4 = 'Foto de registro civil';
+      this.labedoc5 = 'Adjunto en pdf';
+      
+
+    } else if (selectedValue == 3) {
+      //Cedula de ciudadania
+      this.labedoc2 = 'Foto Cedula de ciudadania Frontal';
+      this.labedoc3 = 'Foto Cedula de ciudadania Trasera';
+      this.labedoc4 = 'Adjunto adicional';
+
+    } else if (selectedValue == 4) {
+      //Cedula extranjeria
+      this.labedoc2 = 'Foto Cedula de extranjeria Frontal';
+      this.labedoc3 = 'Foto Cedula de extranjeria Trasera';
+      this.labedoc4 = 'Adjunto adicional';
+    } else if (selectedValue == 5) {
+      //Pasaporte
+      this.labedoc2 = 'Foto Pasaporte';
+      this.labedoc3 = 'Adjunto adicional';
+      this.labedoc4 = 'Adjunto adicional';
+
+    }
+
   }
-
-}
-
 
 }

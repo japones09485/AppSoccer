@@ -6,13 +6,14 @@ import { CommonModule } from '@angular/common';
 import { Torneos } from '../../interfaces/interfaces';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
 import { environment } from "../../../environments/environment";
+import { PaginacionComponent } from '../paginacion/paginacion.component';
 import { Modal } from 'bootstrap';
 import { FormsModule } from '@angular/forms';
 
 
 @Component({
   selector: 'app-torneos',
-  imports: [CommonModule, ReactiveFormsModule,FormsModule],
+  imports: [CommonModule, ReactiveFormsModule,FormsModule,PaginacionComponent],
   templateUrl: './torneos.component.html',
   styleUrl: './torneos.component.css'
 })
@@ -36,6 +37,7 @@ export class TorneosComponent implements OnInit {
   cantFase!:number;
   filtroNombre: string = '';
   torneosFiltrados: any[] = [];
+  paginas = 0;
 
   constructor(private apiRest: ApiService,
     private fb: FormBuilder,
@@ -50,10 +52,21 @@ export class TorneosComponent implements OnInit {
     this.apiRest.get_All_torneos()
       .subscribe((res: any) => {
         this.torneos = res.torneos;
-        this.torneos = this.torneos.map(t => ({ ...t, expanded: false }));
-        this.torneosFiltrados = this.torneos;
+        this.paginas = res.cant_paginas;
 
       });
+  }
+
+  sigPag(pag: number) {
+
+  
+    this.apiRest.get_All_torneos(pag)
+      .subscribe((res: any) => {
+        this.torneos = res.torneos;
+        this.paginas = res.cant_paginas;
+
+      });
+
   }
 
     // Al cargar categorías, conviértelo a número:
@@ -253,17 +266,12 @@ export class TorneosComponent implements OnInit {
 
   
 filtrarTorneos() {
-  const filtro = this.filtroNombre.toLowerCase().trim();
+  const nombre = this.filtroNombre.toLowerCase().trim();
 
-  if (!filtro) {
-    // si no hay filtro, mostramos todo
-    this.torneosFiltrados = this.torneos;
-  } else {
-    // filtramos por nombre
-    this.torneosFiltrados = this.torneos.filter(t =>
-      t.nombre.toLowerCase().includes(filtro)
-    );
-  }
+  this.apiRest.get_All_torneosFilt(nombre).subscribe((res: any) => {
+        this.torneos = res.torneos;
+        this.paginas = res.cant_paginas;
+      });
 
   }
 

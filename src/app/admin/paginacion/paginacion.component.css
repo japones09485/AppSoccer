@@ -1,0 +1,17 @@
+.page-item .page-link {
+  background-color: #28a745; /* verde bootstrap */
+  color: #fff; /* letras blancas */
+  font-size: 1.1rem; /* un poco más grande */
+  border: none; /* quita bordes grises */
+  margin: 0 2px; /* separa un poco los botones */
+}
+
+.page-item .page-link:hover {
+  background-color: #218838; /* verde más oscuro al pasar el mouse */
+  color: #fff;
+}
+
+.page-item.active .page-link {
+  background-color: #1e7e34; /* verde activo */
+  font-weight: bold;
+}

@@ -92,6 +92,7 @@ export class InfoTorneoComponent implements OnInit {
   nombreGrupoActual = '';
   jugadoresEquipo: any[] = [];
   jugadoresInscritos: any[] = [];
+
   // Simulación de jugadores por equipo
   jugadoresEq1: any;
   jugadoresEq2: any;
@@ -122,6 +123,7 @@ export class InfoTorneoComponent implements OnInit {
   IdPreSelect!: number;
   estadoSwitch = true;
   ganadorW !: any;
+  jugadoresEquipoPar: any[] = [];
 
 
   ordinales: string[] = [
@@ -203,6 +205,7 @@ export class InfoTorneoComponent implements OnInit {
       this.apiRest.get_All_equipos_torneo(this.idTorneo).subscribe((res: any) => {
 
         this.equiposTorneo = res.equiposTorneo;
+        
       });
 
 
@@ -946,8 +949,6 @@ export class InfoTorneoComponent implements OnInit {
         const buscarNombre = (id: number, jugadores: any[]) => {
 
 
-          console.log('autogol' + id);
-
           const jugador = jugadores.find(j => Number(j.id) === id || Number(j.fk_jugador) === id);
 
           if (id == -1) {
@@ -1274,7 +1275,6 @@ export class InfoTorneoComponent implements OnInit {
     this.apiRest.EquiposTorneo(this.torneoSelect.id).subscribe((res: any) => {
       this.EquiposTorneo = res.equipos
 
-
     });
 
 
@@ -1522,7 +1522,7 @@ export class InfoTorneoComponent implements OnInit {
         seleccionado: false // para control en "Individual"
       }));
 
-      console.log(this.jugadoresEquipo);
+     
     });
   }
 
@@ -1668,7 +1668,16 @@ anularFase(fase: number) {
   });
 }
 
-
+JugadoresParticipante(IdEquipo: number) {
+  this.apiRest.jugadoresEquipoTorneo(this.torneoSelect.id, IdEquipo).subscribe((res: any) => {
+    this.jugadoresEquipoPar = res.jugadores;
+   
+    if (this.jugadoresEquipoPar.length > 0) {
+      this.jugadoresEquipoPar.shift();
+    }
+    
+    });
+}
 
 }
 

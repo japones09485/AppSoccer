@@ -4,8 +4,8 @@
   <div class="container rounded-4 p-4 shadow-lg">
     <ul class="nav nav-tabs custom-tabs mb-4 justify-content-center" role="tablist">
       <li class="nav-item" role="presentation">
-        <button (click)="validMenu(1)" class="nav-link active" id="info-tab" data-bs-toggle="tab" data-bs-target="#info" type="button"
-          role="tab" aria-controls="info" aria-selected="true">
+        <button (click)="validMenu(1)" class="nav-link active" id="info-tab" data-bs-toggle="tab" data-bs-target="#info"
+          type="button" role="tab" aria-controls="info" aria-selected="true">
           <i class="fa fa-info-circle me-1"></i> Información del equipo
         </button>
       </li>
@@ -26,8 +26,8 @@
       -->
 
       <li class="nav-item" role="presentation">
-        <button (click)="validMenu(3)"  class="nav-link" id="torneos-tab" data-bs-toggle="tab" data-bs-target="#torneos" type="button"
-          role="tab" aria-controls="torneos" aria-selected="false">
+        <button (click)="validMenu(3)" class="nav-link" id="torneos-tab" data-bs-toggle="tab" data-bs-target="#torneos"
+          type="button" role="tab" aria-controls="torneos" aria-selected="false">
           <i class="fa fa-trophy me-1"></i> Torneos
         </button>
       </li>
@@ -69,6 +69,8 @@
         </div>
       </div>
     </div>
+
+
 
     <div *ngIf="validCategorias">
       <!-- Categorias -->
@@ -128,12 +130,24 @@
         <div id="title" class="text-center mb-5">
           <img src="../../../assets/img/logo.png" class="img-fluid mb-3 logo" alt="Logo">
           <h1 class="titulo-principal text-success">
-            Torneos Actuales<br>
-
+            Torneos Actuales
           </h1>
+
+          <!-- Contenedor centrado para el select -->
+          <div class="d-flex justify-content-center mt-3">
+            <div class="col-md-3">
+              <select [(ngModel)]="filtroEstado" (change)="filtrarEstado(filtroEstado)" class="form-select">
+                <option [ngValue]="''">Todos los estados</option>
+                <option [ngValue]="0">Inactivo</option>
+                <option [ngValue]="1">En proceso</option>
+                <option [ngValue]="2">Finalizado</option>
+              </select>
+            </div>
+          </div>
         </div>
 
-        <div class="col-sm-6 col-md-4 col-lg-3" *ngFor="let torneo of Torneos">
+
+        <div class="col-sm-6 col-md-4 col-lg-3" *ngFor="let torneo of torneosFiltrados">
           <div class="card h-100 shadow-lg border-0 rounded-4 overflow-hidden position-relative">
 
             <!-- Imagen -->
@@ -142,7 +156,7 @@
             <!-- Botón en la esquina superior derecha -->
             <div class="position-absolute top-0 end-0 m-2 d-flex gap-1">
 
-               <button *ngIf="torneo.estado == 1" class="btn btn-warning" title="Carnets jugadores"
+              <button *ngIf="torneo.estado == 1" class="btn btn-warning" title="Carnets jugadores"
                 (click)="CarnetsEquipo(torneo.IdTorneo)">
                 <i class="fa fa-id-card" aria-hidden="true"></i>
 
@@ -153,7 +167,8 @@
                 <i class="fa fa-user" aria-hidden="true"></i>
               </button>
 
-                <button *ngIf="torneo.estado == 1" class="btn btn-sm btn-warning" data-bs-toggle="modal" data-bs-target="#modalSeleccionarJugadorT" title="Inscribir jugadores al torneo"
+              <button *ngIf="torneo.estado == 1" class="btn btn-sm btn-warning" data-bs-toggle="modal"
+                data-bs-target="#modalSeleccionarJugadorT" title="Inscribir jugadores al torneo"
                 (click)="abrirModalSeleccionJEquipo(torneo)">
                 +
               </button>
@@ -170,23 +185,23 @@
             <div class="card-body d-flex flex-column px-4 py-3">
               <h5 class="titulo-second card-title text-success fw-bold text-center">{{ torneo.nombre }}</h5>
               <hr class="my-2">
- 
-             <span>Descripción</span>
-                    <div class="text-end">
 
-                      {{
-                      mostrarDescripcionCompleta
-                      ? torneo?.descripcion
-                      : ((torneo?.descripcion || '') | slice:0:100) + ((torneo?.descripcion?.length || 0)
-                      > 100 ? '...' : '')
-                      }}
+              <span>Descripción</span>
+              <div class="text-end">
 
-                      <br>
-                      <a href="javascript:void(0)" *ngIf="(torneo?.descripcion?.length || 0) > 100"
-                        (click)="mostrarDescripcionCompleta = !mostrarDescripcionCompleta">
-                        {{ mostrarDescripcionCompleta ? 'Leer menos' : 'Leer más' }}
-                      </a>
-                    </div>
+                {{
+                mostrarDescripcionCompleta
+                ? torneo?.descripcion
+                : ((torneo?.descripcion || '') | slice:0:100) + ((torneo?.descripcion?.length || 0)
+                > 100 ? '...' : '')
+                }}
+
+                <br>
+                <a href="javascript:void(0)" *ngIf="(torneo?.descripcion?.length || 0) > 100"
+                  (click)="mostrarDescripcionCompleta = !mostrarDescripcionCompleta">
+                  {{ mostrarDescripcionCompleta ? 'Leer menos' : 'Leer más' }}
+                </a>
+              </div>
 
               <div class="mb-1"><strong>Inicio:</strong> {{ torneo.fecha_inicio }}</div>
               <div class="mb-1"><strong>Fin:</strong> {{ torneo.fecha_fin }}</div>
@@ -197,8 +212,10 @@
                 getNombreCategoria(torneo.categoria) }}</div>
 
 
-              <div class="mb-2 text-primary" *ngIf="torneo.estado == 1"><strong>Estado:</strong> En proceso</div>
-              <div class="mb-2 text-success" *ngIf="torneo.estado == 2"><strong>Estado:</strong> Finalizado</div>
+              <div *ngIf="torneo.estado == 0" class="mb-2"><strong>Estado: Inactivo</strong></div>
+              <div *ngIf="torneo.estado == 1" class="mb-2"><strong>Estado: En proceso</strong></div>
+              <div *ngIf="torneo.estado == 2" class="mb-2"><strong>Estado: Finalizado</strong></div>
+
             </div>
           </div>
         </div>
@@ -225,31 +242,24 @@
       <div class="modal-body">
 
         <!-- Selector de jugador con búsqueda por nombre o identificación -->
-        <ng-select
-          id="jugadorSelect"
-          [items]="jugadoresDisponibles"
-          bindLabel="busqueda"
-          bindValue="id"
-          [(ngModel)]="jugadorSeleccionadoId"
-          placeholder="Buscar por nombre o identificación..."
-          [searchable]="true"
-          [clearable]="true"
-          [appendTo]="'#modalSeleccionarJugador .modal-content'"
-          class="w-100 custom-ng-select m-4"
+        <ng-select id="jugadorSelect" [items]="jugadoresDisponibles" bindLabel="busqueda" bindValue="id"
+          [(ngModel)]="jugadorSeleccionadoId" placeholder="Buscar por nombre o identificación..." [searchable]="true"
+          [clearable]="true" [appendTo]="'#modalSeleccionarJugador .modal-content'" class="w-100 custom-ng-select m-4"
           (change)="onSeleccionarJugador()">
 
           <!-- Plantilla personalizada para opciones -->
           <ng-template ng-option-tmp let-item="item">
             <div class="d-flex align-items-center">
               <img *ngIf="item.img1" [src]="pathIm + item.img1" class="rounded-circle me-2" width="30" height="30">
-              <img *ngIf="!item.img1" src="../../../assets/img/nd.png" class="rounded-circle me-2" width="30" height="30">
+              <img *ngIf="!item.img1" src="../../../assets/img/nd.png" class="rounded-circle me-2" width="30"
+                height="30">
               <span><strong>{{ item.identificacion }}</strong> - {{ item.nombre }}</span>
             </div>
           </ng-template>
 
         </ng-select>
 
-       
+
 
       </div>
 
@@ -274,7 +284,7 @@
       <div class="modal-header bg-success text-white">
         <h5 class="modal-title" id="modalLabel">
           <!-- Botón para agregar todos los jugadores de la categoría -->
-<!-- 
+          <!-- 
 <button (click)="AddAllJugadores()" 
         type="button" 
         class="btn btn-warning ml-2" 
@@ -283,7 +293,7 @@
 </button> 
 -->
 
-Agregar jugador a Torneo
+          Agregar jugador a Torneo
         </h5>
         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
       </div>
@@ -292,30 +302,24 @@ Agregar jugador a Torneo
       <div class="modal-body">
 
         <!-- Selector de jugador con búsqueda por nombre o identificación -->
-        <ng-select
-          id="jugadorSelect"
-          [items]="jugadoresDisponiblesClub"
-          bindLabel="busqueda"
-          bindValue="id"
-          [(ngModel)]="jugadorSeleccionadoIdClub"
-          placeholder="Buscar por nombre o identificación..."
-          [searchable]="true"
-          [clearable]="true"
-          class="w-100 custom-ng-select m-4"
+        <ng-select id="jugadorSelect" [items]="jugadoresDisponiblesClub" bindLabel="busqueda" bindValue="id"
+          [(ngModel)]="jugadorSeleccionadoIdClub" placeholder="Buscar por nombre o identificación..."
+          [searchable]="true" [clearable]="true" class="w-100 custom-ng-select m-4"
           (change)="onSeleccionarJugadorClub()">
 
           <!-- Plantilla personalizada para opciones -->
           <ng-template ng-option-tmp let-item="item">
             <div class="d-flex align-items-center">
               <img *ngIf="item.img1" [src]="pathIm + item.img1" class="rounded-circle me-2" width="30" height="30">
-              <img *ngIf="!item.img1" src="../../../assets/img/nd.png" class="rounded-circle me-2" width="30" height="30">
+              <img *ngIf="!item.img1" src="../../../assets/img/nd.png" class="rounded-circle me-2" width="30"
+                height="30">
               <span><strong>{{ item.identificacion }}</strong> - {{ item.nombre }}</span>
             </div>
           </ng-template>
 
         </ng-select>
 
-      
+
 
       </div>
 
@@ -351,7 +355,7 @@ Agregar jugador a Torneo
                 <th>Fecha de nacimiento</th>
                 <th>Edad</th>
                 <th>Posición</th>
-                <th >Acción</th>
+                <th>Acción</th>
               </tr>
             </thead>
             <tbody>
@@ -364,12 +368,12 @@ Agregar jugador a Torneo
                 <td>{{ jugador.fecha_nacimiento }}</td>
                 <td>{{ apiRest.calcularEdad(jugador.fecha_nacimiento) }}</td>
                 <td>
-                  
-                   <span *ngIf="jugador.posicion == 1">Arquero</span>
+
+                  <span *ngIf="jugador.posicion == 1">Arquero</span>
                   <span *ngIf="jugador.posicion == 2">Defensa</span>
                   <span *ngIf="jugador.posicion == 3">Volante</span>
                   <span *ngIf="jugador.posicion == 4">Delantero</span>
-                      
+
                 <td>
                   <button class="btn btn-sm btn-danger"
                     (click)="eliminarJugadorClub(jugador.id, this.categoriaSeleccionada.id,this.equipo.id)">

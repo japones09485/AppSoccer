@@ -6,18 +6,35 @@
 
   <!-- 🔍 Filtro por nombre -->
   <div class="row mb-3 align-items-center">
-    <div class="col-md-6">
-      <input type="text" [(ngModel)]="filtroNombre" class="form-control" placeholder="Filtrar por nombre de torneo...">
-    </div>
-
-    <div class="col-md-3">
-      <button type="button" class="btn btn-success w-100" (click)="filtrarTorneos()">
-        <i class="fa fa-filter"></i> Aplicar filtros
-      </button>
-    </div>
+  <!-- Filtro por nombre -->
+  <div class="col-md-5">
+    <input 
+      type="text" 
+      [(ngModel)]="filtroNombre" 
+      class="form-control" 
+      placeholder="Filtrar por nombre de torneo...">
   </div>
 
+  <!-- Filtro por estado -->
+  <div class="col-md-3">
+    <select [(ngModel)]="filtroEstado" class="form-select">
+      <option [ngValue]="''">Todos los estados</option>
+      <option [ngValue]="0">Inactivo</option>
+      <option [ngValue]="1">En proceso</option>
+      <option [ngValue]="2">Finalizado</option>
+    </select>
+  </div>
 
+  <!-- Botón de filtrar -->
+  <div class="col-md-3">
+    <button 
+      type="button" 
+      class="btn btn-success w-100" 
+      (click)="filtrarTorneos()">
+      <i class="fa fa-filter"></i> Aplicar filtros
+    </button>
+  </div>
+</div>
 
   <div style="overflow-x: auto;">
     <table class="table table-bordered">

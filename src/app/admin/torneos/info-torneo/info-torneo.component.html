@@ -89,7 +89,24 @@
                     <strong>{{ getNombreCategoria(torneoSelect.categoria) }}</strong>
                   </li>
                   <li class="list-group-item text-muted small">
-                    El 1º de cada grupo avanzará a la siguiente etapa
+
+
+                    <div class="d-grid gap-2 col-6 mx-auto">
+
+                      <button *ngIf="this.perfilUsuario == 1 " (click)="RecalcularFase(1)" type="button"
+                        class="btn btn-warning m-1" title="Recalcular"><i class="fa fa-cog"></i> Recalcular Torneo
+                      </button>
+
+                    </div>
+
+
+                    <!-- Spinner debajo de los botones -->
+                    <div *ngIf="isLoading" class="d-flex flex-column align-items-center mt-3">
+                      <img src="../../../assets/img/balon.png" alt="Cargando..." width="40" height="40"
+                        class="balon-girando" />
+                      <span class="mt-2 text-danger fw-bold">Procesando, por favor espera...</span>
+                    </div>
+
                   </li>
                 </ul>
               </div>
@@ -129,6 +146,7 @@
                   <li class="list-group-item d-flex justify-content-between">
                     <span>Fin</span>
                     <strong>{{ torneoSelect?.fecha_fin }}</strong>
+
                   </li>
                 </ul>
               </div>
@@ -142,13 +160,14 @@
 
                   <button
                     *ngIf="this.perfilUsuario == 1 && torneoSelect.ValidF1==2 && torneoSelect.ValidF2!=2 && torneoSelect.ValidF3!=2 && torneoSelect.ValidF4!=2 && torneoSelect.ValidF5!=2 && torneoSelect.ValidF6!=2 && torneoSelect.ValidF7!=2 "
-                    (click)="anularFase(1)" type="button" class="btn btn-danger m-1" title="Editar nombre fase"><i
+                    (click)="anularFase(1)" type="button" class="btn btn-danger m-1" title="Anular fase"><i
                       class="fa fa-arrow-left"></i>
                   </button>
 
                   <button *ngIf="this.perfilUsuario == 1" (click)="editNameFase(1)" type="button"
                     class="btn btn-info m-1" title="Editar nombre fase"><i class="fa fa-edit"></i></button>
                   {{nameFase(1)}}
+
 
 
                 </h5>
@@ -2146,7 +2165,7 @@
       <table class="table table-bordered">
         <thead>
           <tr class="text-center">
-
+            <th class="bg-success text-light" scope="col">#</th>
             <th class="bg-success text-light" scope="col">Info</th>
             <th class="bg-success text-light" scope="col">Nombre</th>
             <th *ngIf="this.perfilUsuario == 1" class="bg-success text-light" scope="col">Email</th>
@@ -2155,8 +2174,11 @@
           </tr>
         </thead>
         <tbody>
-          <tr *ngFor="let eq of equiposTorneo" class="text-center"
+          <tr *ngFor="let eq of equiposTorneo; let i = index" class="text-center"
             [ngClass]="eq.estado ? 'table-success' : 'table-danger'">
+
+            <!-- Contador -->
+            <td>{{ i + 1 }}</td>
 
             <td>
               <div class="d-flex align-items-center justify-content-center">
@@ -2169,22 +2191,18 @@
                   class="img-thumbnail shadow me-2"
                   style="width: 48px; height: 48px; object-fit: cover; border-radius: 0.375rem;">
 
-
-
                 <!-- Button trigger modal -->
                 <button *ngIf="perfilUsuario == 1" (click)="JugadoresParticipante(eq.id)" type="button"
                   class="btn btn-success" data-bs-toggle="modal" data-bs-target="#jugadoresParticipantes">
                   <i class="fa fa-users me-1"></i> Jugadores
                 </button>
 
-
-
               </div>
             </td>
 
-            <td>{{eq.nombre}}</td>
+            <td>{{ eq.nombre }}</td>
 
-            <td *ngIf="this.perfilUsuario == 1">{{eq.email}}</td>
+            <td *ngIf="perfilUsuario == 1">{{ eq.email }}</td>
 
             <td>
               <span *ngFor="let cat of eq.categorias" class="badge bg-primary me-1">
@@ -2192,15 +2210,16 @@
               </span>
             </td>
 
-            <td *ngIf="this.perfilUsuario == 1">
+            <td *ngIf="perfilUsuario == 1">
               <button class="btn btn-sm" [ngClass]="eq.estado ? 'btn-success' : 'btn-danger'"
-                (click)="cambiarEstadoPart(eq.id,eq.estado)">
+                (click)="cambiarEstadoPart(eq.id, eq.estado)">
                 {{ eq.estado ? 'Activo' : 'Inactivo' }}
               </button>
             </td>
 
           </tr>
         </tbody>
+
 
       </table>
 
@@ -2459,9 +2478,8 @@
                     style="width: 48px; height: 48px; object-fit: cover; border-radius: 0.375rem;">
                 </ng-template>
 
-                <button *ngIf="perfilUsuario == 3 " (click)="JugadoresParticipante(eq.id)"
-                  type="button" class="btn btn-success btn-sm" data-bs-toggle="modal"
-                  data-bs-target="#jugadoresParticipantes">
+                <button *ngIf="perfilUsuario == 3 " (click)="JugadoresParticipante(eq.id)" type="button"
+                  class="btn btn-success btn-sm" data-bs-toggle="modal" data-bs-target="#jugadoresParticipantes">
                   <i class="fa fa-users me-1"></i> Jugadores
                 </button>
               </div>
@@ -2601,9 +2619,13 @@
           <label for="equipoBuscar" class="form-label">Buscar y seleccionar equipo</label>
 
           <select class="form-select" [(ngModel)]="equipoSeleccionado">
-            <option *ngFor="let eq of equipos | filtroPorNombre:filtroEquipo" [ngValue]="eq.id">{{ eq.nombre }}</option>
-
+            <ng-container *ngFor="let eq of equiposTorneo | filtroPorNombre:filtroEquipo">
+              <option *ngIf="eq.estado" [ngValue]="eq.id">
+                {{ eq.nombre }}
+              </option>
+            </ng-container>
           </select>
+
         </div>
 
         <div class="modal-footer">
@@ -2829,7 +2851,7 @@
         <div class="modal-body">
           <div class="row">
             <!-- Recorremos cada equipo -->
-            <div class="col-md-6" *ngFor="let equipo of jugadoresInscritos">
+            <div class="col-md-6" *ngFor="let equipo of jugadoresInscritos; let i = index">
               <div class="card h-100">
 
                 <!-- Header equipo -->
@@ -2843,29 +2865,38 @@
                   <table class="table table-sm table-bordered text-center flex-grow-1">
                     <thead>
                       <tr>
+                        <th>#</th>
+                        <th></th>
                         <th>Jugador</th>
                         <th># Camiseta</th>
                       </tr>
                     </thead>
                     <tbody>
-                      <tr *ngFor="let jugador of equipo">
-                        <td>
+
+                      <tr *ngFor="let jugador of equipo; let j = index">
+
+                        <!-- Contador de jugadores -->
+                        <td>{{ j + 1 }}</td>
+
+                        <td class="text-center">
+                          <button *ngIf="jugador.sancionR === 1" type="button" class="btn btn-danger"
+                            (click)="QuitarSancion('R', jugador)">Habilitar</button>
+                          <button *ngIf="jugador.sancionA === 1" type="button" class="btn btn-warning"
+                            (click)="QuitarSancion('A', jugador)">Habilitar</button>
+                        </td>
+
+                        <td [class.bg-danger]="jugador.sancionR === 1">
                           <img class="logo" [src]="pathIm + jugador.img1" alt="">
                           {{ jugador.nombre }}
                         </td>
-                        <td>
 
-                          <!--
-                          <select class="form-select form-select-sm shadow-sm" style="width: auto;"
-                                  [(ngModel)]="jugador.rol">
-                            <option value="">-- Seleccione --</option>
-                            <option value="Suplente">Suplente</option>
-                            <option value="Titular">Titular</option>
-                          </select>
-                          -->
-
+                        <td [class.bg-danger]="jugador.sancionR === 1">
                           <input type="text" class="form-control form-control-sm shadow-sm"
-                            style="width: 80px; text-align: center;" [(ngModel)]="jugador.num_jug" placeholder="N°" />
+                            style="width: 120px; text-align: center;" [(ngModel)]="jugador.num_jug"
+                            [disabled]="jugador.sancionR === 1" [placeholder]="
+                       jugador.sancionR === 1 ? 'N°' :
+                       jugador.sancionA === 1 ? 'Tarjeta amarilla activa' : 'N°'
+                     " />
                         </td>
                       </tr>
                     </tbody>
@@ -2881,6 +2912,7 @@
 
               </div>
             </div>
+
           </div>
         </div>
 

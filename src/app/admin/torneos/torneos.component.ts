@@ -36,6 +36,7 @@ export class TorneosComponent implements OnInit {
   categoriasDisponibles: any[] = [];
   cantFase!:number;
   filtroNombre: string = '';
+  filtroEstado: string = '';
   torneosFiltrados: any[] = [];
   paginas = 0;
 
@@ -267,8 +268,9 @@ export class TorneosComponent implements OnInit {
   
 filtrarTorneos() {
   const nombre = this.filtroNombre.toLowerCase().trim();
+   const estado = this.filtroEstado;
 
-  this.apiRest.get_All_torneosFilt(nombre).subscribe((res: any) => {
+  this.apiRest.get_All_torneosFilt(nombre,estado).subscribe((res: any) => {
         this.torneos = res.torneos;
         this.paginas = res.cant_paginas;
       });

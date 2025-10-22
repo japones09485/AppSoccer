@@ -205,7 +205,7 @@ export class InfoTorneoComponent implements OnInit {
       this.apiRest.get_All_equipos_torneo(this.idTorneo).subscribe((res: any) => {
 
         this.equiposTorneo = res.equiposTorneo;
-        
+
       });
 
 
@@ -1522,18 +1522,18 @@ export class InfoTorneoComponent implements OnInit {
         seleccionado: false // para control en "Individual"
       }));
 
-     
+
     });
   }
 
 
   guardarInscripcionJug() {
     // Validar que todos tengan rol
- 
+
     const datos = this.jugadoresEquipo.map(j => ({
       id_jugador: j.id,
       rol: j.rol,
-      num_jug: j.num_jug || '' 
+      num_jug: j.num_jug || ''
     }));
 
 
@@ -1556,7 +1556,7 @@ export class InfoTorneoComponent implements OnInit {
       rol: jugador.rol || '',
       num_jug: jugador.num_jug || ''       // si no selecciona nada, lo dejamos vacío
     }));
-    
+
     // También puedes obtener datos del equipo (ej: nombre, id)
     const datosEquipo = jugadoresConRol;
 
@@ -1577,7 +1577,7 @@ export class InfoTorneoComponent implements OnInit {
 
     this.apiRest.jugadoresPartidoRol(this.idTorneo, this.idPartidoSelect)
       .subscribe((res: any) => {
-        
+
 
         // Si el backend devuelve directamente un arreglo
         this.jugadoresInscritos = Array.isArray(res.JugadoresRol)
@@ -1639,45 +1639,108 @@ export class InfoTorneoComponent implements OnInit {
     });
   }
 
-anularFase(fase: number) {
-  Swal.fire({
-    title: `¿Está seguro de reversar la fase ${fase}?`,
-    text: 'Se eliminarán los calendarios y estadísticas de esta fase.',
-    icon: 'warning',
-    showDenyButton: true,
-    confirmButtonText: "Sí",
-    denyButtonText: "No"
-  }).then((result) => {
-    if (result.isConfirmed) {
-      this.isLoading = true;
+  anularFase(fase: number) {
+    Swal.fire({
+      title: `¿Está seguro de reversar la fase ${fase}?`,
+      text: 'Se eliminarán los calendarios y estadísticas de esta fase.',
+      icon: 'warning',
+      showDenyButton: true,
+      confirmButtonText: "Sí",
+      denyButtonText: "No"
+    }).then((result) => {
+      if (result.isConfirmed) {
+        this.isLoading = true;
 
-      this.apiRest.anularFase(this.idTorneo, fase).subscribe({
-        next: (res: any) => {
-          Swal.fire(res.msj);
-        },
-        error: (err) => {
-          console.error('Error al anular fase:', err);
-          Swal.fire('Error al anular la fase');
-        },
-        complete: () => {
-          this.isLoading = false;
-          this.ngOnInit(); // recarga los datos al final
+        this.apiRest.anularFase(this.idTorneo, fase).subscribe({
+          next: (res: any) => {
+            Swal.fire(res.msj);
+          },
+          error: (err) => {
+            console.error('Error al anular fase:', err);
+            Swal.fire('Error al anular la fase');
+          },
+          complete: () => {
+            this.isLoading = false;
+            this.ngOnInit(); // recarga los datos al final
+          }
+        });
+      }
+    });
+  }
+
+  JugadoresParticipante(IdEquipo: number) {
+    this.apiRest.jugadoresEquipoTorneo(this.torneoSelect.id, IdEquipo).subscribe((res: any) => {
+      this.jugadoresEquipoPar = res.jugadores;
+
+      if (this.jugadoresEquipoPar.length > 0) {
+        this.jugadoresEquipoPar.shift();
+      }
+
+    });
+  }
+
+  RecalcularFase(fase: number) {
+
+
+    this.isLoading = true;
+
+    this.apiRest.RecalcularFase(this.torneoSelect.id, fase).subscribe((res: any) => {
+      this.calendarioData = res.calendarioData;
+      Swal.fire(res.msj);
+      this.isLoading = false;
+      this.ngOnInit();
+
+    });
+
+
+  }
+
+  QuitarSancion(tipo: string, jugador: any) {
+
+   
+    let tipoTex = '';
+    let msj = '';
+
+    if (tipo === 'A') {
+      tipoTex = 'Amarilla';
+    } else if (tipo === 'R') {
+      tipoTex = 'Roja';
+    }
+
+
+    this.apiRest.InfoTarjeta(this.torneoSelect.id, jugador.fk_jugador, tipo).subscribe((res: any) => {
+
+      msj = res.msj;
+
+
+      Swal.fire({
+        title: msj,
+        icon: 'warning',
+        showDenyButton: true,
+        confirmButtonText: "Sí",
+        denyButtonText: "No"
+      }).then((result) => {
+        if (result.isConfirmed) {
+          this.isLoading = true;
+
+
+          this.apiRest.QuitarSancion(this.torneoSelect.id, jugador.fk_jugador, tipo).subscribe((res: any) => {
+            
+           Swal.fire(res.msj);
+           this.VerTitularesPartido(this.idPartidoSelect);
+
+          });
+         
+        } else if (result.isDenied) {
+          Swal.fire('Cancelado', 'No se hicieron cambios', 'info');
         }
       });
-    }
-  });
-}
 
-JugadoresParticipante(IdEquipo: number) {
-  this.apiRest.jugadoresEquipoTorneo(this.torneoSelect.id, IdEquipo).subscribe((res: any) => {
-    this.jugadoresEquipoPar = res.jugadores;
-   
-    if (this.jugadoresEquipoPar.length > 0) {
-      this.jugadoresEquipoPar.shift();
-    }
-    
     });
-}
+
+
+  }
+
 
 }
 

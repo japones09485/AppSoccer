@@ -9,15 +9,16 @@ import { JugadoresComponent } from "../jugadores/jugadores.component";
 import { CategoriasComponent } from "../categorias/categorias.component";
 import { CanchasComponent } from "../canchas/canchas.component";
 import { JuecesComponent } from "../jueces/jueces.component";
+import { environment } from "../../../environments/environment";
 
-import {  } from "../jugadores/jugadores.component";
+import { } from "../jugadores/jugadores.component";
 
 @Component({
   selector: 'app-admin-temp',
   templateUrl: './admin-temp.component.html',
   imports: [
     CommonModule,
-    TorneosComponent, 
+    TorneosComponent,
     UsersComponent,
     EquiposComponent,
     JugadoresComponent,
@@ -33,15 +34,17 @@ export class AdminTempComponent implements OnInit {
     userV: false,
     torneosV: false,
     equiposV: false,
-    jugadoresV:false,
-    categoriasV:false,
-    canchasV:false,
-    juecesV:false
+    jugadoresV: false,
+    categoriasV: false,
+    canchasV: false,
+    juecesV: false
   };
 
-  constructor(private apiRest: ApiService,private router: Router) {}
+  pathIm = environment.apiURL;
 
-  ngOnInit(): void {}
+  constructor(private apiRest: ApiService, private router: Router) { }
+
+  ngOnInit(): void { }
 
   activarComp(campoValid: string): void {
     // Cambiar la propiedad del objeto a true según el nombre recibido
@@ -55,13 +58,36 @@ export class AdminTempComponent implements OnInit {
 
       // Luego, activa el campo específico
       this.estados[campoValid] = true;
-    
+
     }
   }
 
-  cerrarSesion(){
-     this.apiRest.logOut();
-     this.router.navigate(['/home']);
+  cerrarSesion() {
+    this.apiRest.logOut();
+    this.router.navigate(['/home']);
   }
-  
+
+abrirYDescargarPdf(): void {
+  const url = this.pathIm + 'doc/PADRES_DOC.pdf';
+
+  // Abrir nueva pestaña
+  const nuevaPestana = window.open('', '_blank');
+
+  if (nuevaPestana) {
+    // Insertar un pequeño HTML que fuerza la descarga
+    nuevaPestana.document.write(`
+      <html>
+        <body>
+          <a href="${url}" download="PADRES_DOC.pdf" id="descarga"></a>
+          <script>
+            document.getElementById('descarga').click();
+          </script>
+          <p>Si no inicia la descarga, <a href="${url}" download="PADRES_DOC.pdf">haz clic aquí</a>.</p>
+        </body>
+      </html>
+    `);
+  }
+}
+
+
 }

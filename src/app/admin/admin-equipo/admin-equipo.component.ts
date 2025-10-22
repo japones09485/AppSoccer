@@ -35,6 +35,7 @@ export class AdminEquipoComponent implements OnInit {
   modalVerJugador!: Modal;
   modalVerJugadorTorneo!: Modal;
   Torneos: any;
+  torneosFiltrados: any;
   categoriasDisponibles: any[] = [];
   IdTorneoSelect !: number;
   validInfo = true;
@@ -42,6 +43,7 @@ export class AdminEquipoComponent implements OnInit {
   validTorneos = false;
   EquipoSelect !:number;
   mostrarDescripcionCompleta = false;
+  filtroEstado: string = '';
 
   ngOnInit(): void {
     // Inicializar el modal si existe en el DOM
@@ -79,6 +81,7 @@ export class AdminEquipoComponent implements OnInit {
       // Ahora que tenemos el equipo, obtener torneos
       this.apiRest.TorneosEquipo(this.equipo.id).subscribe((res: any) => {
         this.Torneos = res.torneos;
+        this.torneosFiltrados = this.Torneos; // Inicialmente mostrar todos
     
       });
     });
@@ -111,7 +114,7 @@ export class AdminEquipoComponent implements OnInit {
     
     this.IdTorneoSelect =torneo.IdTorneo;
     
-    this.apiRest.get_jugadores_categoriasId(torneo.categoria)
+    this.apiRest.get_jugadores_categoriasId(torneo.categoria,this.IdTorneoSelect)
       .subscribe((res: any) => {
 
        
@@ -120,6 +123,9 @@ export class AdminEquipoComponent implements OnInit {
           ...j,
           busqueda: `${j.nombre} ${j.identificacion}`
         }));
+
+        console.log(this.jugadoresDisponiblesClub);
+        
 
        
       });
@@ -401,6 +407,20 @@ AddAllJugadores(){
           });
       }
     });
+}
+
+filtrarEstado(estado: number | string) {
+  console.log('Estado seleccionado:', estado);
+
+  // Si no se selecciona ningún estado, mostrar todos
+  if (estado === '' || estado === null || estado === undefined) {
+    this.torneosFiltrados = this.Torneos; // mostrar todos
+  } else {
+    // Filtrar por estado
+    this.torneosFiltrados = this.Torneos.filter((torneo: any) => torneo.estado === estado.toString());
+  }
+
+  console.log('Torneos filtrados:', this.torneosFiltrados);
 }
 
 

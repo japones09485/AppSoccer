@@ -65,12 +65,12 @@ export class ApiService {
 
 
   //Torneos
-  get_All_torneos(pagina ?: number) {
+  get_All_torneos(pagina?: number) {
     return this.http.post(this.urlAPI + `Rest_api/get_All_torneos`, { pagina });
   }
 
-  get_All_torneosFilt(nombre:string) {
-    return this.http.post(this.urlAPI + `Rest_api/get_All_torneosFilt`, { nombre });
+  get_All_torneosFilt(nombre: string, estado: string) {
+    return this.http.post(this.urlAPI + `Rest_api/get_All_torneosFilt`, { nombre, estado });
   }
 
 
@@ -95,22 +95,22 @@ export class ApiService {
 
   //equipos
 
-  get_All_equipos_torneo(IdTorneo:any) {
+  get_All_equipos_torneo(IdTorneo: any) {
     //trae los equipos que cumplan la categoria
     return this.http.post(this.urlAPI + `Rest_api/get_All_equipos_torneo`, { IdTorneo });
   }
 
   get_All_eq() {
-     return this.http.get(this.urlAPI + `Rest_api/get_All_eq`);
+    return this.http.get(this.urlAPI + `Rest_api/get_All_eq`);
   }
 
 
-  get_All_equipos(pagina ?: number) {
+  get_All_equipos(pagina?: number) {
     return this.http.post(this.urlAPI + `Rest_api/get_All_equipos`, { pagina });
   }
 
-  get_All_EquiposFilt(nombre:string,email:string) {
-    return this.http.post(this.urlAPI + `Rest_api/get_All_EquiposFilt`, { nombre,email });
+  get_All_EquiposFilt(nombre: string, email: string) {
+    return this.http.post(this.urlAPI + `Rest_api/get_All_EquiposFilt`, { nombre, email });
   }
 
 
@@ -136,14 +136,14 @@ export class ApiService {
 
   //usuarios
 
-  get_All_users(pagina ?: number) {
-   
-     return this.http.post(this.urlAPI + `Rest_api/get_All_users`, { pagina });
+  get_All_users(pagina?: number) {
+
+    return this.http.post(this.urlAPI + `Rest_api/get_All_users`, { pagina });
   }
 
-  get_All_usersFilt(nombre:string,usuario:string,perfil:string) {
-   
-     return this.http.post(this.urlAPI + `Rest_api/get_All_usersFilt`, { nombre,usuario,perfil });
+  get_All_usersFilt(nombre: string, usuario: string, perfil: string) {
+
+    return this.http.post(this.urlAPI + `Rest_api/get_All_usersFilt`, { nombre, usuario, perfil });
   }
 
   add_user(payload: any) {
@@ -164,12 +164,12 @@ export class ApiService {
 
   //jugadores
 
-  get_All_jugadores(pagina  ?: number) {
+  get_All_jugadores(pagina?: number) {
     return this.http.post(this.urlAPI + `Rest_api/get_All_jugadores`, { pagina });
   }
 
-  get_All_jugadoresFilt(nombre:string,identificacion:string,correo:string) {
-    return this.http.post(this.urlAPI + `Rest_api/get_All_jugadoresFilt`, { nombre,identificacion,correo});
+  get_All_jugadoresFilt(nombre: string, identificacion: string, correo: string) {
+    return this.http.post(this.urlAPI + `Rest_api/get_All_jugadoresFilt`, { nombre, identificacion, correo });
   }
 
 
@@ -350,7 +350,7 @@ export class ApiService {
     return this.http.post(this.urlAPI + `Rest_api/guardarNFase`, { IdTorneo, fase, nombre });
   }
 
-  guardarNGrupo(IdGrupo: number,  nombre: string) {
+  guardarNGrupo(IdGrupo: number, nombre: string) {
     return this.http.post(this.urlAPI + `Rest_api/guardarNGrupo`, { IdGrupo, nombre });
   }
 
@@ -407,42 +407,54 @@ export class ApiService {
   }
 
   jugadoresPartidoRol(IdTorneo: number, IdPartido: number) {
-    return this.http.post(this.urlAPI + `Rest_api/jugadoresPartidoRol`, {  IdPartido, IdTorneo });
+    return this.http.post(this.urlAPI + `Rest_api/jugadoresPartidoRol`, { IdPartido, IdTorneo });
   }
 
   CarnetsEquipo(IdTorneo: number, IdEquipo: any) {
-    return this.http.post(this.urlAPI + `Rest_api/CarnetsEquipo`, {  IdTorneo,IdEquipo });
+    return this.http.post(this.urlAPI + `Rest_api/CarnetsEquipo`, { IdTorneo, IdEquipo });
   }
 
-  EquiposTorneo(IdTorneo: number){
-      return this.http.post(this.urlAPI + `Rest_api/EquiposTorneo`, {  IdTorneo });
+  EquiposTorneo(IdTorneo: number) {
+    return this.http.post(this.urlAPI + `Rest_api/EquiposTorneo`, { IdTorneo });
   }
 
 
-  guardarNPartido(Grupo:any,Equipo1:number,Equipo2:number){
+  guardarNPartido(Grupo: any, Equipo1: number, Equipo2: number) {
 
-     return this.http.post(this.urlAPI + `Rest_api/guardarNPartido`, {  Grupo,Equipo1,Equipo2 });
+    return this.http.post(this.urlAPI + `Rest_api/guardarNPartido`, { Grupo, Equipo1, Equipo2 });
 
   }
 
-  AddAllJugadores(IdTorneo:number,IdEquipo:any){
-      return this.http.post(this.urlAPI + `Rest_api/AddAllJugadores`, {  IdTorneo,IdEquipo });
+  AddAllJugadores(IdTorneo: number, IdEquipo: any) {
+    return this.http.post(this.urlAPI + `Rest_api/AddAllJugadores`, { IdTorneo, IdEquipo });
   }
 
-  InscribirJugadoresPartido(partido:any){
-      return this.http.post(this.urlAPI + `Rest_api/InscribirJugadoresPartido`, {  partido });
+  InscribirJugadoresPartido(partido: any) {
+    return this.http.post(this.urlAPI + `Rest_api/InscribirJugadoresPartido`, { partido });
   }
 
-  cambiarEstadoPart(idTorneo:number, equipo:number , estadoActual:boolean){
-      return this.http.post(this.urlAPI + `Rest_api/cambiarEstadoPart`, {  idTorneo,equipo,estadoActual });
+  cambiarEstadoPart(idTorneo: number, equipo: number, estadoActual: boolean) {
+    return this.http.post(this.urlAPI + `Rest_api/cambiarEstadoPart`, { idTorneo, equipo, estadoActual });
   }
 
-  get_jugadores_categoriasId(categoria:number){
-      return this.http.post(this.urlAPI + `Rest_api/get_jugadores_categoriasId`, {  categoria });
+  get_jugadores_categoriasId(categoria: number,IdTorneo:number) {
+    return this.http.post(this.urlAPI + `Rest_api/get_jugadores_categoriasId`, { categoria,IdTorneo });
   }
 
-  anularFase(IdTorneo:number,fase:number){
-      return this.http.post(this.urlAPI + `Rest_api/anularFase`, {  IdTorneo,fase });
+  anularFase(IdTorneo: number, fase: number) {
+    return this.http.post(this.urlAPI + `Rest_api/anularFase`, { IdTorneo, fase });
+  }
+
+  RecalcularFase(IdTorneo: number, fase: number) {
+    return this.http.post(this.urlAPI + `Rest_api/RecalcularFase`, { IdTorneo, fase });
+  }
+
+  InfoTarjeta(IdTorneo: number, jugador: number, tipo: string) {
+    return this.http.post(this.urlAPI + `Rest_api/InfoTarjeta`, { IdTorneo, jugador, tipo });
+  }
+
+  QuitarSancion(IdTorneo: number, jugador: number, tipo: string) {
+    return this.http.post(this.urlAPI + `Rest_api/QuitarSancion`, { IdTorneo, jugador, tipo });
   }
 
 }

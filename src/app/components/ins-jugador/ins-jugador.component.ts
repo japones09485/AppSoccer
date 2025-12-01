@@ -64,6 +64,9 @@ export class InsJugadorComponent implements OnInit {
     this.frmGuardar.append('data', JSON.stringify(this.JugadorForm.value));
     this.frmGuardar.append('operacion', this.operation);
     this.frmGuardar.append('usuario', '0');
+    this.frmGuardar.append('perfil', JSON.stringify(1));
+    this.frmGuardar.append('torneo', JSON.stringify(0));
+    this.frmGuardar.append('equipo', JSON.stringify(0));
 
     this.isLoading = true;
 

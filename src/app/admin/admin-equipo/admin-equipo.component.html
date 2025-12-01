@@ -9,21 +9,14 @@
           <i class="fa fa-info-circle me-1"></i> Información del equipo
         </button>
       </li>
-      <!--
+
       <li class="nav-item" role="presentation">
-        <button (click)="validMenu(2)" 
-                class="nav-link" 
-                id="categorias-tab" 
-                data-bs-toggle="tab" 
-                data-bs-target="#categorias" 
-                type="button"
-                role="tab" 
-                aria-controls="categorias" 
-                aria-selected="false">
-          <i class="fa fa-users me-1"></i> Categorías
+        <button (click)="validMenu(2)" class="nav-link" id="categorias-tab" data-bs-toggle="tab"
+          data-bs-target="#categorias" type="button" role="tab" aria-controls="categorias" aria-selected="false">
+          <i class="fa fa-users me-1"></i> Dirección tecnica
         </button>
       </li>
-      -->
+
 
       <li class="nav-item" role="presentation">
         <button (click)="validMenu(3)" class="nav-link" id="torneos-tab" data-bs-toggle="tab" data-bs-target="#torneos"
@@ -72,56 +65,151 @@
 
 
 
-    <div *ngIf="validCategorias">
-      <!-- Categorias -->
+    <div *ngIf="validTecnico">\
 
-      <div id="title" class="text-center mb-5">
-        <img src="../../../assets/img/logo.png" class="img-fluid mb-3 logo" alt="Logo">
-        <h1 class="titulo-principal text-success">
-          Categorias Equipo<br>
 
-        </h1>
+      <div *ngIf="!creandoD">
+        <h3 class="text-center text-success"><i class="fa fa-flag" aria-hidden="true"></i> Dirección tecnica</h3>
+
+        <table class="table table-bordered">
+          <thead>
+            <tr class="text-center">
+              <th class="bg-success text-light" scope="col"><button (click)="addTecnico()" type="button"
+                  class="btn btn-info" data-bs-toggle="tooltip" data-bs-placement="top" title="Nuevo">
+                  <i class="fa fa-plus"></i>
+                </button>
+              </th>
+              <th class="bg-success text-light" scope="col">Foto</th>
+              <th class="bg-success text-light" scope="col">Nombre</th>
+              <th class="bg-success text-light" scope="col"># Documento</th>
+              <th class="bg-success text-light" scope="col">Correo</th>
+              <th class="bg-success text-light" scope="col">Telefono</th>
+              <th class="bg-success text-light" scope="col">Tipo</th>
+
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let dir of direccionEquipo" class="text-center">
+              <th scope="row">
+
+
+                <button (click)="deletedireccion(dir.id!)" type="button" class="btn btn-danger m-1">
+                  <i class="fa fa-trash" aria-hidden="true" data-bs-toggle="tooltip" data-bs-placement="top"
+                    title="Eliminar"></i>
+                </button>
+
+
+
+
+              </th>
+
+              <td *ngIf="dir.img1"><img [src]="pathIm + dir.img1" class="d-block mx-auto" alt="Imagen 1"
+                  style="width: 60px; height: 60px;"></td>
+
+              <td *ngIf="!dir.img1"><img src="../../../../assets/img/nd.png" alt="Imagen 1"
+                  class="img-thumbnail d-block mx-auto shadow"
+                  style="width: 48px; height: 48px; object-fit: cover; border-radius: 0.375rem;"></td>
+
+              <td>{{dir.nombre}}</td>
+              <td> {{dir.identificacion}}</td>
+              <td> {{dir.correo}}</td>
+              <td> {{dir.telefono}}</td>
+              <td>
+                <span class="text-danger" *ngIf="dir.tipo ==1">Entrenador</span>
+                <span class="text-success" *ngIf="dir.tipo == 2">Delegado</span>
+                <span class="text-success" *ngIf="dir.tipo == 3">Delegado</span>
+              </td>
+            </tr>
+
+          </tbody>
+        </table>
       </div>
 
-      <!-- Categorías como cards -->
-      <div class="row g-4 justify-content-center">
-        <div class="col-sm-6 col-md-4 col-lg-3" *ngFor="let cat of equipo.categorias">
-          <div class="card h-100 shadow-lg border-0 rounded-3 bg-white text-dark">
-            <div class="car-header bg-success text-center">
-              <h5 class="card-title m-3 fw-bold text-white">{{ cat.nombre }}</h5>
 
-            </div>
-            <div class="card-body text-center">
+      <div *ngIf="creandoD" class="d-flex justify-content-center mt-4">
+        <div class="card shadow-lg p-4" style="max-width: 600px; width: 100%;">
+          <h3 class="text-center mb-4 text-success">
+            <i class="fa fa-users" aria-hidden="true"></i> Crear
+          </h3>
 
-              <p><strong>Año mínimo:</strong> {{ cat.edad_min }}</p>
-              <p><strong>Control de edad:</strong>
-                <span [ngClass]="{'text-success': cat.control_edad == '1', 'text-muted': cat.control_edad != '1'}">
-                  {{ cat.control_edad == '1' ? 'Sí' : 'No' }}
-                </span>
-              </p>
-              <p><strong>Estado:</strong>
-                <span [ngClass]="{'text-success': cat.estado == '1', 'text-danger': cat.estado != '1'}">
-                  {{ cat.estado == '1' ? 'Activo' : 'Inactivo' }}
-                </span>
-              </p>
+          <form [formGroup]="DireccionForm" (ngSubmit)="saveTecnico()" enctype="multipart/form-data">
+            <!-- Nombre -->
+            <div class="mb-3 row">
+              <label for="nombre" class="col-sm-4 col-form-label text-success">Nombre</label>
+              <div class="col-sm-8">
+                <input type="text" id="nombre" formControlName="nombre" class="form-control" required>
+              </div>
             </div>
 
-            <div class="d-flex justify-content-center gap-2 m-3">
-              <button class="btn btn-info m-1" data-bs-toggle="tooltip" data-bs-placement="top"
-                title="Adicionar jugador" data-bs-toggle="modal" data-bs-target="#modalSeleccionarJugador"
-                (click)="abrirModalSeleccion(cat)">
-                <i class="fa fa-plus" aria-hidden="true"></i>
+            <!-- Identificación -->
+            <div class="mb-3 row">
+              <label for="identificaciom" class="col-sm-4 col-form-label text-success">Identificación</label>
+              <div class="col-sm-8">
+                <input type="text" id="identificacion" formControlName="identificacion" class="form-control" required>
+              </div>
+            </div>
+
+            <!-- Correo -->
+            <div class="mb-3 row">
+              <label for="correo" class="col-sm-4 col-form-label text-success">Correo electrónico</label>
+              <div class="col-sm-8">
+                <input type="email" id="correo" formControlName="correo" class="form-control" required>
+              </div>
+            </div>
+
+            <!-- Teléfono -->
+            <div class="mb-3 row">
+              <label for="telefono" class="col-sm-4 col-form-label text-success">Teléfono</label>
+              <div class="col-sm-8">
+                <input type="text" id="telefono" formControlName="telefono" class="form-control" required>
+              </div>
+            </div>
+
+            <!-- Tipo -->
+            <div class="mb-4 row">
+              <label for="tipo" class="col-sm-4 col-form-label text-success">Tipo</label>
+              <div class="col-sm-8">
+                <select id="tipo" formControlName="tipo" class="form-select">
+                  <option [value]="1">Entrenador</option>
+                  <option [value]="2">Delegado</option>
+                  <option [value]="3">Asistente</option>
+                </select>
+              </div>
+            </div>
+
+
+            <div class="mb-3 row">
+              <label for="image1" class="col-sm-3 col-form-label text-success">
+                Foto
+              </label>
+
+
+              <div class="col-sm-9">
+                <input type="file" id="image1" (change)="uploadImage($event, 1)" class="form-control">
+              </div>
+            </div>
+
+            <!-- Botones centrados -->
+            <div class="d-flex justify-content-center">
+              <button type="submit" class="btn btn-warning text-dark m-2" *ngIf="DireccionForm.valid">
+                <i class="fa fa-floppy-o" aria-hidden="true"></i> Guardar
               </button>
-
-
-              <button title="Ver jugadores categoria" class="btn btn-primary" (click)="VerJugador(cat)">
-                <i class="fa fa-user" aria-hidden="true"></i>
+              <button type="button" class="btn btn-secondary m-2" (click)="cancel()">
+                <i class="fa fa-ban" aria-hidden="true"></i> Cancelar
               </button>
-
             </div>
-          </div>
+
+            <!-- Spinner -->
+            <div *ngIf="isLoading" class="d-flex flex-column align-items-center mt-3">
+              <img src="../../../assets/img/balon.png" alt="Cargando..." width="40" height="40" class="balon-girando" />
+              <span class="mt-2 text-warning fw-bold">Procesando, por favor espera...</span>
+            </div>
+          </form>
         </div>
       </div>
+
+
+
     </div>
 
     <div *ngIf="validTorneos">
@@ -215,6 +303,15 @@
               <div *ngIf="torneo.estado == 0" class="mb-2"><strong>Estado: Inactivo</strong></div>
               <div *ngIf="torneo.estado == 1" class="mb-2"><strong>Estado: En proceso</strong></div>
               <div *ngIf="torneo.estado == 2" class="mb-2"><strong>Estado: Finalizado</strong></div>
+
+              <div class="d-flex flex-column w-100" *ngIf="perfilUsuario == 2 && torneo.info_jugadores==1">
+                <label for="" class="mb-1">Jugadores inscritos</label>
+                <button (click)="InfoJugadores(torneo.IdTorneo)" class="btn btn-danger w-100"
+                  title="Jugadores inscritos info">
+                  <i class="fa fa-users"></i> Info Jugadores Inscritos
+                </button>
+              </div>
+
 
             </div>
           </div>

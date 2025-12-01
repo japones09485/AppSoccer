@@ -26,7 +26,7 @@ export class AdminEquipoComponent implements OnInit {
   categoriaSeleccionada: any = null;
   categoriaSeleccionadaT: any = null;
   jugadorSeleccionadoId: number | null = null;
- 
+  perfilUsuario: any;
   jugadoresDisponibles: any[] = [];
   jugadorSeleccionadoIdClub: number | null = null;
   jugadoresDisponiblesClub: any[] = [];
@@ -39,11 +39,16 @@ export class AdminEquipoComponent implements OnInit {
   categoriasDisponibles: any[] = [];
   IdTorneoSelect !: number;
   validInfo = true;
-  validCategorias = false;
+  validTecnico = false;
   validTorneos = false;
-  EquipoSelect !:number;
+  EquipoSelect !: number;
   mostrarDescripcionCompleta = false;
   filtroEstado: string = '';
+  direccionEquipo: any;
+  creandoD = false;
+  DireccionForm!: FormGroup;
+  isLoading = false;
+  frmGuardar = new FormData();
 
   ngOnInit(): void {
     // Inicializar el modal si existe en el DOM
@@ -69,9 +74,14 @@ export class AdminEquipoComponent implements OnInit {
 
     // Obtener usuario
     this.usuario = this.apiRest.getUsuario();
+     this.perfilUsuario = this.usuario ? this.usuario.perfil : 0;
+    
 
-    //categorias
-    this.loadCategorias();
+    this.apiRest.get_direccion_equipo(this.usuario.fk_equipo).subscribe((res: any) => {
+      this.direccionEquipo = res.direccion;
+
+    });
+
 
     // Obtener equipo del usuario
     this.apiRest.Equipo_User(this.usuario.id).subscribe((res: any) => {
@@ -82,12 +92,18 @@ export class AdminEquipoComponent implements OnInit {
       this.apiRest.TorneosEquipo(this.equipo.id).subscribe((res: any) => {
         this.Torneos = res.torneos;
         this.torneosFiltrados = this.Torneos; // Inicialmente mostrar todos
-    
+
       });
     });
+
+
+    // Obtener dirreaccion del equipo
+
+
+
   }
 
-  constructor(public apiRest: ApiService, private router: Router) { }
+  constructor(public apiRest: ApiService, private router: Router, private fb: FormBuilder) { }
 
   cerrarSesion() {
     this.apiRest.logOut();
@@ -96,44 +112,41 @@ export class AdminEquipoComponent implements OnInit {
 
 
   abrirModalSeleccion(categoria: any) {
-  
-    this.apiRest.get_All_jugadoresAct()
-    .subscribe((res: any) => {
-      this.jugadoresDisponibles = res.jugadores.map((j: any) => ({
-        ...j,
-        busqueda: `${j.nombre} ${j.identificacion}`
-      }));
-    });
 
-  this.categoriaSeleccionada = categoria;
-  this.jugadorSeleccionadoId = null;
+    this.apiRest.get_All_jugadoresAct()
+      .subscribe((res: any) => {
+        this.jugadoresDisponibles = res.jugadores.map((j: any) => ({
+          ...j,
+          busqueda: `${j.nombre} ${j.identificacion}`
+        }));
+      });
+
+    this.categoriaSeleccionada = categoria;
+    this.jugadorSeleccionadoId = null;
 
   }
 
   abrirModalSeleccionJEquipo(torneo: any) {
-    
-    this.IdTorneoSelect =torneo.IdTorneo;
-    
-    this.apiRest.get_jugadores_categoriasId(torneo.categoria,this.IdTorneoSelect)
+
+    this.IdTorneoSelect = torneo.IdTorneo;
+
+    this.apiRest.get_jugadores_categoriasId(torneo.categoria, this.IdTorneoSelect)
       .subscribe((res: any) => {
 
-       
-       
+
+
         this.jugadoresDisponiblesClub = res.jugadoresDisponibles.map((j: any) => ({
           ...j,
           busqueda: `${j.nombre} ${j.identificacion}`
         }));
 
-        console.log(this.jugadoresDisponiblesClub);
-        
 
-       
       });
-      
-      
+
+
     this.categoriaSeleccionadaT = torneo.categoria;
     this.jugadorSeleccionadoIdClub = null;
-   
+
   }
 
 
@@ -142,7 +155,7 @@ export class AdminEquipoComponent implements OnInit {
     const jugador = this.jugadoresDisponibles.find(j => j.id === this.jugadorSeleccionadoId);
 
 
-    if (!this.jugadorSeleccionadoId ) {
+    if (!this.jugadorSeleccionadoId) {
       Swal.fire('Faltan datos', 'Debes seleccionar un jugador y su número', 'warning');
       return;
     }
@@ -172,13 +185,13 @@ export class AdminEquipoComponent implements OnInit {
 
   }
 
-   agregarJugadorSeleccionadoT() {
+  agregarJugadorSeleccionadoT() {
     const jugador = this.jugadoresDisponiblesClub.find(j => j.id === this.jugadorSeleccionadoIdClub);
-    console.log('jugadorSeleccionadoIdClub'+this.jugadorSeleccionadoIdClub);
-    
+    console.log('jugadorSeleccionadoIdClub' + this.jugadorSeleccionadoIdClub);
+
     console.log(this.IdTorneoSelect);
-    
-    if (!this.jugadorSeleccionadoIdClub ) {
+
+    if (!this.jugadorSeleccionadoIdClub) {
       Swal.fire('Faltan datos', 'Debes seleccionar un jugador y su número', 'warning');
       return;
     }
@@ -191,13 +204,13 @@ export class AdminEquipoComponent implements OnInit {
       /* Read more about isConfirmed, isDenied below */
       if (result.isConfirmed) {
 
-        this.apiRest.agregar_jugador_categoria_Club(this.IdTorneoSelect,this.usuario.fk_equipo, this.categoriaSeleccionadaT, jugador.id)
+        this.apiRest.agregar_jugador_categoria_Club(this.IdTorneoSelect, this.usuario.fk_equipo, this.categoriaSeleccionadaT, jugador.id)
           .subscribe((res: any) => {
-          
+
             Swal.fire(res.msj);
 
           })
-        
+
 
       }
     });
@@ -211,11 +224,11 @@ export class AdminEquipoComponent implements OnInit {
     this.categoriaSeleccionada = categoria;
 
     console.log(categoria);
-    
+
 
     this.apiRest.jugadoresEquipo(categoria.fk_equipo, categoria.id).subscribe((res: any) => {
       this.jugadoresEquipo = res.jugadores;
-      
+
     });
 
   }
@@ -330,7 +343,7 @@ export class AdminEquipoComponent implements OnInit {
 
   getNombreCategoria(idCategoria: string | undefined): string {
 
-    
+
     const id = Number(idCategoria);
     if (!idCategoria || isNaN(id)) {
       return 'Sin categoría';
@@ -344,24 +357,24 @@ export class AdminEquipoComponent implements OnInit {
     if (opcion == 1) {
 
       this.validInfo = true;
-      this.validCategorias = false;
+      this.validTecnico = false;
       this.validTorneos = false;
 
     } else if (opcion == 2) {
 
       this.validInfo = false;
-      this.validCategorias = true;
+      this.validTecnico = true;
       this.validTorneos = false;
 
     } else if (opcion == 3) {
 
       this.validInfo = false;
-      this.validCategorias = false;
+      this.validTecnico = false;
       this.validTorneos = true;
 
     }
   }
- 
+
   onSeleccionarJugador() {
     // Si necesitas cargar más datos del jugador seleccionado, hazlo aquí
     const seleccionado = this.jugadoresDisponibles.find(j => j.id === this.jugadorSeleccionadoId);
@@ -374,24 +387,24 @@ export class AdminEquipoComponent implements OnInit {
     console.log('Jugador seleccionado:', seleccionado);
   }
 
-CarnetsEquipo(IdTorneo: number) {
-  this.apiRest.CarnetsEquipo(IdTorneo, this.usuario.fk_equipo).subscribe((res: any) => {
-    if (res.success && res.ur) {
-      // Crear enlace temporal
-      const a = document.createElement('a');
-      a.href = res.ur;
-      a.target = '_blank'; // abre en nueva pestaña
-      a.download = 'carnets_equipo.pdf'; // fuerza descarga
-      document.body.appendChild(a);
-      a.click();
-      document.body.removeChild(a);
-    } else {
-      Swal.fire(res.msj);
-    }
-  });
-}
+  CarnetsEquipo(IdTorneo: number) {
+    this.apiRest.CarnetsEquipo(IdTorneo, this.usuario.fk_equipo).subscribe((res: any) => {
+      if (res.success && res.ur) {
+        // Crear enlace temporal
+        const a = document.createElement('a');
+        a.href = res.ur;
+        a.target = '_blank'; // abre en nueva pestaña
+        a.download = 'carnets_equipo.pdf'; // fuerza descarga
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+      } else {
+        Swal.fire(res.msj);
+      }
+    });
+  }
 
-AddAllJugadores(){
+  AddAllJugadores() {
     Swal.fire({
       title: "Desea agregar todos los jugadores de la categoria al torneo?",
       showDenyButton: true,
@@ -403,25 +416,127 @@ AddAllJugadores(){
           .subscribe((res: any) => {
 
             Swal.fire(res.msj);
-            
+
           });
       }
     });
-}
-
-filtrarEstado(estado: number | string) {
-  console.log('Estado seleccionado:', estado);
-
-  // Si no se selecciona ningún estado, mostrar todos
-  if (estado === '' || estado === null || estado === undefined) {
-    this.torneosFiltrados = this.Torneos; // mostrar todos
-  } else {
-    // Filtrar por estado
-    this.torneosFiltrados = this.Torneos.filter((torneo: any) => torneo.estado === estado.toString());
   }
 
-  console.log('Torneos filtrados:', this.torneosFiltrados);
+  filtrarEstado(estado: number | string) {
+    console.log('Estado seleccionado:', estado);
+
+    // Si no se selecciona ningún estado, mostrar todos
+    if (estado === '' || estado === null || estado === undefined) {
+      this.torneosFiltrados = this.Torneos; // mostrar todos
+    } else {
+      // Filtrar por estado
+      this.torneosFiltrados = this.Torneos.filter((torneo: any) => torneo.estado === estado.toString());
+    }
+
+  }
+
+  uploadImage(ev: any, numFile: number) {
+    const inputFile = ev.target as HTMLInputElement;
+    if (inputFile.files && inputFile.files.length > 0) {
+      const file = inputFile.files[0];
+
+      // Solo validar si el archivo es 1, 2 o 3
+      if (numFile !== 4 && numFile !== 5) {
+        const validTypes = ['image/jpeg', 'image/png'];
+        if (!validTypes.includes(file.type)) {
+          Swal.fire('Solo se permiten imagenes , archivos JPG o PNG');
+          inputFile.value = ''; // Limpia el input
+          return;
+        }
+      }
+
+      // Agregar el archivo al formulario
+      this.frmGuardar.append(`${numFile}`, file);
+
+      // Obtener el label asociado y actualizar su texto
+      const fileName = file.name;
+      const labelElement = document.getElementById(`labelFile${numFile}`);
+      if (labelElement) {
+        labelElement.textContent = fileName;
+      }
+    }
+  }
+
+  addTecnico() {
+
+    this.creandoD = true;
+    this.initFormDir();
+
+  }
+
+  cancel() {
+    this.creandoD = false;
+  }
+
+
+  initFormDir() {
+    this.DireccionForm = this.fb.group({
+      nombre: ['', Validators.required],
+      identificacion: ['', Validators.required],
+      correo: ['', [Validators.required, Validators.email]],
+      telefono: ['', Validators.required],
+      tipo: ['', Validators.required]
+
+    });
+  }
+
+
+  saveTecnico() {
+
+    this.frmGuardar.append('data', JSON.stringify(this.DireccionForm.value));
+    this.frmGuardar.append('IdEquipo', JSON.stringify(this.usuario.fk_equipo));
+
+    this.isLoading = true;
+    this.apiRest.saveTecnico(this.frmGuardar).subscribe((data: any) => {
+      if (data.success) {
+        this.direccionEquipo = data.direccion;
+        Swal.fire(data.msj);
+        this.isLoading = false;
+        this.initFormDir();
+        this.creandoD = false;
+        this.frmGuardar = new FormData(); // limpiar formulario
+      }
+    });
+
+  }
+
+  deletedireccion(idDireccion: number) {
+
+
+    Swal.fire({
+      title: "Desea eliminar de la direccion tecnica?",
+      showDenyButton: true,
+      confirmButtonText: "Si"
+    }).then((result) => {
+      /* Read more about isConfirmed, isDenied below */
+      if (result.isConfirmed) {
+        this.isLoading = true;
+
+        this.apiRest.deletedireccion(idDireccion,this.usuario.fk_equipo)
+          .subscribe((res: any) => {
+            this.direccionEquipo = res.direccion;
+            Swal.fire(res.msj);
+            this.isLoading = false;
+
+          });
+      }
+    });
+
+
+
+  }
+
+InfoJugadores(Idtorneo: number) {
+  const url = `${window.location.origin}/#/jugadores/${Idtorneo}/${this.usuario.fk_equipo}`;
+  window.open(url, '_blank');
 }
+
+
 
 
 }

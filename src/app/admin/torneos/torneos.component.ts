@@ -101,6 +101,7 @@ export class TorneosComponent implements OnInit {
       num_gruposF4: [''],
       num_gruposF5: [''],
       num_gruposF6: [''],
+      InfoJugadores: [''],
       num_gruposF7: [''],
       categoria: ['',],
       Rninas: ['',]
@@ -165,6 +166,8 @@ export class TorneosComponent implements OnInit {
        
         
         this.torneoSelect = res.torneo;
+        console.log(this.torneoSelect);
+        
         this.cantFase = this.torneoSelect.num_fases as number;
         this.controlEdad = this.torneoSelect.control_edad ?? false;
       
@@ -186,6 +189,7 @@ export class TorneosComponent implements OnInit {
           num_gruposF5: this.torneoSelect.num_gruposF5,
           num_gruposF6: this.torneoSelect.num_gruposF6,
           num_gruposF7: this.torneoSelect.num_gruposF7,
+          InfoJugadores: this.torneoSelect.info_jugadores,
 
         });
 
@@ -276,5 +280,26 @@ filtrarTorneos() {
       });
 
   }
+
+
+   ReporteJugadoresTorneo(IdTorneo: number) {
+  
+      Swal.fire({
+        title: "Desea generar el reporte de  jugadores en excel?",
+        showDenyButton: true,
+        confirmButtonText: "Si"
+      }).then((result) => {
+        /* Read more about isConfirmed, isDenied below */
+        if (result.isConfirmed) {
+        //descargiue el excel
+        //console.log(`${this.pathIm}excel/ReporteJugadoresTorneo/${IdTorneo}`);
+          const url = `${this.pathIm}excel/ReporteJugadoresTorneo/${IdTorneo}`;
+            // Llamada HTTP
+          window.open(url, '_blank');
+        }
+      });
+  
+  
+    }
 
 }

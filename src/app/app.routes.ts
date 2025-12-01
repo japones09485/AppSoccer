@@ -24,6 +24,8 @@ export const routes: Routes = [
   { path: 'adminTemp', component: AdminTempComponent },
   { path: 'InfoTorneo/:idTorneo', component: InfoTorneoComponent },
   { path: 'Jugadores', component: JugadoresComponent },
+  { path: 'jugadores/:idTorneo/:idEquipo', component: JugadoresComponent },
+
   { path: 'Equipos', component: EquiposComponent },
   //delegado de cancha
 

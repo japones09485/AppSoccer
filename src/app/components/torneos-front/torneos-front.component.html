@@ -18,6 +18,48 @@
       </h1>
     </div>
 
+
+    <div class="row justify-content-center mb-4">
+
+      <div style="
+            background: #f2f2f2;
+            padding: 5px;
+            border-radius: 68px;
+            margin: 15px;
+        ">
+        <p class="text-primary text-center">
+          La fecha de inicio y la fecha de fin del filtro deben ser seleccionadas de manera que solo se muestren los
+          torneos <br>
+          cuya fecha de inicio y fecha de fin estén completamente dentro del rango definido por el filtro.
+        </p>
+      </div>
+
+      <div class="col-12 col-md-3 mb-2">
+        <input type="date" [(ngModel)]="fechaInicio" class="form-control text-center"
+          placeholder="Fecha Inicio del torneo" name="fechaInicio">
+      </div>
+
+      <div class="col-12 col-md-3 mb-2">
+        <input type="date" [(ngModel)]="fechaFin" class="form-control text-center" placeholder="Fecha Fin del torneo"
+          name="fechaFin">
+      </div>
+
+      <div class="col-12 col-md-2 text-center">
+        <button class="btn btn-primary w-100" (click)="tomarFechas()">
+          <i class="fa fa-search"></i> Buscar
+        </button>
+      </div>
+
+      <div class="col-12 col-md-2 text-center">
+        <button class="btn btn-info w-100" (click)="ngOnInit()">
+          <i class="fa fa-trash"></i> Limpiar FIltro
+        </button>
+      </div>
+
+
+    </div>
+    
+
     <!-- Tarjetas de torneos -->
     <div class="cards-container row g-4 justify-content-center">
       <div class="col-sm-6 col-md-4 col-lg-3" *ngFor="let torneo of torneos">

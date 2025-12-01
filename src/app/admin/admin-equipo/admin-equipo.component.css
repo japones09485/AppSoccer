@@ -191,3 +191,30 @@
   overflow-y: auto;
 }
 
+
+
+.card {
+  border-radius: 20px;
+  background-color: #ffffff;
+}
+
+.form-control, .form-select {
+  border-radius: 10px;
+}
+
+
+/* Animación del balón */
+.balon-girando {
+  animation: girar 1.5s linear infinite;
+}
+
+@keyframes girar {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+

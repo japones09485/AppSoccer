@@ -183,7 +183,7 @@ export class ApiService {
   }
 
   add_jugador(payload: any) {
-    return this.http.post(this.urlAPI + `Rest_api/add_jugador`, payload);
+    return this.http.post(this.urlAPI + `Rest_api/add_jugador`, payload,);
   }
 
   editJugador(idJugador: number) {
@@ -369,6 +369,12 @@ export class ApiService {
 
   }
 
+   VallaMenosVencidaTorneo(idTorneo: number) {
+
+    return this.http.post(this.urlAPI + `Rest_api/VallaMenosVencidaTorneo`, { idTorneo });
+
+  }
+
 
   AnularPartido(IdPartido: number, IdTorneo: number, estado: number) {
 
@@ -437,8 +443,12 @@ export class ApiService {
     return this.http.post(this.urlAPI + `Rest_api/cambiarEstadoPart`, { idTorneo, equipo, estadoActual });
   }
 
-  get_jugadores_categoriasId(categoria: number,IdTorneo:number) {
-    return this.http.post(this.urlAPI + `Rest_api/get_jugadores_categoriasId`, { categoria,IdTorneo });
+  get_jugadores_categoriasId(categoria: number, IdTorneo: number) {
+    return this.http.post(this.urlAPI + `Rest_api/get_jugadores_categoriasId`, { categoria, IdTorneo });
+  }
+
+  get_jugadores_Torneo_Equipo(IdTorneo: string, IdEquipo: string) {
+    return this.http.post(this.urlAPI + `Rest_api/get_jugadores_Torneo_Equipo`, { IdTorneo, IdEquipo });
   }
 
   anularFase(IdTorneo: number, fase: number) {
@@ -455,6 +465,38 @@ export class ApiService {
 
   QuitarSancion(IdTorneo: number, jugador: number, tipo: string) {
     return this.http.post(this.urlAPI + `Rest_api/QuitarSancion`, { IdTorneo, jugador, tipo });
+  }
+
+  get_direccion_equipo(IdEquipo: any) {
+    return this.http.post(this.urlAPI + `Rest_api/get_direccion_equipo`, { IdEquipo });
+  }
+
+  saveTecnico(payload: any) {
+    return this.http.post(this.urlAPI + `Rest_api/saveTecnico`, payload);
+  }
+
+  deletedireccion(idDireccion: number,IdEquipo: any) {
+    return this.http.post(this.urlAPI + `Rest_api/deletedireccion`, { idDireccion,IdEquipo });
+  }
+  
+  direccionTecnicaP(IdPartido: any) {
+    return this.http.post(this.urlAPI + `Rest_api/direccionTecnicaP`, { IdPartido });
+  }
+
+  guardarDireccion(idPartidoD: number,idEquipo: number, entrenadorId: any, delegadoId: any, asistenteId: any){
+    return this.http.post(this.urlAPI + `Rest_api/guardarDireccion`, { idPartidoD, idEquipo, entrenadorId, delegadoId, asistenteId });
+  }
+
+  ReporteJugadores(IdEquipo: number, IdTorneo: number){
+   return this.http.post(this.urlAPI + `Rest_api/ReporteJugadores`, { IdEquipo, IdTorneo });
+  }
+
+  GetTorneoFechas(FechaInicio: any, FechaFin: any){
+       return this.http.post(this.urlAPI + `Rest_api/GetTorneoFechas`, { FechaInicio, FechaFin });
+  }
+
+  cambiarEquipoTr( IdTorneo: number,equipoSelect: number,IdEquipoNew: string, ){
+    return this.http.post(this.urlAPI + `Rest_api/cambiarEquipoTr`, { IdTorneo,  equipoSelect , IdEquipoNew });
   }
 
 }

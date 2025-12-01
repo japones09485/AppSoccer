@@ -71,6 +71,13 @@
               <i class="fa fa-info" aria-hidden="true" data-bs-toggle="tooltip" data-bs-placement="top"
                 title="Informacion"></i>
             </button>
+
+             <button (click)="ReporteJugadoresTorneo(tr.id)" type="button" class="btn btn-success m-1">
+              <i class="fa fa-file me-1"  data-bs-toggle="tooltip" data-bs-placement="top"
+                title="Informe jugadores"></i> 
+            </button>
+
+
           </th>
 
           <td>
@@ -302,6 +309,16 @@
           <label for="image2" class="col-sm-3 col-form-label text-light">Imagen 2</label>
           <div class="col-sm-9">
             <input type="file" id="image2" (change)="uploadImage($event, 2)" class="form-control">
+          </div>
+        </div>
+
+        <div class="mb-3 row">
+          <label for="InfoJugadores" class="col-sm-3 col-form-label text-light">Control Info Jugadores</label>
+          <div class="col-sm-9">
+            <select formControlName="InfoJugadores" class="form-select">
+              <option [value]=0>No</option>
+              <option [value]=1>Si</option>
+            </select>
           </div>
         </div>
 

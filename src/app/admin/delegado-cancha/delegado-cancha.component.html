@@ -21,11 +21,50 @@
         <i class="fa fa-table fa-lg"></i>
       </button>
 
-
-
       <button class="btn btn-lg btn-warning btn-icon m-2" title="Jugadores" (click)="Jugadores()">
         <i class="fa fa-user"></i>
       </button>
+    </div>
+
+    <!-- Filtro por fechas centrado -->
+    <div class="row justify-content-center mb-4">
+
+      <div style="
+            background: #f2f2f2;
+            padding: 5px;
+            border-radius: 68px;
+            margin: 15px;
+        ">
+        <p class="text-primary text-center">
+          La fecha de inicio y la fecha de fin del filtro deben ser seleccionadas de manera que solo se muestren los
+          torneos <br>
+          cuya fecha de inicio y fecha de fin estén completamente dentro del rango definido por el filtro.
+        </p>
+      </div>
+
+      <div class="col-12 col-md-3 mb-2">
+        <input type="date" [(ngModel)]="fechaInicio" class="form-control text-center"
+          placeholder="Fecha Inicio del torneo" name="fechaInicio">
+      </div>
+
+      <div class="col-12 col-md-3 mb-2">
+        <input type="date" [(ngModel)]="fechaFin" class="form-control text-center" placeholder="Fecha Fin del torneo"
+          name="fechaFin">
+      </div>
+
+      <div class="col-12 col-md-2 text-center">
+        <button class="btn btn-primary w-100" (click)="tomarFechas()">
+          <i class="fa fa-search"></i> Buscar
+        </button>
+      </div>
+
+      <div class="col-12 col-md-2 text-center">
+        <button class="btn btn-info w-100" (click)="ngOnInit()">
+          <i class="fa fa-trash"></i> Limpiar FIltro
+        </button>
+      </div>
+
+
     </div>
 
     <!-- Tarjetas de torneos -->
@@ -38,18 +77,10 @@
 
           <!-- Botón en la esquina superior derecha -->
           <div class="position-absolute top-0 end-0 m-2 d-flex gap-1 flex-wrap">
-
-
-
             <button class="btn btn-sm btn-info btn-icon" title="Información del torneo" (click)="InfoTorneo(torneo.id)">
               <i class="fa fa-info"></i>
             </button>
-
-
-
-
           </div>
-
 
           <!-- Contenido -->
           <div class="card-body d-flex flex-column px-4 py-3">
@@ -57,28 +88,25 @@
             <hr class="my-2">
 
             <div class="mb-2 text-muted small">
-                <span>Descripción</span>
-                    <div class="text-end">
-
-                      {{
-                      mostrarDescripcionCompleta
-                      ? torneo?.descripcion
-                      : ((torneo?.descripcion || '') | slice:0:100) + ((torneo?.descripcion?.length || 0)
-                      > 100 ? '...' : '')
-                      }}
-
-                      <br>
-                      <a href="javascript:void(0)" *ngIf="(torneo?.descripcion?.length || 0) > 100"
-                        (click)="mostrarDescripcionCompleta = !mostrarDescripcionCompleta">
-                        {{ mostrarDescripcionCompleta ? 'Leer menos' : 'Leer más' }}
-                      </a>
-                    </div>
+              <span>Descripción</span>
+              <div class="text-end">
+                {{
+                mostrarDescripcionCompleta
+                ? torneo?.descripcion
+                : ((torneo?.descripcion || '') | slice:0:100) + ((torneo?.descripcion?.length || 0) > 100 ? '...' : '')
+                }}
+                <br>
+                <a href="javascript:void(0)" *ngIf="(torneo?.descripcion?.length || 0) > 100"
+                  (click)="mostrarDescripcionCompleta = !mostrarDescripcionCompleta">
+                  {{ mostrarDescripcionCompleta ? 'Leer menos' : 'Leer más' }}
+                </a>
+              </div>
             </div>
 
             <div class="mb-1"><strong>Inicio:</strong> {{ torneo.fecha_inicio }}</div>
             <div class="mb-1"><strong>Fin:</strong> {{ torneo.fecha_fin }}</div>
             <div class="mb-2"><strong>Fases:</strong> {{ torneo.num_fases }}</div>
-             <div class="mb-2"><strong>Categoria:</strong> {{ getNombreCategoria(torneo.categoria)  }}</div>
+            <div class="mb-2"><strong>Categoria:</strong> {{ getNombreCategoria(torneo.categoria) }}</div>
 
             <div class="mb-2 text-primary" *ngIf="torneo.estado == 1"><strong>Estado:</strong> En proceso</div>
             <div class="mb-2 text-success" *ngIf="torneo.estado == 2"><strong>Estado:</strong> Finalizado</div>

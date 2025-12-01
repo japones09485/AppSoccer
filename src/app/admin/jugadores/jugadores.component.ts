@@ -7,13 +7,13 @@ import { PaginacionComponent } from '../paginacion/paginacion.component';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule, FormsModule } from '@angular/forms';
 import { environment } from "../../../environments/environment";
 import { Modal } from 'bootstrap';
-import { Router } from '@angular/router';
+import { Router, ActivatedRoute } from '@angular/router';
 
 
 
 @Component({
   selector: 'app-jugadores',
-  imports: [CommonModule, ReactiveFormsModule, FormsModule,PaginacionComponent],
+  imports: [CommonModule, ReactiveFormsModule, FormsModule, PaginacionComponent],
   templateUrl: './jugadores.component.html',
   styleUrl: './jugadores.component.css'
 })
@@ -50,34 +50,54 @@ export class JugadoresComponent implements OnInit {
   paginas = 0;
 
 
-  constructor(private apiRest: ApiService, private router: Router,
+  constructor(private apiRest: ApiService, private router: Router, private route: ActivatedRoute,
     private fb: FormBuilder,
   ) { }
 
   ngOnInit(): void {
     this.UserLog = this.apiRest.getUser();
-    console.log(this.UserLog.perfil);
-    
+
     this.initForm();
     this.creando = false;
 
-    this.apiRest.get_All_jugadores().subscribe((res: any) => {
-      this.jugadores = res.jugadores;
-      this.paginas = res.cant_paginas;
+    const idTorneo = this.route.snapshot.paramMap.get('idTorneo');
+    const idEquipo = this.route.snapshot.paramMap.get('idEquipo');
 
-    
-    });
+    if (idTorneo && idEquipo) {
+      // 🔸 Si llegan parámetros, cargar jugadores por torneo/equipo
+
+      this.apiRest.get_jugadores_Torneo_Equipo(idTorneo, idEquipo).subscribe((res: any) => {
+        this.jugadores = res.jugadores;
+        this.paginas = res.cant_paginas;
+
+
+      });
+
+
+
+
+    } else {
+      // 🔸 Si no llegan parámetros, cargar todos los jugadores
+      this.apiRest.get_All_jugadores().subscribe((res: any) => {
+        this.jugadores = res.jugadores;
+        this.paginas = res.cant_paginas;
+
+
+      });
+    }
+
+
   }
 
   initForm() {
     this.JugadorForm = this.fb.group({
       name: ['', Validators.required],
-      identificacion: ['', Validators.required],
+      identificacion: [''],
       genero: ['', Validators.required],
       fch_nacimiento: ['', Validators.required],
       mail: ['', [Validators.required, Validators.email]],
       posicion: ['', Validators.required],
-      estado: ['', Validators.required],
+      estado: [''],
       TipoDoc: ['', Validators.required],
       nomMadre: [''],
       telMadre: [''],
@@ -88,11 +108,11 @@ export class JugadoresComponent implements OnInit {
 
   sigPag(pag: number) {
 
-    
-      this.apiRest.get_All_jugadores(pag).subscribe((res: any) => {
-        this.jugadores = res.jugadores;
-        this.paginas = res.cant_paginas;
-      });
+
+    this.apiRest.get_All_jugadores(pag).subscribe((res: any) => {
+      this.jugadores = res.jugadores;
+      this.paginas = res.cant_paginas;
+    });
 
   }
 
@@ -104,12 +124,20 @@ export class JugadoresComponent implements OnInit {
   saveJugador() {
 
 
+    const idTorneo = this.route.snapshot.paramMap.get('idTorneo');
+    const idEquipo = this.route.snapshot.paramMap.get('idEquipo');
 
     this.JugadorForm.get('edad')?.setValue(this.EdadJugador);
     this.frmGuardar.append('data', JSON.stringify(this.JugadorForm.value));
     this.frmGuardar.append('operacion', this.operation);
     this.frmGuardar.append('usuario', String(this.UserLog.id));
     this.frmGuardar.append('idEdit', JSON.stringify(this.idEdit));
+    this.frmGuardar.append('perfil', JSON.stringify(this.UserLog.perfil));
+    this.frmGuardar.append('torneo', JSON.stringify(idTorneo));
+    this.frmGuardar.append('equipo', JSON.stringify(idEquipo));
+
+
+
 
     this.isLoading = true;
 
@@ -130,6 +158,8 @@ export class JugadoresComponent implements OnInit {
       denyButtonText: "No"
     }).then((result) => {
       if (result.isConfirmed) {
+
+
         this.apiRest.add_jugador(this.frmGuardar)
           .subscribe((data: any) => {
             if (data.success == true) {
@@ -215,6 +245,7 @@ export class JugadoresComponent implements OnInit {
       .subscribe((res: any) => {
         this.jugadorSelect = res.jugador;
         this.tipoDoc = Number(this.jugadorSelect.tipoDoc);
+         this.updateDocumentoByValue(this.tipoDoc);
 
         this.JugadorForm.setValue({
           name: this.jugadorSelect.nombre,
@@ -231,6 +262,8 @@ export class JugadoresComponent implements OnInit {
           telPadre: this.jugadorSelect.telefono_padre
 
         });
+
+       
 
 
         this.creando = true;
@@ -328,17 +361,57 @@ export class JugadoresComponent implements OnInit {
 
   }
 
+
+  updateDocumentoByValue(selectValue: any): void {
+    const selectedValue = parseInt(selectValue.toString(), 10);
+
+   
+    
+    if (selectedValue === 1) {
+      // Registro civil
+      this.labedoc2 = 'Foto del Registro civil';
+      this.labedoc3 = 'Adjunto adicional';
+      this.labedoc4 = 'Adjunto adicional';
+
+    } else if (selectedValue === 2) {
+      // Tarjeta Identidad
+      this.labedoc2 = 'Foto Tarjeta Identidad Frontal';
+      this.labedoc3 = 'Foto Tarjeta Identidad Trasera';
+      this.labedoc4 = 'Foto de registro civil';
+      this.labedoc5 = 'Adjunto en pdf';
+
+    } else if (selectedValue === 3) {
+      // Cédula de ciudadanía
+      this.labedoc2 = 'Foto Cédula de ciudadanía Frontal';
+      this.labedoc3 = 'Foto Cédula de ciudadanía Trasera';
+      this.labedoc4 = 'Adjunto adicional';
+
+    } else if (selectedValue === 4) {
+      // Cédula extranjería
+      this.labedoc2 = 'Foto Cédula de extranjería Frontal';
+      this.labedoc3 = 'Foto Cédula de extranjería Trasera';
+      this.labedoc4 = 'Adjunto adicional';
+
+    } else if (selectedValue === 5) {
+      // Pasaporte
+      this.labedoc2 = 'Foto Pasaporte';
+      this.labedoc3 = 'Adjunto adicional';
+      this.labedoc4 = 'Adjunto adicional';
+    }
+  }
+
+
   aplicarFiltros() {
     const nombre = this.filtroNombre.toLowerCase();
     const identificacion = this.filtroIdentificacion.toLowerCase();
     const correo = this.filtroCorreo.toLowerCase();
 
-    this.apiRest.get_All_jugadoresFilt(nombre,identificacion,correo).subscribe((res: any) => {
+    this.apiRest.get_All_jugadoresFilt(nombre, identificacion, correo).subscribe((res: any) => {
       this.jugadores = res.jugadores;
       this.paginas = res.cant_paginas;
     });
 
-    
+
   }
 
   Inicio() {

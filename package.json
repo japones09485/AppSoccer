@@ -28,6 +28,7 @@
     "bootstrap-duallistbox": "^3.0.9",
     "bootstrap-select": "^1.13.18",
     "bootstrap4-duallistbox": "^4.0.2",
+    "file-saver": "^2.0.5",
     "font-awesome": "^4.7.0",
     "jquery": "^3.7.1",
     "ng2-dual-list-box": "^1.2.1",
@@ -35,6 +36,7 @@
     "rxjs": "~7.8.0",
     "sweetalert2": "^11.19.1",
     "tslib": "^2.3.0",
+    "xlsx": "^0.18.5",
     "zone.js": "~0.15.0"
   },
   "devDependencies": {

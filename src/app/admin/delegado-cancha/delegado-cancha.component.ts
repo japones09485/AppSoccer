@@ -2,12 +2,15 @@ import { Component, OnInit } from '@angular/core';
 import { ApiService } from "../../services/api.service";
 import { Torneos } from '../../interfaces/interfaces';
 import { environment } from "../../../environments/environment";
+import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
+import { FormsModule } from '@angular/forms';
+import { NgSelectModule } from '@ng-select/ng-select';
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-delegado-cancha',
-  imports: [CommonModule],
+  imports: [CommonModule, ReactiveFormsModule, FormsModule, NgSelectModule],
   templateUrl: './delegado-cancha.component.html',
   styleUrl: './delegado-cancha.component.css'
 })
@@ -18,6 +21,8 @@ export class DelegadoCanchaComponent implements OnInit {
   pathIm = environment.apiURL;
    categoriasDisponibles: any[] = [];
   mostrarDescripcionCompleta = false;
+  fechaInicio= '';
+  fechaFin= '';
 
 
   ngOnInit(): void {
@@ -78,6 +83,20 @@ export class DelegadoCanchaComponent implements OnInit {
     this.router.navigate(['/Equipos']);
   }
 
+
+tomarFechas() {
+
+     this.apiRest.GetTorneoFechas(this.fechaInicio,this.fechaFin).subscribe((res: any) => {
+
+      if(res.success){
+        this.torneos = res.torneos;
+      }
+
+    });
+
+
+    // Aquí puedes hacer el filtro o lo que necesites
+  }
 
 
 }

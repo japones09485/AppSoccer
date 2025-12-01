@@ -11,7 +11,7 @@ import { CommonModule } from '@angular/common';
 import { FiltroPorNombrePipe } from '../../../filtro-por-nombre.pipe';
 import { Modal } from 'bootstrap';
 import { EnsureArrayPipe } from '../../../pipes/ensure-array.pipe';
-
+declare var bootstrap: any;
 
 
 
@@ -31,6 +31,7 @@ export class InfoTorneoComponent implements OnInit {
   Delegados: User[] = [];
   nameFases: nameFases[] = [];
   goleadores: any[] = [];
+  vallamn: any[] = [];
   torneoSelect!: Torneos;
   creando = false;
   pathIm = environment.apiURL;
@@ -48,7 +49,7 @@ export class InfoTorneoComponent implements OnInit {
   VlParticipante!: boolean;
   formatoSeleccionado: string = 'ida';
   calendarioData: Record<string, Calendario[]> = {};
-
+  imagenSeleccionada: string = '';
   isLoading: boolean = false;
   fechaSeleccionada: string = '';
   horaSeleccionada: string = '';
@@ -85,6 +86,7 @@ export class InfoTorneoComponent implements OnInit {
   ResultadosEq1: any;
   ResultadosEq2: any;
   clafGeneral: any;
+  clafGeneralF1: any;
   numero_fases!: number;
   addAfase = false;
   GrupoActual = 0;
@@ -92,6 +94,7 @@ export class InfoTorneoComponent implements OnInit {
   nombreGrupoActual = '';
   jugadoresEquipo: any[] = [];
   jugadoresInscritos: any[] = [];
+  DirectivosP: any[] = [];
 
   // Simulación de jugadores por equipo
   jugadoresEq1: any;
@@ -125,6 +128,22 @@ export class InfoTorneoComponent implements OnInit {
   ganadorW !: any;
   jugadoresEquipoPar: any[] = [];
 
+  direccion1!: any;
+  entrenadores1!: any;
+  entrenadores2!: any;
+  delegado1!: any;
+  delegado2!: any;
+  asistente1!: any;
+  asistente2!: any;
+  nameEq1!: string;
+  nameEq2!: string;
+  idEq1!: number;
+  idEq2!: number;
+  idPartidoD!: number;
+  contCabezaGR=0;
+  nameEqSelect:string='';
+  equipoSelect:any;
+
 
   ordinales: string[] = [
     'Primero',
@@ -148,7 +167,7 @@ export class InfoTorneoComponent implements OnInit {
 
 
   gruposPorFase: { [key: number]: any[] } = {}; // <- asegúrate de tener esto generado
-
+  
   constructor(
     private apiRest: ApiService,
     private fb: FormBuilder,
@@ -166,7 +185,7 @@ export class InfoTorneoComponent implements OnInit {
 
     this.usuario = this.apiRest.getUsuario();
     this.perfilUsuario = this.usuario ? this.usuario.perfil : 0;
-
+    
     this.acRouter.params.subscribe(param => {
       this.idTorneo = param['idTorneo'];
 
@@ -186,6 +205,14 @@ export class InfoTorneoComponent implements OnInit {
         this.goleadores = res.goleadores;
 
       });
+
+      this.apiRest.VallaMenosVencidaTorneo(this.idTorneo).subscribe((res: any) => {
+
+        this.vallamn = res.vallas;
+
+      });
+
+
 
 
 
@@ -213,18 +240,22 @@ export class InfoTorneoComponent implements OnInit {
       this.apiRest.getById_Grupos(this.idTorneo).subscribe((res: any) => {
         this.grupos = res.grupos;
 
+      
+
         for (let i = 1; i <= 7; i++) {
           this.gruposPorFase[i] = this.grupos.filter((g: any) => Number(g.fase) === i);
         }
-
-        this.clafGeneral = res.general;
+     
+         this.clafGeneral = res.general;
+         this.clafGeneralF1= res.generalFase1;
       });
 
 
 
       this.apiRest.get_Calendary(this.idTorneo).subscribe((res: any) => {
         this.calendarioData = res.calendarioData;
-
+        this.contCabezaGR=res.contCabezaGR;
+       
       });
 
       this.apiRest.get_Jueces_activos().subscribe((res: any) => {
@@ -947,7 +978,9 @@ export class InfoTorneoComponent implements OnInit {
 
         // Función auxiliar para buscar nombre por ID
         const buscarNombre = (id: number, jugadores: any[]) => {
+          console.log('Buscando ID:', id);
 
+          console.log('jugadores ID:', jugadores);
 
           const jugador = jugadores.find(j => Number(j.id) === id || Number(j.fk_jugador) === id);
 
@@ -1003,13 +1036,11 @@ export class InfoTorneoComponent implements OnInit {
         };
 
         this.ResultadosEq1 = equipoA;
-        console.log('japon ');
-
-        console.log(this.ResultadosEq1.resultado.ampli_penaltis);
 
         this.ResultadosEq2 = equipoB;
       });
     });
+
   }
 
 
@@ -1578,6 +1609,10 @@ export class InfoTorneoComponent implements OnInit {
     this.apiRest.jugadoresPartidoRol(this.idTorneo, this.idPartidoSelect)
       .subscribe((res: any) => {
 
+        this.DirectivosP = Array.isArray(res.directivos)
+          ? res.directivos
+          : Object.values(res.directivos || {});
+
 
         // Si el backend devuelve directamente un arreglo
         this.jugadoresInscritos = Array.isArray(res.JugadoresRol)
@@ -1585,11 +1620,38 @@ export class InfoTorneoComponent implements OnInit {
           : Object.values(res.JugadoresRol || {});
 
 
+        console.log('Jugadores Inscritos:', this.jugadoresInscritos);
+        console.log('JDirectivosP:', this.DirectivosP);
+
+
         if (!this.jugadoresInscritos.length) {
           Swal.fire('No hay jugadores inscritos para este partido.');
 
         }
       });
+  }
+
+
+  direccionTecnicaP(IdPartido: number) {
+
+
+    this.apiRest.direccionTecnicaP(IdPartido)
+      .subscribe((res: any) => {
+        this.idPartidoD = res.IdPartido;
+        this.nameEq1 = res.equipo1.nombre;
+        this.nameEq2 = res.equipo2.nombre;
+        this.idEq1 = res.equipo1.id;
+        this.idEq2 = res.equipo2.id;
+        this.entrenadores1 = res.entrenadores1;
+        this.entrenadores2 = res.entrenadores2;
+        this.delegado1 = res.delegado1;
+        this.delegado2 = res.delegado2;
+        this.asistente1 = res.asistente1;
+        this.asistente2 = res.asistente2;
+
+      });
+
+
   }
 
   cambiarEstadoW(partido: any) {
@@ -1697,7 +1759,7 @@ export class InfoTorneoComponent implements OnInit {
 
   QuitarSancion(tipo: string, jugador: any) {
 
-   
+
     let tipoTex = '';
     let msj = '';
 
@@ -1725,12 +1787,12 @@ export class InfoTorneoComponent implements OnInit {
 
 
           this.apiRest.QuitarSancion(this.torneoSelect.id, jugador.fk_jugador, tipo).subscribe((res: any) => {
-            
-           Swal.fire(res.msj);
-           this.VerTitularesPartido(this.idPartidoSelect);
+
+            Swal.fire(res.msj);
+            this.VerTitularesPartido(this.idPartidoSelect);
 
           });
-         
+
         } else if (result.isDenied) {
           Swal.fire('Cancelado', 'No se hicieron cambios', 'info');
         }
@@ -1740,6 +1802,111 @@ export class InfoTorneoComponent implements OnInit {
 
 
   }
+
+  guardarDireccion(idEquipo: number, equipoNum: number) {
+    let entrenadorId: string | null = null;
+    let delegadoId: string | null = null;
+    let asistenteId: string | null = null;
+
+    // Obtener valores según el equipo
+    if (equipoNum === 1) {
+      entrenadorId = (document.getElementById('entrenador1') as HTMLSelectElement)?.value || null;
+      delegadoId = (document.getElementById('delegado1') as HTMLSelectElement)?.value || null;
+      asistenteId = (document.getElementById('asistente1') as HTMLSelectElement)?.value || null;
+    } else if (equipoNum === 2) {
+      entrenadorId = (document.getElementById('entrenador2') as HTMLSelectElement)?.value || null;
+      delegadoId = (document.getElementById('delegado2') as HTMLSelectElement)?.value || null;
+      asistenteId = (document.getElementById('asistente2') as HTMLSelectElement)?.value || null;
+    }
+
+    // Validar que al menos uno esté lleno
+    const algunSeleccionado = entrenadorId || delegadoId || asistenteId;
+
+    if (!algunSeleccionado) {
+      Swal.fire({
+        icon: 'warning',
+        title: 'Atención',
+        text: 'Debe seleccionar al menos un integrante (entrenador, delegado o asistente).',
+        confirmButtonColor: '#198754'
+      });
+      return;
+    }
+
+    console.log('partido:', this.idPartidoD);
+    console.log('Guardar dirección para el equipo:', idEquipo);
+    console.log('Entrenador seleccionado:', entrenadorId);
+    console.log('Delegado seleccionado:', delegadoId);
+    console.log('Asistente seleccionado:', asistenteId);
+
+    // Llamada al backend solo si hay alguno seleccionado
+    this.apiRest.guardarDireccion(this.idPartidoD, idEquipo, entrenadorId, delegadoId, asistenteId)
+      .subscribe((res: any) => {
+        Swal.fire({
+          icon: 'info',
+          title: res.msj,
+          confirmButtonColor: '#198754'
+        });
+      });
+  }
+
+  ReporteJugadores(IdEquipo: number) {
+
+    Swal.fire({
+      title: "Desea generar el reporte de  jugadores en excel?",
+      showDenyButton: true,
+      confirmButtonText: "Si"
+    }).then((result) => {
+      /* Read more about isConfirmed, isDenied below */
+      if (result.isConfirmed) {
+      //descargiue el excel
+        const url = `${this.pathIm}excel/ReporteJugadores/${IdEquipo}/${this.idTorneo}`;
+          // Llamada HTTP
+        window.open(url, '_blank');
+      }
+    });
+
+
+  }
+
+
+abrirImagen(imgUrl: string) {
+  if (!imgUrl) return; // evita abrir modal con imagen vacía
+
+  console.log(imgUrl);
+
+  this.imagenSeleccionada = imgUrl;
+
+  const modalEl = document.getElementById('modalImagen');
+  if (modalEl) {
+    const modal = new bootstrap.Modal(modalEl); // usa el global
+    modal.show();
+  } else {
+    console.warn('No se encontró el modal en el DOM');
+  }
+}
+
+Selectequ(equipo:any){
+
+  this.equipoSelect= equipo;
+  this.nameEqSelect= equipo.nombre;
+  
+}
+
+cambiarEquipoTr(idEquipo: string) {
+  if (!idEquipo || idEquipo === '') {
+    Swal.fire('Debe seleccionar un equipo');
+    return; // evita que se ejecute el resto
+  }
+
+  this.apiRest.cambiarEquipoTr(this.idTorneo, this.equipoSelect, idEquipo)
+    .subscribe((res: any) => {
+      Swal.fire(res.msj);
+      this.ngOnInit(); // refresca datos si es necesario
+    });
+}
+
+
+
 
 
 }

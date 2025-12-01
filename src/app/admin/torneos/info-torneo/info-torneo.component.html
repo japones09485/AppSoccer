@@ -202,6 +202,15 @@
                             </thead>
                             <tbody>
                               <tr *ngFor="let equipo of gr.detalle" [title]="equipo.nombre + ' - ' + equipo.categoria">
+
+                                <td>
+
+                                  
+                                  <button  (click)="Selectequ(equipo)"  *ngIf="torneoSelect.ValidF1==2 && torneoSelect.ValidF2==1 && this.perfilUsuario == 1"
+                                    type="button"
+                                    class="btn btn-info btn-sm" style="padding: 2px 6px;" data-bs-toggle="modal" data-bs-target="#CambioEq"><i class="fa fa-recycle"></i></button>
+                                </td>
+
                                 <td>
                                   <button *ngIf="torneoSelect.ValidF1== 0 && this.perfilUsuario == 1"
                                     (click)="deleteEqGr(gr.id, equipo.id)" type="button"
@@ -1234,7 +1243,66 @@
 
         <!-- DERECHA -->
         <div class="col-12 col-md-3 mt-4 mt-md-0">
-          <div class="card shadow-sm p-3 rounded ">
+
+          
+          <div class="card shadow-sm p-3 rounded " *ngIf="this.torneoSelect.ValidF2 == 2">
+            <h5 class="text-success bg-warning p-2 rounded text-center">Reclasificación Fase 1</h5>
+            <div class="table-responsive">
+              <table class="table table-bordered table-striped text-center mb-0">
+                <colgroup>
+                  <col style="width: 50px;"> <!-- contador -->
+                  <col style="width: 150px;"> <!-- Equipo (fijo) -->
+                </colgroup>
+                <thead class="table-success sticky-top">
+                  <tr>
+                    <th>#</th>
+                    <th>Equipo</th>
+                    <th>PTS</th>
+                    <th>PJ</th>
+                    <th>PG</th>
+                    <th>PE</th>
+                    <th>PP</th>
+                    <th>GF</th>
+                    <th>GC</th>
+                    <th>DIF</th>
+                    <th>JL</th>
+                  </tr>
+                </thead>
+              </table>
+
+              <!-- Scroll solo al cuerpo -->
+              <div style="max-height: 450px; overflow-y: auto;">
+                <table class="table table-bordered table-striped text-center mb-0">
+                  <colgroup>
+                    <col style="width: 50px;"> <!-- contador -->
+                    <col style="width: 150px;"> <!-- Equipo (fijo) -->
+                  </colgroup>
+                  <tbody>
+                    <tr *ngFor="let eq of clafGeneralF1; let i = index" [title]="eq.nombre + ' - ' + eq.categoria">
+                    <td>{{ (i + 1) + contCabezaGR }}</td>
+                      <td>
+                        <img [src]="pathIm + eq.img1" class="rounded-circle border mb-1"
+                          style="width: 30px; height: 30px; object-fit: cover;" />
+                        <br>
+                        <small>{{ eq.nombre }}</small>
+                      </td>
+                      <td>{{ eq.pts }}</td>
+                      <td>{{ eq.pj }}</td>
+                      <td>{{ eq.pg }}</td>
+                      <td>{{ eq.pe }}</td>
+                      <td>{{ eq.pp }}</td>
+                      <td>{{ eq.gf }}</td>
+                      <td>{{ eq.gc }}</td>
+                      <td>{{ eq.dif }}</td>
+                      <td>{{ eq.jl }}</td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+
+           <div class="card shadow-sm p-3 rounded ">
             <h5 class="text-white bg-success p-2 rounded text-center">Clasificación General</h5>
             <div class="table-responsive">
               <table class="table table-bordered table-striped text-center mb-0">
@@ -1331,6 +1399,49 @@
                         <img [src]="pathIm + gol.imgeq" class="rounded-circle border mb-1"
                           style="width: 30px; height: 30px; object-fit: cover;" />
                       </td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+
+
+            <div class="card shadow-sm p-3 rounded ">
+            <h5 class="text-white bg-success p-2 rounded text-center">Goles en contra</h5>
+            <div class="table-responsive">
+              <table class="table table-bordered table-striped text-center mb-0">
+                <colgroup>
+                  <col style="width: 200px;"> <!-- Jugador -->
+                  <col style="width: 80px;"> <!-- Cantidad -->
+                  <col style="width: 120px;"> <!-- Equipo -->
+                </colgroup>
+                <thead class="table-success sticky-top">
+                  <tr>
+                    <th>Equipo</th>
+                    <th>goles</th>
+                  </tr>
+                </thead>
+              </table>
+
+              <!-- Scroll solo al cuerpo -->
+              <div style="max-height: 450px; overflow-y: auto;">
+                <table class="table table-bordered table-striped text-center mb-0">
+                  <colgroup>
+                    <col style="width: 200px;"> <!-- Jugador -->
+                    <col style="width: 80px;"> <!-- Cantidad -->
+                    <col style="width: 120px;"> <!-- Equipo -->
+                  </colgroup>
+                  <tbody>
+                    <tr *ngFor="let gol of vallamn" [title]="gol.nombre">
+                      <td>
+                        <img [src]="pathIm + gol.imgeq" class="rounded-circle border mb-1"
+                          style="width: 30px; height: 30px; object-fit: cover;" />
+                        <br>
+                        <small>{{ gol.nameEq }}</small>
+                      </td>
+                      <td>{{ gol.goles_recibidos }}</td>
+                     
                     </tr>
                   </tbody>
                 </table>
@@ -1497,6 +1608,12 @@
                     <button type="button" (click)="VerTitularesPartido(partido.id)"
                       *ngIf="(usuario?.perfil == 1 || usuario?.perfil == 3)" class="btn btn-info m-1"
                       title="jugadores partido" data-bs-toggle="modal" [attr.data-bs-target]="'#modalVerJugadoresIns'">
+                      <i class="fa fa-users"></i>
+                    </button>
+
+                    <button type="button" (click)="direccionTecnicaP(partido.id)"
+                      *ngIf="(usuario?.perfil == 1 || usuario?.perfil == 2 || usuario?.perfil == 3)" class="btn btn-primary m-1"
+                      title="Direccion Tecnica" data-bs-toggle="modal" [attr.data-bs-target]="'#modalDireccion'">
                       <i class="fa fa-users"></i>
                     </button>
 
@@ -2171,6 +2288,7 @@
             <th *ngIf="this.perfilUsuario == 1" class="bg-success text-light" scope="col">Email</th>
             <th class="bg-success text-light" scope="col">Categorias</th>
             <th *ngIf="this.perfilUsuario == 1" class="bg-success text-light" scope="col">Estado</th>
+            <th *ngIf="this.perfilUsuario == 1" class="bg-success text-light" scope="col">Reporte</th>
           </tr>
         </thead>
         <tbody>
@@ -2214,6 +2332,13 @@
               <button class="btn btn-sm" [ngClass]="eq.estado ? 'btn-success' : 'btn-danger'"
                 (click)="cambiarEstadoPart(eq.id, eq.estado)">
                 {{ eq.estado ? 'Activo' : 'Inactivo' }}
+              </button>
+            </td>
+
+             <td *ngIf="perfilUsuario == 1">
+              <button class="btn btn-sm" [ngClass]="eq.estado ? 'btn-success' : 'btn-danger'"
+                (click)="ReporteJugadores(eq.id)">
+                <i class="fa fa-file me-1"></i> Reporte
               </button>
             </td>
 
@@ -2785,25 +2910,25 @@
                   <th>Fecha de nacimiento</th>
                   <th>Edad</th>
                   <th>Posición</th>
-                  <th>Acción</th>
+                  <th>N°</th>
                 </tr>
               </thead>
               <tbody>
                 <tr *ngFor="let jugador of jugadoresEquipo">
-                  <td>
+                  <td [class.bg-danger]="jugador.sancionR === 1">
                     <img [src]="jugador.img1 ? (pathIm + jugador.img1) : '../../../assets/img/nd.png'" alt="Foto"
                       width="30" height="30" class="rounded-circle">
                   </td>
-                  <td>{{ jugador.nombre }}</td>
-                  <td>{{ jugador.fecha_nacimiento }}</td>
-                  <td>{{ jugador.fecha_nacimiento }}</td>
-                  <td>
+                  <td  [class.bg-danger]="jugador.sancionR === 1">{{ jugador.nombre }}</td>
+                  <td [class.bg-danger]="jugador.sancionR === 1">{{ jugador.fecha_nacimiento }}</td>
+                  <td [class.bg-danger]="jugador.sancionR === 1">{{ jugador.fecha_nacimiento }}</td>
+                  <td [class.bg-danger]="jugador.sancionR === 1">
                     <span *ngIf="jugador.posicion == 1">Arquero</span>
                     <span *ngIf="jugador.posicion == 2">Defensa</span>
                     <span *ngIf="jugador.posicion == 3">Volante</span>
                     <span *ngIf="jugador.posicion == 4">Delantero</span>
                   </td>
-                  <td>
+                  <td [class.bg-danger]="jugador.sancionR === 1">
 
                     <!--
                           <select class="form-select form-select-sm shadow-sm" style="width: auto;"
@@ -2814,7 +2939,7 @@
                           </select>
                           -->
 
-                    <input type="text" class="form-control form-control-sm shadow-sm"
+                    <input [disabled]="jugador.sancionR === 1" type="text" class="form-control form-control-sm shadow-sm"
                       style="width: 80px; text-align: center;" [(ngModel)]="jugador.num_jug" placeholder="N°" />
 
 
@@ -2835,35 +2960,76 @@
 
   <div class="modal fade" id="modalVerJugadoresIns" tabindex="-1" aria-labelledby="exampleModalLabel"
     aria-hidden="true">
-    <div class="modal-dialog modal-xl modal-dialog-centered modal-full-height">
-      <div class="modal-content">
+    <div class="modal-dialog modal-xl modal-dialog-centered modal-fullscreen-lg-down">
+      <div class="modal-content shadow-lg rounded-4">
 
-        <!-- Header -->
-        <div class="modal-header bg-success position-relative">
-          <h1 class="modal-title fs-5 text-center w-100 m-0 text-white">
+        <!-- Directivos -->
+        <div class="row p-3">
+
+          <div class="modal-header bg-success position-relative text-white rounded-top">
+            <h1 class="modal-title fs-5 text-center w-100 m-0">
+              Direccion tecnica
+            </h1>
+            <button type="button" class="btn-close btn-close-white position-absolute end-0 me-2" data-bs-dismiss="modal"
+              aria-label="Close"></button>
+          </div>
+
+          <div class="col-md-6" *ngFor="let equipo of DirectivosP; let i = index">
+            <div class="card h-100 border-0 shadow-sm rounded-3">
+              <!-- Directivos -->
+              <div class="card-body p-3 scroll-card d-flex flex-column">
+                <table class="table table-sm table-bordered text-center flex-grow-1 align-middle mb-0">
+                  <thead style="background-color: rgba(25, 135, 84, 0.1);">
+                    <tr>
+                      <th>Nombre</th>
+                      <th>Teléfono</th>
+                      <th>Correo</th>
+                      <th>Tipo</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr *ngFor="let dir of equipo; let j = index">
+                      <td class="text-start">
+                        <img class="logo me-2" [src]="pathIm + dir.img1" alt=""
+                          style="width:35px;height:35px;object-fit:cover;border-radius:50%;">
+                        {{ dir.nombre }}
+                      </td>
+                      <td>{{ dir.telefono }}</td>
+                      <td>{{ dir.correo }}</td>
+                      <td>{{ dir.tipo === '1' ? 'Entrenador' : dir.tipo === '2' ? 'Delegado' : 'Asistente' }}</td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Header Jugadores -->
+        <div class="modal-header bg-success position-relative text-white rounded-top">
+          <h1 class="modal-title fs-5 text-center w-100 m-0">
             Jugadores Inscritos
           </h1>
-          <button type="button" class="btn-close position-absolute end-0 me-2" data-bs-dismiss="modal"
+          <button type="button" class="btn-close btn-close-white position-absolute end-0 me-2" data-bs-dismiss="modal"
             aria-label="Close"></button>
         </div>
 
-        <!-- Body -->
-        <div class="modal-body">
-          <div class="row">
-            <!-- Recorremos cada equipo -->
+        <!-- Body Jugadores -->
+        <div class="modal-body p-3">
+          <div class="row g-3">
             <div class="col-md-6" *ngFor="let equipo of jugadoresInscritos; let i = index">
-              <div class="card h-100">
-
+              <div class="card h-100 border-0 shadow-sm rounded-3">
                 <!-- Header equipo -->
-                <div class="card-header text-center fw-bold">
-                  <img class="logo" [src]="pathIm + equipo[0]?.imgEq" alt="">
+                <div class="card-header text-center fw-bold bg-light rounded-top">
+                  <img class="logo me-2" [src]="pathIm + equipo[0]?.imgEq" alt=""
+                    style="width:40px;height:40px;object-fit:cover;border-radius:50%;">
                   {{ equipo[0]?.nombreEq }}
                 </div>
 
                 <!-- Jugadores -->
-                <div class="card-body p-2 scroll-card d-flex flex-column">
-                  <table class="table table-sm table-bordered text-center flex-grow-1">
-                    <thead>
+                <div class="card-body p-3 scroll-card d-flex flex-column">
+                  <table class="table table-sm table-bordered text-center flex-grow-1 align-middle mb-0">
+                    <thead style="background-color: rgba(13, 110, 253, 0.08);">
                       <tr>
                         <th>#</th>
                         <th></th>
@@ -2872,37 +3038,29 @@
                       </tr>
                     </thead>
                     <tbody>
-
-                      <tr *ngFor="let jugador of equipo; let j = index">
-
-                        <!-- Contador de jugadores -->
+                      <tr *ngFor="let jugador of equipo; let j = index" [class.bg-light]="jugador.sancionR !== 1">
                         <td>{{ j + 1 }}</td>
-
                         <td class="text-center">
-                          <button *ngIf="jugador.sancionR === 1" type="button" class="btn btn-danger"
+                          <button *ngIf="jugador.sancionR === 1" type="button" class="btn btn-danger btn-sm"
                             (click)="QuitarSancion('R', jugador)">Habilitar</button>
-                          <button *ngIf="jugador.sancionA === 1" type="button" class="btn btn-warning"
+                          <button *ngIf="jugador.sancionA === 1" type="button" class="btn btn-warning btn-sm"
                             (click)="QuitarSancion('A', jugador)">Habilitar</button>
                         </td>
-
-                        <td [class.bg-danger]="jugador.sancionR === 1">
-                          <img class="logo" [src]="pathIm + jugador.img1" alt="">
+                        <td  (click)="abrirImagen(pathIm + jugador.img1)" [class.bg-danger]="jugador.sancionR === 1" class="text-start">
+                          <img class="logo me-2" [src]="jugador.img1 ? pathIm + jugador.img1 : pathIm + 'NoDisponible.jpg'"   alt=""
+                            style="width:35px;height:35px;object-fit:cover;border-radius:50%;">
                           {{ jugador.nombre }}
                         </td>
-
                         <td [class.bg-danger]="jugador.sancionR === 1">
                           <input type="text" class="form-control form-control-sm shadow-sm"
                             style="width: 120px; text-align: center;" [(ngModel)]="jugador.num_jug"
-                            [disabled]="jugador.sancionR === 1" [placeholder]="
-                       jugador.sancionR === 1 ? 'N°' :
-                       jugador.sancionA === 1 ? 'Tarjeta amarilla activa' : 'N°'
-                     " />
+                            [disabled]="jugador.sancionR === 1"
+                            [placeholder]="jugador.sancionR === 1 ? 'N°' : jugador.sancionA === 1 ? 'Tarjeta amarilla activa' : 'N°'" />
                         </td>
                       </tr>
                     </tbody>
                   </table>
 
-                  <!-- Botón Guardar (centrado y con color Bootstrap) -->
                   <div class="text-center mt-2">
                     <button type="button" class="btn btn-primary btn-sm" (click)="guardarInscripcionAll(equipo)">
                       Guardar
@@ -2912,7 +3070,6 @@
 
               </div>
             </div>
-
           </div>
         </div>
 
@@ -2996,3 +3153,143 @@
       </div>
     </div>
   </div>
+
+  <div class="modal fade" id="modalDireccion" tabindex="-1" aria-labelledby="modalDireccion" aria-hidden="true">
+    <div class="modal-dialog modal-xl modal-dialog-centered modal-full-height">
+      <div class="modal-content">
+
+        <!-- Header -->
+        <div class="modal-header bg-success position-relative">
+          <h1 class="modal-title fs-5 text-center w-100 m-0 text-white">
+            Dirección técnica
+          </h1>
+          <button type="button" class="btn-close position-absolute end-0 me-2" data-bs-dismiss="modal"
+            aria-label="Close"></button>
+        </div>
+
+        <!-- Body -->
+        <div class="modal-body">
+          <div class="row g-3">
+            <!-- Equipo 1 -->
+            <div class="col-md-6 text-center"
+              style="background-color: rgba(0, 128, 0, 0.06); border-radius: 8px; padding: 15px;">
+              <h5 class="m-3">{{ nameEq1 }}</h5>
+
+              <!-- Entrenadores -->
+              <div class="mb-3 text-start">
+                <label for="entrenador1" class="form-label">Entrenador</label>
+                <select id="entrenador1" class="form-select">
+                  <option value="" disabled selected>Seleccione un entrenador</option>
+                  <option *ngFor="let e of entrenadores1" [value]="e.id">{{ e.nombre }}</option>
+                </select>
+              </div>
+
+              <!-- Delegados -->
+              <div class="mb-3 text-start">
+                <label for="delegado1" class="form-label">Delegado</label>
+                <select id="delegado1" class="form-select">
+                  <option value="" disabled selected>Seleccione un delegado</option>
+                  <option *ngFor="let d of delegado1" [value]="d.id">{{ d.nombre }}</option>
+                </select>
+              </div>
+
+              <!-- Asistentes -->
+              <div class="mb-3 text-start">
+                <label for="asistente1" class="form-label">Asistente</label>
+                <select id="asistente1" class="form-select">
+                  <option value="" disabled selected>Seleccione un asistente</option>
+                  <option *ngFor="let a of asistente1" [value]="a.id">{{ a.nombre }}</option>
+                </select>
+              </div>
+
+              <!-- Botón Guardar -->
+              <button class="btn btn-success w-100" (click)="guardarDireccion(idEq1, 1)">
+                Guardar
+              </button>
+            </div>
+
+            <!-- Equipo 2 -->
+            <div class="col-md-6 text-center"
+              style="background-color: rgba(0, 123, 255, 0.06); border-radius: 8px; padding: 15px;">
+              <h5 class="m-3">{{ nameEq2 }}</h5>
+
+              <!-- Entrenadores -->
+              <div class="mb-3 text-start">
+                <label for="entrenador2" class="form-label">Entrenador</label>
+                <select id="entrenador2" class="form-select">
+                  <option value="" disabled selected>Seleccione un entrenador</option>
+                  <option *ngFor="let e of entrenadores2" [value]="e.id">{{ e.nombre }}</option>
+                </select>
+              </div>
+
+              <!-- Delegados -->
+              <div class="mb-3 text-start">
+                <label for="delegado2" class="form-label">Delegado</label>
+                <select id="delegado2" class="form-select">
+                  <option value="" disabled selected>Seleccione un delegado</option>
+                  <option *ngFor="let d of delegado2" [value]="d.id">{{ d.nombre }}</option>
+                </select>
+              </div>
+
+              <!-- Asistentes -->
+              <div class="mb-3 text-start">
+                <label for="asistente2" class="form-label">Asistente</label>
+                <select id="asistente2" class="form-select">
+                  <option value="" disabled selected>Seleccione un asistente</option>
+                  <option *ngFor="let a of asistente2" [value]="a.id">{{ a.nombre }}</option>
+                </select>
+              </div>
+
+              <!-- Botón Guardar -->
+              <button class="btn btn-primary w-100" (click)="guardarDireccion(idEq2, 2)">
+                Guardar
+              </button>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <div class="modal fade" id="modalImagen" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content border-0 bg-transparent">
+      <div class="modal-body p-0 text-center">
+        <img [src]="imagenSeleccionada" alt="Imagen ampliada" class="img-fluid rounded">
+      </div>
+      <div class="text-center mt-2">
+        <button type="button" class="btn btn-secondary btn-sm" data-bs-dismiss="modal">Cerrar</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Modal -->
+<div class="modal fade" id="CambioEq" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content bg-secondary">
+      <div class="modal-header">
+        <h1 class="modal-title fs-5" id="exampleModalLabel">Cambiar equipo : {{this.nameEqSelect}}</h1>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+
+        <select id="asistente2" class="form-select" #selectEquipo>
+          <option value="" disabled selected>Seleccione un asistente</option>
+          <option *ngFor="let a of equiposTorneo" [value]="a.id">{{ a.nombre }}</option>
+        </select>
+
+      
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+       <button type="button" class="btn btn-primary"
+              (click)="cambiarEquipoTr(selectEquipo.value)">
+        Cambiar Equipo
+      </button>
+
+      </div>
+    </div>
+  </div>
+</div>

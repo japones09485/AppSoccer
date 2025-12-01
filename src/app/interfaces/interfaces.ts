@@ -30,6 +30,7 @@ export interface Torneos {
   ValidF6?: number;
   ValidF7?: number;
   expanded?: boolean;
+  info_jugadores?: number;
  
 }
 

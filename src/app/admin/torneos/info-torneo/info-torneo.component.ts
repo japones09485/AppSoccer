@@ -140,9 +140,9 @@ export class InfoTorneoComponent implements OnInit {
   idEq1!: number;
   idEq2!: number;
   idPartidoD!: number;
-  contCabezaGR=0;
-  nameEqSelect:string='';
-  equipoSelect:any;
+  contCabezaGR = 0;
+  nameEqSelect: string = '';
+  equipoSelect: any;
 
 
   ordinales: string[] = [
@@ -167,7 +167,7 @@ export class InfoTorneoComponent implements OnInit {
 
 
   gruposPorFase: { [key: number]: any[] } = {}; // <- asegúrate de tener esto generado
-  
+
   constructor(
     private apiRest: ApiService,
     private fb: FormBuilder,
@@ -185,7 +185,7 @@ export class InfoTorneoComponent implements OnInit {
 
     this.usuario = this.apiRest.getUsuario();
     this.perfilUsuario = this.usuario ? this.usuario.perfil : 0;
-    
+
     this.acRouter.params.subscribe(param => {
       this.idTorneo = param['idTorneo'];
 
@@ -240,22 +240,22 @@ export class InfoTorneoComponent implements OnInit {
       this.apiRest.getById_Grupos(this.idTorneo).subscribe((res: any) => {
         this.grupos = res.grupos;
 
-      
+
 
         for (let i = 1; i <= 7; i++) {
           this.gruposPorFase[i] = this.grupos.filter((g: any) => Number(g.fase) === i);
         }
-     
-         this.clafGeneral = res.general;
-         this.clafGeneralF1= res.generalFase1;
+
+        this.clafGeneral = res.general;
+        this.clafGeneralF1 = res.generalFase1;
       });
 
 
 
       this.apiRest.get_Calendary(this.idTorneo).subscribe((res: any) => {
         this.calendarioData = res.calendarioData;
-        this.contCabezaGR=res.contCabezaGR;
-       
+        this.contCabezaGR = res.contCabezaGR;
+
       });
 
       this.apiRest.get_Jueces_activos().subscribe((res: any) => {
@@ -906,7 +906,7 @@ export class InfoTorneoComponent implements OnInit {
 
     Swal.fire({
       title: "¿Deseas reversar el resultado del partido?",
-      text: " Esto recalculara puntos goles y juego limpio.",
+      text: "Esto recalculará puntos, goles y juego limpio.",
       icon: "warning",
       showCancelButton: true,
       confirmButtonText: "Sí, guardar",
@@ -914,14 +914,21 @@ export class InfoTorneoComponent implements OnInit {
       reverseButtons: true
     }).then((result) => {
 
+      // Si NO confirma, no hacemos nada
+      if (!result.isConfirmed) {
+        return;
+      }
+
+      // Si confirma, ejecuta el servicio
       this.apiRest.ReversarResultado(IdPartido, idTorneo).subscribe((res: any) => {
         Swal.fire(res.msj);
         this.calendarioData = res.calendarioData;
         this.grupos = res.grupos;
         this.clafGeneral = res.general;
-
       });
+
     });
+
 
 
   }
@@ -933,12 +940,12 @@ export class InfoTorneoComponent implements OnInit {
 
     Swal.fire({
       title: `¿Deseas inscribir jugadores a los equipos 
-          <span style="color:#28a745; font-weight:bold;">${eq1}</span> 
-          y 
-          <span style="color:#dc3545; font-weight:bold;">${eq2}</span>?`,
+      <span style="color:#28a745; font-weight:bold;">${eq1}</span> 
+      y 
+      <span style="color:#dc3545; font-weight:bold;">${eq2}</span>?`,
       html: `<p style="font-size:14px; color:#6c757d;">
-                Esto inscribirá todos los jugadores de la categoría al torneo.
-              </p>`,
+            Esto inscribirá todos los jugadores de la categoría al torneo.
+         </p>`,
       icon: "info",
       showCancelButton: true,
       confirmButtonColor: "#28a745",
@@ -947,16 +954,19 @@ export class InfoTorneoComponent implements OnInit {
       cancelButtonText: "❌ Cancelar",
       reverseButtons: true
     }).then((result) => {
-      if (result.isConfirmed) {
 
-        this.apiRest.InscribirJugadoresPartido(partido).subscribe((res: any) => {
-          Swal.fire(res.msj);
-
-
-        });
-
+      // Si NO confirma, no hace nada
+      if (!result.isConfirmed) {
+        return;
       }
+
+      // Si confirma, ejecuta el servicio
+      this.apiRest.InscribirJugadoresPartido(partido).subscribe((res: any) => {
+        Swal.fire(res.msj);
+      });
+
     });
+
 
   }
 
@@ -1635,6 +1645,8 @@ export class InfoTorneoComponent implements OnInit {
   direccionTecnicaP(IdPartido: number) {
 
 
+
+
     this.apiRest.direccionTecnicaP(IdPartido)
       .subscribe((res: any) => {
         this.idPartidoD = res.IdPartido;
@@ -1858,9 +1870,9 @@ export class InfoTorneoComponent implements OnInit {
     }).then((result) => {
       /* Read more about isConfirmed, isDenied below */
       if (result.isConfirmed) {
-      //descargiue el excel
+        //descargiue el excel
         const url = `${this.pathIm}excel/ReporteJugadores/${IdEquipo}/${this.idTorneo}`;
-          // Llamada HTTP
+        // Llamada HTTP
         window.open(url, '_blank');
       }
     });
@@ -1869,41 +1881,41 @@ export class InfoTorneoComponent implements OnInit {
   }
 
 
-abrirImagen(imgUrl: string) {
-  if (!imgUrl) return; // evita abrir modal con imagen vacía
+  abrirImagen(imgUrl: string) {
+    if (!imgUrl) return; // evita abrir modal con imagen vacía
 
-  console.log(imgUrl);
+    console.log(imgUrl);
 
-  this.imagenSeleccionada = imgUrl;
+    this.imagenSeleccionada = imgUrl;
 
-  const modalEl = document.getElementById('modalImagen');
-  if (modalEl) {
-    const modal = new bootstrap.Modal(modalEl); // usa el global
-    modal.show();
-  } else {
-    console.warn('No se encontró el modal en el DOM');
-  }
-}
-
-Selectequ(equipo:any){
-
-  this.equipoSelect= equipo;
-  this.nameEqSelect= equipo.nombre;
-  
-}
-
-cambiarEquipoTr(idEquipo: string) {
-  if (!idEquipo || idEquipo === '') {
-    Swal.fire('Debe seleccionar un equipo');
-    return; // evita que se ejecute el resto
+    const modalEl = document.getElementById('modalImagen');
+    if (modalEl) {
+      const modal = new bootstrap.Modal(modalEl); // usa el global
+      modal.show();
+    } else {
+      console.warn('No se encontró el modal en el DOM');
+    }
   }
 
-  this.apiRest.cambiarEquipoTr(this.idTorneo, this.equipoSelect, idEquipo)
-    .subscribe((res: any) => {
-      Swal.fire(res.msj);
-      this.ngOnInit(); // refresca datos si es necesario
-    });
-}
+  Selectequ(equipo: any) {
+
+    this.equipoSelect = equipo;
+    this.nameEqSelect = equipo.nombre;
+
+  }
+
+  cambiarEquipoTr(idEquipo: string) {
+    if (!idEquipo || idEquipo === '') {
+      Swal.fire('Debe seleccionar un equipo');
+      return; // evita que se ejecute el resto
+    }
+
+    this.apiRest.cambiarEquipoTr(this.idTorneo, this.equipoSelect, idEquipo)
+      .subscribe((res: any) => {
+        Swal.fire(res.msj);
+        this.ngOnInit(); // refresca datos si es necesario
+      });
+  }
 
 
 

@@ -1,8 +1,8 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild, ElementRef } from '@angular/core';
 import Swal from 'sweetalert2';
 import { Router } from '@angular/router';
 import { ApiService } from "../../services/api.service";
-import { CommonModule } from '@angular/common';
+import {CommonModule, NgOptimizedImage} from '@angular/common';
 import { Torneos } from '../../interfaces/interfaces';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
 import { environment } from "../../../environments/environment";
@@ -13,7 +13,7 @@ import { FormsModule } from '@angular/forms';
 
 @Component({
   selector: 'app-torneos',
-  imports: [CommonModule, ReactiveFormsModule,FormsModule,PaginacionComponent],
+  imports: [CommonModule, ReactiveFormsModule, FormsModule, PaginacionComponent, NgOptimizedImage],
   templateUrl: './torneos.component.html',
   styleUrl: './torneos.component.css'
 })
@@ -39,6 +39,13 @@ export class TorneosComponent implements OnInit {
   filtroEstado: string = '';
   torneosFiltrados: any[] = [];
   paginas = 0;
+  currentSlide: number = 0;
+  slideInterval: any;
+  @ViewChild('fileInput') fileInput!: ElementRef;
+
+  mostrarModal: boolean = false;
+  cargando: boolean = false;
+  archivoSeleccionado: File | null = null;
 
   constructor(private apiRest: ApiService,
     private fb: FormBuilder,
@@ -60,7 +67,7 @@ export class TorneosComponent implements OnInit {
 
   sigPag(pag: number) {
 
-  
+
     this.apiRest.get_All_torneos(pag)
       .subscribe((res: any) => {
         this.torneos = res.torneos;
@@ -73,13 +80,13 @@ export class TorneosComponent implements OnInit {
     // Al cargar categorías, conviértelo a número:
     loadCategorias() {
         this.apiRest.get_All_categorias_activas().subscribe((res: any) => {
-         
+
           this.categoriasDisponibles = res.categoriasDisponibles.map((cat: any) => ({
             id: Number(cat.id),   // aquí convierto id a número
             nombre: cat.nombre
           }));
 
-      
+
         });
 
       }
@@ -105,7 +112,7 @@ export class TorneosComponent implements OnInit {
       num_gruposF7: [''],
       categoria: ['',],
       Rninas: ['',]
-      
+
     });
   }
 
@@ -163,14 +170,14 @@ export class TorneosComponent implements OnInit {
     this.operation = 'edit';
     this.apiRest.getById_Torneo(id)
       .subscribe((res: any) => {
-       
-        
+
+
         this.torneoSelect = res.torneo;
         console.log(this.torneoSelect);
-        
+
         this.cantFase = this.torneoSelect.num_fases as number;
         this.controlEdad = this.torneoSelect.control_edad ?? false;
-      
+
         this.TorneoForm.setValue({
           name: this.torneoSelect.nombre,
           descripcion: this.torneoSelect.descripcion,
@@ -226,12 +233,12 @@ export class TorneosComponent implements OnInit {
   }
 
   openModal(path:String,torneo:String) {
-  
+
       this.imgVisi=path;
       this.TorneoVisi = torneo;
-  
+
       const modalElement = document.getElementById('exampleModal');
-      
+
       // Verificar que el elemento existe
       if (modalElement) {
         const modal = new Modal(modalElement); // Solo se crea el modal si el elemento existe
@@ -244,6 +251,11 @@ export class TorneosComponent implements OnInit {
   goToInfo(InfoTorneo:number) {
     this.router.navigate(['/InfoTorneo/'+InfoTorneo]); // Reemplaza con tu ruta
   }
+
+  goToInfo1(InfoTorneo:number) {
+    this.router.navigate(['/InfoT/'+InfoTorneo]); // Reemplaza con tu ruta
+  }
+
 
   getNombreCategoria(idCategoria: string | undefined): string {
     const id = Number(idCategoria);
@@ -269,7 +281,7 @@ export class TorneosComponent implements OnInit {
     // Aquí puedes agregar llamada al backend si lo necesitas
   }
 
-  
+
 filtrarTorneos() {
   const nombre = this.filtroNombre.toLowerCase().trim();
    const estado = this.filtroEstado;
@@ -283,7 +295,7 @@ filtrarTorneos() {
 
 
    ReporteJugadoresTorneo(IdTorneo: number) {
-  
+
       Swal.fire({
         title: "Desea generar el reporte de  jugadores en excel?",
         showDenyButton: true,
@@ -298,8 +310,93 @@ filtrarTorneos() {
           window.open(url, '_blank');
         }
       });
-  
-  
+
+
     }
+
+    // Llama a esta función cuando abras el formulario de edición
+startAutoSlider() {
+  // Limpiamos cualquier intervalo previo para no duplicar
+  this.stopAutoSlider();
+
+  // Solo iniciamos si existen las dos imágenes
+  if (this.torneoSelect?.img1 && this.torneoSelect?.img2) {
+    this.slideInterval = setInterval(() => {
+      this.nextSlide();
+    }, 4000); // Cambia cada 4 segundos
+  }
+}
+
+stopAutoSlider() {
+  if (this.slideInterval) {
+    clearInterval(this.slideInterval);
+  }
+}
+
+nextSlide() {
+  this.currentSlide = (this.currentSlide + 1) % 2;
+}
+
+prevSlide() {
+  this.currentSlide = this.currentSlide === 0 ? 1 : 0;
+}
+
+// Asegúrate de detener el slider cuando se cierre el componente
+ngOnDestroy() {
+  this.stopAutoSlider();
+}
+
+
+onFileSelected(event: any) {
+    const file: File = event.target.files[0];
+    if (file) {
+      // Validación extra de seguridad para la extensión
+      if (file.name.toLowerCase().endsWith('.csv')) {
+        this.archivoSeleccionado = file;
+      } else {
+        alert('Por favor, selecciona un archivo con extensión .csv');
+        this.limpiarInput();
+      }
+    }
+  }
+
+  procesarArchivo() {
+    if (!this.archivoSeleccionado) return;
+
+    this.cargando = true;
+    const formData = new FormData();
+    // 'archivo' es la llave que recibirá PHP en $_FILES['archivo']
+    formData.append('archivo', this.archivoSeleccionado, this.archivoSeleccionado.name);
+
+    this.apiRest.uploadMasivoT(formData).subscribe({
+      next: (res) => {
+        this.torneos = res.torneos;
+        Swal.fire(res.msj);
+        this.cerrarModal();
+        this.filtrarTorneos(); // Tu función existente para refrescar la lista
+      },
+      error: (err) => {
+
+        Swal.fire('Hubo un error al procesar el archivo. Revisa el formato.');
+        this.cargando = false;
+      },
+      complete: () => {
+        this.cargando = false;
+      }
+    });
+  }
+
+  cerrarModal() {
+    this.mostrarModal = false;
+    this.archivoSeleccionado = null;
+    this.cargando = false;
+    this.limpiarInput();
+  }
+
+  limpiarInput() {
+    if (this.fileInput) {
+      this.fileInput.nativeElement.value = '';
+    }
+  }
 
 }

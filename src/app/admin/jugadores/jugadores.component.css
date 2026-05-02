@@ -1,23 +1,12 @@
 .balon-girando {
     animation: girar 1.2s linear infinite;
   }
-  
-  @keyframes girar {
-    from {
-      transform: rotate(0deg);
-    }
-    to {
-      transform: rotate(360deg);
-    }
-  }
 
-  #content {
-  background-image: url('../../../assets/img/fondoPR.jpg');
-  background-size: cover;
-  background-position: center;
-  background-repeat: no-repeat;
-  background-attachment: fixed;
-  min-height: 100vh;
-  font-family: 'Poppins', sans-serif;
-}
+
+  .animate-spin-slow { animation: spin 3s linear infinite; }
+  @keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+  .animate-fade-in { animation: fadeIn 0.2s ease-out; }
+  @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+
+
   

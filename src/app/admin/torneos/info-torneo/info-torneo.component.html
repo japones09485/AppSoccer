@@ -18,7 +18,7 @@
 
           <img src="../../../../assets/img/logo.png" id="Logo">
 
-          <div class="collapse navbar-collapse" id="tournamentNav">
+          <div class="navbar-collapse" id="tournamentNav">
             <ul class="navbar-nav">
               <li class="nav-item">
                 <a class="nav-link text-success hover-success" (click)="inicio()" aria-current="page">
@@ -59,6 +59,9 @@
       <div class="tournament-header mb-4">
         <h1 class="card-title fw-bold text-center text-uppercase m-2 titulo-contorno">
           {{ torneoSelect.nombre }}
+          <a class="nav-link text-success hover-success" (click)="opMenu(2)">
+            <i class="bi bi-calendar-event me-1"></i> Calendario
+          </a>
         </h1>
 
 
@@ -205,10 +208,12 @@
 
                                 <td>
 
-                                  
-                                  <button  (click)="Selectequ(equipo)"  *ngIf="torneoSelect.ValidF1==2 && torneoSelect.ValidF2==1 && this.perfilUsuario == 1"
-                                    type="button"
-                                    class="btn btn-info btn-sm" style="padding: 2px 6px;" data-bs-toggle="modal" data-bs-target="#CambioEq"><i class="fa fa-recycle"></i></button>
+
+                                  <button (click)="Selectequ(equipo)"
+                                    *ngIf="torneoSelect.ValidF1==2 && torneoSelect.ValidF2==1 && this.perfilUsuario == 1"
+                                    type="button" class="btn btn-info btn-sm" style="padding: 2px 6px;"
+                                    data-bs-toggle="modal" data-bs-target="#CambioEq"><i
+                                      class="fa fa-recycle"></i></button>
                                 </td>
 
                                 <td>
@@ -1244,7 +1249,7 @@
         <!-- DERECHA -->
         <div class="col-12 col-md-3 mt-4 mt-md-0">
 
-          
+
           <div class="card shadow-sm p-3 rounded " *ngIf="this.torneoSelect.ValidF2 == 2">
             <h5 class="text-success bg-warning p-2 rounded text-center">Reclasificación Fase 1</h5>
             <div class="table-responsive">
@@ -1279,7 +1284,7 @@
                   </colgroup>
                   <tbody>
                     <tr *ngFor="let eq of clafGeneralF1; let i = index" [title]="eq.nombre + ' - ' + eq.categoria">
-                    <td>{{ (i + 1) + contCabezaGR }}</td>
+                      <td>{{ (i + 1) + contCabezaGR }}</td>
                       <td>
                         <img [src]="pathIm + eq.img1" class="rounded-circle border mb-1"
                           style="width: 30px; height: 30px; object-fit: cover;" />
@@ -1302,7 +1307,7 @@
             </div>
           </div>
 
-           <div class="card shadow-sm p-3 rounded ">
+          <div class="card shadow-sm p-3 rounded ">
             <h5 class="text-white bg-success p-2 rounded text-center">Clasificación General</h5>
             <div class="table-responsive">
               <table class="table table-bordered table-striped text-center mb-0">
@@ -1407,7 +1412,7 @@
           </div>
 
 
-            <div class="card shadow-sm p-3 rounded ">
+          <div class="card shadow-sm p-3 rounded ">
             <h5 class="text-white bg-success p-2 rounded text-center">Goles en contra</h5>
             <div class="table-responsive">
               <table class="table table-bordered table-striped text-center mb-0">
@@ -1441,7 +1446,7 @@
                         <small>{{ gol.nameEq }}</small>
                       </td>
                       <td>{{ gol.goles_recibidos }}</td>
-                     
+
                     </tr>
                   </tbody>
                 </table>
@@ -1473,7 +1478,7 @@
           </button>
 
           <img src="../../../../assets/img/logo.png" id="Logo">
-          <div class="collapse navbar-collapse" id="tournamentNav">
+          <div class="navbar-collapse" id="tournamentNav">
             <ul class="navbar-nav">
               <li class="nav-item">
                 <a class="nav-link text-success hover-success" (click)="inicio()" aria-current="page">
@@ -1612,8 +1617,9 @@
                     </button>
 
                     <button type="button" (click)="direccionTecnicaP(partido.id)"
-                      *ngIf="(usuario?.perfil == 1 || usuario?.perfil == 2 || usuario?.perfil == 3)" class="btn btn-primary m-1"
-                      title="Direccion Tecnica" data-bs-toggle="modal" [attr.data-bs-target]="'#modalDireccion'">
+                      *ngIf="(usuario?.perfil == 1 || usuario?.perfil == 2 || usuario?.perfil == 3)"
+                      class="btn btn-primary m-1" title="Direccion Tecnica" data-bs-toggle="modal"
+                      [attr.data-bs-target]="'#modalDireccion'">
                       <i class="fa fa-users"></i>
                     </button>
 
@@ -2221,8 +2227,9 @@
 
         <!-- BOTÓN POR FASE -->
         <div class="d-flex justify-content-center">
-          <button *ngIf="getValidFase(torneoSelect, fase.key) == 1 && (this.perfilUsuario == 1 || this.perfilUsuario == 3)" (click)="validarFase(idTorneo, (+fase.key) + 1 )"
-            type="button"
+          <button
+            *ngIf="getValidFase(torneoSelect, fase.key) == 1 && (this.perfilUsuario == 1 || this.perfilUsuario == 3)"
+            (click)="validarFase(idTorneo, (+fase.key) + 1 )" type="button"
             class="btn btn-warning text-dark fw-bold px-5 py-3 rounded-pill border border-primary hover-red"
             style="width: 800px; font-size: 1.5rem;">
             Generar partidos Fase {{ (+fase.key) + 1 }}
@@ -2247,7 +2254,7 @@
           </button>
 
           <img src="../../../../assets/img/logo.png" id="Logo">
-          <div class="collapse navbar-collapse" id="tournamentNav">
+          <div class="navbar-collapse" id="tournamentNav">
             <ul class="navbar-nav">
               <li class="nav-item">
                 <a class="nav-link text-success hover-success" (click)="inicio()">
@@ -2279,73 +2286,88 @@
         {{ torneoSelect.nombre }}
       </h1>
 
-      <table class="table table-bordered">
+      <table class="table table-bordered table-fixed align-middle">
         <thead>
           <tr class="text-center">
-            <th class="bg-success text-light" scope="col">#</th>
-            <th class="bg-success text-light" scope="col">Info</th>
-            <th class="bg-success text-light" scope="col">Nombre</th>
-            <th *ngIf="this.perfilUsuario == 1" class="bg-success text-light" scope="col">Email</th>
-            <th class="bg-success text-light" scope="col">Categorias</th>
-            <th *ngIf="this.perfilUsuario == 1" class="bg-success text-light" scope="col">Estado</th>
-            <th *ngIf="this.perfilUsuario == 1" class="bg-success text-light" scope="col">Reporte</th>
+            <th class="bg-success text-light col-num">#</th>
+            <th class="bg-success text-light col-info">Info</th>
+            <th class="bg-success text-light col-nombre">Nombre</th>
+            <th *ngIf="perfilUsuario == 1" class="bg-success text-light col-email">Email</th>
+            <th class="bg-success text-light col-categorias">Categorias</th>
+            <th *ngIf="perfilUsuario == 1" class="bg-success text-light col-estado">Estado</th>
+            <th *ngIf="perfilUsuario == 1" class="bg-success text-light col-acciones">Acciones</th>
           </tr>
         </thead>
+
         <tbody>
           <tr *ngFor="let eq of equiposTorneo; let i = index" class="text-center"
             [ngClass]="eq.estado ? 'table-success' : 'table-danger'">
 
-            <!-- Contador -->
-            <td>{{ i + 1 }}</td>
+            <!-- Número -->
+            <td class="fw-bold">{{ i + 1 }}</td>
 
+            <!-- INFO -->
             <td>
-              <div class="d-flex align-items-center justify-content-center">
-                <a *ngIf="eq.img1">
-                  <img [src]="pathIm + eq.img1" alt="Imagen 1" class="img-thumbnail shadow me-2" title="{{eq.nombre}}"
-                    style="width: 48px; height: 48px; object-fit: cover; border-radius: 0.375rem;">
-                </a>
+              <div class="d-flex flex-column align-items-center gap-2">
 
-                <img *ngIf="!eq.img1" src="../../../../assets/img/nd.png" alt="Imagen 1"
-                  class="img-thumbnail shadow me-2"
-                  style="width: 48px; height: 48px; object-fit: cover; border-radius: 0.375rem;">
+                <!-- Imagen corregida -->
+                <div class="img-container">
+                  <img *ngIf="eq.img1; else sinImg" [src]="pathIm + eq.img1" class="img-pro">
 
-                <!-- Button trigger modal -->
-                <button *ngIf="perfilUsuario == 1" (click)="JugadoresParticipante(eq.id)" type="button"
-                  class="btn btn-success" data-bs-toggle="modal" data-bs-target="#jugadoresParticipantes">
-                  <i class="fa fa-users me-1"></i> Jugadores
-                </button>
+                  <ng-template #sinImg>
+                    <img src="../../../../assets/img/nd.png" class="img-pro">
+                  </ng-template>
+                </div>
+
+                <!-- Botones -->
+                <div  class="d-flex gap-2">
+
+                  <button *ngIf="perfilUsuario == 1 || perfilUsuario == 3"  (click)="JugadoresParticipante(eq.id)" class="btn btn-primary btn-lg-custom"
+                    data-bs-toggle="modal" data-bs-target="#jugadoresParticipantes">
+                    <i class="fa fa-users me-1"></i>
+                  </button>
+
+                  <button *ngIf="perfilUsuario == 1 || perfilUsuario == 3" (click)="abrirModalSeleccionJEquipo(eq.id)" class="btn btn-success btn-lg-custom"
+                    data-bs-toggle="modal" data-bs-target="#modalSeleccionarJugadorT">
+                    <i class="fa fa-plus"></i>
+                  </button>
+
+                </div>
 
               </div>
             </td>
 
-            <td>{{ eq.nombre }}</td>
+            <!-- Nombre -->
+            <td class="fw-semibold">{{ eq.nombre }}</td>
 
+            <!-- Email -->
             <td *ngIf="perfilUsuario == 1">{{ eq.email }}</td>
 
+            <!-- Categorías -->
             <td>
               <span *ngFor="let cat of eq.categorias" class="badge bg-primary me-1">
                 {{ getNombreCategoria(cat) }}
               </span>
             </td>
 
+            <!-- Estado -->
             <td *ngIf="perfilUsuario == 1">
-              <button class="btn btn-sm" [ngClass]="eq.estado ? 'btn-success' : 'btn-danger'"
+              <button class="btn btn-lg-custom" [ngClass]="eq.estado ? 'btn-success' : 'btn-danger'"
                 (click)="cambiarEstadoPart(eq.id, eq.estado)">
+                <i class="fa me-1" [ngClass]="eq.estado ? 'fa-check' : 'fa-times'"></i>
                 {{ eq.estado ? 'Activo' : 'Inactivo' }}
               </button>
             </td>
 
-             <td *ngIf="perfilUsuario == 1">
-              <button class="btn btn-sm" [ngClass]="eq.estado ? 'btn-success' : 'btn-danger'"
-                (click)="ReporteJugadores(eq.id)">
+            <!-- Acciones -->
+            <td *ngIf="perfilUsuario == 1">
+              <button class="btn btn-dark btn-lg-custom" (click)="ReporteJugadores(eq.id)">
                 <i class="fa fa-file me-1"></i> Reporte
               </button>
             </td>
 
           </tr>
         </tbody>
-
-
       </table>
 
       <!-- Spinner -->
@@ -2432,7 +2454,7 @@
           </button>
 
           <img src="../../../../assets/img/logo.png" id="Logo">
-          <div class="collapse navbar-collapse" id="tournamentNav">
+          <div class="navbar-collapse" id="tournamentNav">
             <ul class="navbar-nav">
               <li class="nav-item">
                 <a class="nav-link text-success hover-success" (click)="inicio()">
@@ -2544,7 +2566,7 @@
           </button>
 
           <img src="../../../../assets/img/logo.png" id="Logo">
-          <div class="collapse navbar-collapse" id="tournamentNav">
+          <div class="navbar-collapse" id="tournamentNav">
             <ul class="navbar-nav">
               <li class="nav-item">
                 <a class="nav-link text-success hover-success" (click)="inicio()">
@@ -2919,7 +2941,7 @@
                     <img [src]="jugador.img1 ? (pathIm + jugador.img1) : '../../../assets/img/nd.png'" alt="Foto"
                       width="30" height="30" class="rounded-circle">
                   </td>
-                  <td  [class.bg-danger]="jugador.sancionR === 1">{{ jugador.nombre }}</td>
+                  <td [class.bg-danger]="jugador.sancionR === 1">{{ jugador.nombre }}</td>
                   <td [class.bg-danger]="jugador.sancionR === 1">{{ jugador.fecha_nacimiento }}</td>
                   <td [class.bg-danger]="jugador.sancionR === 1">{{ jugador.fecha_nacimiento }}</td>
                   <td [class.bg-danger]="jugador.sancionR === 1">
@@ -2939,8 +2961,9 @@
                           </select>
                           -->
 
-                    <input [disabled]="jugador.sancionR === 1" type="text" class="form-control form-control-sm shadow-sm"
-                      style="width: 80px; text-align: center;" [(ngModel)]="jugador.num_jug" placeholder="N°" />
+                    <input [disabled]="jugador.sancionR === 1" type="text"
+                      class="form-control form-control-sm shadow-sm" style="width: 80px; text-align: center;"
+                      [(ngModel)]="jugador.num_jug" placeholder="N°" />
 
 
                   </td>
@@ -3046,8 +3069,10 @@
                           <button *ngIf="jugador.sancionA === 1" type="button" class="btn btn-warning btn-sm"
                             (click)="QuitarSancion('A', jugador)">Habilitar</button>
                         </td>
-                        <td  (click)="abrirImagen(pathIm + jugador.img1)" [class.bg-danger]="jugador.sancionR === 1" class="text-start">
-                          <img class="logo me-2" [src]="jugador.img1 ? pathIm + jugador.img1 : pathIm + 'NoDisponible.jpg'"   alt=""
+                        <td (click)="abrirImagen(pathIm + jugador.img1)" [class.bg-danger]="jugador.sancionR === 1"
+                          class="text-start">
+                          <img class="logo me-2"
+                            [src]="jugador.img1 ? pathIm + jugador.img1 : pathIm + 'NoDisponible.jpg'" alt=""
                             style="width:35px;height:35px;object-fit:cover;border-radius:50%;">
                           {{ jugador.nombre }}
                         </td>
@@ -3253,43 +3278,112 @@
   </div>
 
   <div class="modal fade" id="modalImagen" tabindex="-1" aria-hidden="true">
-  <div class="modal-dialog modal-dialog-centered">
-    <div class="modal-content border-0 bg-transparent">
-      <div class="modal-body p-0 text-center">
-        <img [src]="imagenSeleccionada" alt="Imagen ampliada" class="img-fluid rounded">
-      </div>
-      <div class="text-center mt-2">
-        <button type="button" class="btn btn-secondary btn-sm" data-bs-dismiss="modal">Cerrar</button>
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content border-0 bg-transparent">
+        <div class="modal-body p-0 text-center">
+          <img [src]="imagenSeleccionada" alt="Imagen ampliada" class="img-fluid rounded">
+        </div>
+        <div class="text-center mt-2">
+          <button type="button" class="btn btn-secondary btn-sm" data-bs-dismiss="modal">Cerrar</button>
+        </div>
       </div>
     </div>
   </div>
-</div>
 
-<!-- Modal -->
-<div class="modal fade" id="CambioEq" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-  <div class="modal-dialog">
-    <div class="modal-content bg-secondary">
-      <div class="modal-header">
-        <h1 class="modal-title fs-5" id="exampleModalLabel">Cambiar equipo : {{this.nameEqSelect}}</h1>
-        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-      </div>
-      <div class="modal-body">
+  <!-- Modal -->
+  <div class="modal fade" id="CambioEq" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content bg-secondary">
+        <div class="modal-header">
+          <h1 class="modal-title fs-5" id="exampleModalLabel">Cambiar equipo : {{this.nameEqSelect}}</h1>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
 
-        <select id="asistente2" class="form-select" #selectEquipo>
-          <option value="" disabled selected>Seleccione un asistente</option>
-          <option *ngFor="let a of equiposTorneo" [value]="a.id">{{ a.nombre }}</option>
-        </select>
+          <select id="asistente2" class="form-select" #selectEquipo>
+            <option value="" disabled selected>Seleccione un asistente</option>
+            <option *ngFor="let a of equiposTorneo" [value]="a.id">{{ a.nombre }}</option>
+          </select>
 
-      
-      </div>
-      <div class="modal-footer">
-        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-       <button type="button" class="btn btn-primary"
-              (click)="cambiarEquipoTr(selectEquipo.value)">
-        Cambiar Equipo
-      </button>
 
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+          <button type="button" class="btn btn-primary" (click)="cambiarEquipoTr(selectEquipo.value)">
+            Cambiar Equipo
+          </button>
+
+        </div>
       </div>
     </div>
+  </div>
+
+<div class="modal fade" id="modalSeleccionarJugadorT" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered px-4">
+    
+    <div class="modal-content bg-[#0b0e14] border border-green-500/20 rounded-[2.5rem] shadow-2xl overflow-hidden">
+
+      <!-- HEADER -->
+      <div class="bg-gradient-to-r from-green-500 to-green-600 p-6 flex justify-between items-center shadow-xl">
+        <h5 class="text-xl md:text-2xl font-black text-black uppercase italic tracking-tight">
+          Inscribir <span class="text-white">Jugador</span>
+        </h5>
+
+        <button type="button"
+                class="text-black hover:scale-125 transition-transform"
+                data-bs-dismiss="modal">
+          <i class="fa fa-times text-2xl"></i>
+        </button>
+      </div>
+
+      <!-- BODY -->
+      <div class="p-8 space-y-6">
+
+        <!-- SELECT -->
+        <ng-select
+          [items]="jugadoresDisponiblesClub"
+          bindLabel="busqueda"
+          bindValue="id"
+          [(ngModel)]="jugadorSeleccionadoIdClub"
+          placeholder="Buscar jugador por nombre o identificación..."
+          [searchable]="true"
+          [clearable]="true"
+          class="w-full custom-ng-select-green"
+          (change)="onSeleccionarJugadorClub()">
+
+          <ng-template ng-option-tmp let-item="item">
+            <div class="flex items-center gap-4 p-3 rounded-xl hover:bg-green-500 hover:text-black transition-all">
+
+              <img [src]="item.img1 ? pathIm + item.img1 : '../../../assets/img/nd.png'"
+                   class="w-12 h-12 rounded-xl object-cover bg-white/10 border border-white/10">
+
+              <div class="flex flex-col">
+                <span class="font-black uppercase text-[12px] tracking-tight text-white">
+                  {{ item.nombre }}
+                </span>
+                <span class="text-[11px] font-mono opacity-70 text-white">
+                  ID: {{ item.identificacion }}
+                </span>
+              </div>
+
+            </div>
+          </ng-template>
+        </ng-select>
+
+        <!-- BOTÓN -->
+        <button
+          class="w-full bg-green-500 hover:bg-green-600 text-black py-4 rounded-2xl font-black uppercase text-sm tracking-widest shadow-xl active:scale-95 transition-all disabled:opacity-30"
+          (click)="agregarJugadorSeleccionadoT()"
+          [disabled]="!jugadorSeleccionadoIdClub">
+
+          <i class="fa fa-check-circle me-2"></i>
+          Procesar Inscripción
+
+        </button>
+
+      </div>
+
+    </div>
+
   </div>
 </div>

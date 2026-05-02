@@ -39,6 +39,7 @@ export class AdminTempComponent implements OnInit {
     canchasV: false,
     juecesV: false
   };
+  menuOpen: boolean = false;
 
   pathIm = environment.apiURL;
 

@@ -124,7 +124,7 @@ export class AdminEquipoComponent implements OnInit {
     this.categoriaSeleccionada = categoria;
     this.jugadorSeleccionadoId = null;
 
-  }
+  } 
 
   abrirModalSeleccionJEquipo(torneo: any) {
 
@@ -337,7 +337,8 @@ export class AdminEquipoComponent implements OnInit {
 
 
   InfoTorneo(IdTorneo: number) {
-    this.router.navigate(['/InfoTorneo/' + IdTorneo]);
+    
+    this.router.navigate(['/InfoT/' + IdTorneo]);
 
   }
 
@@ -534,6 +535,23 @@ export class AdminEquipoComponent implements OnInit {
 InfoJugadores(Idtorneo: number) {
   const url = `${window.location.origin}/#/jugadores/${Idtorneo}/${this.usuario.fk_equipo}`;
   window.open(url, '_blank');
+}
+
+esFechaPasada(fecha: string | Date): boolean {
+  const fechaSeleccionada = new Date(fecha);
+  const fechaActual = new Date();
+  console.log(fechaActual);
+  
+  // Ponemos ambas fechas a las 00:00:00 para comparar solo el día
+  fechaSeleccionada.setHours(0, 0, 0, 0);
+  fechaActual.setHours(0, 0, 0, 0);
+
+  // Si la fecha seleccionada es menor a la actual, retorna true
+  if (fechaSeleccionada.getTime() < fechaActual.getTime()) {
+    return true;
+  } else {
+    return false;
+  }
 }
 
 

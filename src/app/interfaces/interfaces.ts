@@ -31,6 +31,7 @@ export interface Torneos {
   ValidF7?: number;
   expanded?: boolean;
   info_jugadores?: number;
+  
  
 }
 
@@ -80,11 +81,13 @@ export interface Jugadores {
   img2?: string;
   img3?: string;
   img4?: string;
+  img5?: string;
   tipoDoc?: number;
   nombre_madre?: string;
   nombre_padre?: string;
   telefono_madre?: string;
   telefono_padre?: string;
+  [key: string]: any;
 }
 
 

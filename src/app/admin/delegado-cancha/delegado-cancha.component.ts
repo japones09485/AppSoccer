@@ -23,7 +23,8 @@ export class DelegadoCanchaComponent implements OnInit {
   mostrarDescripcionCompleta = false;
   fechaInicio= '';
   fechaFin= '';
-
+  filtroEstado: string = '';
+  torneosFiltrados: any;
 
   ngOnInit(): void {
 
@@ -32,6 +33,7 @@ export class DelegadoCanchaComponent implements OnInit {
     this.apiRest.get_All_torneos_Dele()
       .subscribe((res: any) => {
         this.torneos = res.torneos;
+        this.torneosFiltrados = this.torneos;
 
       });
 
@@ -41,7 +43,7 @@ export class DelegadoCanchaComponent implements OnInit {
 
 
   InfoTorneo(IdTorneo: number) {
-    this.router.navigate(['/InfoTorneo/' + IdTorneo]);
+    this.router.navigate(['/InfoT/' + IdTorneo]);
 
   }
 
@@ -96,6 +98,19 @@ tomarFechas() {
 
 
     // Aquí puedes hacer el filtro o lo que necesites
+  }
+
+  filtrarEstado(estado: number | string) {
+    console.log('Estado seleccionado:', estado);
+
+    // Si no se selecciona ningún estado, mostrar todos
+    if (estado === '' || estado === null || estado === undefined) {
+      this.torneosFiltrados = this.torneos; // mostrar todos
+    } else {
+      // Filtrar por estado
+      this.torneosFiltrados = this.torneos.filter((torneo: any) => torneo.estado === estado.toString());
+    }
+
   }
 
 

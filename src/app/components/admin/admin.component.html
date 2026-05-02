@@ -1,59 +1,78 @@
-<div  class="d-flex justify-content-center align-items-center min-vh-100" style="background-image: url('../../../assets/img/fondoPR.jpg'); background-size: cover; background-position: center;">
-    
-   
-        
-  <div class="bg-white p-4 rounded shadow w-100" style="max-width: 400px;">
-      <!-- Logo -->
-
-       <div class="text-center mb-3">
-            <button type="button" class="btn btn-success" [routerLink]="'/home'">
-               <i class="fa fa-home"></i>
-            </button>
-        </div>
-        
-      <div class="text-center mb-4">
-        <img src="../../../assets/img/logo.png" alt="Logo" class="logo w-25">
-
-      </div>
+<div class="min-h-screen flex items-center justify-center bg-slate-950 relative overflow-hidden p-4">
   
-      <!-- Formulario Reactivo -->
-      <form [formGroup]="loginForm" (ngSubmit)="onSubmit()">
-        <div class="mb-3">
-          <label for="usuario" class="form-label">Usuario</label>
+  <div class="absolute inset-0 -z-10">
+    <div class="absolute inset-0 bg-gradient-to-br from-slate-950/90 via-slate-900/40 to-slate-950/90 backdrop-blur-[4px] z-10"></div>
+    <img src="../../../assets/img/fondoPR.jpg" class="w-full h-full object-cover opacity-60" alt="Fondo">
+  </div>
+
+  <div class="absolute top-1/4 left-1/4 w-64 h-64 bg-emerald-500/10 blur-[120px] rounded-full"></div>
+  <div class="absolute bottom-1/4 right-1/4 w-64 h-64 bg-emerald-600/10 blur-[120px] rounded-full"></div>
+
+  <div class="w-full max-w-[380px] bg-white/[0.07] backdrop-blur-2xl rounded-[2.5rem] border border-white/10 p-8 sm:p-10 shadow-2xl animate-in fade-in zoom-in duration-500">
+    
+    <div class="relative flex flex-col items-center mb-8">
+      <button type="button" [routerLink]="'/home'" 
+        class="absolute -top-2 -left-2 w-10 h-10 flex items-center justify-center rounded-full bg-white/5 border border-white/10 text-emerald-400 hover:bg-emerald-500 hover:text-white transition-all duration-300">
+        <i class="fa fa-home text-sm"></i>
+      </button>
+      
+      <img src="../../../assets/img/logo.png" alt="Logo" class="w-16 mb-4 drop-shadow-[0_0_15px_rgba(255,255,255,0.2)]">
+      <h2 class="text-xl font-light text-white tracking-widest uppercase">Portal <span class="font-bold text-emerald-400">Elite</span></h2>
+    </div>
+
+    <form [formGroup]="loginForm" (ngSubmit)="onSubmit()" class="space-y-5">
+      
+      <div class="space-y-2">
+        <label for="usuario" class="text-[10px] font-bold uppercase tracking-[0.2em] text-emerald-500/80 ml-1">Identificación</label>
+        <div class="relative group">
           <input
             type="text"
             id="usuario"
-            class="form-control"
             formControlName="usuario"
-            [ngClass]="{'is-invalid': loginForm.get('usuario')?.invalid && loginForm.get('usuario')?.touched}"
+            placeholder="Usuario"
+            class="w-full bg-white/5 border border-white/10 rounded-2xl px-5 py-3.5 text-sm text-white outline-none transition-all focus:border-emerald-500/50 focus:bg-white/10 placeholder:text-slate-500"
+            [ngClass]="{'border-rose-500/50 bg-rose-500/5': loginForm.get('usuario')?.invalid && loginForm.get('usuario')?.touched}"
           />
-          <div *ngIf="loginForm.get('usuario')?.invalid && loginForm.get('usuario')?.touched" class="invalid-feedback">
-            El usuario es obligatorio
-          </div>
+          <i class="fa fa-user absolute right-5 top-1/2 -translate-y-1/2 text-slate-500 group-focus-within:text-emerald-400 transition-colors text-xs"></i>
         </div>
-  
-        <div class="mb-3">
-          <label for="password" class="form-label">Contraseña</label>
+        <p *ngIf="loginForm.get('usuario')?.invalid && loginForm.get('usuario')?.touched" class="text-[9px] text-rose-400 font-medium ml-1 tracking-wide">
+          Este campo es obligatorio
+        </p>
+      </div>
+
+      <div class="space-y-2">
+        <label for="password" class="text-[10px] font-bold uppercase tracking-[0.2em] text-emerald-500/80 ml-1">Clave de Acceso</label>
+        <div class="relative group">
           <input
             type="password"
             id="password"
-            class="form-control"
             formControlName="password"
-            [ngClass]="{'is-invalid': loginForm.get('password')?.invalid && loginForm.get('password')?.touched}"
+            placeholder="••••••••"
+            class="w-full bg-white/5 border border-white/10 rounded-2xl px-5 py-3.5 text-sm text-white outline-none transition-all focus:border-emerald-500/50 focus:bg-white/10 placeholder:text-slate-500"
+            [ngClass]="{'border-rose-500/50 bg-rose-500/5': loginForm.get('password')?.invalid && loginForm.get('password')?.touched}"
           />
-          <div *ngIf="loginForm.get('password')?.invalid && loginForm.get('password')?.touched" class="invalid-feedback">
-            La contraseña es obligatoria
-          </div>
+          <i class="fa fa-lock absolute right-5 top-1/2 -translate-y-1/2 text-slate-500 group-focus-within:text-emerald-400 transition-colors text-xs"></i>
         </div>
-  
+        <p *ngIf="loginForm.get('password')?.invalid && loginForm.get('password')?.touched" class="text-[9px] text-rose-400 font-medium ml-1 tracking-wide">
+          La contraseña es necesaria
+        </p>
+      </div>
+
+      <div class="pt-4">
         <button
           type="submit"
-          class="btn btn-success w-100 text-white"
           [disabled]="loginForm.invalid"
-        >
-          Ingresar
+          class="w-full bg-emerald-600 hover:bg-emerald-500 disabled:bg-slate-800 disabled:text-slate-500 text-white font-bold py-4 rounded-2xl shadow-[0_0_20px_-5px_rgba(16,185,129,0.4)] transition-all duration-300 active:scale-95 uppercase text-[11px] tracking-[0.2em] flex items-center justify-center gap-2">
+          <span>Entrar al Sistema</span>
+          <i class="fa fa-sign-in"></i>
         </button>
-      </form>
+      </div>
+    </form>
+
+    <div class="mt-10 text-center">
+      <p class="text-[9px] text-slate-500 font-bold uppercase tracking-[0.3em]">
+        Soccer Melgar Elite v2.0
+      </p>
     </div>
   </div>
-  
+</div>

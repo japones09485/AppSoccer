@@ -1,140 +1,233 @@
-<div id="table" *ngIf="!this.creando">
+<div class="min-h-screen antialiased">
 
-    <h1 class="text-center text-success"><i class="fa fa-flag" aria-hidden="true"></i> Jueces </h1>
+  <div *ngIf="!this.creando" class="w-full max-w-7xl mx-auto p-0 md:p-8 space-y-0 md:space-y-6">
 
-    <table class="table table-bordered">
-        <thead>
-            <tr class="text-center">
-                <th class="bg-success text-light" scope="col"><button (click)="addJuez()" type="button"
-                        class="btn btn-info" data-bs-toggle="tooltip" data-bs-placement="top" title="Nuevo">
-                        <i class="fa fa-plus"></i>
-                    </button>
-                </th>
-               
-                <th class="bg-success text-light" scope="col">Foto</th>
-                <th class="bg-success text-light" scope="col">Nombre</th>
-                <th class="bg-success text-light" scope="col">Identificacion</th>
-                <th class="bg-success text-light" scope="col">Email</th>
-                 <th class="bg-success text-light" scope="col">Estado</th>
-              
-            </tr>
-        </thead>
-        <tbody> 
-            <tr *ngFor="let cat of jueces" class="text-center">
-                <th scope="row">
-                    <button (click)="editJuez(cat.id!)" type="button" class="btn btn-warning m-1"
-                        data-bs-toggle="tooltip" data-bs-placement="top" title="editar"> <i
-                            class="fa fa-edit"></i></button>
-                   
-                    <button (click)="deleteJuez(cat.id!)" type="button" class="btn btn-danger m-1">
-                    <i class="fa fa-trash" aria-hidden="true" data-bs-toggle="tooltip" data-bs-placement="top" title="Eliminar"></i>
-                    </button>
-                   
-
-
-
-                </th>
-
-                <td>
-                    <img *ngIf="cat.img1" [src]="pathIm +cat.img1" style="width: 48px; height: 48px; object-fit: cover; border-radius: 0.375rem;" alt="">
-                    N/A
-                </td>
-                <td>{{cat.nombre}}</td>
-                <td> {{cat.identificacion}}</td>
-                <td> {{cat.email}}</td>
-                <td>
-                    <span class="text-danger" *ngIf="cat.estado == 0">Inactivo</span>
-                    <span class="text-success" *ngIf="cat.estado == 1">Activo</span>
-                </td>
-
-
-            </tr>
-
-        </tbody>
-    </table>
-</div>
-
-
-<div class="container d-flex justify-content-center align-items-center min-vh-100" *ngIf="this.creando">
-    <div class="col-12 col-md-8 col-lg-6">
-        <div class="card shadow-lg p-4 border bg-success">
-            <h3 class="text-center mb-4 text-light"><i class="fa fa-users" aria-hidden="true"></i> Crear Juez</h3>
-            <form [formGroup]="JuezForm" (ngSubmit)="saveJuez()" enctype="multipart/form-data">
-
-                <!-- Nombre -->
-                <div class="mb-3 row">
-                    <label for="name" class="col-sm-3 col-form-label text-light">Nombre</label>
-                    <div class="col-sm-9">
-                        <input type="text" id="nombre" formControlName="nombre" class="form-control"
-                            placeholder="Ingrese el nombre del jugador" required>
-                    </div>
-                </div>
-
-
-                 <div class="mb-3 row">
-                    <label for="name" class="col-sm-3 col-form-label text-light">Identificacion</label>
-                    <div class="col-sm-9">
-                        <input type="text" id="identificacion" formControlName="identificacion" class="form-control"
-                            placeholder="Ingrese el nombre del jugador" required>
-                    </div>
-                </div>
-
-
-                <div class="mb-3 row">
-                    <label for="name" class="col-sm-3 col-form-label text-light">Email</label>
-                    <div class="col-sm-9">
-                        <input type="text" id="email" formControlName="email" class="form-control"
-                            placeholder="Ingrese el nombre del jugador" required>
-                        
-                    </div>
-                </div>
-
-                    <!-- Imagen 1 -->
-                <div class="mb-3 row">
-                    <label for="image1" class="col-sm-3 col-form-label text-light">Foto</label>
-                    <div class="col-sm-9">
-                        <input type="file" id="image1" (change)="uploadImage($event, 1)" class="form-control" required>
-                    </div>
-                </div>
-
-
-                
-
-                <div class="mb-3 row">
-                    <label for="estado" class="col-sm-3 col-form-label text-light">Estado</label>
-                    <div class="col-sm-9">
-                        <select id="estado" formControlName="estado" class="form-select">
-                            <option [value]="0">Inactivo</option>
-                            <option [value]="1">Activo</option>
-                           
-                        </select>
-                    </div>
-                </div>
-
-                <!-- Botones -->
-                <div class="d-flex justify-content-end">
-                    <button type="submit" class="btn btn-warning text-dark m-2" *ngIf="JuezForm.valid">
-                        <i class="fa fa-floppy-o" aria-hidden="true"></i> Guardar
-                    </button>
-
-                    <button type="button" class="btn btn-secondary m-2" (click)="cancel()">
-                        <i class="fa fa-ban" aria-hidden="true"></i> Cancelar
-                    </button>
-                </div>
-
-
-
-                <!-- Spinner debajo de los botones -->
-                <div *ngIf="isLoading" class="d-flex flex-column align-items-center mt-3">
-                    <img src="../../../assets/img/balon.png" alt="Cargando..." width="40" height="40"
-                        class="balon-girando" />
-                    <span class="mt-2 text-warning fw-bold">Procesando, por favor espera...</span>
-                </div>
-
-
-            </form>
-        </div>
+    <div
+      class="p-6 md:p-0 flex flex-col gap-4 md:flex-row md:items-center md:justify-between  md:bg-transparent border-b md:border-none border-slate-200">
+      <div>
+        <h1 class="text-2xl md:text-3xl font-black text-white flex items-center gap-3">
+          <div class="bg-emerald-500 p-2.5 rounded-2xl shadow-lg shadow-emerald-500/20">
+            <i class="fa fa-flag text-white"></i>
+          </div>
+          JUECES
+        </h1>
+        <p class="text-white text-[10px] mt-1 ml-1 font-black uppercase tracking-[0.2em] opacity-60 italic">Panel de
+          Árbitros Oficiales</p>
+      </div>
     </div>
 
+    <div class="md:hidden fixed bottom-6 right-6 z-50">
+      <button (click)="addJuez()"
+        class="bg-emerald-500 text-white w-16 h-16 rounded-2xl shadow-2xl flex items-center justify-center active:scale-95 transition-transform border-4 border-white">
+        <i class="fa fa-plus text-2xl"></i>
+      </button>
+    </div>
+
+    <div class="grid grid-cols-1 md:hidden">
+      <div *ngFor="let juez of jueces; let i = index" [ngClass]="i % 2 === 0 ? 'bg-white' : 'bg-slate-100/60'"
+        class="p-6 border-b border-slate-200 flex flex-col gap-4">
+
+        <div class="flex items-center gap-4">
+          <div class="relative shrink-0">
+            <img *ngIf="juez.img1" [src]="pathIm + juez.img1"
+              class="w-20 h-20 object-cover rounded-2xl shadow-lg border-2 border-emerald-500">
+            <div *ngIf="!juez.img1"
+              class="w-20 h-20 flex items-center justify-center bg-white rounded-2xl border-2 border-dashed border-slate-300">
+              <i class="fa fa-user text-slate-300 text-2xl"></i>
+            </div>
+            <div [ngClass]="juez.estado == 1 ? 'bg-emerald-500' : 'bg-rose-500'"
+              class="absolute -bottom-1 -right-1 w-6 h-6 rounded-full border-4 border-white shadow-sm"></div>
+          </div>
+
+          <div class="flex-1 min-w-0">
+            <span class="text-[9px] font-black bg-slate-900 text-white px-2 py-0.5 rounded italic">#{{
+              juez.identificacion }}</span>
+            <h2 class="text-xl font-black text-slate-1000 uppercase leading-tight tracking-tight mt-1 break-words">{{
+              juez.nombre }}</h2>
+            <p class="text-xs text-emerald-600 font-bold mt-1 italic break-all">{{ juez.email }}</p>
+          </div>
+        </div>
+
+        <div class="flex items-center justify-between pt-2">
+          <span
+            [ngClass]="juez.estado == 1 ? 'text-emerald-700 bg-emerald-50 border-emerald-100' : 'text-slate-500 bg-slate-200 border-slate-300'"
+            class="px-3 py-1 rounded-lg text-[10px] font-black uppercase border italic">
+            {{ juez.estado == 1 ? 'Disponible' : 'Inactivo' }}
+          </span>
+
+          <div class="flex justify-center items-center gap-4">
+
+            <!-- EDITAR -->
+            <button (click)="editJuez(juez.id!)" class="bg-amber-500 text-white w-14 h-14 rounded-2xl flex items-center justify-center 
+                 shadow-lg shadow-amber-500/30 hover:scale-110 active:scale-95 transition-all">
+              <i class="fa fa-edit text-xl"></i>
+            </button>
+
+            <!-- ELIMINAR -->
+            <button (click)="deleteJuez(juez.id!)" class="bg-rose-500 text-white w-14 h-14 rounded-2xl flex items-center justify-center 
+                 shadow-lg shadow-rose-500/30 hover:scale-110 active:scale-95 transition-all">
+              <i class="fa fa-trash text-xl"></i>
+            </button>
+
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div
+      class="hidden md:block overflow-hidden shadow-2xl shadow-slate-200/50 rounded-[2rem] border border-slate-200 bg-white">
+      <table class="min-w-full border-separate border-spacing-0">
+        <thead class="bg-slate-900 text-white">
+          <tr>
+            <th class="p-5 text-center w-28 border-b border-slate-800">
+              <button (click)="addJuez()"
+                class="bg-emerald-500 hover:bg-emerald-400 text-slate-900 w-10 h-10 rounded-xl transition-all flex items-center justify-center mx-auto shadow-lg"><i
+                  class="fa fa-plus"></i></button>
+            </th>
+            <th
+              class="p-5 font-black uppercase tracking-widest text-[10px] text-slate-500 text-center border-b border-slate-800">
+              Foto</th>
+            <th class="p-5 font-black uppercase tracking-widest text-[10px] text-left border-b border-slate-800">Nombre
+            </th>
+            <th class="p-5 font-black uppercase tracking-widest text-[10px] text-left border-b border-slate-800">ID</th>
+            <th class="p-5 font-black uppercase tracking-widest text-[10px] text-left border-b border-slate-800">Email
+            </th>
+            <th class="p-5 font-black uppercase tracking-widest text-[10px] text-right pr-10 border-b border-slate-800">
+              Estado</th>
+          </tr>
+        </thead>
+        <tbody class="divide-y divide-slate-100">
+          <tr *ngFor="let juez of jueces" class="group hover:bg-slate-50 transition-all">
+            <td class="p-5 text-center">
+              <div class="flex justify-center items-center gap-4">
+
+                <!-- EDITAR -->
+                <button (click)="editJuez(juez.id!)" class="bg-amber-500 text-white w-14 h-14 rounded-2xl flex items-center justify-center 
+                 shadow-lg shadow-amber-500/30 hover:scale-110 active:scale-95 transition-all">
+                  <i class="fa fa-edit text-xl"></i>
+                </button>
+
+                <!-- ELIMINAR -->
+                <button (click)="deleteJuez(juez.id!)" class="bg-rose-500 text-white w-14 h-14 rounded-2xl flex items-center justify-center 
+                 shadow-lg shadow-rose-500/30 hover:scale-110 active:scale-95 transition-all">
+                  <i class="fa fa-trash text-xl"></i>
+                </button>
+
+              </div>
+            </td>
+            <td class="p-5">
+              <img *ngIf="juez.img1" [src]="pathIm + juez.img1"
+                class="w-10 h-10 object-cover rounded-lg shadow-sm mx-auto">
+              <div *ngIf="!juez.img1"
+                class="w-10 h-10 flex items-center justify-center bg-slate-50 rounded-lg border border-dashed border-slate-200 text-slate-300 mx-auto">
+                <i class="fa fa-user text-xs"></i>
+              </div>
+            </td>
+            <td class="p-5 text-left font-black text-slate-700 uppercase text-xs tracking-tight">{{ juez.nombre }}</td>
+            <td class="p-5 text-left font-mono font-bold text-slate-1000 text-[12px]">{{ juez.identificacion }}</td>
+            <td class="p-5 text-left text-[10px] text-slate-1000 text-[12px]">{{ juez.email }}</td>
+            <td class="p-5 text-right pr-10">
+              <span
+                [ngClass]="juez.estado == 1 ? 'bg-emerald-50 text-emerald-700 border-emerald-100' : 'bg-rose-50 text-rose-700 border-rose-100'"
+                class="px-3 py-1 rounded-lg text-[9px] font-black uppercase border italic">{{ juez.estado == 1 ?
+                'Activo' : 'Inactivo' }}</span>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <div *ngIf="this.creando"
+    class="fixed inset-0 z-[100] flex items-end md:items-center justify-center bg-slate-900/80 backdrop-blur-sm p-0 md:p-4">
+
+    <div
+      class="w-full h-[95vh] md:h-auto md:max-w-xl bg-slate-900 md:rounded-[2rem] shadow-2xl relative overflow-hidden flex flex-col border border-slate-800">
+
+      <div class="bg-slate-900 p-5 border-b border-slate-800 flex items-center justify-between shrink-0">
+        <div class="flex items-center gap-3">
+          <div
+            class="w-8 h-8 bg-emerald-500 rounded-lg flex items-center justify-center shadow-lg shadow-emerald-500/20">
+            <i class="fa fa-user-shield text-slate-900 text-sm"></i>
+          </div>
+          <div>
+            <h3 class="text-lg font-black text-white uppercase italic tracking-tighter leading-none">
+              {{ editForm ? 'Editar' : 'Nuevo' }} Juez
+            </h3>
+          </div>
+        </div>
+        <button (click)="cancel()"
+          class="text-slate-500 hover:text-white p-2 hover:bg-slate-800 rounded-full transition-all">
+          <i class="fa fa-times text-xl"></i>
+        </button>
+      </div>
+
+      <div class="p-6 md:p-8 overflow-y-auto custom-scrollbar flex-1">
+        <form [formGroup]="JuezForm" (ngSubmit)="saveJuez()" class="space-y-4">
+
+          <div class="space-y-1.5">
+            <label class="text-[9px] font-black text-emerald-500 uppercase tracking-widest ml-1">Nombre Completo</label>
+            <input type="text" formControlName="nombre" placeholder="Nombre del árbitro"
+              class="w-full rounded-xl px-4 py-2.5 bg-slate-800/50 text-white border border-slate-700 focus:border-emerald-500 focus:outline-none transition-all text-sm font-bold uppercase placeholder:text-slate-700" />
+          </div>
+
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div class="space-y-1.5">
+              <label class="text-[9px] font-black text-slate-500 uppercase tracking-widest ml-1">Identificación</label>
+              <input type="text" formControlName="identificacion" placeholder="DNI / Cédula"
+                class="w-full rounded-xl px-4 py-2.5 bg-slate-800/50 text-white border border-slate-700 focus:border-emerald-500 focus:outline-none text-sm font-bold" />
+            </div>
+
+            <div class="space-y-1.5">
+              <label class="text-[9px] font-black text-slate-500 uppercase tracking-widest ml-1">Estado</label>
+              <div class="relative">
+                <select formControlName="estado"
+                  class="w-full rounded-xl px-4 py-2.5 bg-slate-800/50 text-white border border-slate-700 focus:border-emerald-500 focus:outline-none appearance-none text-sm font-bold cursor-pointer">
+                  <option [value]="1">Activo</option>
+                  <option [value]="0">Inactivo</option>
+                </select>
+                <i
+                  class="fa fa-chevron-down absolute right-4 top-1/2 -translate-y-1/2 text-slate-600 text-[10px] pointer-events-none"></i>
+              </div>
+            </div>
+          </div>
+
+          <div class="space-y-1.5">
+            <label class="text-[9px] font-black text-slate-500 uppercase tracking-widest ml-1">Email Profesional</label>
+            <input type="email" formControlName="email" placeholder="correo@ejemplo.com"
+              class="w-full rounded-xl px-4 py-2.5 bg-slate-800/50 text-white border border-slate-700 focus:border-emerald-500 focus:outline-none text-sm font-bold" />
+          </div>
+
+          <div class="space-y-1.5">
+            <label class="text-[9px] font-black text-emerald-500 uppercase tracking-widest ml-1">Fotografía</label>
+            <div
+              class="bg-slate-800/30 p-3 rounded-xl border border-dashed border-slate-700 flex items-center justify-between">
+              <input type="file" (change)="uploadImage($event, 1)"
+                class="text-[10px] text-slate-400 file:bg-emerald-600 file:text-white file:border-none file:rounded-md file:px-3 file:py-1 file:mr-3 file:font-black file:cursor-pointer">
+              <i class="fa fa-camera text-slate-700 mr-2"></i>
+            </div>
+          </div>
+
+          <div class="flex flex-col-reverse md:flex-row gap-3 pt-6 pb-2">
+            <button type="button" (click)="cancel()"
+              class="w-full md:flex-1 bg-slate-800 text-slate-500 px-4 py-3 rounded-xl font-black hover:text-white transition-all uppercase text-[10px] tracking-widest">
+              Cancelar
+            </button>
+            <button type="submit" [disabled]="!JuezForm.valid" [class.opacity-50]="!JuezForm.valid"
+              class="w-full md:flex-[1.5] bg-emerald-500 text-slate-900 px-4 py-3 rounded-xl font-black shadow-lg shadow-emerald-500/20 hover:bg-emerald-400 active:scale-95 transition-all flex items-center justify-center gap-2 uppercase text-[10px] tracking-widest">
+              <i class="fa fa-save"></i> Guardar Juez
+            </button>
+          </div>
+
+          <div *ngIf="isLoading" class="flex items-center justify-center gap-3 py-2">
+            <div class="w-4 h-4 border-2 border-emerald-500 border-t-transparent rounded-full animate-spin"></div>
+            <p class="text-emerald-500 font-black text-[8px] uppercase tracking-widest animate-pulse">Sincronizando...
+            </p>
+          </div>
+
+        </form>
+      </div>
+    </div>
+  </div>
 
 </div>

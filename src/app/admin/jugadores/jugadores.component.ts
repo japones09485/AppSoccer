@@ -32,8 +32,9 @@ export class JugadoresComponent implements OnInit {
   operation = 'add';
   isModalOpen: boolean = false;
   modalImage: string = '';
-  imgVisi: String = '';
-  JugadorVisi: String = '';
+  imgSelect: string | null = null;
+  nameSelect: string = '';
+
   EdadJugador!: number;
   UserLog !: User;
   tipoDoc = 0;
@@ -48,6 +49,10 @@ export class JugadoresComponent implements OnInit {
   jugadoresFiltrados: any[] = [];
   p = 1;
   paginas = 0;
+  imgVisi: string = '';
+  JugadorVisi: string = '';
+  mostrarModal: boolean = false;
+  currentSlide: number = 0;
 
 
   constructor(private apiRest: ApiService, private router: Router, private route: ActivatedRoute,
@@ -118,6 +123,7 @@ export class JugadoresComponent implements OnInit {
 
   addJugador() {
     this.initForm();
+    this.operation = 'add';
     this.creando = true;
   }
 
@@ -146,9 +152,9 @@ export class JugadoresComponent implements OnInit {
       html: `
           <div style="text-align: left; font-size: 13px;">
             <strong>Veracidad de la información:</strong> Al completar este formulario, usted se compromete a proporcionar información verídica, completa y actualizada. En caso de detectar información falsa o incorrecta, nos reservamos el derecho de tomar las acciones legales correspondientes, incluyendo la presentación de la información a las autoridades competentes, como la Policía.<br><br>
-            
+
             <strong>Tratamiento de Datos Personales:</strong> Sus datos personales serán tratados de acuerdo con las leyes vigentes de protección de datos. Serán utilizados exclusivamente para la gestión y organización del evento o proceso correspondiente, almacenados de forma segura y no compartidos con terceros sin su consentimiento, salvo requerimiento legal.<br><br>
-            
+
             Al enviar sus datos, usted autoriza el tratamiento conforme a lo indicado.<br><br>
             ¡Gracias por su colaboración y por ayudarnos a garantizar un proceso transparente y seguro!
           </div>
@@ -263,7 +269,7 @@ export class JugadoresComponent implements OnInit {
 
         });
 
-       
+
 
 
         this.creando = true;
@@ -273,20 +279,14 @@ export class JugadoresComponent implements OnInit {
   }
 
 
-  openModal(path: String, equipo: String) {
+  openModal(url: string, nombre: string) {
+    this.imgSelect = url;
+    this.nameSelect = nombre;
+  }
 
-    this.imgVisi = path;
-    this.JugadorVisi = equipo;
-
-    const modalElement = document.getElementById('exampleModal');
-
-    // Verificar que el elemento existe
-    if (modalElement) {
-      const modal = new Modal(modalElement); // Solo se crea el modal si el elemento existe
-      modal.show();
-    } else {
-      console.error('Modal element not found!');
-    }
+  closeModal() {
+    this.imgSelect = null;
+    this.nameSelect = '';
   }
 
   onFechaNacimientoChange(event: Event): void {
@@ -365,8 +365,8 @@ export class JugadoresComponent implements OnInit {
   updateDocumentoByValue(selectValue: any): void {
     const selectedValue = parseInt(selectValue.toString(), 10);
 
-   
-    
+
+
     if (selectedValue === 1) {
       // Registro civil
       this.labedoc2 = 'Foto del Registro civil';
@@ -416,6 +416,15 @@ export class JugadoresComponent implements OnInit {
 
   Inicio() {
     this.router.navigate(['/DelegaCh']);
+  }
+
+  prevSlide() {
+    this.currentSlide = this.currentSlide === 0 ? 1 : 0;
+  }
+
+  // 3. Función para avanzar
+  nextSlide() {
+    this.currentSlide = this.currentSlide === 0 ? 1 : 0;
   }
 
 

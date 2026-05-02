@@ -1,196 +1,192 @@
-<div class="container-fluid fondo-inscripcion d-flex justify-content-center align-items-center min-vh-100">
-    <div class="col-12 col-md-8 col-lg-6">
-        <div class="text-center mb-3">
-            <button type="button" class="btn btn-success" [routerLink]="'/home'">
-                <i class="fa fa-home"></i>
-            </button>
-        </div>
+<div class="min-h-screen flex items-center justify-center bg-slate-950 relative overflow-x-hidden p-4 sm:p-10">
 
+  <div class="absolute inset-0 -z-10">
+    <div
+      class="absolute inset-0 bg-gradient-to-br from-slate-950/95 via-slate-900/60 to-slate-950/95 backdrop-blur-[6px] z-10">
+    </div>
+    <img src="../../../assets/img/fondoPR.jpg" class="w-full h-full object-cover opacity-40" alt="Fondo">
+  </div>
 
-        <div class="text-center card shadow-lg p-4 border bg-success">
-            <img src="../../../assets/img/logo.png" alt="Logo" style="width: 150px; height: 150px;"
-                class="mx-auto d-block mb-3">
+  <div class="w-full max-w-4xl relative">
 
-            <h3 class="text-center mb-4 text-light"><i class="fa fa-users" aria-hidden="true"></i> Inscripcion Jugador
-            </h3>
-            <form [formGroup]="JugadorForm" (ngSubmit)="saveJugador()" enctype="multipart/form-data">
-
-                <!-- Nombre -->
-                <div class="mb-3 row">
-                    <label for="name" class="col-sm-3 col-form-label text-light">Nombre</label>
-                    <div class="col-sm-9">
-                        <input type="text" id="name" formControlName="name" class="form-control"
-                            placeholder="Ingrese el nombre del jugador" required>
-                    </div>
-                </div>
-
-                <!-- Email -->
-                <div class="mb-3 row">
-                    <label for="name" class="col-sm-3 col-form-label text-light">Correo Electronico</label>
-                    <div class="col-sm-9">
-                        <input type="mail" id="mail" formControlName="mail" class="form-control"
-                            placeholder="Ingrese su correo electronico" required>
-                    </div>
-                </div>
-
-                <div class="mb-3 row">
-                    <label for="name" class="col-sm-3 col-form-label text-light">Fecha nacimiento</label>
-                    <div class="col-sm-9">
-                        <input type="date" id="fch_nacimiento" formControlName="fch_nacimiento" class="form-control"
-                            (change)="onFechaNacimientoChange($event)" placeholder="Ingrese la fecha de nacimiento"
-                            required>
-                    </div>
-                </div>
-
-                <div class="mb-3 row">
-                    <label for="estado" class="col-sm-3 col-form-label text-light">Posicion</label>
-                    <div class="col-sm-9">
-                        <select id="posicion" formControlName="posicion" class="form-select">
-                            <option [value]="1">Arquero</option>
-                            <option [value]="2">Defensa</option>
-                            <option [value]="3">Volante</option>
-                            <option [value]="4">Delantero</option>
-                        </select>
-                    </div>
-                </div>
-
-
-                <div class="mb-3 row">
-                    <label for="estado" class="col-sm-3 col-form-label text-light">Tipo de documento</label>
-                    <div class="col-sm-9">
-                        <select id="estado" formControlName="TipoDoc" class="form-select"
-                            (change)="updateDocumento($event)">
-                            <option [value]="1">Registro civil</option>
-                            <option [value]="2">Tarjeta Identidad</option>
-                            <option [value]="3">Cedula de ciudadania</option>
-                            <option [value]="4">Cedula extranjeria</option>
-                            <option [value]="5">Pasaporte</option>
-                        </select>
-                    </div>
-                </div>
-
-                <div class="mb-3 row" *ngIf="tipoDoc>0">
-                    <label for="name" class="col-sm-3 col-form-label text-light"># Documento</label>
-                    <div class="col-sm-9">
-                        <input type="text" id="identificacion" formControlName="identificacion" class="form-control"
-                            placeholder="# Documento" required>
-                    </div>
-                </div>
-
-                <div class="mb-3 row">
-                    <label for="estado" class="col-sm-3 col-form-label text-white"
-                       >
-                        Género
-                    </label>
-                    <div class="col-sm-9">
-                        <select id="estado" formControlName="genero" class="form-select">
-                            <option value="Masculino">Masculino</option>
-                            <option value="Femenino">Femenino</option>
-                        </select>
-                    </div>
-                </div>
-
-
-                <div class="mb-3 row" *ngIf="tipoDoc==1 || tipoDoc==2">
-                    <label for="name" class="col-sm-3 col-form-label text-light">Nombre madre</label>
-                    <div class="col-sm-9">
-                        <input type="text" id="nomMadre" formControlName="nomMadre" class="form-control"
-                            placeholder="Nombre madre">
-                    </div>
-                </div>
-
-
-                <div class="mb-3 row" *ngIf="tipoDoc==1 || tipoDoc==2">
-                    <label for="name" class="col-sm-3 col-form-label text-light">Telefono madre</label>
-                    <div class="col-sm-9">
-                        <input type="text" id="telMadre" formControlName="telMadre" class="form-control"
-                            placeholder="Telefono madre">
-                    </div>
-                </div>
-
-
-
-                <div class="mb-3 row" *ngIf="tipoDoc==1 || tipoDoc==2">
-                    <label for="name" class="col-sm-3 col-form-label text-light">Nombre padre</label>
-                    <div class="col-sm-9">
-                        <input type="text" id="nomPadre" formControlName="nomPadre" class="form-control"
-                            placeholder="Nombre padre">
-                    </div>
-                </div>
-
-
-                <div class="mb-3 row" *ngIf="tipoDoc==1 || tipoDoc==2">
-                    <label for="name" class="col-sm-3 col-form-label text-light">Telefono padre</label>
-                    <div class="col-sm-9">
-                        <input type="text" id="telPadre" formControlName="telPadre" class="form-control"
-                            placeholder="Telefono padre">
-                    </div>
-                </div>
-
-
-
-
-                <!-- Imagen 1 -->
-                <div class="mb-3 row" *ngIf="tipoDoc>0">
-                    <label for="image1" class="col-sm-3 col-form-label text-light">{{this.labedoc1}}</label>
-                    <div class="col-sm-9">
-                        <input type="file" id="image1" (change)="uploadImage($event, 1)" class="form-control" required>
-                    </div>
-                </div>
-
-                <!-- Imagen 2 -->
-                <div class="mb-3 row" *ngIf="tipoDoc>0">
-                    <label for="image2" class="col-sm-3 col-form-label text-light">{{this.labedoc2}}</label>
-                    <div class="col-sm-9">
-                        <input type="file" id="image2" (change)="uploadImage($event, 2)" class="form-control" required>
-                    </div>
-                </div>
-
-
-
-                <div class="mb-3 row" *ngIf="tipoDoc>0">
-
-                    <label for="image1" class="col-sm-3 col-form-label text-light">{{this.labedoc3}}</label>
-                    <div class="col-sm-9">
-                        <input type="file" id="image3" (change)="uploadImage($event, 3)" class="form-control" required>
-                    </div>
-                </div>
-
-
-
-                <div class="mb-3 row" *ngIf="tipoDoc>0">
-
-                    <label for="image1" class="col-sm-3 col-form-label text-light">{{this.labedoc4}}</label>
-                    <div class="col-sm-9">
-                        <input type="file" id="image4" (change)="uploadImage($event, 4)" class="form-control" required>
-                    </div>
-                </div>
-
-
-
-
-                <!-- Botones -->
-                <div class="d-flex justify-content-end">
-                    <button type="submit" class="btn btn-warning text-dark m-2" *ngIf="JugadorForm.valid">
-                        <i class="fa fa-floppy-o" aria-hidden="true"></i> Guardar
-                    </button>
-
-
-                </div>
-
-
-
-                <!-- Spinner debajo de los botones -->
-                <div *ngIf="isLoading" class="d-flex flex-column align-items-center mt-3">
-                    <img src="../../../assets/img/balon.png" alt="Cargando..." width="40" height="40"
-                        class="balon-girando" />
-                    <span class="mt-2 text-warning fw-bold">Procesando, por favor espera...</span>
-                </div>
-
-
-            </form>
-        </div>
+    <div class="absolute -top-12 left-0 sm:-left-12">
+      <button type="button" [routerLink]="'/home'"
+        class="w-10 h-10 flex items-center justify-center rounded-full bg-white/5 border border-white/10 text-emerald-400 hover:bg-emerald-500 hover:text-white transition-all duration-300 shadow-xl">
+        <i class="fa fa-home"></i>
+      </button>
     </div>
 
+    <div
+      class="bg-white/[0.06] backdrop-blur-2xl rounded-[2.5rem] border border-white/10 shadow-2xl overflow-hidden animate-in fade-in slide-in-from-bottom-4 duration-700">
 
+      <div class="bg-white/[0.03] p-6 sm:p-10 border-b border-white/5 flex flex-col sm:flex-row items-center gap-6">
+        <img src="../../../assets/img/logo.png" alt="Logo"
+          class="w-20 h-20 drop-shadow-[0_0_15px_rgba(255,255,255,0.2)]">
+        <div class="text-center sm:text-left">
+          <h2 class="text-2xl sm:text-3xl font-light text-white tracking-tight">Registro de <span
+              class="font-bold text-emerald-400">Jugador</span></h2>
+          <p class="text-[10px] font-bold uppercase tracking-[0.3em] text-slate-400 mt-1">Temporada Oficial</p>
+        </div>
+      </div>
+
+      <form [formGroup]="JugadorForm" (ngSubmit)="saveJugador()" class="p-6 sm:p-10 space-y-8">
+
+        <div class="space-y-6">
+          <div class="flex items-center gap-3 mb-4">
+            <span class="w-8 h-px bg-emerald-500/30"></span>
+            <span class="text-[10px] font-black text-emerald-400 uppercase tracking-widest">Información Básica</span>
+          </div>
+
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div class="space-y-2">
+              <label class="font-bold text-white uppercase tracking-wider ml-1 text-[12px]">Nombre Completo</label>
+              <input type="text" formControlName="name" placeholder="Ej: Juan Pérez"
+                class="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-sm text-white outline-none focus:border-emerald-500/50 focus:bg-white/10 transition-all">
+            </div>
+
+            <div class="space-y-2">
+              <label class="font-bold text-white uppercase tracking-wider ml-1 text-[12px]">Correo Electrónico</label>
+              <input type="email" formControlName="mail" placeholder="usuario@correo.com"
+                class="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-sm text-white outline-none focus:border-emerald-500/50 focus:bg-white/10 transition-all">
+            </div>
+
+            <div class="space-y-2">
+              <label class="font-bold text-white uppercase tracking-wider ml-1 text-[12px]">Fecha de Nacimiento</label>
+              <input type="date" formControlName="fch_nacimiento" (change)="onFechaNacimientoChange($event)"
+                class="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-sm text-white outline-none focus:border-emerald-500/50 transition-all">
+            </div>
+
+            <div class="space-y-2">
+              <label class="font-bold text-white uppercase tracking-wider ml-1 text-[12px]">Género</label>
+              <select formControlName="genero"
+                class="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-sm text-white outline-none focus:border-emerald-500/50 transition-all cursor-pointer">
+                <option value="Masculino" class="bg-slate-900">Masculino</option>
+                <option value="Femenino" class="bg-slate-900">Femenino</option>
+              </select>
+            </div>
+          </div>
+        </div>
+
+        <div class="space-y-6 pt-4">
+          <div class="flex items-center gap-3 mb-4">
+            <span class="w-8 h-px bg-emerald-500/30"></span>
+            <span class="text-[13px] font-black text-emerald-400 uppercase tracking-widest">Detalles de
+              Competición</span>
+          </div>
+
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div class="space-y-2">
+              <label class="font-bold text-white uppercase tracking-wider ml-1 text-[12px]">Posición en Campo</label>
+              <select formControlName="posicion"
+                class="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-sm text-white outline-none focus:border-emerald-500/50 transition-all">
+                <option [value]="1" class="bg-slate-900">Arquero</option>
+                <option [value]="2" class="bg-slate-900">Defensa</option>
+                <option [value]="3" class="bg-slate-900">Volante</option>
+                <option [value]="4" class="bg-slate-900">Delantero</option>
+              </select>
+            </div>
+
+            <div class="space-y-2">
+              <label class="font-bold text-white uppercase tracking-wider ml-1 text-[12px]">Tipo de Documento</label>
+              <select formControlName="TipoDoc" (change)="updateDocumento($event)"
+                class="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-sm text-white outline-none focus:border-emerald-500/50 transition-all">
+                <option [value]="1" class="bg-slate-900">Registro Civil</option>
+                <option [value]="2" class="bg-slate-900">Tarjeta Identidad</option>
+                <option [value]="3" class="bg-slate-900">Cédula de Ciudadanía</option>
+                <option [value]="4" class="bg-slate-900">Cédula Extranjería</option>
+                <option [value]="5" class="bg-slate-900">Pasaporte</option>
+              </select>
+            </div>
+
+            <div class="space-y-2 md:col-span-2" *ngIf="tipoDoc > 0">
+              <label class="font-bold text-white uppercase tracking-wider ml-1 text-[12px]">Número de Documento</label>
+              <input type="text" formControlName="identificacion" placeholder="Ingrese el número de identificación"
+                class="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-sm text-white outline-none focus:border-emerald-500/50 transition-all">
+            </div>
+          </div>
+        </div>
+
+        <div class="space-y-6 pt-4 animate-in fade-in" *ngIf="tipoDoc == 1 || tipoDoc == 2">
+          <div class="flex items-center gap-3 mb-4">
+            <span class="w-8 h-px bg-emerald-500/30"></span>
+            <span class="text-[10px] font-black text-emerald-400 uppercase tracking-widest">Información de Padres</span>
+          </div>
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <input type="text" formControlName="nomMadre" placeholder="Nombre de la Madre"
+              class="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-sm text-white outline-none">
+            <input type="text" formControlName="telMadre" placeholder="Teléfono Madre"
+              class="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-sm text-white outline-none">
+            <input type="text" formControlName="nomPadre" placeholder="Nombre del Padre"
+              class="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-sm text-white outline-none">
+            <input type="text" formControlName="telPadre" placeholder="Teléfono Padre"
+              class="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-sm text-white outline-none">
+          </div>
+        </div>
+
+
+        <div class="flex items-center gap-3 mb-4">
+          <span class="w-8 h-px bg-emerald-500/30"></span>
+          <span class="text-[10px] font-black text-emerald-400 uppercase tracking-widest">Documentos Digitales</span>
+        </div>
+
+        <div class="mb-3 row" *ngIf="tipoDoc>0">
+          <label for="image1" class="col-sm-3 col-form-label text-light">{{this.labedoc1}}</label>
+          <div class="col-sm-9">
+            <input type="file" id="image1" (change)="uploadImage($event, 1)" class="form-control" required>
+          </div>
+        </div>
+
+        <!-- Imagen 2 -->
+        <div class="mb-3 row" *ngIf="tipoDoc>0">
+          <label for="image2" class="col-sm-3 col-form-label text-light">{{this.labedoc2}}</label>
+          <div class="col-sm-9">
+            <input type="file" id="image2" (change)="uploadImage($event, 2)" class="form-control" required>
+          </div>
+        </div>
+
+
+
+        <div class="mb-3 row" *ngIf="tipoDoc>0">
+
+          <label for="image1" class="col-sm-3 col-form-label text-light">{{this.labedoc3}}</label>
+          <div class="col-sm-9">
+            <input type="file" id="image3" (change)="uploadImage($event, 3)" class="form-control" required>
+          </div>
+        </div>
+
+
+
+        <div class="mb-3 row" *ngIf="tipoDoc>0">
+
+          <label for="image1" class="col-sm-3 col-form-label text-light">{{this.labedoc4}}</label>
+          <div class="col-sm-9">
+            <input type="file" id="image4" (change)="uploadImage($event, 4)" class="form-control" required>
+          </div>
+        </div>
+
+
+        <div class="pt-10 flex flex-col items-center">
+          <button type="submit" *ngIf="JugadorForm.valid && !isLoading"
+            class="group relative w-full sm:w-64 bg-emerald-600 hover:bg-emerald-500 text-white font-bold py-4 rounded-2xl shadow-[0_10px_20px_-10px_rgba(16,185,129,0.5)] transition-all active:scale-95 uppercase text-xs tracking-widest overflow-hidden">
+            <span class="relative z-10 flex items-center justify-center gap-2">
+              <i class="fa fa-floppy-o"></i> Finalizar Registro
+            </span>
+            <div
+              class="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent -translate-x-full group-hover:animate-[shimmer_1.5s_infinite]">
+            </div>
+          </button>
+
+          <div *ngIf="isLoading" class="flex flex-col items-center space-y-4">
+            <div class="relative w-12 h-12">
+              <img src="../../../assets/img/balon.png" class="w-full h-full animate-spin" alt="Cargando">
+              <div class="absolute inset-0 bg-emerald-500/20 blur-xl animate-pulse"></div>
+            </div>
+            <span class="text-[10px] font-black uppercase tracking-[0.3em] text-emerald-400">Procesando
+              Jugador...</span>
+          </div>
+        </div>
+
+      </form>
+    </div>
+  </div>
 </div>

@@ -2,6 +2,7 @@ import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { environment } from '../../environments/environment';
 import { User } from '../interfaces/interfaces';
+import { Observable } from 'rxjs';
 
 @Injectable({
   providedIn: 'root'
@@ -111,6 +112,10 @@ export class ApiService {
 
   get_All_EquiposFilt(nombre: string, email: string) {
     return this.http.post(this.urlAPI + `Rest_api/get_All_EquiposFilt`, { nombre, email });
+  }
+
+  get_All_equipos_torneoFilt(nombre: string, email: string,idT: any) {
+    return this.http.post(this.urlAPI + `Rest_api/get_All_equipos_torneoFilt`, { nombre, email,idT });
   }
 
 
@@ -390,8 +395,8 @@ export class ApiService {
     return this.http.post(this.urlAPI + `Rest_api/TorneosEquipo`, { IdEquipo });
   }
 
-  jugadoresEquipoTorneo(IdTorneo: any, Idequipo: any) {
-    return this.http.post(this.urlAPI + `Rest_api/jugadoresEquipoTorneo`, { Idequipo, IdTorneo });
+  jugadoresEquipoTorneo(IdTorneo: any, Idequipo: any, Idpartido ?: any) {
+    return this.http.post(this.urlAPI + `Rest_api/jugadoresEquipoTorneo`, { Idequipo, IdTorneo,Idpartido });
   }
 
   jugadoresTorneoPartido(IdTorneo: number, IdPartido: number, IdEquipo: any) {
@@ -443,7 +448,7 @@ export class ApiService {
     return this.http.post(this.urlAPI + `Rest_api/cambiarEstadoPart`, { idTorneo, equipo, estadoActual });
   }
 
-  get_jugadores_categoriasId(categoria: number, IdTorneo: number) {
+  get_jugadores_categoriasId(categoria: any, IdTorneo: any) {
     return this.http.post(this.urlAPI + `Rest_api/get_jugadores_categoriasId`, { categoria, IdTorneo });
   }
 
@@ -499,4 +504,11 @@ export class ApiService {
     return this.http.post(this.urlAPI + `Rest_api/cambiarEquipoTr`, { IdTorneo,  equipoSelect , IdEquipoNew });
   }
 
+
+  uploadMasivoT(formData: FormData): Observable<any> {
+    return this.http.post(`${this.urlAPI}Rest_api/uploadMasivoT`, formData);
+  }
+
+
+  
 }

@@ -4,6 +4,7 @@ import { InsJugadorComponent } from './components/ins-jugador/ins-jugador.compon
 import { AdminComponent } from './components/admin/admin.component';
 import { AdminTempComponent } from './admin/admin-temp/admin-temp.component';
 import { InfoTorneoComponent } from './admin/torneos/info-torneo/info-torneo.component';
+import { InfoTComponent } from './admin/torneos/info-t/info-t.component';
 import { DelegadoCanchaComponent } from './admin/delegado-cancha/delegado-cancha.component';
 import { AdminEquipoComponent } from './admin/admin-equipo/admin-equipo.component';
 import { InsClubComponent } from './components/ins-club/ins-club.component';
@@ -23,6 +24,7 @@ export const routes: Routes = [
   
   { path: 'adminTemp', component: AdminTempComponent },
   { path: 'InfoTorneo/:idTorneo', component: InfoTorneoComponent },
+  { path: 'InfoT/:idTorneo', component: InfoTComponent },
   { path: 'Jugadores', component: JugadoresComponent },
   { path: 'jugadores/:idTorneo/:idEquipo', component: JugadoresComponent },
 

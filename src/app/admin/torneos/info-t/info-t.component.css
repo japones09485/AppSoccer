@@ -1,0 +1,86 @@
+/* Ajustes para móvil */
+@media (max-width: 768px) {
+  /* Reducir padding general */
+  .space-y-4 > * + * {
+    margin-top: 1rem;
+  }
+  
+  /* Mejorar contraste */
+  .bg-slate-900\/80 {
+    background-color: rgba(15, 23, 42, 0.9);
+  }
+  
+  /* Botones más táctiles */
+  button {
+    min-height: 36px;
+  }
+  
+  /* Textos más legibles */
+  .text-xs {
+    font-size: 0.7rem;
+    line-height: 1.1;
+  }
+  
+  /* Truncar textos largos */
+  .truncate {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+  
+  /* Mejorar bordes */
+  .border-slate-700\/60 {
+    border-color: rgba(51, 65, 85, 0.6);
+  }
+  
+  /* Sombras más sutiles */
+  .shadow-lg {
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.2);
+  }
+}
+
+
+ @keyframes shimmer {
+          100% {
+            transform: translateX(100%);
+          }
+        }
+
+        .animate-spin-slow {
+          animation: spin 3s linear infinite;
+        }
+
+        @keyframes spin {
+          from {
+            transform: rotate(0deg);
+          }
+
+          to {
+            transform: rotate(360deg);
+          }
+        }
+
+
+        /* 1. Forza el color del texto que escribes en el buscador */
+::ng-deep .custom-ng-select-green .ng-input > input {
+    color: #ffffff !important; /* Blanco puro */
+    font-weight: 900 !important; /* Negrita máxima */
+    text-shadow: 0px 0px 5px rgba(255, 255, 255, 0.2); /* Un pequeño brillo para el proyector */
+}
+
+/* 2. Forza el color del texto cuando ya está seleccionado */
+::ng-deep .custom-ng-select-green .ng-value-label {
+    color: #ffffff !important;
+    font-weight: 900 !important;
+}
+
+/* 3. Asegura que el fondo del input no sea transparente si hay problemas de contraste */
+::ng-deep .custom-ng-select-green .ng-select-container {
+    background-color: rgba(255, 255, 255, 0.05) !important;
+    border: 1px solid rgba(16, 185, 129, 0.3) !important;
+}
+
+/* 4. Color de la "X" para borrar la búsqueda */
+::ng-deep .custom-ng-select-green .ng-clear-wrapper {
+    color: #ef4444 !important; /* Rojo para que se vea claro */
+}

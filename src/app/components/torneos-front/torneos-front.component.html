@@ -1,127 +1,89 @@
-<!-- Contenedor principal con fondo -->
-<div id="content">
-  <div class="container-fluid py-5">
+<div class="fixed inset-0 -z-10 overflow-hidden">
+  <div class="absolute inset-0 bg-gradient-to-br from-slate-950/95 via-slate-900/70 to-slate-950/95 z-10"></div>
+  <img src="../../../assets/img/fondoPR.jpg" class="w-full h-full object-cover opacity-60" alt="Fondo">
+</div>
 
-    <!-- Botón cerrar sesión alineado a la derecha -->
-    <div class="d-flex justify-content-end mb-3">
-      <button class="btn btn-danger" (click)="cerrarSesion()">
-        <i class="fa fa-sign-out" aria-hidden="true"></i>
-      </button>
-    </div>
+<div class="min-h-screen p-4 sm:p-10">
+  
+  <div class="flex justify-end mb-8">
+    <button (click)="cerrarSesion()" 
+      class="bg-white/10 backdrop-blur-md hover:bg-rose-600 border border-white/20 px-6 py-2 rounded-full text-white transition-all duration-300 text-[10px] font-black uppercase tracking-widest">
+      <i class="fa fa-home mr-2"></i> Inicio
+    </button>
+  </div>
 
-    <!-- Encabezado -->
-    <div id="title" class="text-center mb-5">
-      <img src="../../../assets/img/logo.png" class="img-fluid mb-3 logo" alt="Logo">
-      <h1 class="titulo-principal text-white">
-        Eventos deportivos <br>
-        <span class="titulo-secundario">Soccer Melgar</span>
-      </h1>
-    </div>
+  <header class="text-center mb-16 animate-in fade-in duration-1000">
+    <img src="../../../assets/img/logo.png" class="w-24 mx-auto mb-4 drop-shadow-[0_0_15px_rgba(255,255,255,0.4)]" alt="Logo">
+    <h1 class="text-4xl sm:text-6xl font-black text-white tracking-tighter drop-shadow-2xl">
+      EVENTOS <span class="text-emerald-400 italic">SOCCER MELGAR</span>
+    </h1>
+    <div class="h-1.5 w-32 bg-emerald-500 mx-auto mt-4 rounded-full shadow-[0_0_15px_rgba(16,185,129,0.6)]"></div>
+  </header>
 
-
-    <div class="row justify-content-center mb-4">
-
-      <div style="
-            background: #f2f2f2;
-            padding: 5px;
-            border-radius: 68px;
-            margin: 15px;
-        ">
-        <p class="text-primary text-center">
-          La fecha de inicio y la fecha de fin del filtro deben ser seleccionadas de manera que solo se muestren los
-          torneos <br>
-          cuya fecha de inicio y fecha de fin estén completamente dentro del rango definido por el filtro.
-        </p>
+  <div class="max-w-5xl mx-auto mb-16">
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 bg-white/10 backdrop-blur-2xl p-6 rounded-[2.5rem] border border-white/20 shadow-2xl">
+      <div class="space-y-1">
+        <label class="text-[9px] font-black text-emerald-400 uppercase ml-2 tracking-widest">Desde</label>
+        <input type="date" [(ngModel)]="fechaInicio" class="w-full bg-white/90 border-none rounded-xl px-4 py-3 text-sm text-slate-900 outline-none">
       </div>
-
-      <div class="col-12 col-md-3 mb-2">
-        <input type="date" [(ngModel)]="fechaInicio" class="form-control text-center"
-          placeholder="Fecha Inicio del torneo" name="fechaInicio">
+      <div class="space-y-1">
+        <label class="text-[9px] font-black text-emerald-400 uppercase ml-2 tracking-widest">Hasta</label>
+        <input type="date" [(ngModel)]="fechaFin" class="w-full bg-white/90 border-none rounded-xl px-4 py-3 text-sm text-slate-900 outline-none">
       </div>
-
-      <div class="col-12 col-md-3 mb-2">
-        <input type="date" [(ngModel)]="fechaFin" class="form-control text-center" placeholder="Fecha Fin del torneo"
-          name="fechaFin">
-      </div>
-
-      <div class="col-12 col-md-2 text-center">
-        <button class="btn btn-primary w-100" (click)="tomarFechas()">
-          <i class="fa fa-search"></i> Buscar
+      <div class="flex items-end">
+        <button (click)="tomarFechas()" class="w-full bg-emerald-500 hover:bg-emerald-400 text-white font-black h-[48px] rounded-xl transition-all shadow-lg shadow-emerald-500/20 uppercase text-[11px] tracking-widest">
+          <i class="fa fa-search mr-2"></i> Buscar
         </button>
       </div>
-
-      <div class="col-12 col-md-2 text-center">
-        <button class="btn btn-info w-100" (click)="ngOnInit()">
-          <i class="fa fa-trash"></i> Limpiar FIltro
+      <div class="flex items-end">
+        <button (click)="ngOnInit()" class="w-full bg-slate-800 text-slate-300 font-black h-[48px] rounded-xl transition-all uppercase text-[11px] tracking-widest">
+          <i class="fa fa-trash mr-2"></i> Reset
         </button>
       </div>
-
-
     </div>
-    
+  </div>
 
-    <!-- Tarjetas de torneos -->
-    <div class="cards-container row g-4 justify-content-center">
-      <div class="col-sm-6 col-md-4 col-lg-3" *ngFor="let torneo of torneos">
-        <div class="card h-100 shadow-lg border-0 rounded-4 overflow-hidden position-relative">
-
-          <!-- Imagen -->
-          <img [src]="pathIm + torneo.img1" class="card-img-top img-fluid">
-
-          <!-- Botón en la esquina superior derecha -->
-          <div class="position-absolute top-0 end-0 m-2 d-flex gap-1 flex-wrap">
-
-         
-            
-            <button class="btn btn-sm btn-info btn-icon" title="Información del torneo" (click)="InfoTorneo(torneo.id)">
-              <i class="fa fa-info"> </i> <i class="fa fa-trophy" aria-hidden="true"></i>
-            </button>
-
-
-           
-           
-          </div>
-
-
-          <!-- Contenido -->
-          <div class="card-body d-flex flex-column px-4 py-3">
-            <div class="p-2 text-muted small">
-                <h5 class="titulo-second card-title text-success fw-bold text-center">{{ torneo.nombre }}</h5>
-               
-            </div>
-          
-
-            <div class="mb-2 text-muted small">
-              <span>Descripción</span>
-                    <div class="text-end">
-
-                      {{
-                      mostrarDescripcionCompleta
-                      ? torneo?.descripcion
-                      : ((torneo?.descripcion || '') | slice:0:100) + ((torneo?.descripcion?.length || 0)
-                      > 100 ? '...' : '')
-                      }}
-
-                      <br>
-                      <a href="javascript:void(0)" *ngIf="(torneo?.descripcion?.length || 0) > 100"
-                        (click)="mostrarDescripcionCompleta = !mostrarDescripcionCompleta">
-                        {{ mostrarDescripcionCompleta ? 'Leer menos' : 'Leer más' }}
-                      </a>
-                    </div>
-            </div>
-
-            <div class="mb-1"><strong>Inicio:</strong> {{ torneo.fecha_inicio }}</div>
-            <div class="mb-1"><strong>Fin:</strong> {{ torneo.fecha_fin }}</div>
-            <div class="mb-2"><strong>Fases:</strong> {{ torneo.num_fases }}</div>
-
-            <div class="mb-2 text-primary" *ngIf="torneo.estado == 1"><strong>Estado:</strong> En proceso</div>
-            <div class="mb-2 text-success" *ngIf="torneo.estado == 2"><strong>Estado:</strong> Finalizado</div>
-
-            <div class="mb-2"><button type="button" class="btn btn-warning text-white" (click)="InfoTorneo(torneo.id)"><i class="fa fa-trophy" aria-hidden="true"></i> Detalle de torneo</button></div>
-          </div>
+  <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8 max-w-7xl mx-auto">
+    <div *ngFor="let torneo of torneos" 
+      class="group bg-white rounded-[2.5rem] overflow-hidden transition-all duration-500 hover:-translate-y-4 shadow-[0_20px_50px_-10px_rgba(0,0,0,0.5)]">
+      
+      <div class="relative h-48 overflow-hidden">
+        <img [src]="pathIm + torneo.img1" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110">
+        <div class="absolute top-4 left-4">
+          <span [ngClass]="torneo.estado == 1 ? 'bg-sky-500' : 'bg-emerald-500'" 
+            class="px-4 py-1.5 rounded-full text-[9px] font-black uppercase tracking-widest text-white shadow-xl">
+            {{ torneo.estado == 1 ? 'En vivo' : 'Finalizado' }}
+          </span>
         </div>
       </div>
-    </div>
 
+      <div class="p-8">
+        <h5 class="text-xl font-black text-slate-900 mb-2 leading-tight uppercase tracking-tight">{{ torneo.nombre }}</h5>
+        
+        <p class="text-slate-500 text-xs leading-relaxed mb-6 font-medium">
+          {{ mostrarDescripcionCompleta ? torneo?.descripcion : (torneo?.descripcion | slice:0:75) + '...' }}
+          <span (click)="mostrarDescripcionCompleta = !mostrarDescripcionCompleta" class="text-emerald-600 font-bold cursor-pointer hover:underline">
+             {{ mostrarDescripcionCompleta ? 'Ver menos' : 'Leer más' }}
+          </span>
+        </p>
+
+        <div class="grid grid-cols-2 gap-2 p-4 bg-slate-50 rounded-2xl mb-6">
+          <div class="text-center border-r border-slate-200">
+            <p class="text-[8px] font-black text-slate-400 uppercase mb-1">Inicia</p>
+            <p class="text-[11px] font-bold text-slate-800">{{ torneo.fecha_inicio }}</p>
+          </div>
+          <div class="text-center">
+            <p class="text-[8px] font-black text-slate-400 uppercase mb-1">Fases</p>
+            <p class="text-[11px] font-bold text-slate-800">{{ torneo.num_fases }} Etapas</p>
+          </div>
+        </div>
+
+        <button (click)="InfoTorneo(torneo.id)" 
+          class="w-full bg-slate-900 hover:bg-emerald-600 text-white py-4 rounded-2xl text-[10px] font-black uppercase tracking-[0.2em] transition-all duration-300 shadow-lg flex items-center justify-center gap-2">
+          Ver Torneo <i class="fa fa-trophy"></i>
+        </button>
+      </div>
+    </div>
   </div>
+
 </div>

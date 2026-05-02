@@ -1,220 +1,29 @@
-#content {
-  background-image: url('../../../assets/img/fondoPR.jpg');
-  background-size: cover;
-  background-position: center;
-  background-repeat: no-repeat;
-  background-attachment: fixed;
-  min-height: 100vh;
-  font-family: 'Poppins', sans-serif;
+/* Eliminar Scrollbars en Navegación */
+.no-scrollbar::-webkit-scrollbar { display: none; }
+.no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+
+/* Custom Scrollbar para Tablas y Modales */
+.custom-scrollbar::-webkit-scrollbar { width: 4px; }
+.custom-scrollbar::-webkit-scrollbar-thumb { background: #10b981; border-radius: 10px; }
+
+/* Estilos para NG-SELECT Cyber */
+::ng-deep .custom-ng-select .ng-select-container {
+  @apply bg-white border-none rounded-2xl py-4 px-6 text-slate-900 font-black shadow-2xl !important;
 }
 
-
-.container {
-  background-color: rgba(255, 255, 255, 0.75);
-  border-radius: 15px;
-  transition: transform 0.3s ease, box-shadow 0.3s ease;
+::ng-deep .custom-ng-select .ng-dropdown-panel {
+  @apply bg-[#0b0e14] border-white/10 rounded-2xl overflow-hidden shadow-[0_30px_60px_-12px_rgba(0,0,0,1)] !important;
 }
 
-.titulo-principal {
-  font-size: 2rem;
-  font-weight: 800;
-  text-shadow: 2px 2px 5px rgba(0,0,0,0.3);
-  letter-spacing: 1px;
+::ng-deep .custom-ng-select .ng-option {
+  @apply border-b border-white/5 !important;
 }
 
-.logo {
-  max-height: 100px;
-  max-width: 100px;
-}
-
-
+/* Spinner Girando */
 .balon-girando {
-    animation: girar 1.2s linear infinite;
-  }
-  
-  @keyframes girar {
-    from {
-      transform: rotate(0deg);
-    }
-    to {
-      transform: rotate(360deg);
-    }
-  }
-  
-
-
-/* Asegura que el dropdown del ng-select aparezca sobre el modal */
-.ng-dropdown-panel {
-  z-index: 1055 !important; /* El modal suele tener 1050, así que necesitamos un valor mayor */
+  animation: spin 2s linear infinite;
 }
+@keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
 
-/* Modal más grande */
-#modalSeleccionarJugador .modal-dialog {
-  max-width: 800px; /* o el ancho que prefieras */
-}
-
-/* Cuerpo del modal con scroll si es necesario */
-#modalSeleccionarJugador .modal-body {
-  min-height: 400px;
-  max-height: 70vh;
-  overflow-y: auto;
-}
-
-/* Estilo para el ng-select */
-.custom-ng-select .ng-dropdown-panel {
-  max-height: 300px;
-  overflow-y: auto;
-}
-
-/* Opcional: hacer los items del select más altos para mejor legibilidad */
-.custom-ng-select .ng-option {
-  padding: 8px 10px;
-}
-
-.custom-tabs .nav-link {
-  border: 2px solid transparent;
-  color: #198754;
-  font-weight: 600;
-  border-radius: 0.5rem 0.5rem 0 0;
-  transition: all 0.3s ease;
-}
-
-.custom-tabs .nav-link:hover {
-  background-color: #e9f7ef;
-  border-color: #198754;
-}
-
-.custom-tabs .nav-link.active {
-  background-color: #198754;
-  color: white;
-  border-color: #198754 #198754 #fff;
-}
-
-.custom-tabs .nav-item {
-  margin-right: 0.5rem;
-}
-
-
-.balon-girando {
-    animation: girar 1.2s linear infinite;
-  }
-  
-  @keyframes girar {
-    from {
-      transform: rotate(0deg);
-    }
-    to {
-      transform: rotate(360deg);
-    }
-  }
-  
-
-
-/* Asegura que el dropdown del ng-select aparezca sobre el modal */
-.ng-dropdown-panel {
-  z-index: 1055 !important; /* El modal suele tener 1050, así que necesitamos un valor mayor */
-}
-
-/* Modal más grande */
-#modalSeleccionarJugador .modal-dialog {
-  max-width: 800px; /* o el ancho que prefieras */
-}
-
-/* Cuerpo del modal con scroll si es necesario */
-#modalSeleccionarJugador .modal-body {
-  min-height: 400px;
-  max-height: 70vh;
-  overflow-y: auto;
-}
-
-/* Estilo para el ng-select */
-.custom-ng-select .ng-dropdown-panel {
-  max-height: 300px;
-  overflow-y: auto;
-}
-
-/* Opcional: hacer los items del select más altos para mejor legibilidad */
-.custom-ng-select .ng-option {
-  padding: 8px 10px;
-}
-
-:host ::ng-deep .ng-dropdown-panel {
-  max-height: 100px !important;
-  overflow-y: auto;
-}
-
-.balon-girando {
-    animation: girar 1.2s linear infinite;
-  }
-  
-  @keyframes girar {
-    from {
-      transform: rotate(0deg);
-    }
-    to {
-      transform: rotate(360deg);
-    }
-  }
-  
-
-
-/* Asegura que el dropdown del ng-select aparezca sobre el modal */
-.ng-dropdown-panel {
-  z-index: 1055 !important; /* El modal suele tener 1050, así que necesitamos un valor mayor */
-}
-
-/* Modal más grande */
-#modalSeleccionarJugador .modal-dialog {
-  max-width: 800px; /* o el ancho que prefieras */
-}
-
-/* Cuerpo del modal con scroll si es necesario */
-#modalSeleccionarJugador .modal-body {
-  min-height: 400px;
-  max-height: 70vh;
-  overflow-y: auto;
-}
-
-/* Estilo para el ng-select */
-.custom-ng-select .ng-dropdown-panel {
-  max-height: 300px;
-  overflow-y: auto;
-}
-
-/* Opcional: hacer los items del select más altos para mejor legibilidad */
-.custom-ng-select .ng-option {
-  padding: 8px 10px;
-}
-
-:host ::ng-deep .ng-dropdown-panel {
-  max-height: 100px !important;
-  overflow-y: auto;
-}
-
-
-
-.card {
-  border-radius: 20px;
-  background-color: #ffffff;
-}
-
-.form-control, .form-select {
-  border-radius: 10px;
-}
-
-
-/* Animación del balón */
-.balon-girando {
-  animation: girar 1.5s linear infinite;
-}
-
-@keyframes girar {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
-}
-
-
+/* Fix para Inputs de Formulario (Texto Oscuro) */
+input::placeholder { color: #94a3b8; font-weight: normal; }

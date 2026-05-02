@@ -1,1 +1,23 @@
-/* You can add global styles to this file, and also import other style files */
+/* En src/styles.css */
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer components {
+  .menu-link {
+    @apply flex items-center px-4 py-3.5 text-green-100 hover:bg-green-800/50 rounded-xl transition-all duration-200 font-medium;
+  }
+}
+
+.contenedorF {
+  /* Usamos ruta absoluta /assets/ para evitar errores de compilación */
+  background-image: linear-gradient(rgba(241, 248, 244, 0.14), rgba(241, 248, 244, 0.24)), 
+                    url('./assets/img/fondo.png');
+  
+  background-size: cover;
+  background-position: center;
+  background-attachment: fixed; /* El fondo no se mueve, el contenido sí */
+  background-repeat: no-repeat;
+  min-height: 100vh;
+  width: 100%;
+}

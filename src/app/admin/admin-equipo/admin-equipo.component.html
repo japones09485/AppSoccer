@@ -1,262 +1,384 @@
-<!-- Fondo general -->
-<div class="container-fluid py-5 text-white" id="content">
+<div class="contenedorF bg-gray-50 min-h-screen py-10" id="content">
 
-  <div class="container rounded-4 p-4 shadow-lg">
-    <ul class="nav nav-tabs custom-tabs mb-4 justify-content-center" role="tablist">
-      <li class="nav-item" role="presentation">
-        <button (click)="validMenu(1)" class="nav-link active" id="info-tab" data-bs-toggle="tab" data-bs-target="#info"
-          type="button" role="tab" aria-controls="info" aria-selected="true">
-          <i class="fa fa-info-circle me-1"></i> Información del equipo
+  <div class="w-full px-4 md:px-10 mx-auto max-w-7xl">
+
+    <!-- NAV -->
+    <ul
+      class="flex overflow-x-auto no-scrollbar bg-white border border-gray-200 rounded-2xl p-2 mb-10 justify-start md:justify-center gap-2 shadow-lg">
+
+      <li class="nav-item flex-none">
+        <button (click)="validMenu(1)"
+          [ngClass]="validInfo ? 'bg-emerald-500 text-white shadow-lg' : 'text-gray-500 hover:text-black'"
+          class="flex items-center gap-2 px-6 py-3 rounded-xl font-bold uppercase text-xs tracking-widest transition-all">
+          <i class="fa fa-info-circle text-lg"></i> Información del equipo
         </button>
       </li>
 
-      <li class="nav-item" role="presentation">
-        <button (click)="validMenu(2)" class="nav-link" id="categorias-tab" data-bs-toggle="tab"
-          data-bs-target="#categorias" type="button" role="tab" aria-controls="categorias" aria-selected="false">
-          <i class="fa fa-users me-1"></i> Dirección tecnica
+      <li class="nav-item flex-none">
+        <button (click)="validMenu(2)"
+          [ngClass]="validTecnico ? 'bg-emerald-500 text-white shadow-lg' : 'text-gray-500 hover:text-black'"
+          class="flex items-center gap-2 px-6 py-3 rounded-xl font-bold uppercase text-xs tracking-widest transition-all">
+          <i class="fa fa-users text-lg"></i> Dirección técnica
         </button>
       </li>
 
+      <li class="nav-item flex-none">
+        <button (click)="validMenu(3)"
+          [ngClass]="validTorneos ? 'bg-emerald-500 text-white shadow-lg' : 'text-gray-500 hover:text-black'"
+          class="flex items-center gap-2 px-6 py-3 rounded-xl font-bold uppercase text-xs tracking-widest transition-all">
+          <i class="fa fa-trophy text-lg"></i> Torneos
+        </button>
+      </li>
 
-      <li class="nav-item" role="presentation">
-        <button (click)="validMenu(3)" class="nav-link" id="torneos-tab" data-bs-toggle="tab" data-bs-target="#torneos"
-          type="button" role="tab" aria-controls="torneos" aria-selected="false">
-          <i class="fa fa-trophy me-1"></i> Torneos
+      <li class="nav-item flex-none ml-auto">
+        <button
+          class="px-6 py-3 text-rose-500 font-bold uppercase text-xs tracking-widest flex items-center gap-2 hover:bg-rose-100 rounded-xl transition-all"
+          (click)="cerrarSesion()">
+          <i class="fa fa-sign-out-alt"></i> Cerrar sesión
         </button>
       </li>
-      <li class="nav-item" role="presentation">
-        <button class="nav-link text-danger fw-bold" (click)="cerrarSesion()">
-          <i class="fa fa-sign-out-alt me-1"></i> Cerrar sesión
-        </button>
-      </li>
+
     </ul>
 
-    <!-- Informacion del equipo -->
-    <div *ngIf="validInfo">
-      <div id="title" class="text-center mb-5">
-        <img src="../../../assets/img/logo.png" class="img-fluid mb-3 logo" alt="Logo">
-        <h1 class="titulo-principal text-success">
-          Detalles del equipo <br>
+    <!-- INFO -->
+    <div *ngIf="validInfo" class="relative">
+
+      <!-- HEADER -->
+      <div class="text-center mb-16 relative">
+
+        <div
+          class="absolute inset-0 bg-gradient-to-r from-emerald-100 via-white to-emerald-50 blur-3xl opacity-40 rounded-full">
+        </div>
+
+        <img src="../../../assets/img/logo.png"
+          class="h-28 mx-auto mb-6 relative z-10 drop-shadow-xl hover:scale-105 transition duration-500">
+
+        <h1 class="text-6xl font-black leading-none">
+
+          <span class="text-black" style="-webkit-text-stroke: 2px white;">
+            Detalles del
+          </span>
+          <span class="text-black" style="-webkit-text-stroke: 2px white;">
+            Equipo
+          </span>
 
         </h1>
       </div>
 
-      <!-- Información del equipo -->
-      <div class="card shadow-lg border-0 rounded-4 mb-5" *ngIf="equipo">
-        <div class="row g-0">
-          <div class="col-md-5 text-center p-4 bg-light rounded-start">
-            <img [src]="pathIm + equipo.img1" class="img-fluid rounded mb-3" alt="Imagen 1"
-              style="max-height: 200px; object-fit: cover;">
+      <!-- CARD PRINCIPAL -->
+      <div
+        class="w-full relative bg-white-100 backdrop-blur-xl border border-gray-200 rounded-[2.5rem] shadow-[0_20px_60px_rgba(0,0,0,0.08)] p-10 flex flex-col lg:flex-row items-center gap-12 hover:shadow-[0_30px_80px_rgba(16,185,129,0.15)] transition-all duration-500"
+        *ngIf="equipo">
 
+        <!-- EFECTO BACKGROUND -->
+        <div class="absolute inset-0 rounded-[2.5rem] bg-gradient-to-br from-white via-white to-emerald-50 opacity-70">
+        </div>
+
+        <!-- IMAGEN -->
+        <div class="relative z-10 group">
+          <div
+            class="absolute inset-0 bg-emerald-400/20 blur-2xl rounded-full opacity-50 group-hover:opacity-80 transition">
           </div>
-          <div class="col-md-7 p-4 bg-white rounded-end">
-            <h2 class="text-success fw-bold">{{ equipo.nombre }}</h2>
-            <p><strong>Email:</strong> {{ equipo.email }}</p>
-            <p><strong>Estado:</strong>
-              <span [ngClass]="{'text-success': equipo.estado == '1', 'text-danger': equipo.estado != '1'}">
+
+          <div
+            class="w-64 h-64 bg-white rounded-[2rem] p-6 shadow-[0_10px_40px_rgba(0,0,0,0.1)] transform group-hover:scale-105 transition duration-500">
+            <img [src]="pathIm + equipo.img1" class="w-full h-full object-contain drop-shadow-lg">
+          </div>
+        </div>
+
+        <!-- INFO -->
+        <div class="flex-1 space-y-8 text-center lg:text-left relative z-10">
+
+          <!-- NOMBRE -->
+          <div>
+            <h2 style="-webkit-text-stroke: 2px black;"
+              class="text-6xl font-black leading-none bg-gradient-to-r from-emerald-500 to-emerald-400 bg-clip-text text-transparent">
+              {{ equipo.nombre }}
+            </h2>
+
+            <div class="mt-3 inline-block px-4 py-1 rounded-full text-xs font-bold tracking-widest uppercase
+        bg-emerald-100 text-emerald-600 shadow-sm">
+              Club Registrado
+            </div>
+          </div>
+
+          <!-- GRID -->
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-6 text-sm">
+
+            <!-- EMAIL -->
+            <div
+              class="group bg-white border border-gray-200 p-6 rounded-2xl shadow-sm hover:shadow-lg hover:-translate-y-1 transition-all duration-300">
+              <span class="text-emerald-500 block mb-2 text-xs font-bold uppercase tracking-widest">
+                Email Corporativo
+              </span>
+              <span class="text-lg text-gray-800 font-semibold break-all">
+                {{ equipo.email }}
+              </span>
+            </div>
+
+            <!-- ESTADO -->
+            <div
+              class="group bg-white border border-gray-200 p-6 rounded-2xl shadow-sm hover:shadow-lg hover:-translate-y-1 transition-all duration-300">
+              <span class="block mb-2 text-xs uppercase text-gray-500 font-bold tracking-widest">
+                Estado del Equipo
+              </span>
+
+              <span [ngClass]="equipo.estado == '1' ? 'text-emerald-500' : 'text-rose-500'"
+                class="text-lg font-bold flex items-center justify-center lg:justify-start gap-2">
+
+                <span class="w-3 h-3 rounded-full"
+                  [ngClass]="equipo.estado == '1' ? 'bg-emerald-500 animate-pulse' : 'bg-rose-500'"></span>
+
                 {{ equipo.estado == '1' ? 'Activo' : 'Inactivo' }}
               </span>
-            </p>
-            <p><strong>Fecha de creación:</strong> {{ equipo.fecha_creacion }}</p>
+            </div>
+
+            <!-- FECHA -->
+            <div
+              class="group bg-white border border-gray-200 p-6 rounded-2xl shadow-sm hover:shadow-lg hover:-translate-y-1 transition-all duration-300 md:col-span-2 text-center">
+              <span class="text-emerald-500 block mb-2 text-xs uppercase font-bold tracking-widest">
+                Fecha de Vinculación
+              </span>
+              <span class="text-gray-800 font-semibold text-base">
+                {{ equipo.fecha_creacion }}
+              </span>
+            </div>
+
+          </div>
+
+        </div>
+
+      </div>
+    </div>
+
+    <!-- TABLA -->
+    <div *ngIf="validTecnico">
+
+      <div class="flex justify-between items-center mb-8">
+        <h3 class="text-4xl font-black text-white">
+          Dirección <span class="text-emerald-500">Técnica</span>
+        </h3>
+
+        <button (click)="addTecnico()"
+          class="bg-emerald-500 text-white w-12 h-12 rounded-xl shadow-lg hover:scale-105 transition">
+          <i class="fa fa-plus"></i>
+        </button>
+      </div>
+
+      <div *ngIf="!creandoD" class="bg-white rounded-3xl shadow-2xl border overflow-hidden">
+        <div class="overflow-x-auto">
+
+          <table class="w-full text-sm">
+            <thead class="bg-gray-100 text-gray-600 uppercase text-xs">
+              <tr>
+                <th class="p-6 text-center">Gestión</th>
+                <th class="p-6 text-center">Perfil</th>
+                <th class="p-6">Nombre</th>
+                <th class="p-6">Documento</th>
+                <th class="p-6">Email</th>
+                <th class="p-6">Teléfono</th>
+                <th class="p-6 text-center">Cargo</th>
+              </tr>
+            </thead>
+
+            <tbody>
+              <tr *ngFor="let dir of direccionEquipo" class="border-t hover:bg-gray-50 transition">
+
+                <td class="p-4 text-center">
+                  <button (click)="deletedireccion(dir.id!)"
+                    class="w-10 h-10 bg-rose-100 text-rose-500 rounded-lg hover:bg-rose-500 hover:text-white transition">
+                    <i class="fa fa-trash"></i>
+                  </button>
+                </td>
+
+                <td class="p-4 text-center">
+                  <img [src]="pathIm + dir.img1" class="w-14 h-14 rounded-xl object-cover mx-auto">
+                </td>
+
+                <td class="p-4 font-bold text-gray-800">{{dir.nombre}}</td>
+                <td class="p-4">{{dir.identificacion}}</td>
+                <td class="p-4">{{dir.correo}}</td>
+                <td class="p-4">{{dir.telefono}}</td>
+
+                <td class="p-4 text-center">
+                  <span class="px-4 py-1 rounded-full text-xs font-bold border"
+                    [ngClass]="dir.tipo ==1 ? 'text-rose-500 border-rose-200' : 'text-sky-500 border-sky-200'">
+                    {{dir.tipo == 1 ? 'Entrenador' : 'Delegado'}}
+                  </span>
+                </td>
+
+              </tr>
+            </tbody>
+          </table>
+
+        </div>
+      </div>
+
+
+      <!-- Contenedor Principal con Animación de entrada -->
+      <div *ngIf="creandoD" class="flex justify-center mt-10 px-4 animate-in fade-in zoom-in-95 duration-300">
+
+        <!-- Tarjeta Profesional -->
+        <div
+          class="w-full max-w-[600px] bg-white rounded-[2.5rem] shadow-2xl border-4 border-emerald-500/10 overflow-hidden">
+
+          <!-- Encabezado con Estilo -->
+          <div class="bg-emerald-600 py-8 px-6 text-center">
+            <h3
+              class="text-3xl font-black text-white uppercase italic tracking-tighter flex items-center justify-center gap-3">
+              <i class="fa fa-users" aria-hidden="true"></i> Crear <span class="text-emerald-200">Técnico</span>
+            </h3>
+          </div>
+
+          <!-- Cuerpo del Formulario -->
+          <div class="p-8 md:p-10">
+            <form [formGroup]="DireccionForm" (ngSubmit)="saveTecnico()" enctype="multipart/form-data"
+              class="space-y-6">
+
+              <!-- Campo: Nombre -->
+              <div class="space-y-2">
+                <label for="nombre"
+                  class="text-emerald-700 font-black uppercase text-xs tracking-widest ml-4 italic block">Nombre
+                  Completo</label>
+                <div class="relative">
+                  <input type="text" id="nombre" formControlName="nombre" required
+                    class="w-full bg-gray-50 border-2 border-gray-200 rounded-2xl py-4 px-6 text-gray-800 font-bold focus:border-emerald-500 focus:ring-0 outline-none transition-all placeholder-gray-400">
+                </div>
+              </div>
+
+              <!-- Campo: Identificación -->
+              <div class="space-y-2">
+                <label for="identificacion"
+                  class="text-emerald-700 font-black uppercase text-xs tracking-widest ml-4 italic block">Número de
+                  Identificación</label>
+                <input type="text" id="identificacion" formControlName="identificacion" required
+                  class="w-full bg-gray-50 border-2 border-gray-200 rounded-2xl py-4 px-6 text-gray-800 font-bold focus:border-emerald-500 outline-none transition-all">
+              </div>
+
+              <!-- Campo: Correo -->
+              <div class="space-y-2">
+                <label for="correo"
+                  class="text-emerald-700 font-black uppercase text-xs tracking-widest ml-4 italic block">Correo
+                  Electrónico</label>
+                <input type="email" id="correo" formControlName="correo" required
+                  class="w-full bg-gray-50 border-2 border-gray-200 rounded-2xl py-4 px-6 text-gray-800 font-bold focus:border-emerald-500 outline-none transition-all">
+              </div>
+
+              <!-- Campo: Teléfono -->
+              <div class="space-y-2">
+                <label for="telefono"
+                  class="text-emerald-700 font-black uppercase text-xs tracking-widest ml-4 italic block">Teléfono de
+                  Contacto</label>
+                <input type="text" id="telefono" formControlName="telefono" required
+                  class="w-full bg-gray-50 border-2 border-gray-200 rounded-2xl py-4 px-6 text-gray-800 font-bold focus:border-emerald-500 outline-none transition-all">
+              </div>
+
+              <!-- Campo: Tipo de Cargo -->
+              <div class="space-y-2">
+                <label for="tipo"
+                  class="text-emerald-700 font-black uppercase text-xs tracking-widest ml-4 italic block">Tipo de
+                  Cargo</label>
+                <div class="relative">
+                  <select id="tipo" formControlName="tipo"
+                    class="w-full bg-gray-50 border-2 border-gray-200 rounded-2xl py-4 px-6 text-gray-800 font-black uppercase italic outline-none focus:border-emerald-500 appearance-none cursor-pointer">
+                    <option [value]="1">Entrenador</option>
+                    <option [value]="2">Delegado</option>
+                    <option [value]="3">Asistente</option>
+                  </select>
+                  <!-- Icono de flecha personalizado para el select -->
+                  <div class="absolute inset-y-0 right-6 flex items-center pointer-events-none text-emerald-600">
+                    <i class="fa fa-chevron-down"></i>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Campo: Foto -->
+              <div class="space-y-2 pt-2">
+                <label for="image1"
+                  class="text-emerald-700 font-black uppercase text-xs tracking-widest ml-4 italic block">Foto de
+                  Perfil</label>
+                <div class="relative group">
+                  <input type="file" id="image1" (change)="uploadImage($event, 1)"
+                    class="w-full bg-emerald-50 text-emerald-700 font-bold py-3 px-6 rounded-2xl border-2 border-dashed border-emerald-200 cursor-pointer hover:bg-emerald-100 transition-all file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-xs file:font-black file:bg-emerald-600 file:text-white">
+                </div>
+              </div>
+
+              <!-- Botones de Acción -->
+              <div class="flex flex-col sm:flex-row justify-center gap-4 pt-6">
+                <button type="submit" *ngIf="DireccionForm.valid"
+                  class="flex-1 bg-amber-500 hover:bg-amber-600 text-white font-black py-5 rounded-2xl text-xl uppercase italic shadow-lg shadow-amber-200 transition-all active:scale-95 flex items-center justify-center gap-3">
+                  <i class="fa fa-floppy-o" aria-hidden="true"></i> Guardar
+                </button>
+
+                <button type="button" (click)="cancel()"
+                  class="flex-1 bg-gray-100 hover:bg-gray-200 text-gray-500 font-black py-5 rounded-2xl text-xl uppercase italic transition-all active:scale-95 flex items-center justify-center gap-3">
+                  <i class="fa fa-ban" aria-hidden="true"></i> Cancelar
+                </button>
+              </div>
+
+              <!-- Spinner de Carga -->
+              <div *ngIf="isLoading"
+                class="flex flex-col items-center mt-6 p-4 bg-amber-50 rounded-3xl border border-amber-100">
+                <img src="../../../assets/img/balon.png" alt="Cargando..." class="w-12 h-12 animate-spin mb-3" />
+                <span class="text-amber-700 font-black italic uppercase text-xs tracking-widest text-center">
+                  Procesando, por favor espera...
+                </span>
+              </div>
+
+            </form>
           </div>
         </div>
       </div>
-    </div>
-
-
-
-    <div *ngIf="validTecnico">\
-
-
-      <div *ngIf="!creandoD">
-        <h3 class="text-center text-success"><i class="fa fa-flag" aria-hidden="true"></i> Dirección tecnica</h3>
-
-        <table class="table table-bordered">
-          <thead>
-            <tr class="text-center">
-              <th class="bg-success text-light" scope="col"><button (click)="addTecnico()" type="button"
-                  class="btn btn-info" data-bs-toggle="tooltip" data-bs-placement="top" title="Nuevo">
-                  <i class="fa fa-plus"></i>
-                </button>
-              </th>
-              <th class="bg-success text-light" scope="col">Foto</th>
-              <th class="bg-success text-light" scope="col">Nombre</th>
-              <th class="bg-success text-light" scope="col"># Documento</th>
-              <th class="bg-success text-light" scope="col">Correo</th>
-              <th class="bg-success text-light" scope="col">Telefono</th>
-              <th class="bg-success text-light" scope="col">Tipo</th>
-
-            </tr>
-          </thead>
-          <tbody>
-            <tr *ngFor="let dir of direccionEquipo" class="text-center">
-              <th scope="row">
-
-
-                <button (click)="deletedireccion(dir.id!)" type="button" class="btn btn-danger m-1">
-                  <i class="fa fa-trash" aria-hidden="true" data-bs-toggle="tooltip" data-bs-placement="top"
-                    title="Eliminar"></i>
-                </button>
-
-
-
-
-              </th>
-
-              <td *ngIf="dir.img1"><img [src]="pathIm + dir.img1" class="d-block mx-auto" alt="Imagen 1"
-                  style="width: 60px; height: 60px;"></td>
-
-              <td *ngIf="!dir.img1"><img src="../../../../assets/img/nd.png" alt="Imagen 1"
-                  class="img-thumbnail d-block mx-auto shadow"
-                  style="width: 48px; height: 48px; object-fit: cover; border-radius: 0.375rem;"></td>
-
-              <td>{{dir.nombre}}</td>
-              <td> {{dir.identificacion}}</td>
-              <td> {{dir.correo}}</td>
-              <td> {{dir.telefono}}</td>
-              <td>
-                <span class="text-danger" *ngIf="dir.tipo ==1">Entrenador</span>
-                <span class="text-success" *ngIf="dir.tipo == 2">Delegado</span>
-                <span class="text-success" *ngIf="dir.tipo == 3">Delegado</span>
-              </td>
-            </tr>
-
-          </tbody>
-        </table>
-      </div>
-
-
-      <div *ngIf="creandoD" class="d-flex justify-content-center mt-4">
-        <div class="card shadow-lg p-4" style="max-width: 600px; width: 100%;">
-          <h3 class="text-center mb-4 text-success">
-            <i class="fa fa-users" aria-hidden="true"></i> Crear
-          </h3>
-
-          <form [formGroup]="DireccionForm" (ngSubmit)="saveTecnico()" enctype="multipart/form-data">
-            <!-- Nombre -->
-            <div class="mb-3 row">
-              <label for="nombre" class="col-sm-4 col-form-label text-success">Nombre</label>
-              <div class="col-sm-8">
-                <input type="text" id="nombre" formControlName="nombre" class="form-control" required>
-              </div>
-            </div>
-
-            <!-- Identificación -->
-            <div class="mb-3 row">
-              <label for="identificaciom" class="col-sm-4 col-form-label text-success">Identificación</label>
-              <div class="col-sm-8">
-                <input type="text" id="identificacion" formControlName="identificacion" class="form-control" required>
-              </div>
-            </div>
-
-            <!-- Correo -->
-            <div class="mb-3 row">
-              <label for="correo" class="col-sm-4 col-form-label text-success">Correo electrónico</label>
-              <div class="col-sm-8">
-                <input type="email" id="correo" formControlName="correo" class="form-control" required>
-              </div>
-            </div>
-
-            <!-- Teléfono -->
-            <div class="mb-3 row">
-              <label for="telefono" class="col-sm-4 col-form-label text-success">Teléfono</label>
-              <div class="col-sm-8">
-                <input type="text" id="telefono" formControlName="telefono" class="form-control" required>
-              </div>
-            </div>
-
-            <!-- Tipo -->
-            <div class="mb-4 row">
-              <label for="tipo" class="col-sm-4 col-form-label text-success">Tipo</label>
-              <div class="col-sm-8">
-                <select id="tipo" formControlName="tipo" class="form-select">
-                  <option [value]="1">Entrenador</option>
-                  <option [value]="2">Delegado</option>
-                  <option [value]="3">Asistente</option>
-                </select>
-              </div>
-            </div>
-
-
-            <div class="mb-3 row">
-              <label for="image1" class="col-sm-3 col-form-label text-success">
-                Foto
-              </label>
-
-
-              <div class="col-sm-9">
-                <input type="file" id="image1" (change)="uploadImage($event, 1)" class="form-control">
-              </div>
-            </div>
-
-            <!-- Botones centrados -->
-            <div class="d-flex justify-content-center">
-              <button type="submit" class="btn btn-warning text-dark m-2" *ngIf="DireccionForm.valid">
-                <i class="fa fa-floppy-o" aria-hidden="true"></i> Guardar
-              </button>
-              <button type="button" class="btn btn-secondary m-2" (click)="cancel()">
-                <i class="fa fa-ban" aria-hidden="true"></i> Cancelar
-              </button>
-            </div>
-
-            <!-- Spinner -->
-            <div *ngIf="isLoading" class="d-flex flex-column align-items-center mt-3">
-              <img src="../../../assets/img/balon.png" alt="Cargando..." width="40" height="40" class="balon-girando" />
-              <span class="mt-2 text-warning fw-bold">Procesando, por favor espera...</span>
-            </div>
-          </form>
-        </div>
-      </div>
 
 
 
     </div>
 
+    <!-- TORNEOS -->
     <div *ngIf="validTorneos">
-      <div class="cards-container row g-4 justify-content-center mt-4">
 
-        <div id="title" class="text-center mb-5">
-          <img src="../../../assets/img/logo.png" class="img-fluid mb-3 logo" alt="Logo">
-          <h1 class="titulo-principal text-success">
-            Torneos Actuales
-          </h1>
+      <div class="text-center mb-10">
+        <h1 class="text-6xl font-black text-white">
+          Torneos <span class="text-emerald-500">Actuales</span>
+        </h1>
 
-          <!-- Contenedor centrado para el select -->
-          <div class="d-flex justify-content-center mt-3">
-            <div class="col-md-3">
-              <select [(ngModel)]="filtroEstado" (change)="filtrarEstado(filtroEstado)" class="form-select">
-                <option [ngValue]="''">Todos los estados</option>
-                <option [ngValue]="0">Inactivo</option>
-                <option [ngValue]="1">En proceso</option>
-                <option [ngValue]="2">Finalizado</option>
-              </select>
-            </div>
+        <div class="d-flex justify-content-center mt-3">
+          <div class="col-md-3">
+            <select [(ngModel)]="filtroEstado" (change)="filtrarEstado(filtroEstado)" class="form-select">
+              <option [ngValue]="''">Todos los estados</option>
+              <option [ngValue]="0">Inactivo</option>
+              <option [ngValue]="1">En proceso</option>
+              <option [ngValue]="2">Finalizado</option>
+            </select>
           </div>
         </div>
 
+      </div>
 
-        <div class="col-sm-6 col-md-4 col-lg-3" *ngFor="let torneo of torneosFiltrados">
-          <div class="card h-100 shadow-lg border-0 rounded-4 overflow-hidden position-relative">
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
 
-            <!-- Imagen -->
-            <img [src]="pathIm + torneo.img1" class="card-img-top img-fluid" alt="{{torneo.nombre}}">
+        <div *ngFor="let torneo of torneosFiltrados"
+          class="bg-white border rounded-3xl shadow-xl overflow-hidden hover:shadow-2xl transition">
 
-            <!-- Botón en la esquina superior derecha -->
+          <div class="h-44 relative overflow-hidden bg-slate-100">
+            <img [src]="pathIm + torneo.img1"
+              class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105">
+
             <div class="position-absolute top-0 end-0 m-2 d-flex gap-1">
 
-              <button *ngIf="torneo.estado == 1" class="btn btn-warning" title="Carnets jugadores"
-                (click)="CarnetsEquipo(torneo.IdTorneo)">
+              <button *ngIf="torneo.estado == 1 && !esFechaPasada(torneo.fecha_limite)" class="btn btn-success"
+                title="Carnets jugadores" (click)="CarnetsEquipo(torneo.IdTorneo)">
                 <i class="fa fa-id-card" aria-hidden="true"></i>
 
               </button>
 
-              <button *ngIf="torneo.estado == 1" class="btn btn-warning" title="Ver jugadores inscritos al torneo"
-                (click)="VerJugadorTorneo(torneo.IdTorneo)">
+              <button *ngIf="torneo.estado == 1 && !esFechaPasada(torneo.fecha_limite)" class="btn btn-primary"
+                title="Ver jugadores inscritos al torneo" (click)="VerJugadorTorneo(torneo.IdTorneo)">
                 <i class="fa fa-user" aria-hidden="true"></i>
               </button>
 
-              <button *ngIf="torneo.estado == 1" class="btn btn-sm btn-warning" data-bs-toggle="modal"
-                data-bs-target="#modalSeleccionarJugadorT" title="Inscribir jugadores al torneo"
+              <button *ngIf="torneo.estado == 1 && !esFechaPasada(torneo.fecha_limite)" class="btn btn-sm btn-danger"
+                data-bs-toggle="modal" data-bs-target="#modalSeleccionarJugadorT" title="Inscribir jugadores al torneo"
                 (click)="abrirModalSeleccionJEquipo(torneo)">
                 +
               </button>
@@ -267,272 +389,213 @@
                 <i class="fa fa-info"></i>
               </button>
             </div>
+          </div>
 
 
-            <!-- Contenido -->
-            <div class="card-body d-flex flex-column px-4 py-3">
-              <h5 class="titulo-second card-title text-success fw-bold text-center">{{ torneo.nombre }}</h5>
-              <hr class="my-2">
+          <div class="p-6 space-y-4">
 
-              <span>Descripción</span>
-              <div class="text-end">
+            <h5 class="text-xl font-bold text-gray-800">
+              {{ torneo.nombre }}
+            </h5>
 
-                {{
-                mostrarDescripcionCompleta
-                ? torneo?.descripcion
-                : ((torneo?.descripcion || '') | slice:0:100) + ((torneo?.descripcion?.length || 0)
-                > 100 ? '...' : '')
-                }}
+            <p class="text-sm text-gray-500">
+              {{ torneo.descripcion | slice:0:100 }}...
+            </p>
 
-                <br>
-                <a href="javascript:void(0)" *ngIf="(torneo?.descripcion?.length || 0) > 100"
-                  (click)="mostrarDescripcionCompleta = !mostrarDescripcionCompleta">
-                  {{ mostrarDescripcionCompleta ? 'Leer menos' : 'Leer más' }}
-                </a>
-              </div>
-
-              <div class="mb-1"><strong>Inicio:</strong> {{ torneo.fecha_inicio }}</div>
-              <div class="mb-1"><strong>Fin:</strong> {{ torneo.fecha_fin }}</div>
-              <div class="mb-2"><strong>Fases:</strong> {{ torneo.num_fases }}</div>
-              <div *ngIf="torneo.control_edad" class="mb-2"><strong>Control de edad: SI</strong></div>
-              <div *ngIf="!torneo.control_edad" class="mb-2"><strong>Control de edad: NO</strong></div>
-              <div *ngIf="torneo.control_edad" class="mb-2"><strong>Categoria:</strong> {{
-                getNombreCategoria(torneo.categoria) }}</div>
-
-
-              <div *ngIf="torneo.estado == 0" class="mb-2"><strong>Estado: Inactivo</strong></div>
-              <div *ngIf="torneo.estado == 1" class="mb-2"><strong>Estado: En proceso</strong></div>
-              <div *ngIf="torneo.estado == 2" class="mb-2"><strong>Estado: Finalizado</strong></div>
-
-              <div class="d-flex flex-column w-100" *ngIf="perfilUsuario == 2 && torneo.info_jugadores==1">
-                <label for="" class="mb-1">Jugadores inscritos</label>
-                <button (click)="InfoJugadores(torneo.IdTorneo)" class="btn btn-danger w-100"
-                  title="Jugadores inscritos info">
-                  <i class="fa fa-users"></i> Info Jugadores Inscritos
-                </button>
-              </div>
-
-
+            <div class="flex justify-between text-xs text-black">
+              <span>fecha Inicio: {{ torneo.fecha_inicio }}</span>
+              <span>fecha Fin: {{ torneo.fecha_fin }}</span>
+              <span>fecha Limite: {{ torneo.fecha_limite }}</span>
             </div>
+
+            <span class="block text-center py-2 rounded-xl text-xs font-bold" [ngClass]="{
+              'bg-red-100 text-red-500': torneo.estado == 0,
+              'bg-green-100 text-green-600': torneo.estado == 1,
+              'bg-blue-100 text-blue-500': torneo.estado == 2
+            }">
+              {{ torneo.estado == 0 ? 'Inactivo' : (torneo.estado == 1 ? 'En proceso' : 'Finalizado') }}
+            </span>
+
           </div>
         </div>
+
       </div>
     </div>
 
   </div>
 </div>
 
-<!-- Modal seleccionar jugador categoria -->
-<div class="modal fade" id="modalSeleccionarJugador" tabindex="-1" aria-labelledby="modalLabel" aria-hidden="true">
-  <div class="modal-dialog modal-dialog-centered">
-    <div class="modal-content">
 
-      <!-- Encabezado del modal -->
-      <div class="modal-header bg-success text-white">
-        <h5 class="modal-title" id="modalLabel">
-          Agregar jugador a {{ categoriaSeleccionada?.nombre }}
-        </h5>
-        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+<div class="modal fade" id="modalSeleccionarJugador" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered px-4">
+    <div class="modal-content bg-[#0b0e14] border border-white/10 rounded-[3rem] shadow-2xl overflow-hidden">
+      <div class="bg-emerald-500 p-8 flex justify-between items-center shadow-2xl">
+        <h5 class="text-2xl font-black text-slate-900 uppercase italic tracking-tighter">Agregar <span
+            class="text-white">{{ categoriaSeleccionada?.nombre }}</span></h5>
+        <button type="button" class="text-slate-900 hover:scale-125 transition-transform" data-bs-dismiss="modal"><i
+            class="fa fa-times text-2xl"></i></button>
       </div>
-
-      <!-- Cuerpo del modal -->
-      <div class="modal-body">
-
-        <!-- Selector de jugador con búsqueda por nombre o identificación -->
-        <ng-select id="jugadorSelect" [items]="jugadoresDisponibles" bindLabel="busqueda" bindValue="id"
-          [(ngModel)]="jugadorSeleccionadoId" placeholder="Buscar por nombre o identificación..." [searchable]="true"
-          [clearable]="true" [appendTo]="'#modalSeleccionarJugador .modal-content'" class="w-100 custom-ng-select m-4"
-          (change)="onSeleccionarJugador()">
-
-          <!-- Plantilla personalizada para opciones -->
-          <ng-template ng-option-tmp let-item="item">
-            <div class="d-flex align-items-center">
-              <img *ngIf="item.img1" [src]="pathIm + item.img1" class="rounded-circle me-2" width="30" height="30">
-              <img *ngIf="!item.img1" src="../../../assets/img/nd.png" class="rounded-circle me-2" width="30"
-                height="30">
-              <span><strong>{{ item.identificacion }}</strong> - {{ item.nombre }}</span>
-            </div>
-          </ng-template>
-
-        </ng-select>
-
-
-
-      </div>
-
-      <!-- Footer -->
-      <div class="modal-footer text-end mt-3">
-        <button class="btn btn-success" (click)="agregarJugadorSeleccionado()" [disabled]="!jugadorSeleccionadoId">
-          Agregar
+      <div class="p-10 space-y-6">
+        <div class="relative cyber-select-container">
+          <ng-select id="jugadorSelect" [items]="jugadoresDisponibles" bindLabel="busqueda" bindValue="id"
+            [(ngModel)]="jugadorSeleccionadoId" placeholder="Buscar por nombre o identificación..." [searchable]="true"
+            [clearable]="true" [appendTo]="'#modalSeleccionarJugador .modal-content'" class="w-full custom-ng-select"
+            (change)="onSeleccionarJugador()">
+            <ng-template ng-option-tmp let-item="item">
+              <div
+                class="flex items-center gap-4 p-3 hover:bg-emerald-500 hover:text-black transition-colors rounded-xl">
+                <img [src]="item.img1 ? pathIm + item.img1 : '../../../assets/img/nd.png'"
+                  class="w-12 h-12 rounded-xl object-cover bg-white/5">
+                <div class="flex flex-col">
+                  <span class="font-black uppercase text-xs tracking-tight">{{ item.nombre }}</span>
+                  <span class="text-[10px] font-mono opacity-60">ID: {{ item.identificacion }}</span>
+                </div>
+              </div>
+            </ng-template>
+          </ng-select>
+        </div>
+        <button
+          class="w-full bg-emerald-500 text-slate-900 py-6 rounded-[2rem] font-black uppercase text-xs tracking-widest shadow-2xl active:scale-95 transition-all disabled:opacity-20"
+          (click)="agregarJugadorSeleccionado()" [disabled]="!jugadorSeleccionadoId">
+          <i class="fa fa-plus-circle mr-2"></i> Confirmar Inscripción
         </button>
       </div>
-
     </div>
   </div>
 </div>
 
-
-<!-- Modal seleccionar jugador  equipo torneo-->
-<div class="modal fade" id="modalSeleccionarJugadorT" tabindex="-1" aria-labelledby="modalLabel" aria-hidden="true">
-  <div class="modal-dialog modal-dialog-centered">
-    <div class="modal-content">
-
-      <!-- Encabezado del modal -->
-      <div class="modal-header bg-success text-white">
-        <h5 class="modal-title" id="modalLabel">
-          <!-- Botón para agregar todos los jugadores de la categoría -->
-          <!-- 
-<button (click)="AddAllJugadores()" 
-        type="button" 
-        class="btn btn-warning ml-2" 
-        title="Agregar todos los jugadores de la categoria">
-  <i class="fa fa-plus"></i>
-</button> 
--->
-
-          Agregar jugador a Torneo
-        </h5>
-        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+<div class="modal fade" id="modalSeleccionarJugadorT" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered px-4">
+    <div class="modal-content bg-[#0b0e14] border border-white/10 rounded-[3rem] shadow-2xl overflow-hidden">
+      <div class="bg-sky-500 p-8 flex justify-between items-center shadow-2xl">
+        <h5 class="text-2xl font-black text-slate-900 uppercase italic tracking-tighter">Inscribir <span
+            class="text-white">Jugador</span></h5>
+        <button type="button" class="text-slate-900 hover:scale-125 transition-transform" data-bs-dismiss="modal"><i
+            class="fa fa-times text-2xl"></i></button>
       </div>
-
-      <!-- Cuerpo del modal -->
-      <div class="modal-body">
-
-        <!-- Selector de jugador con búsqueda por nombre o identificación -->
-        <ng-select id="jugadorSelect" [items]="jugadoresDisponiblesClub" bindLabel="busqueda" bindValue="id"
-          [(ngModel)]="jugadorSeleccionadoIdClub" placeholder="Buscar por nombre o identificación..."
-          [searchable]="true" [clearable]="true" class="w-100 custom-ng-select m-4"
-          (change)="onSeleccionarJugadorClub()">
-
-          <!-- Plantilla personalizada para opciones -->
+      <div class="p-10 space-y-6">
+        <ng-select [items]="jugadoresDisponiblesClub" bindLabel="busqueda" bindValue="id"
+          [(ngModel)]="jugadorSeleccionadoIdClub" placeholder="Filtrar por nombre o identificación..."
+          [searchable]="true" [clearable]="true" class="w-full custom-ng-select" (change)="onSeleccionarJugadorClub()">
           <ng-template ng-option-tmp let-item="item">
-            <div class="d-flex align-items-center">
-              <img *ngIf="item.img1" [src]="pathIm + item.img1" class="rounded-circle me-2" width="30" height="30">
-              <img *ngIf="!item.img1" src="../../../assets/img/nd.png" class="rounded-circle me-2" width="30"
-                height="30">
-              <span><strong>{{ item.identificacion }}</strong> - {{ item.nombre }}</span>
+            <div class="flex items-center gap-4 p-3 hover:bg-sky-500 hover:text-black transition-colors rounded-xl">
+              <img [src]="item.img1 ? pathIm + item.img1 : '../../../assets/img/nd.png'"
+                class="w-12 h-12 rounded-xl object-cover bg-white/5">
+              <div class="flex flex-col">
+                <span class="font-black uppercase text-xs tracking-tight text-white text-[12px]">{{ item.nombre
+                  }}</span>
+                <span class="text-[12px] font-mono opacity-60 text-white">ID: {{ item.identificacion }}</span>
+              </div>
             </div>
           </ng-template>
-
         </ng-select>
-
-
-
-      </div>
-
-      <!-- Footer -->
-      <div class="modal-footer text-end mt-3">
-        <button class="btn btn-success" (click)="agregarJugadorSeleccionadoT()" [disabled]="!jugadorSeleccionadoIdClub">
-          Agregar
+        <button
+          class="w-full bg-sky-500 text-slate-900 py-6 rounded-[2rem] font-black uppercase text-xs tracking-widest shadow-2xl active:scale-95 transition-all disabled:opacity-20"
+          (click)="agregarJugadorSeleccionadoT()" [disabled]="!jugadorSeleccionadoIdClub">
+          <i class="fa fa-save mr-2"></i> Procesar Inscripción
         </button>
       </div>
-
     </div>
   </div>
 </div>
 
-
-<div class="modal fade" id="modalVerJugador" tabindex="-1" aria-labelledby="modalLabel" aria-hidden="true">
-  <div class="modal-dialog modal-dialog-centered">
-    <div class="modal-content">
-
-      <div class="modal-header">
-        <h5 class="modal-title text-center" id="modalLabel">Jugadores</h5>
-        <button type="button" class="btn-close" (click)="cerrarModalVerJugador()"></button>
+<div class="modal fade" id="modalVerJugador" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered modal-lg px-4">
+    <div class="modal-content bg-[#0b0e14] border border-white/10 rounded-[3.5rem] shadow-2xl overflow-hidden">
+      <div class="p-10 border-b border-white/5 flex justify-between items-center">
+        <h5 class="text-3xl font-black text-white uppercase italic tracking-tighter">Gestión <span
+            class="text-emerald-500">Nómina</span></h5>
+        <button type="button" class="text-white opacity-40 hover:opacity-100 transition-opacity"
+          (click)="cerrarModalVerJugador()"><i class="fa fa-times text-2xl"></i></button>
       </div>
-
-      <div class="modal-body p-0">
-        <!-- Scrollable container -->
-        <div style="max-height: 350px; overflow-y: auto;">
-          <table class="table table-bordered mb-0 text-center">
-            <thead class="bg-success text-white sticky-top">
-              <tr>
-                <th></th>
-                <th>Nombre</th>
-                <th>Fecha de nacimiento</th>
-                <th>Edad</th>
-                <th>Posición</th>
-                <th>Acción</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr *ngFor="let jugador of jugadoresEquipo">
-                <td>
-                  <img [src]="jugador.img1 ? (pathIm + jugador.img1) : '../../../assets/img/nd.png'" alt="Foto"
-                    width="30" height="30" class="rounded-circle">
-                </td>
-                <td>{{ jugador.nombre }}</td>
-                <td>{{ jugador.fecha_nacimiento }}</td>
-                <td>{{ apiRest.calcularEdad(jugador.fecha_nacimiento) }}</td>
-                <td>
-
-                  <span *ngIf="jugador.posicion == 1">Arquero</span>
-                  <span *ngIf="jugador.posicion == 2">Defensa</span>
-                  <span *ngIf="jugador.posicion == 3">Volante</span>
-                  <span *ngIf="jugador.posicion == 4">Delantero</span>
-
-                <td>
-                  <button class="btn btn-sm btn-danger"
-                    (click)="eliminarJugadorClub(jugador.id, this.categoriaSeleccionada.id,this.equipo.id)">
-                    X
-                  </button>
-                </td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
+      <div class="p-0 max-h-[60vh] overflow-y-auto custom-scrollbar">
+        <table class="w-full text-left">
+          <thead class="bg-white/5 text-[10px] font-black uppercase tracking-widest text-emerald-500 sticky top-0 z-20">
+            <tr>
+              <th class="p-6 text-center w-24">Perfil</th>
+              <th class="p-6">Nombre</th>
+              <th class="p-6 hidden md:table-cell">Nacimiento</th>
+              <th class="p-6 text-center">Edad</th>
+              <th class="p-6">Posición</th>
+              <th class="p-6 text-center">X</th>
+            </tr>
+          </thead>
+          <tbody class="divide-y divide-white/5">
+            <tr *ngFor="let jugador of jugadoresEquipo" class="hover:bg-white/[0.02] transition-colors group">
+              <td class="p-4 text-center">
+                <img [src]="jugador.img1 ? (pathIm + jugador.img1) : '../../../assets/img/nd.png'"
+                  class="w-12 h-12 rounded-xl object-cover mx-auto shadow-xl group-hover:scale-110 transition-transform">
+              </td>
+              <td class="p-4 font-black uppercase text-white text-xs">{{ jugador.nombre }}</td>
+              <td class="p-4 hidden md:table-cell text-gray-500 font-bold italic text-xs">{{ jugador.fecha_nacimiento }}
+              </td>
+              <td class="p-4 text-center font-mono text-emerald-500 font-black text-base">{{
+                apiRest.calcularEdad(jugador.fecha_nacimiento) }}</td>
+              <td class="p-4">
+                <span
+                  class="text-[9px] font-black uppercase text-sky-500 border border-sky-500/30 px-3 py-1 rounded-full italic">
+                  {{ jugador.posicion == 1 ? 'Arquero' : jugador.posicion == 2 ? 'Defensa' : jugador.posicion == 3 ?
+                  'Volante' : 'Delantero' }}
+                </span>
+              </td>
+              <td class="p-4 text-center">
+                <button
+                  class="w-10 h-10 bg-rose-600/20 text-rose-500 rounded-xl hover:bg-rose-600 hover:text-white transition-all flex items-center justify-center mx-auto"
+                  (click)="eliminarJugadorClub(jugador.id, this.categoriaSeleccionada.id,this.equipo.id)">
+                  <i class="fa fa-trash"></i>
+                </button>
+              </td>
+            </tr>
+          </tbody>
+        </table>
       </div>
-
     </div>
   </div>
 </div>
 
-
-<div class="modal fade" id="modalVerJugadorTorneo" tabindex="-1" aria-labelledby="modalLabel" aria-hidden="true">
-  <div class="modal-dialog modal-dialog-centered">
-    <div class="modal-content">
-
-      <div class="modal-header">
-        <h5 class="modal-title text-center" id="modalLabel">Jugadores Torneo</h5>
-        <button type="button" class="btn-close" (click)="cerrarModalVerJugadorT()"></button>
+<div class="modal fade" id="modalVerJugadorTorneo" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered modal-lg px-4">
+    <div class="modal-content bg-[#0b0e14] border border-white/10 rounded-[3.5rem] shadow-2xl overflow-hidden">
+      <div class="p-10 border-b border-white/5 flex justify-between items-center">
+        <h5 class="text-3xl font-black text-white uppercase italic tracking-tighter">Jugadores <span
+            class="text-sky-500">Inscritos</span></h5>
+        <button type="button" class="text-white opacity-40 hover:opacity-100 transition-opacity"
+          (click)="cerrarModalVerJugadorT()"><i class="fa fa-times text-2xl"></i></button>
       </div>
-
-      <div class="modal-body p-0">
-        <!-- Scrollable container -->
-        <div style="max-height: 350px; overflow-y: auto;">
-          <table class="table table-bordered mb-0 text-center">
-            <thead class="bg-success text-white sticky-top">
-              <tr>
-                <th></th>
-                <th>Nombre</th>
-                <th>Fecha de nacimiento</th>
-                <th>Edad</th>
-                <th>Posición</th>
-                <th>Acción</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr *ngFor="let jugador of jugadoresEquipo">
-                <td>
-                  <img [src]="jugador.img1 ? (pathIm + jugador.img1) : '../../../assets/img/nd.png'" alt="Foto"
-                    width="30" height="30" class="rounded-circle">
-                </td>
-                <td>{{ jugador.nombre }}</td>
-                <td>{{ jugador.fecha_nacimiento }}</td>
-                <td>{{ apiRest.calcularEdad(jugador.fecha_nacimiento) }}</td>
-                <td>{{ jugador.posicion }}</td>
-                <td>
-                  <button class="btn btn-sm btn-danger"
-                    (click)="eliminarJugadorTorneo(jugador.fk_jugador,  jugador.fk_club)">
-                    X
-                  </button>
-                </td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
+      <div class="p-0 max-h-[60vh] overflow-y-auto custom-scrollbar">
+        <table class="w-full text-left">
+          <thead class="bg-white/5 text-[10px] font-black uppercase tracking-widest text-sky-500 sticky top-0 z-20">
+            <tr>
+              <th class="p-6 text-center w-24">Perfil</th>
+              <th class="p-6">Nombre</th>
+              <th class="p-6">Nacimiento</th>
+              <th class="p-6 text-center">Edad</th>
+              <th class="p-6">Posición</th>
+              <th class="p-6 text-center">X</th>
+            </tr>
+          </thead>
+          <tbody class="divide-y divide-white/5">
+            <tr *ngFor="let jugador of jugadoresEquipo" class="hover:bg-white/[0.02] transition-colors group">
+              <td class="p-4 text-center">
+                <img [src]="jugador.img1 ? (pathIm + jugador.img1) : '../../../assets/img/nd.png'"
+                  class="w-12 h-12 rounded-xl object-cover mx-auto shadow-xl group-hover:scale-110 transition-transform">
+              </td>
+              <td class="p-4 font-black uppercase text-white text-xs">{{ jugador.nombre }}</td>
+              <td class="p-4 text-gray-500 font-bold italic text-xs">{{ jugador.fecha_nacimiento }}</td>
+              <td class="p-4 text-center font-mono text-sky-500 font-black text-base">{{
+                apiRest.calcularEdad(jugador.fecha_nacimiento) }}</td>
+              <td class="p-4 text-xs font-black uppercase text-gray-500">{{ jugador.posicion }}</td>
+              <td class="p-4 text-center">
+                <button
+                  class="w-10 h-10 bg-rose-600/20 text-rose-500 rounded-xl hover:bg-rose-600 hover:text-white transition-all flex items-center justify-center mx-auto"
+                  (click)="eliminarJugadorTorneo(jugador.fk_jugador,  jugador.fk_club)">
+                  <i class="fa fa-trash"></i>
+                </button>
+              </td>
+            </tr>
+          </tbody>
+        </table>
       </div>
-
     </div>
   </div>
 </div>

@@ -43,13 +43,13 @@ export class EquiposComponent implements OnInit {
   categoriasEquipo: any[] = [];
   categoriaSeleccionada: any = null;
   jugadorSeleccionadoId: number | null = null;
-  
+
   jugadoresDisponibles: any[] = [];
   idClub !:number;
   filtroNombre: string = '';
   filtroEmail: string = '';
   paginas = 0;
-  
+
   constructor(
     public apiRest: ApiService,
     private fb: FormBuilder,
@@ -63,7 +63,7 @@ export class EquiposComponent implements OnInit {
     this.initForm();
     this.creando = false;
     this.loadEquipos();
-    
+
   }
 
   // Al cargar categorías, conviértelo a número:
@@ -74,7 +74,7 @@ export class EquiposComponent implements OnInit {
         nombre: cat.nombre
       }));
 
-  
+
     });
 
   }
@@ -85,19 +85,19 @@ export class EquiposComponent implements OnInit {
         this.equipos = res.equipos;
         this.paginas = res.cant_paginas;
 
-        
+
       });
   }
 
     sigPag(pag: number) {
 
-    
+
      this.apiRest.get_All_equipos(pag)
       .subscribe((res: any) => {
         this.equipos = res.equipos;
         this.paginas = res.cant_paginas;
 
-        
+
       });
 
   }
@@ -284,7 +284,7 @@ export class EquiposComponent implements OnInit {
 
     getNombreCategoria(id: number | string): string {
       // 1. Verificar que el array esté cargado
-    
+
       const idNumber = Number(id);
       const categoriaEncontrada = this.categoriasDisponibles.find(cat => Number(cat.id) === idNumber);
 
@@ -303,7 +303,7 @@ export class EquiposComponent implements OnInit {
         this.categoriasEquipo = res.categoriasEq;
 
       });
-      
+
     }
 
 
@@ -324,12 +324,12 @@ export class EquiposComponent implements OnInit {
         });
     }
 
- 
+
 
 abrirModalSeleccion(categoria: any) {
 
    console.log('categoria:'+categoria);
-  
+
   this.apiRest.get_All_jugadoresAct()
     .subscribe((res: any) => {
       this.jugadoresDisponibles = res.jugadores.map((j: any) => ({
@@ -339,7 +339,7 @@ abrirModalSeleccion(categoria: any) {
     });
 
   this.categoriaSeleccionada = categoria;
- 
+
   this.jugadorSeleccionadoId = null;
 
 }
@@ -361,22 +361,22 @@ agregarJugadorSeleccionado() {
       }).then((result) => {
         /* Read more about isConfirmed, isDenied below */
         if (result.isConfirmed) {
-         
-          
+
+
           this.apiRest.agregar_jugador_categoria(this.categoriaSeleccionada.IdEq,this.categoriaSeleccionada.id,jugador.id)
           .subscribe((res:any)=>{
             if(res.success){
               this.categoriasEquipo = res.categoriasEq;
             }
-             
+
             Swal.fire(res.msj);
           })
-       
+
         }
       });
-  
 
-  
+
+
 }
 
 
@@ -401,7 +401,9 @@ aplicarFiltros() {
   }
 
 Inicio(){
- this.router.navigate(['/DelegaCh']); 
+ this.router.navigate(['/DelegaCh']);
 }
+
+ 
 
 }

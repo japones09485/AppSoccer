@@ -99,6 +99,7 @@ filtroNombre: string = '';
         this.apiRest.add_categoria(this.frmGuardar).subscribe((data: any) => {
           if (data.success) {
             this.categorias = data.categoriasDisponibles;
+            this.categoriasFiltrados = [...this.categorias];
             Swal.fire(data.msj);
             this.isLoading = false;
             this.initForm();

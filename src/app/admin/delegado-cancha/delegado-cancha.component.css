@@ -47,15 +47,7 @@ html, body {
   width: 100%;
 }
 
-#content {
-  background-image: url('../../../assets/img/fondoPR.jpg');
-  background-size: cover;
-  background-position: center;
-  background-repeat: no-repeat;
-  background-attachment: fixed;
-  min-height: 100vh;
-  font-family: 'Poppins', sans-serif;
-}
+
 
 .logo {
   max-height: 100px;

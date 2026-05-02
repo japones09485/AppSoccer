@@ -1910,12 +1910,14 @@ export class InfoTComponent implements OnInit {
     });
   }
 
-  verImagen(img: string) {
+  verImagen(img?: string) {
     this.imagenSeleccionada =
-      img === 'nd.png' ? '../../../../assets/img/nd.png' : this.pathIm + img;
+      !img || img === 'nd.png'
+        ? '../../../../assets/img/nd.png'
+        : this.pathIm + img;
 
     const modal = new bootstrap.Modal(
-      document.getElementById('modalImagenGrande')!,
+      document.getElementById('modalImagenGrande')!
     );
     modal.show();
   }
@@ -2046,5 +2048,7 @@ export class InfoTComponent implements OnInit {
   });
 
 }
+
+
 
 }

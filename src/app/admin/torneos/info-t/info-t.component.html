@@ -330,7 +330,7 @@
                               class="text-red-600 hover:text-red-700 font-bold text-xs">✕</button>
                           </td>
                           <td class="p-2">
-                            <img [src]="pathIm + equipo.img1"
+                            <img  (click)="verImagen(equipo.img1)" [src]="pathIm + equipo.img1"
                               class="w-10 h-10 rounded-full object-cover border-2 border-gray-300 mx-auto">
                           </td>
                           <td class="font-bold text-emerald-600 text-base">{{ equipo.pts }}</td>
@@ -375,7 +375,7 @@
                 <div class="space-y-3">
                   <div *ngFor="let equipo of gr.detalle" class="bg-gray-50 rounded-xl p-3 border border-gray-200">
                     <div class="flex items-center gap-3 mb-2">
-                      <img [src]="pathIm + equipo.img1"
+                      <img (click)="verImagen(equipo.img1)"  [src]="pathIm + equipo.img1"
                         class="w-12 h-12 rounded-full object-cover border-2 border-gray-300">
                       <div class="flex-1">
                         <div class="text-gray-900 font-bold text-sm break-words">{{ equipo.nombre }}</div>
@@ -670,7 +670,7 @@
                             <tr *ngFor="let equipo of gr.detalle" [title]="equipo.nombre + ' - ' + equipo.categoria"
                               class="hover:bg-gray-50 transition-all border-b border-gray-100">
                               <td class="py-3 px-3 text-left border-r border-gray-200">
-                                <div class="flex items-center gap-3"><img [src]="pathIm + equipo.img1"
+                                <div class="flex items-center gap-3"><img (click)="verImagen(equipo.img1)"  [src]="pathIm + equipo.img1"
                                     class="w-10 h-10 rounded-full object-cover border-2 border-gray-300"><span
                                     class="text-gray-900 font-bold text-xs truncate w-24">{{ equipo.nombre }}</span>
                                 </div>
@@ -708,7 +708,7 @@
                       <div class="space-y-3">
                         <div *ngFor="let equipo of gr.detalle" class="bg-white rounded-xl p-3 border border-gray-200">
                           <div class="flex items-center gap-3 mb-3">
-                            <img [src]="pathIm + equipo.img1"
+                            <img (click)="verImagen(equipo.img1)"  [src]="pathIm + equipo.img1"
                               class="w-12 h-12 rounded-full object-cover border-2 border-gray-300">
                             <div class="flex-1">
                               <div class="text-gray-900 font-bold text-sm break-words">{{ equipo.nombre }}</div>
@@ -999,7 +999,7 @@
                             <tr *ngFor="let equipo of gr.detalle" [title]="equipo.nombre + ' - ' + equipo.categoria"
                               class="hover:bg-gray-50 transition-all border-b border-gray-100">
                               <td class="py-3 px-3 text-left border-r border-gray-200">
-                                <div class="flex items-center gap-3"><img [src]="pathIm + equipo.img1"
+                                <div class="flex items-center gap-3"><img (click)="verImagen(equipo.img1)"  [src]="pathIm + equipo.img1"
                                     class="w-10 h-10 rounded-full object-cover border-2 border-gray-300"><span
                                     class="text-gray-900 font-bold text-xs truncate w-24">{{ equipo.nombre }}</span>
                                 </div>
@@ -1037,7 +1037,7 @@
                       <div class="space-y-3">
                         <div *ngFor="let equipo of gr.detalle" class="bg-white rounded-xl p-3 border border-gray-200">
                           <div class="flex items-center gap-3 mb-3">
-                            <img [src]="pathIm + equipo.img1"
+                            <img (click)="verImagen(equipo.img1)"  [src]="pathIm + equipo.img1"
                               class="w-12 h-12 rounded-full object-cover border-2 border-gray-300">
                             <div class="flex-1">
                               <div class="text-gray-900 font-bold text-sm break-words">{{ equipo.nombre }}</div>
@@ -1323,7 +1323,7 @@
                             <tr *ngFor="let equipo of gr.detalle" [title]="equipo.nombre + ' - ' + equipo.categoria"
                               class="hover:bg-gray-50 transition-all border-b border-gray-100">
                               <td class="py-3 px-3 text-left border-r border-gray-200">
-                                <div class="flex items-center gap-3"><img [src]="pathIm + equipo.img1"
+                                <div class="flex items-center gap-3"><img (click)="verImagen(equipo.img1)"  [src]="pathIm + equipo.img1"
                                     class="w-10 h-10 rounded-full object-cover border-2 border-gray-300"><span
                                     class="text-gray-900 font-bold text-xs truncate w-24">{{ equipo.nombre }}</span>
                                 </div>
@@ -1361,7 +1361,7 @@
                       <div class="space-y-3">
                         <div *ngFor="let equipo of gr.detalle" class="bg-white rounded-xl p-3 border border-gray-200">
                           <div class="flex items-center gap-3 mb-3">
-                            <img [src]="pathIm + equipo.img1"
+                            <img (click)="verImagen(equipo.img1)"  [src]="pathIm + equipo.img1"
                               class="w-12 h-12 rounded-full object-cover border-2 border-gray-300">
                             <div class="flex-1">
                               <div class="text-gray-900 font-bold text-sm break-words">{{ equipo.nombre }}</div>
@@ -1645,7 +1645,7 @@
                             <tr *ngFor="let equipo of gr.detalle" [title]="equipo.nombre + ' - ' + equipo.categoria"
                               class="hover:bg-gray-50 transition-all border-b border-gray-100">
                               <td class="py-3 px-3 text-left border-r border-gray-200">
-                                <div class="flex items-center gap-3"><img [src]="pathIm + equipo.img1"
+                                <div class="flex items-center gap-3"><img (click)="verImagen(equipo.img1)"  [src]="pathIm + equipo.img1"
                                     class="w-10 h-10 rounded-full object-cover border-2 border-gray-300"><span
                                     class="text-gray-900 font-bold text-xs truncate w-24">{{ equipo.nombre }}</span>
                                 </div>
@@ -2004,7 +2004,7 @@
                       <div class="space-y-3">
                         <div *ngFor="let equipo of gr.detalle" class="bg-white rounded-xl p-3 border border-gray-200">
                           <div class="flex items-center gap-3 mb-3">
-                            <img [src]="pathIm + equipo.img1"
+                            <img (click)="verImagen(equipo.img1)" [src]="pathIm + equipo.img1"
                               class="w-12 h-12 rounded-full object-cover border-2 border-gray-300">
                             <div class="flex-1">
                               <div class="text-gray-900 font-bold text-sm break-words">{{ equipo.nombre }}</div>
@@ -2286,7 +2286,7 @@
                             <tr *ngFor="let equipo of gr.detalle" [title]="equipo.nombre + ' - ' + equipo.categoria"
                               class="hover:bg-gray-50 transition-all border-b border-gray-100">
                               <td class="py-3 px-3 text-left border-r border-gray-200">
-                                <div class="flex items-center gap-3"><img [src]="pathIm + equipo.img1"
+                                <div class="flex items-center gap-3"><img (click)="verImagen(equipo.img1)" [src]="pathIm + equipo.img1"
                                     class="w-10 h-10 rounded-full object-cover border-2 border-gray-300"><span
                                     class="text-gray-900 font-bold text-xs truncate w-24">{{ equipo.nombre }}</span>
                                 </div>
@@ -2324,7 +2324,7 @@
                       <div class="space-y-3">
                         <div *ngFor="let equipo of gr.detalle" class="bg-white rounded-xl p-3 border border-gray-200">
                           <div class="flex items-center gap-3 mb-3">
-                            <img [src]="pathIm + equipo.img1"
+                            <img (click)="verImagen(equipo.img1)" [src]="pathIm + equipo.img1"
                               class="w-12 h-12 rounded-full object-cover border-2 border-gray-300">
                             <div class="flex-1">
                               <div class="text-gray-900 font-bold text-sm break-words">{{ equipo.nombre }}</div>
@@ -2476,7 +2476,7 @@
                             <div
                               class="absolute inset-0 bg-emerald-500 blur-xl opacity-0 group-hover:opacity-20 transition-opacity">
                             </div>
-                            <img [src]="eq.img1 ? pathIm + eq.img1 : '../../../../assets/img/nd.png'"
+                            <img (click)="verImagen(eq.img1)" [src]="eq.img1 ? pathIm + eq.img1 : '../../../../assets/img/nd.png'"
                               class="w-16 h-16 rounded-2xl object-cover border-4 border-white shadow-xl relative z-10 group-hover:border-emerald-500 transition-all">
                             <div *ngIf="!eq.estado"
                               class="absolute inset-0 bg-red-600/80 rounded-2xl flex items-center justify-center z-20 backdrop-blur-sm">
@@ -2580,7 +2580,7 @@
 
                 <div class="flex flex-col items-center text-center mt-2 mb-6">
                   <div class="relative mb-4">
-                    <img [src]="eq.img1 ? pathIm + eq.img1 : '../../../../assets/img/nd.png'"
+                    <img (click)="verImagen(eq.img1)" [src]="eq.img1 ? pathIm + eq.img1 : '../../../../assets/img/nd.png'"
                       class="w-24 h-24 rounded-[2rem] object-cover border-4 border-white shadow-2xl">
                     <div *ngIf="!eq.estado"
                       class="absolute inset-0 bg-rose-600/70 rounded-[2rem] flex items-center justify-center">
@@ -2837,7 +2837,7 @@
                       <div class="flex items-center justify-between gap-2 mb-4">
                         <!-- Equipo Local -->
                         <div class="flex flex-col items-center flex-1 text-center">
-                          <img [src]="pathIm + partido.foto_eq1"
+                          <img (click)="verImagen(partido.foto_eq1)" [src]="pathIm + partido.foto_eq1"
                             class="w-12 h-12 rounded-full border-2 border-gray-300 object-cover shadow mb-2">
                           <span class="text-[11px] font-black uppercase italic text-gray-900 leading-tight">{{
                             partido.name_eq_1 }}</span>
@@ -2851,7 +2851,7 @@
 
                         <!-- Equipo Visitante -->
                         <div class="flex flex-col items-center flex-1 text-center">
-                          <img [src]="pathIm + partido.foto_eq2"
+                          <img (click)="verImagen(partido.foto_eq2)" [src]="pathIm + partido.foto_eq2"
                             class="w-12 h-12 rounded-full border-2 border-gray-300 object-cover shadow mb-2">
                           <span class="text-[11px] font-black uppercase italic text-gray-900 leading-tight">{{
                             partido.name_eq_2 }}</span>
@@ -2919,7 +2919,7 @@
                                             ResultadosEq1.nombre }}</span>
                                         </div>
                                         <div class="p-5 flex flex-col items-center flex-grow">
-                                          <img [src]="pathIm + ResultadosEq1.foto"
+                                          <img (click)="verImagen(ResultadosEq1.foto)" [src]="pathIm + ResultadosEq1.foto"
                                             class="w-24 h-24 object-contain rounded-2xl bg-white p-2 mb-4 shadow-lg border-4 border-gray-300">
                                           <div class="flex flex-col items-center mb-6">
                                             <span
@@ -2988,7 +2988,7 @@
                                             ResultadosEq2.nombre }}</span>
                                         </div>
                                         <div class="p-5 flex flex-col items-center flex-grow">
-                                          <img [src]="pathIm + ResultadosEq2.foto"
+                                          <img (click)="verImagen(ResultadosEq2.foto)" [src]="pathIm + ResultadosEq2.foto"
                                             class="w-24 h-24 object-contain rounded-2xl bg-white p-2 mb-4 shadow-lg border-4 border-gray-300">
                                           <div class="flex flex-col items-center mb-6">
                                             <span
@@ -3179,7 +3179,7 @@
                                                     ResultadosEq1.nombre }}</span>
                                                 </div>
                                                 <div class="p-5 flex flex-col items-center flex-grow">
-                                                  <img [src]="pathIm + ResultadosEq1.foto"
+                                                  <img (click)="verImagen(ResultadosEq1.foto)" [src]="pathIm + ResultadosEq1.foto"
                                                     class="w-24 h-24 object-contain rounded-2xl bg-white p-2 mb-4 shadow-lg border-4 border-gray-300">
                                                   <div class="flex flex-col items-center mb-6">
                                                     <span
@@ -3252,7 +3252,7 @@
                                                     ResultadosEq2.nombre }}</span>
                                                 </div>
                                                 <div class="p-5 flex flex-col items-center flex-grow">
-                                                  <img [src]="pathIm + ResultadosEq2.foto"
+                                                  <img (click)="verImagen(ResultadosEq2.foto)" [src]="pathIm + ResultadosEq2.foto"
                                                     class="w-24 h-24 object-contain rounded-2xl bg-white p-2 mb-4 shadow-lg border-4 border-gray-300">
                                                   <div class="flex flex-col items-center mb-6">
                                                     <span
@@ -3362,7 +3362,7 @@
                           <div class="flex items-center gap-3 justify-end">
                             <span class="text-sm font-black uppercase italic text-gray-900">{{ partido.name_eq_1
                               }}</span>
-                            <img [src]="pathIm + partido.foto_eq1"
+                            <img (click)="verImagen(partido.foto_eq1)" [src]="pathIm + partido.foto_eq1"
                               class="w-10 h-10 rounded-full border-2 border-gray-300 object-cover shadow">
                           </div>
                         </td>
@@ -3376,7 +3376,7 @@
 
                         <td class="p-4">
                           <div class="flex items-center gap-3 justify-start">
-                            <img [src]="pathIm + partido.foto_eq2"
+                            <img (click)="verImagen(partido.foto_eq2)" [src]="pathIm + partido.foto_eq2"
                               class="w-10 h-10 rounded-full border-2 border-gray-300 object-cover shadow">
                             <span class="text-sm font-black uppercase italic text-gray-900">{{ partido.name_eq_2
                               }}</span>
@@ -3614,7 +3614,7 @@
                   <div class="text-sm font-black uppercase italic text-emerald-700 mb-2 text-center break-words w-full">
                     {{ partidoSeleccionadoResultado.name_eq_1 }}
                   </div>
-                  <img [src]="pathIm + partidoSeleccionadoResultado.foto_eq1"
+                  <img (click)="verImagen(partidoSeleccionadoResultado.foto_eq1)" [src]="pathIm + partidoSeleccionadoResultado.foto_eq1"
                     class="w-16 h-16 object-contain rounded-lg bg-white p-1 mb-2 shadow-sm border border-gray-300">
                   <div *ngIf="estadoSwitch" class="w-full text-center">
                     <span class="text-xs font-bold text-gray-700 uppercase mb-1 block">Goles</span>
@@ -3629,7 +3629,7 @@
                   <div class="text-sm font-black uppercase italic text-blue-700 mb-2 text-center break-words w-full">
                     {{ partidoSeleccionadoResultado.name_eq_2 }}
                   </div>
-                  <img [src]="pathIm + partidoSeleccionadoResultado.foto_eq2"
+                  <img (click)="verImagen(partidoSeleccionadoResultado.foto_eq2)" [src]="pathIm + partidoSeleccionadoResultado.foto_eq2"
                     class="w-16 h-16 object-contain rounded-lg bg-white p-1 mb-2 shadow-sm border border-gray-300">
                   <div *ngIf="estadoSwitch" class="w-full text-center">
                     <span class="text-xs font-bold text-gray-700 uppercase mb-1 block">Goles</span>
@@ -3882,7 +3882,7 @@
                         </td>
                         <td class="p-4">
                           <div class="flex items-center gap-4">
-                            <img [src]="pathIm + eq.img1"
+                            <img (click)="verImagen(eq.img1)" [src]="pathIm + eq.img1"
                               class="w-14 h-14 rounded-full border-2 border-gray-300 object-cover">
                             <div class="text-left">
                               <div class="text-gray-900 font-bold text-lg break-words">{{ eq.nombre }}</div>
@@ -3924,7 +3924,7 @@
                         <div class="bg-amber-100 text-amber-700 font-bold px-3 py-1 rounded-lg text-sm">
                           #{{ (i + 1) + contCabezaGR }}
                         </div>
-                        <img [src]="pathIm + eq.img1"
+                        <img (click)="verImagen(eq.img1)"  [src]="pathIm + eq.img1"
                           class="w-10 h-10 rounded-full border-2 border-gray-300 object-cover">
                       </div>
 
@@ -4028,7 +4028,7 @@
                         <td class="p-4 text-center text-gray-700 font-bold text-lg">{{ i + 1 }}</td>
                         <td class="p-4">
                           <div class="flex items-center gap-4">
-                            <img [src]="pathIm + eq.img1"
+                            <img (click)="verImagen(eq.img1)"  [src]="pathIm + eq.img1"
                               class="w-14 h-14 rounded-full border-2 border-gray-300 object-cover">
                             <div class="text-left">
                               <div class="text-gray-900 font-bold text-lg break-words">{{ eq.nombre }}</div>
@@ -4070,7 +4070,7 @@
                         <div class="bg-emerald-100 text-emerald-700 font-bold px-3 py-1 rounded-lg text-sm">
                           #{{ i + 1 }}
                         </div>
-                        <img [src]="pathIm + eq.img1"
+                        <img (click)="verImagen(eq.img1)"  [src]="pathIm + eq.img1"
                           class="w-10 h-10 rounded-full border-2 border-gray-300 object-cover">
                       </div>
 
@@ -4162,7 +4162,7 @@
                         class="bg-amber-100 text-amber-700 font-bold w-10 h-10 rounded-lg flex items-center justify-center text-lg">
                         {{ i + 1 }}
                       </div>
-                      <img [src]="pathIm + gol.img1"
+                      <img (click)="verImagen(gol.img1)"  [src]="pathIm + gol.img1"
                         class="w-12 h-12 rounded-full border-2 border-gray-300 object-cover">
                       <div class="flex-grow min-w-0">
                         <div class="text-gray-900 font-bold text-sm break-words">{{ gol.nombre }}</div>
@@ -4188,7 +4188,7 @@
                         class="bg-amber-100 text-amber-700 font-bold px-2 py-1 rounded text-xs min-w-[30px] text-center">
                         #{{ i + 1 }}
                       </div>
-                      <img [src]="pathIm + gol.img1"
+                      <img (click)="verImagen(gol.img1)" [src]="pathIm + gol.img1"
                         class="w-10 h-10 rounded-full border-2 border-gray-300 object-cover mt-1">
 
                       <!-- NOMBRE COMPLETO del jugador -->
@@ -4199,7 +4199,7 @@
 
                         <!-- EQUIPO completo -->
                         <div class="flex items-center gap-1">
-                          <img [src]="pathIm + gol.imgeq"
+                          <img (click)="verImagen(gol.imgeq)" [src]="pathIm + gol.imgeq"
                             class="w-5 h-5 rounded-full border border-gray-300 object-cover">
                           <div class="text-gray-500 text-[10px] break-words">
                             {{ gol.nameEq }}
@@ -4233,7 +4233,7 @@
                         class="bg-rose-100 text-rose-700 font-bold w-10 h-10 rounded-lg flex items-center justify-center text-lg">
                         {{ i + 1 }}
                       </div>
-                      <img [src]="pathIm + gol.imgeq"
+                      <img (click)="verImagen(gol.imgeq)" [src]="pathIm + gol.imgeq"
                         class="w-12 h-12 rounded-full border-2 border-gray-300 object-cover">
                       <div class="flex-grow min-w-0">
                         <div class="text-gray-900 font-bold text-sm break-words">{{ gol.nameEq }}</div>
@@ -4258,7 +4258,7 @@
                         #{{ i + 1 }}
                       </div>
 
-                      <img [src]="pathIm + gol.imgeq"
+                      <img (click)="verImagen(gol.imgeq)" [src]="pathIm + gol.imgeq"
                         class="w-10 h-10 rounded-full border-2 border-gray-300 object-cover mt-1">
 
                       <!-- NOMBRE COMPLETO del equipo -->
@@ -4499,7 +4499,7 @@
                 <tr *ngFor="let dir of equipo" class="hover:bg-gray-100 transition-colors">
                   <td class="p-3">
                     <div class="flex items-center gap-3">
-                      <img [src]="pathIm + dir.img1"
+                      <img (click)="verImagen(dir.img1)" [src]="pathIm + dir.img1"
                         class="w-10 h-10 rounded-full object-cover border-2 border-gray-300">
                       <div>
                         <p class="font-bold text-gray-900">{{ dir.nombre }}</p>
@@ -4532,7 +4532,7 @@
 
             <!-- Cabecera del equipo -->
             <div class="bg-gray-100 p-4 flex items-center gap-3 border-b border-gray-200">
-              <img [src]="pathIm + equipo[0]?.imgEq"
+              <img (click)="verImagen(equipo[0]?.imgEq)" [src]="pathIm + equipo[0]?.imgEq"
                 class="w-8 h-8 object-contain bg-white rounded-lg p-1 border border-gray-300">
               <span class="text-gray-900 font-black uppercase italic text-sm tracking-wide">
                 {{ equipo[0]?.nombreEq }}
@@ -4554,7 +4554,7 @@
                     <td class="p-3">
                       <div class="flex items-center gap-3">
                         <div class="relative">
-                          <img [src]="jugador.img1 ? pathIm + jugador.img1 : pathIm + 'NoDisponible.jpg'"
+                          <img  (click)="verImagen(jugador.img1)" [src]="jugador.img1 ? pathIm + jugador.img1 : pathIm + 'NoDisponible.jpg'"
                             class="w-10 h-10 rounded-xl object-cover border-2 border-gray-300 group-hover:border-cyan-500 transition-all">
                           <div *ngIf="jugador.sancionR === 1"
                             class="absolute -top-1 -right-1 w-3 h-3 bg-red-500 rounded-full border-2 border-white shadow-md">
@@ -4822,7 +4822,7 @@
               <div class="flex items-center gap-3">
                 <!-- Foto y Sanción -->
                 <div class="relative">
-                  <img [src]="jugador.img1 ? (pathIm + jugador.img1) : 'assets/img/nd.png'"
+                  <img (click)="verImagen(jugador.img1)" [src]="jugador.img1 ? (pathIm + jugador.img1) : 'assets/img/nd.png'"
                     class="w-12 h-12 rounded-xl object-cover border-2 shadow-md"
                     [ngClass]="jugador.sancionR === 1 ? 'border-red-500' : 'border-slate-600'">
                   <div *ngIf="jugador.sancionR === 1"
@@ -4887,7 +4887,7 @@
                     class="transition-colors group">
                     <td class="p-3 flex justify-center">
                       <div class="relative">
-                        <img [src]="jugador.img1 ? (pathIm + jugador.img1) : 'assets/img/nd.png'"
+                        <img (click)="verImagen(jugador.img1)" [src]="jugador.img1 ? (pathIm + jugador.img1) : 'assets/img/nd.png'"
                           class="w-10 h-10 rounded-xl object-cover border-2 transition-all shadow-md"
                           [ngClass]="jugador.sancionR === 1 ? 'border-red-500' : 'border-slate-700 group-hover:border-cyan-500'">
                         <div *ngIf="jugador.sancionR === 1"
@@ -5314,7 +5314,7 @@
                 class="flex items-center gap-4 p-3 rounded-2xl hover:bg-emerald-500 transition-all group border-b border-white/5">
 
                 <!-- Miniatura del Jugador con borde de contraste -->
-                <img [src]="item.img1 ? pathIm + item.img1 : 'assets/img/nd.png'"
+                <img (click)="verImagen(item.img1)" [src]="item.img1 ? pathIm + item.img1 : 'assets/img/nd.png'"
                   class="w-14 h-14 rounded-xl object-cover bg-black border-2 border-white/10 group-hover:border-black/30 shadow-lg transition-transform duration-300 group-hover:scale-105">
 
                 <div class="flex flex-col">

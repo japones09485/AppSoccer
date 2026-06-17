@@ -509,6 +509,17 @@ export class ApiService {
     return this.http.post(`${this.urlAPI}Rest_api/uploadMasivoT`, formData);
   }
 
+ // En api.service.ts
+
+getImagenJugador(image: string) {
+  // Agregamos un número aleatorio al final para "romper" la caché del navegador
+  const nocache = `?t=${new Date().getTime()}`;
+  const url = `${this.urlAPI}${image}${nocache}`;
+  console.log('url>>>'+url);
+  
+  
+  return this.http.get(url, { responseType: 'blob' });
+}
 
   
 }

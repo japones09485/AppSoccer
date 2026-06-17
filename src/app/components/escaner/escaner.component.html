@@ -1,0 +1,266 @@
+<div class="escaner">
+
+  <!-- Input oculto para cargar foto -->
+  <input #archivoInput type="file" accept="image/*" style="display:none" (change)="onArchivoSeleccionado($event)">
+
+  <!-- Video SIEMPRE en DOM — ViewChild necesita el elemento disponible -->
+  <div class="visor-wrap" [class.activo]="estado() === 'camara'">
+    <video #videoEl autoplay playsinline muted class="visor-video"></video>
+
+    <div class="visor-ui">
+      <div class="visor-top">
+        <button class="btn-cancelar-cam" (click)="cancelarCamara()">← Cancelar</button>
+        <span class="visor-titulo">Apunte al reverso del documento</span>
+      </div>
+
+      <div class="visor-marco">
+        <div class="marco-esquina tl"></div>
+        <div class="marco-esquina tr"></div>
+        <div class="marco-esquina bl"></div>
+        <div class="marco-esquina br"></div>
+        <span class="marco-texto">Código PDF417</span>
+      </div>
+
+      <div class="visor-bottom">
+        <button class="btn-capturar" (click)="capturar()">
+          <div class="capturar-anillo"></div>
+          <div class="capturar-centro"></div>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── INICIO ──────────────────────────────────────────────── -->
+  @if (estado() === 'inicio') {
+    <div class="pantalla-inicio">
+
+      <div class="doc-icon">
+        <svg viewBox="0 0 96 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <rect width="96" height="64" rx="7" fill="#003893"/>
+          <rect x="7" y="9" width="26" height="32" rx="3" fill="#FCD116" opacity=".9"/>
+          <circle cx="20" cy="21" r="7" fill="#003893"/>
+          <rect x="8" y="30" width="24" height="2.5" rx="1.2" fill="#003893"/>
+          <rect x="40" y="11" width="46" height="4" rx="2" fill="white" opacity=".9"/>
+          <rect x="40" y="19" width="36" height="2.5" rx="1.2" fill="white" opacity=".6"/>
+          <rect x="40" y="25" width="40" height="2.5" rx="1.2" fill="white" opacity=".6"/>
+          <rect x="40" y="31" width="30" height="2.5" rx="1.2" fill="white" opacity=".5"/>
+          <rect x="7" y="47" width="82" height="2.5" rx="1.2" fill="#FCD116" opacity=".4"/>
+          <rect x="7" y="52" width="60" height="2" rx="1" fill="#FCD116" opacity=".3"/>
+          <rect x="7" y="57" width="74" height="2" rx="1" fill="#FCD116" opacity=".25"/>
+        </svg>
+      </div>
+
+      <div class="instruccion">
+        <h2>Leer Documento</h2>
+        <p>Fotografíe el <strong>reverso</strong> de la cédula o tarjeta de identidad.</p>
+      </div>
+
+      <div class="botones-inicio">
+        <button class="btn-opcion" (click)="activarCamara()">
+          <div class="btn-icono azul">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/>
+              <circle cx="12" cy="13" r="4"/>
+            </svg>
+          </div>
+          <span class="btn-label">Tomar foto</span>
+          <span class="btn-sub">Abre la cámara</span>
+        </button>
+
+        <button class="btn-opcion" (click)="cargarArchivo()">
+          <div class="btn-icono verde">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+              <polyline points="17 8 12 3 7 8"/>
+              <line x1="12" y1="3" x2="12" y2="15"/>
+            </svg>
+          </div>
+          <span class="btn-label">Cargar foto</span>
+          <span class="btn-sub">Desde galería</span>
+        </button>
+      </div>
+
+      <p class="tip">Detecta automáticamente cédula o tarjeta de identidad</p>
+    </div>
+  }
+
+  <!-- ── PROCESANDO ──────────────────────────────────────────── -->
+  @if (estado() === 'procesando') {
+    <div class="pantalla-procesando">
+      @if (preview()) {
+        <div class="preview-wrap">
+          <img [src]="preview()!" alt="Foto capturada" class="preview-img">
+          <div class="preview-overlay">
+            <div class="spinner-ring"></div>
+            <span>Leyendo código de barras…</span>
+          </div>
+        </div>
+      } @else {
+        <div class="spinner-solo">
+          <div class="spinner-ring"></div>
+          <span>Procesando…</span>
+        </div>
+      }
+    </div>
+  }
+
+  <!-- ── ERROR ───────────────────────────────────────────────── -->
+  @if (estado() === 'error') {
+    <div class="pantalla-error">
+
+      @if (tipoError() === 'sin-codigo') {
+        <div class="error-card">
+          <div class="error-icono rojo">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+              <circle cx="12" cy="12" r="10"/>
+              <line x1="12" y1="8" x2="12" y2="12"/>
+              <line x1="12" y1="16" x2="12.01" y2="16"/>
+            </svg>
+          </div>
+          @if (preview()) { <img [src]="preview()!" class="error-preview"> }
+          <p class="error-titulo">No se detectó código de barras</p>
+          <p class="error-desc">
+            Fotografíe el <strong>reverso completo</strong> del documento con buena iluminación y sin reflejos.
+          </p>
+        </div>
+      }
+
+      @if (tipoError() === 'codigo-invalido') {
+        <div class="error-card amarillo">
+          <div class="error-icono amarillo">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+              <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/>
+              <line x1="12" y1="9" x2="12" y2="13"/>
+              <line x1="12" y1="17" x2="12.01" y2="17"/>
+            </svg>
+          </div>
+          @if (preview()) { <img [src]="preview()!" class="error-preview"> }
+          <p class="error-titulo">Código no válido</p>
+          <p class="error-desc">
+            El código leído <strong>no corresponde a un documento colombiano válido</strong>.<br>
+            Verifique que está fotografiando el <strong>reverso</strong> de la cédula o tarjeta.
+          </p>
+        </div>
+      }
+
+      @if (tipoError() === 'generico') {
+        <div class="error-card">
+          <div class="error-icono rojo">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+              <circle cx="12" cy="12" r="10"/>
+              <line x1="12" y1="8" x2="12" y2="12"/>
+              <line x1="12" y1="16" x2="12.01" y2="16"/>
+            </svg>
+          </div>
+          <p class="error-titulo">Error al procesar</p>
+          <p class="error-desc">Ocurrió un error inesperado. Intente de nuevo.</p>
+        </div>
+      }
+
+      <div class="botones-error">
+        <button class="btn-err" (click)="activarCamara()">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/>
+            <circle cx="12" cy="13" r="4"/>
+          </svg>
+          Nueva foto
+        </button>
+        <button class="btn-err" (click)="cargarArchivo()">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+            <polyline points="17 8 12 3 7 8"/>
+            <line x1="12" y1="3" x2="12" y2="15"/>
+          </svg>
+          Cargar foto
+        </button>
+      </div>
+    </div>
+  }
+
+  <!-- ── RESULTADO ───────────────────────────────────────────── -->
+  @if (estado() === 'resultado' && datos(); as d) {
+    <div class="pantalla-resultado">
+
+      <div class="id-card">
+        <div class="id-header" [class.ti]="d.tipoDocumento === 'TI'">
+          <div class="banderita">
+            <span class="a"></span><span class="b"></span><span class="c"></span>
+          </div>
+          <span class="id-titulo">{{ d.tipoDocumento === 'TI' ? 'TARJETA DE IDENTIDAD' : 'CÉDULA DE CIUDADANÍA' }}</span>
+          <div class="id-check">✓</div>
+        </div>
+        <div class="id-body">
+          <div class="id-avatar">{{ iniciales }}</div>
+          <div>
+            <div class="id-nombre">{{ d.nombreCompleto || d.primerNombre }}</div>
+            <div class="id-apellido">{{ d.apellidosCompletos || d.primerApellido }}</div>
+            <div class="id-cc">{{ d.tipoDocumento === 'TI' ? 'T.I.' : 'C.C.' }} {{ d.numeroCedula }}</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="rejilla">
+        <div class="celda full">
+          <span class="clave">{{ d.tipoDocumento === 'TI' ? 'Número de tarjeta' : 'Número de cédula' }}</span>
+          <span class="valor grande">{{ d.numeroCedula }}</span>
+        </div>
+        @if (d.primerNombre) {
+          <div class="celda">
+            <span class="clave">Primer nombre</span>
+            <span class="valor">{{ d.primerNombre }}</span>
+          </div>
+        }
+        @if (d.segundoNombre) {
+          <div class="celda">
+            <span class="clave">Segundo nombre</span>
+            <span class="valor">{{ d.segundoNombre }}</span>
+          </div>
+        }
+        @if (d.primerApellido) {
+          <div class="celda">
+            <span class="clave">Primer apellido</span>
+            <span class="valor">{{ d.primerApellido }}</span>
+          </div>
+        }
+        @if (d.segundoApellido) {
+          <div class="celda">
+            <span class="clave">Segundo apellido</span>
+            <span class="valor">{{ d.segundoApellido }}</span>
+          </div>
+        }
+        @if (d.fechaNacimiento) {
+          <div class="celda">
+            <span class="clave">Fecha nacimiento</span>
+            <span class="valor">{{ d.fechaNacimiento }}</span>
+          </div>
+        }
+        @if (d.sexo) {
+          <div class="celda">
+            <span class="clave">Sexo</span>
+            <span class="valor">{{ d.sexo }}</span>
+          </div>
+        }
+        @if (d.grupoSanguineo) {
+          <div class="celda">
+            <span class="clave">Grupo sanguíneo</span>
+            <span class="valor rojo">{{ d.grupoSanguineo }}</span>
+          </div>
+        }
+      </div>
+
+      <button class="btn-json-toggle" (click)="verJson.set(!verJson())">
+        {{ verJson() ? '▲ Ocultar JSON' : '▼ Ver datos JSON' }}
+      </button>
+      @if (verJson()) {
+        <pre class="json-box">{{ jsonDatos() }}</pre>
+      }
+
+      <div class="acciones">
+        <button class="btn-confirmar" (click)="confirmar()">Confirmar datos</button>
+        <button class="btn-nuevo" (click)="reiniciar()">↺ Nueva lectura</button>
+      </div>
+
+    </div>
+  }
+
+</div>

@@ -11,6 +11,7 @@ import { InsClubComponent } from './components/ins-club/ins-club.component';
 import { JugadoresComponent } from './admin/jugadores/jugadores.component';
 import { EquiposComponent } from './admin/equipos/equipos.component';
 import { TorneosFrontComponent } from './components/torneos-front/torneos-front.component';
+import { EscanerComponent } from './components/escaner/escaner.component';
 
 
 
@@ -27,7 +28,7 @@ export const routes: Routes = [
   { path: 'InfoT/:idTorneo', component: InfoTComponent },
   { path: 'Jugadores', component: JugadoresComponent },
   { path: 'jugadores/:idTorneo/:idEquipo', component: JugadoresComponent },
-
+    { path: 'interfcam', component: EscanerComponent },
   { path: 'Equipos', component: EquiposComponent },
   //delegado de cancha
 

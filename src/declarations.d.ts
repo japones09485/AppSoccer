@@ -1,0 +1,1 @@
+declare module '@microblink/blinkid-in-browser-sdk/ui';

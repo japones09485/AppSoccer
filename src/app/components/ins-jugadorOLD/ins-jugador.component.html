@@ -100,7 +100,7 @@
 
             <div class="space-y-2 md:col-span-2" *ngIf="tipoDoc > 0">
               <label class="font-bold text-white uppercase tracking-wider ml-1 text-[12px]">Número de Documento</label>
-              <input type="number" formControlName="identificacion" placeholder="Ingrese el número de identificación"
+              <input type="text" formControlName="identificacion" placeholder="Ingrese el número de identificación"
                 class="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-sm text-white outline-none focus:border-emerald-500/50 transition-all">
             </div>
           </div>
@@ -130,36 +130,40 @@
         </div>
 
         <div class="mb-3 row" *ngIf="tipoDoc>0">
-          <label class="col-sm-3 col-form-label text-light">{{this.labedoc1}}</label>
+          <label for="image1" class="col-sm-3 col-form-label text-light">{{this.labedoc1}}</label>
           <div class="col-sm-9">
             <input type="file" id="image1" (change)="uploadImage($event, 1)" class="form-control" required>
-            <small *ngIf="archivosSeleccionados[1]" class="text-emerald-400 text-xs mt-1 block">{{archivosSeleccionados[1]}}</small>
           </div>
         </div>
 
+        <!-- Imagen 2 -->
         <div class="mb-3 row" *ngIf="tipoDoc>0">
-          <label class="col-sm-3 col-form-label text-light">{{this.labedoc2}}</label>
+          <label for="image2" class="col-sm-3 col-form-label text-light">{{this.labedoc2}}</label>
           <div class="col-sm-9">
             <input type="file" id="image2" (change)="uploadImage($event, 2)" class="form-control" required>
-            <small *ngIf="archivosSeleccionados[2]" class="text-emerald-400 text-xs mt-1 block">{{archivosSeleccionados[2]}}</small>
           </div>
         </div>
 
+
+
         <div class="mb-3 row" *ngIf="tipoDoc>0">
-          <label class="col-sm-3 col-form-label text-light">{{this.labedoc3}}</label>
+
+          <label for="image1" class="col-sm-3 col-form-label text-light">{{this.labedoc3}}</label>
           <div class="col-sm-9">
             <input type="file" id="image3" (change)="uploadImage($event, 3)" class="form-control" required>
-            <small *ngIf="archivosSeleccionados[3]" class="text-emerald-400 text-xs mt-1 block">{{archivosSeleccionados[3]}}</small>
           </div>
         </div>
 
+
+
         <div class="mb-3 row" *ngIf="tipoDoc>0">
-          <label class="col-sm-3 col-form-label text-light">{{this.labedoc4}}</label>
+
+          <label for="image1" class="col-sm-3 col-form-label text-light">{{this.labedoc4}}</label>
           <div class="col-sm-9">
             <input type="file" id="image4" (change)="uploadImage($event, 4)" class="form-control" required>
-            <small *ngIf="archivosSeleccionados[4]" class="text-emerald-400 text-xs mt-1 block">{{archivosSeleccionados[4]}}</small>
           </div>
         </div>
+
 
         <div class="pt-10 flex flex-col items-center">
           <button type="submit" *ngIf="JugadorForm.valid && !isLoading"
@@ -183,61 +187,6 @@
         </div>
 
       </form>
-    </div>
-  </div>
-</div>
-
-<!-- MODAL DEL CROPPER (EDITOR DE IMÁGENES) -->
-<div *ngIf="showCropper"
-  class="fixed inset-0 z-[200] flex items-center justify-center bg-[#0f172a]/95 backdrop-blur-md p-2 md:p-4">
-  <div
-    class="w-full max-w-2xl bg-[#161d2f] rounded-[2.5rem] shadow-2xl relative overflow-hidden flex flex-col border border-white/10">
-
-    <div class="p-6 border-b border-white/5 flex items-center justify-between bg-[#1e273a]/50">
-      <div class="flex items-center gap-3">
-        <div class="w-8 h-8 bg-amber-500 rounded-lg flex items-center justify-center shadow-lg shadow-amber-500/20">
-          <i class="fa fa-crop-simple text-slate-900"></i>
-        </div>
-        <h3 class="text-white font-black uppercase italic text-sm tracking-tighter">AJUSTAR FOTO</h3>
-      </div>
-      <button (click)="cerrarCropper()" class="text-white/20 hover:text-white transition-colors">
-        <i class="fa fa-times text-xl"></i>
-      </button>
-    </div>
-
-    <div class="p-4 bg-black/40 overflow-hidden flex justify-center items-center" style="max-height: 60vh;">
-      <!-- Solo muestro la etiqueta del cropper modificada, el resto de tu diseño se mantiene igual -->
-        <image-cropper 
-          [imageChangedEvent]="imageChangedEvent" 
-          [imageBase64]="imageBase64" 
-          [imageURL]="imageURL"
-          [maintainAspectRatio]="false" 
-          [canvasRotation]="canvasRotation" 
-          [alignImage]="'center'" 
-          format="jpeg" 
-          [imageQuality]="75"
-          [resizeToWidth]="1000"
-          (imageCropped)="imageCropped($event)" 
-          class="w-full" 
-          style="max-height: 55vh;">
-        </image-cropper>
-    </div>
-
-    <div class="p-6 bg-[#1e273a]/50 border-t border-white/5">
-      <div class="flex flex-wrap justify-center gap-4">
-        <button type="button" (click)="rotateLeft()"
-          class="bg-slate-800 text-white px-6 py-3 rounded-xl border border-white/5 hover:bg-slate-700 transition-all font-black text-[10px] uppercase flex items-center justify-center gap-2">
-          <i class="fa fa-rotate-left"></i> Girar Izq.
-        </button>
-        <button type="button" (click)="rotateRight()"
-          class="bg-slate-800 text-white px-6 py-3 rounded-xl border border-white/5 hover:bg-slate-700 transition-all font-black text-[10px] uppercase flex items-center justify-center gap-2">
-          <i class="fa fa-rotate-right"></i> Girar Der.
-        </button>
-        <button type="button" (click)="confirmarEdicion()"
-          class="bg-emerald-500 text-slate-900 px-10 py-3 rounded-xl font-black text-[10px] uppercase tracking-widest shadow-xl shadow-emerald-500/20 active:scale-95 transition-all flex items-center justify-center gap-2">
-          <i class="fa fa-check-double"></i> Aplicar Ajustes
-        </button>
-      </div>
     </div>
   </div>
 </div>

@@ -1,0 +1,30 @@
+{
+  "wasm": {
+    "basic": {
+      "lightweight": 3503840,
+      "full": 3463916
+    },
+    "advanced": {
+      "lightweight": 3502656,
+      "full": 3464935
+    },
+    "advanced-threads": {
+      "full": 3518342,
+      "lightweight": 3554515
+    }
+  },
+  "data": {
+    "basic": {
+      "lightweight": 12173753,
+      "full": 13806438
+    },
+    "advanced": {
+      "lightweight": 12173753,
+      "full": 13806438
+    },
+    "advanced-threads": {
+      "full": 13806438,
+      "lightweight": 12173753
+    }
+  }
+}

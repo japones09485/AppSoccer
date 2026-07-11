@@ -3,18 +3,20 @@ import Swal from 'sweetalert2';
 import { ApiService } from "../../services/api.service"
 import { environment } from "../../../environments/environment";
 import { CommonModule } from '@angular/common';
+import { FormsModule } from '@angular/forms';
 import { Juez } from '../../interfaces/interfaces';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
 
 
 @Component({
   selector: 'app-jueces',
-  imports: [CommonModule, ReactiveFormsModule],
+  imports: [CommonModule, ReactiveFormsModule, FormsModule],
   templateUrl: './jueces.component.html',
   styleUrl: './jueces.component.css'
 })
 export class JuecesComponent implements OnInit {
   jueces: Juez[] = [];
+  juecesAll: Juez[] = [];
   juez!: Juez;
   creando = false;
   pathIm = environment.apiURL;
@@ -26,6 +28,8 @@ export class JuecesComponent implements OnInit {
   idEdit = 0;
   operation = 'add';
   juezSeleccionado!: Juez;
+  filtroNombre = '';
+  filtroIdentificacion = '';
 
 
 constructor(private apiRest: ApiService, private fb: FormBuilder,) { }
@@ -35,9 +39,8 @@ constructor(private apiRest: ApiService, private fb: FormBuilder,) { }
     this.initForm();
     this.apiRest.get_All_jueces()
     .subscribe((res:any)=>{
-
       this.jueces = res.jueces;
-      
+      this.juecesAll = res.jueces;
     });
 
 
@@ -91,6 +94,7 @@ constructor(private apiRest: ApiService, private fb: FormBuilder,) { }
                 this.apiRest.deleteJuez(IdJuez)
                   .subscribe((res: any) => {
                     this.jueces = res.jueces;
+                    this.juecesAll = res.jueces;
                     Swal.fire(res.msj);
         
                   });
@@ -107,6 +111,7 @@ constructor(private apiRest: ApiService, private fb: FormBuilder,) { }
             this.apiRest.saveJuez(this.frmGuardar).subscribe((data: any) => {
               if (data.success) {
                 this.jueces = data.jueces;
+                this.juecesAll = data.jueces;
                 Swal.fire(data.msj);
                 this.isLoading = false;
                 this.initForm();
@@ -122,7 +127,15 @@ constructor(private apiRest: ApiService, private fb: FormBuilder,) { }
   }
 
 
-     uploadImage(ev: any, numFile: number) {
+  aplicarFiltros() {
+    this.jueces = this.juecesAll.filter(j => {
+      const nombre = (j.nombre || '').toLowerCase().includes(this.filtroNombre.toLowerCase());
+      const id = (j.identificacion || '').toLowerCase().includes(this.filtroIdentificacion.toLowerCase());
+      return nombre && id;
+    });
+  }
+
+  uploadImage(ev: any, numFile: number) {
       const inputFile = ev.target as HTMLInputElement;
       if (inputFile.files && inputFile.files.length > 0) {
         // Agregar el archivo al formulario

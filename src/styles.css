@@ -1,23 +1,490 @@
-/* En src/styles.css */
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
-@layer components {
-  .menu-link {
-    @apply flex items-center px-4 py-3.5 text-green-100 hover:bg-green-800/50 rounded-xl transition-all duration-200 font-medium;
-  }
+/* ── Transición suave al cambiar de tema (solo bg y border, NO color para no afectar textos) ── */
+*, *::before, *::after {
+  transition-property: background-color, border-color;
+  transition-duration: 200ms;
+  transition-timing-function: ease;
 }
 
+/* ── Scrollbar global ── */
+::-webkit-scrollbar       { width: 5px; height: 5px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: #c8cdd8; border-radius: 10px; }
+.dark ::-webkit-scrollbar-thumb { background: #3a3a42; }
+
+/* ── Clase heredada de contenedorF (fondo imagen+degradado) ── */
 .contenedorF {
-  /* Usamos ruta absoluta /assets/ para evitar errores de compilación */
-  background-image: linear-gradient(rgba(241, 248, 244, 0.14), rgba(241, 248, 244, 0.24)), 
+  background-image: linear-gradient(rgba(5,10,5,0.85), rgba(5,10,5,0.92)),
                     url('./assets/img/fondo.png');
-  
   background-size: cover;
   background-position: center;
-  background-attachment: fixed; /* El fondo no se mueve, el contenido sí */
+  background-attachment: fixed;
   background-repeat: no-repeat;
   min-height: 100vh;
   width: 100%;
 }
+
+/* ── Toggle de tema ── */
+.theme-toggle {
+  position: relative;
+  width: 46px; height: 25px;
+  background: rgba(255,255,255,0.15);
+  border-radius: 13px;
+  border: 1px solid rgba(255,255,255,0.2);
+  cursor: pointer;
+  transition: background 0.3s ease, border-color 0.3s ease;
+  flex-shrink: 0;
+  outline: none;
+}
+.theme-toggle.toggle-on { background: #16a34a; border-color: #16a34a; }
+.toggle-thumb {
+  position: absolute;
+  top: 3px; left: 3px;
+  width: 17px; height: 17px;
+  background: #fff;
+  border-radius: 50%;
+  transition: transform 0.28s cubic-bezier(0.32, 0.72, 0, 1);
+  box-shadow: 0 1px 4px rgba(0,0,0,0.4);
+  pointer-events: none;
+}
+.theme-toggle.toggle-on .toggle-thumb { transform: translateX(21px); }
+
+/* ── Sidebar siempre oscuro-verde — nav links ── */
+.nav-link {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 9px 12px;
+  border-radius: 10px;
+  color: rgba(255,255,255,0.5);
+  font-size: 0.7rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  transition: all 0.18s ease;
+  border: 1px solid transparent;
+  text-decoration: none;
+}
+.nav-link:hover {
+  background: rgba(255,255,255,0.06);
+  color: rgba(255,255,255,0.85);
+  border-color: rgba(255,255,255,0.08);
+}
+.nav-active {
+  background: rgba(34,197,94,0.15) !important;
+  color: #4ade80 !important;
+  border-color: rgba(34,197,94,0.25) !important;
+}
+.nav-icon {
+  width: 30px; height: 30px;
+  display: flex; align-items: center; justify-content: center;
+  border-radius: 8px;
+  background: rgba(255,255,255,0.06);
+  font-size: 13px;
+  flex-shrink: 0;
+  transition: all 0.18s ease;
+}
+.nav-active .nav-icon { background: rgba(34,197,94,0.2); color: #4ade80; }
+
+/* ── Modal slide-up ── */
+.modal-panel { animation: slideUp 0.3s cubic-bezier(0.32,0.72,0,1) forwards; }
+@keyframes slideUp {
+  from { transform: translateY(70px); opacity: 0; }
+  to   { transform: translateY(0);    opacity: 1; }
+}
+@media (min-width: 768px) {
+  .modal-panel { animation: fadeScale 0.22s ease forwards; }
+}
+@keyframes fadeScale {
+  from { transform: scale(0.94); opacity: 0; }
+  to   { transform: scale(1);    opacity: 1; }
+}
+
+/* ── Animaciones de entrada ── */
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(22px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+@keyframes slideInLeft {
+  from { opacity: 0; transform: translateX(-24px); }
+  to   { opacity: 1; transform: translateX(0); }
+}
+@keyframes glowPulse {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(34,197,94,0); }
+  50%       { box-shadow: 0 0 16px 4px rgba(34,197,94,0.25); }
+}
+@keyframes shimmer {
+  0%   { background-position: -200% center; }
+  100% { background-position:  200% center; }
+}
+@keyframes popIn {
+  0%   { opacity: 0; transform: scale(0.88); }
+  60%  { transform: scale(1.04); }
+  100% { opacity: 1; transform: scale(1); }
+}
+@keyframes borderGlow {
+  0%, 100% { border-color: rgba(34,197,94,0.2); }
+  50%       { border-color: rgba(34,197,94,0.6); }
+}
+
+.animate-fade-up    { animation: fadeUp     0.42s cubic-bezier(0.22,1,0.36,1) both; }
+.animate-fade-in    { animation: fadeIn     0.35s ease both; }
+.animate-slide-left { animation: slideInLeft 0.38s cubic-bezier(0.22,1,0.36,1) both; }
+.animate-glow       { animation: glowPulse  2.5s ease-in-out infinite; }
+.animate-pop-in     { animation: popIn      0.35s cubic-bezier(0.34,1.56,0.64,1) both; }
+.animate-border-glow{ animation: borderGlow 2s ease-in-out infinite; }
+
+/* Stagger de entrada — usa fill-mode:both para que empiece desde el estado 'from' */
+[data-animate]    { animation: fadeUp 0.42s cubic-bezier(0.22,1,0.36,1) both; }
+[data-delay="1"]  { animation-delay: 0.04s; }
+[data-delay="2"]  { animation-delay: 0.10s; }
+[data-delay="3"]  { animation-delay: 0.16s; }
+[data-delay="4"]  { animation-delay: 0.22s; }
+[data-delay="5"]  { animation-delay: 0.28s; }
+[data-delay="6"]  { animation-delay: 0.34s; }
+[data-delay="7"]  { animation-delay: 0.40s; }
+[data-delay="8"]  { animation-delay: 0.46s; }
+
+/* Shimmer para skeletons / loading states */
+.shimmer {
+  background: linear-gradient(90deg,
+    rgba(255,255,255,0) 0%,
+    rgba(255,255,255,0.06) 50%,
+    rgba(255,255,255,0) 100%);
+  background-size: 200% auto;
+  animation: shimmer 1.8s linear infinite;
+}
+
+/* ── Scrollbar componentes ── */
+.custom-scrollbar::-webkit-scrollbar       { width: 3px; }
+.custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
+.custom-scrollbar::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.12); border-radius: 10px; }
+
+/* ── Hover efecto tarjetas dual-tema ── */
+.card-hover {
+  transition: transform 0.22s cubic-bezier(0.22,1,0.36,1),
+              box-shadow 0.22s ease,
+              border-color 0.22s ease;
+}
+.card-hover:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 12px 32px -8px rgba(0,0,0,0.12);
+}
+.dark .card-hover:hover {
+  box-shadow: 0 12px 32px -8px rgba(0,0,0,0.4);
+}
+
+/* ── Filas de tabla: siempre visibles, solo transición de fondo ── */
+tbody tr {
+  opacity: 1 !important;
+  transition: background-color 0.15s ease;
+}
+
+/* ── Botones de acción con micro-interacción ── */
+.btn-action {
+  transition: background-color 0.18s ease,
+              color 0.18s ease,
+              transform 0.15s cubic-bezier(0.34,1.56,0.64,1),
+              border-color 0.18s ease,
+              box-shadow 0.18s ease;
+}
+.btn-action:hover  { transform: scale(1.12); }
+.btn-action:active { transform: scale(0.93); }
+
+/* ── Badge de estado con pulso ── */
+.badge-active   { box-shadow: 0 0 0 0 rgba(34,197,94,0.4); animation: badgePulse 2s ease-in-out infinite; }
+.badge-inactive { box-shadow: 0 0 0 0 rgba(239,68,68,0.3); animation: badgePulse 2s ease-in-out infinite; }
+@keyframes badgePulse {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(34,197,94,0.4); }
+  50%       { box-shadow: 0 0 0 4px rgba(34,197,94,0); }
+}
+
+/* ── Tarjetas glassmorphism (para info-t) ── */
+.glass-card {
+  background: rgba(255,255,255,0.04);
+  backdrop-filter: blur(12px);
+  border: 1px solid rgba(255,255,255,0.08);
+  border-radius: 1.25rem;
+}
+.glass-card-green {
+  background: rgba(34,197,94,0.08);
+  backdrop-filter: blur(12px);
+  border: 1px solid rgba(34,197,94,0.2);
+  border-radius: 1.25rem;
+}
+
+/* ── Stagger de filas de tabla (solo transform, no opacity para no ocultar texto) ── */
+@keyframes rowIn {
+  from { transform: translateY(12px); opacity: 0; }
+  to   { transform: translateY(0);    opacity: 1; }
+}
+tbody.anim-rows tr {
+  animation: rowIn 0.32s cubic-bezier(0.22,1,0.36,1) forwards;
+  opacity: 1;
+}
+tbody.anim-rows tr:nth-child(1)   { animation-delay: 0.03s; }
+tbody.anim-rows tr:nth-child(2)   { animation-delay: 0.07s; }
+tbody.anim-rows tr:nth-child(3)   { animation-delay: 0.11s; }
+tbody.anim-rows tr:nth-child(4)   { animation-delay: 0.15s; }
+tbody.anim-rows tr:nth-child(5)   { animation-delay: 0.19s; }
+tbody.anim-rows tr:nth-child(6)   { animation-delay: 0.23s; }
+tbody.anim-rows tr:nth-child(7)   { animation-delay: 0.27s; }
+tbody.anim-rows tr:nth-child(8)   { animation-delay: 0.31s; }
+tbody.anim-rows tr:nth-child(n+9) { animation-delay: 0.35s; }
+
+/* ── Selección de texto ── */
+::selection        { background: rgba(34,197,94,0.22); color: inherit; }
+.dark ::selection  { background: rgba(34,197,94,0.30); color: inherit; }
+
+/* ── Scrollbar modo claro ── */
+::-webkit-scrollbar-thumb { background: #c8cdd8; }
+.dark ::-webkit-scrollbar-thumb { background: #3a3a42; }
+
+/* ── Focus visible global para accesibilidad ── */
+:focus-visible {
+  outline: 2px solid #16a34a;
+  outline-offset: 2px;
+  border-radius: 6px;
+}
+
+/* ── Transición de tema suave: bg + border (NO color/opacity — no afectar textos ni animaciones) ── */
+*:not([class*="animate-"]):not([data-animate]) {
+  transition-property: background-color, border-color, box-shadow;
+  transition-duration: 220ms;
+  transition-timing-function: ease;
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════════
+   DARK MODE — SISTEMA DE COLOR COMPLETO
+   Paleta "Carbono Deportivo":
+     Página   #111114  |  Tarjeta  #1b1b1f
+     Elevado  #252529  |  Hover    #202024
+     Borde    #303038  |  Sidebar  #071a0d (intacto)
+   ═══════════════════════════════════════════════════════════════════════════════ */
+
+/* ── Variables CSS ── */
+html.dark {
+  --dm-page:     #111114;
+  --dm-surface:  #1b1b1f;
+  --dm-elevated: #252529;
+  --dm-hover:    #202024;
+  --dm-border:   #303038;
+  --dm-text:     #f0f0f2;
+  --dm-muted:    #8b8b9e;
+  color-scheme: dark;
+}
+
+html:not(.dark) {
+  --dm-page:     #f1f5f9;
+  --dm-surface:  #ffffff;
+  --dm-elevated: #f8fafc;
+  --dm-hover:    #f1f5f9;
+  --dm-border:   #e2e8f0;
+  --dm-text:     #0f172a;
+  --dm-muted:    #64748b;
+  color-scheme: light;
+}
+
+/* ── Fondos: !important garantiza override sobre cualquier clase Tailwind ── */
+html.dark .bg-white       { background-color: var(--dm-surface)  !important; }
+html.dark .bg-slate-100   { background-color: var(--dm-page)     !important; }
+html.dark .bg-slate-50    { background-color: var(--dm-elevated) !important; }
+html.dark .bg-gray-100    { background-color: var(--dm-page)     !important; }
+html.dark .bg-gray-50     { background-color: var(--dm-elevated) !important; }
+
+/* ── Bordes ── */
+html.dark .border-slate-200 { border-color: var(--dm-border) !important; }
+html.dark .border-slate-100 { border-color: var(--dm-elevated) !important; }
+html.dark .divide-slate-100 > * + * { border-color: var(--dm-elevated) !important; }
+html.dark .divide-slate-200 > * + * { border-color: var(--dm-border) !important; }
+
+/* ── Hover de filas y paneles ── */
+html.dark .hover\:bg-slate-50:hover  { background-color: var(--dm-hover) !important; }
+html.dark .hover\:bg-slate-100:hover { background-color: var(--dm-elevated) !important; }
+html.dark .hover\:bg-white:hover     { background-color: var(--dm-hover) !important; }
+
+/* ── Texto ── */
+html.dark .text-slate-900 { color: var(--dm-text)  !important; }
+html.dark .text-slate-800 { color: #e4e4e9         !important; }
+html.dark .text-slate-700 { color: #c8c8d4         !important; }
+html.dark .text-slate-600 { color: #a0a0b0         !important; }
+html.dark .text-slate-500 { color: var(--dm-muted) !important; }
+html.dark .text-slate-400 { color: #6b6b7e         !important; }
+
+/* ── Tablas ── */
+html.dark table   { color: var(--dm-text); }
+html.dark td      { color: var(--dm-text) !important; }
+html.dark th      { color: var(--dm-muted) !important; }
+
+/* ── Inputs y selects en dark ── */
+html.dark input:not([type="checkbox"]):not([type="radio"]):not([type="range"]),
+html.dark select,
+html.dark textarea {
+  background-color: #18181c !important;
+  border-color: var(--dm-border) !important;
+  color: var(--dm-text) !important;
+}
+html.dark input:focus,
+html.dark select:focus,
+html.dark textarea:focus {
+  border-color: #22c55e !important;
+  box-shadow: 0 0 0 2px rgba(34,197,94,0.18) !important;
+}
+
+/* ── Filas de tabla ── */
+html.dark tbody tr       { background-color: var(--dm-surface); }
+html.dark tbody tr:hover { background-color: var(--dm-hover) !important; }
+
+/* ── Ripple en botones de acción ── */
+.btn-action { position: relative; overflow: hidden; }
+.btn-action::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(circle, rgba(255,255,255,0.25) 0%, transparent 70%);
+  opacity: 0;
+  transition: opacity 0.2s ease;
+}
+.btn-action:active::after { opacity: 1; }
+
+/* ── Fade-up para mobile cards ── */
+.card-anim {
+  animation: fadeUp 0.42s cubic-bezier(0.22,1,0.36,1) both;
+}
+
+/* ── Hover lift en filas de tabla ── */
+tbody tr { cursor: default; }
+
+/* ── Tooltip sutil ── */
+[title] { cursor: help; }
+button[title] { cursor: pointer; }
+
+/* ── Input placeholder consistente ── */
+::placeholder { opacity: 0.55; }
+
+/* ── Date input color-scheme ── */
+input[type="date"] { color-scheme: light; }
+html.dark input[type="date"] { color-scheme: dark; }
+
+/* ── Select options ── */
+select option { background: #fff; color: #0f172a; }
+html.dark select option { background: #1b1b1f; color: #f4f4f5; }
+
+/* ── Hover de filas en modo claro ── */
+tbody tr:hover { background-color: #f8fafc; }
+
+/* ════════════════════════════════════════════════════════════════════
+   INFO-T / DARK MODE — CORRECCIONES DEFINITIVAS DE COLOR
+   Estos overrides garantizan que text-gray-* sea visible en dark,
+   que los botones pasteles tengan estilo glassmorphism,
+   y que los modales y tablas se vean profesionales.
+   ════════════════════════════════════════════════════════════════════ */
+
+/* ── text-gray-* en dark mode: siempre visibles (blanco/gris claro) ── */
+html.dark .text-gray-900, html.dark .text-gray-800 { color: #f1f5f9 !important; }
+html.dark .text-gray-700 { color: #e2e8f0 !important; }
+html.dark .text-gray-600 { color: #cbd5e1 !important; }
+html.dark .text-gray-500 { color: #94a3b8 !important; }
+html.dark .text-gray-400 { color: #64748b !important; }
+
+/* ── Acentos de color: versiones brillantes para dark ── */
+html.dark .text-emerald-600, html.dark .text-emerald-700 { color: #34d399 !important; }
+html.dark .text-green-600,   html.dark .text-green-700   { color: #4ade80 !important; }
+html.dark .text-cyan-600,    html.dark .text-cyan-700     { color: #22d3ee !important; }
+html.dark .text-blue-600,    html.dark .text-blue-700     { color: #60a5fa !important; }
+html.dark .text-amber-600,   html.dark .text-amber-700    { color: #fbbf24 !important; }
+html.dark .text-rose-600,    html.dark .text-rose-700     { color: #fb7185 !important; }
+html.dark .text-orange-500,  html.dark .text-orange-600   { color: #fb923c !important; }
+html.dark .text-red-600                                    { color: #f87171 !important; }
+html.dark .text-purple-600                                 { color: #c084fc !important; }
+
+/* ── Botones pasteles → glassmorphism en dark ── */
+html.dark .bg-amber-100    { background-color: rgba(251,191,36,0.13)  !important; }
+html.dark .bg-emerald-100  { background-color: rgba(16,185,129,0.13)  !important; }
+html.dark .bg-green-100    { background-color: rgba(34,197,94,0.13)   !important; }
+html.dark .bg-cyan-100     { background-color: rgba(6,182,212,0.13)   !important; }
+html.dark .bg-blue-100     { background-color: rgba(59,130,246,0.13)  !important; }
+html.dark .bg-rose-100     { background-color: rgba(244,63,94,0.13)   !important; }
+html.dark .bg-orange-100   { background-color: rgba(249,115,22,0.13)  !important; }
+html.dark .bg-purple-100   { background-color: rgba(168,85,247,0.13)  !important; }
+
+/* ── Borders pasteles → sutiles en dark ── */
+html.dark .border-amber-200, html.dark .border-amber-300     { border-color: rgba(251,191,36,0.25)  !important; }
+html.dark .border-emerald-200, html.dark .border-emerald-300 { border-color: rgba(16,185,129,0.25)  !important; }
+html.dark .border-green-200, html.dark .border-green-300     { border-color: rgba(34,197,94,0.25)   !important; }
+html.dark .border-cyan-200, html.dark .border-cyan-300       { border-color: rgba(6,182,212,0.25)   !important; }
+html.dark .border-blue-200, html.dark .border-blue-300       { border-color: rgba(59,130,246,0.25)  !important; }
+html.dark .border-rose-200, html.dark .border-rose-300       { border-color: rgba(244,63,94,0.25)   !important; }
+html.dark .border-gray-100                                    { border-color: rgba(255,255,255,0.07) !important; }
+html.dark .border-gray-200                                    { border-color: rgba(255,255,255,0.10) !important; }
+html.dark .border-gray-300                                    { border-color: rgba(255,255,255,0.14) !important; }
+html.dark .divide-gray-200 > * + *                            { border-color: rgba(255,255,255,0.08) !important; }
+html.dark .hover\:bg-gray-50:hover                            { background-color: rgba(255,255,255,0.04) !important; }
+
+/* ── Modales — estilos profesionales ── */
+.modal-content {
+  border-radius: 1.25rem !important;
+  overflow: hidden;
+}
+html:not(.dark) .modal-content {
+  border: 1px solid #e2e8f0 !important;
+  box-shadow: 0 20px 60px -10px rgba(0,0,0,0.13) !important;
+}
+html.dark .modal-content {
+  background-color: #0d1410 !important; /* near-black con tinte verde */
+  border: 1px solid rgba(16,185,129,0.18) !important;
+  box-shadow: 0 25px 60px -12px rgba(0,0,0,0.7) !important;
+}
+
+/* ═══════════════════════════════════════════════════════════════════
+   IT-STATS — SECCIÓN ESTADÍSTICAS COMPACTA
+   ═══════════════════════════════════════════════════════════════════ */
+
+/* Título principal más pequeño */
+.it-stats > .text-center h1   { font-size: 1.2rem !important; line-height: 1.4 !important; margin-bottom: 0.25rem !important; }
+.it-stats > .text-center      { margin-bottom: 0.75rem !important; }
+
+/* Cards de sección: menos padding */
+.it-stats .rounded-2xl.p-4    { padding: 0.6rem 0.75rem !important; }
+.it-stats .rounded-2xl.shadow-md h5 { padding: 0.4rem 0.75rem !important; font-size: 0.75rem !important; margin-bottom: 0.5rem !important; }
+
+/* Tabla desktop: celdas compactas */
+.it-stats table th            { padding: 0.35rem 0.5rem !important; font-size: 0.65rem !important; }
+.it-stats table td            { padding: 0.35rem 0.5rem !important; font-size: 0.72rem !important; }
+.it-stats table td .text-lg,
+.it-stats table td .text-xl   { font-size: 0.78rem !important; }
+
+/* Logos de equipo: más pequeños */
+.it-stats table .w-14 { width: 2rem !important; }
+.it-stats table .h-14 { height: 2rem !important; }
+.it-stats table .gap-4 { gap: 0.5rem !important; }
+
+/* Badge de puntos PTS: compacto */
+.it-stats .bg-emerald-100.text-emerald-700.px-4.py-2 {
+  padding: 0.15rem 0.5rem !important;
+  font-size: 0.8rem !important;
+  border-radius: 9999px;
+}
+
+/* Cards móvil: compactos */
+.it-stats .space-y-3 > div.bg-gray-50 { padding: 0.5rem !important; }
+.it-stats .space-y-3 .space-y-2       { gap: 0.25rem !important; }
+.it-stats .space-y-3 .mb-3            { margin-bottom: 0.35rem !important; }
+.it-stats .space-y-3 .bg-emerald-100.p-2 { padding: 0.25rem 0.5rem !important; }
+.it-stats .space-y-3 .text-xl         { font-size: 0.85rem !important; }
+
+/* Goleadores / Tarjetas — misma lógica compacta */
+.it-stats .space-y-6 { gap: 0.6rem !important; }
+
+/* ── Títulos h5 de sección → acento verde en ambos modos ── */
+.it-stats h5[class*="bg-amber"]  { background: linear-gradient(135deg,#059669,#047857) !important; }
+.it-stats h5[class*="bg-blue"]   { background: linear-gradient(135deg,#2563eb,#1d4ed8) !important; }
+.it-stats h5[class*="bg-rose"]   { background: linear-gradient(135deg,#e11d48,#be123c) !important; }
+.it-stats h5[class*="bg-purple"] { background: linear-gradient(135deg,#9333ea,#7e22ce) !important; }

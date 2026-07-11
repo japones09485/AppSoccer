@@ -49,6 +49,8 @@ export interface Equipos {
   categorias :any,
   telefono1: number;
   telefono2: number;
+  departamento: number;
+  ciudad: number
  
 }
 

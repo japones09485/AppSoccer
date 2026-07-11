@@ -191,9 +191,15 @@ export class ApiService {
     return this.http.post(this.urlAPI + `Rest_api/add_jugador`, payload,);
   }
 
+  
   editJugador(idJugador: number) {
     return this.http.post(this.urlAPI + `Rest_api/editJugador`, { idJugador });
   }
+
+  valid_jugador(identificacion: number) {
+    return this.http.post(this.urlAPI + `Rest_api/valid_jugador`, { identificacion });
+  }
+
 
   jugadoresClub(idClub: number) {
     return this.http.post(this.urlAPI + `Rest_api/jugadoresClub`, { idClub });
@@ -507,6 +513,15 @@ export class ApiService {
 
   uploadMasivoT(formData: FormData): Observable<any> {
     return this.http.post(`${this.urlAPI}Rest_api/uploadMasivoT`, formData);
+  }
+
+  // Ubicación geográfica
+  get_departamentos() {
+    return this.http.get(this.urlAPI + `Ciudades_APi/get_departamentos`);
+  }
+
+  get_ciudades_by_departamento(fk_departamento: number) {
+    return this.http.post(this.urlAPI + `Ciudades_APi/get_ciudades_by_depto`, { fk_departamento });
   }
 
  // En api.service.ts

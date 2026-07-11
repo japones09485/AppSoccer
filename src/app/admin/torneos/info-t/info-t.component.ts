@@ -3,6 +3,7 @@ import { Router, ActivatedRoute, RouterModule } from '@angular/router';
 import { NgModule } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { ApiService } from '../../../services/api.service';
+import { ThemeService } from '../../../services/theme.service';
 import {
   Equipos,
   Torneos,
@@ -65,6 +66,9 @@ export class InfoTComponent implements OnInit {
   AddIdGrupo!: number;
   equipoSeleccionado!: number;
   jugadoresDisponiblesClub: any[] = [];
+  jugadoresInscritosTorneo: any[] = [];
+  filtroInscripcion: string = '';
+  inscribiendoJugadorId: number | null = null;
   filtroEquipo: string = '';
   VlInfo!: boolean;
   VlCalif!: boolean;
@@ -212,6 +216,7 @@ export class InfoTComponent implements OnInit {
     private fb: FormBuilder,
     private router: Router,
     private acRouter: ActivatedRoute,
+    public themeService: ThemeService,
   ) {}
 
   ngOnInit(): void {
@@ -303,6 +308,23 @@ export class InfoTComponent implements OnInit {
         this.canchas = res.canchas;
       });
     });
+  }
+
+  get todosLosPartidos(): Calendario[] {
+    return Object.values(this.calendarioData).flat();
+  }
+  get totalPartidos(): number { return this.todosLosPartidos.length; }
+  get partidosValidados(): number { return this.todosLosPartidos.filter(p => p.estado === 3).length; }
+  get partidosProgramados(): number { return this.todosLosPartidos.filter(p => p.estado === 1).length; }
+  get partidosRegistrados(): number { return this.todosLosPartidos.filter(p => p.estado === 2).length; }
+  get partidosAnulados(): number { return this.todosLosPartidos.filter(p => p.estado === 4).length; }
+  get partidosSinProg(): number { return this.todosLosPartidos.filter(p => p.estado === 0).length; }
+  get porcentajeAvance(): number {
+    if (!this.totalPartidos) return 0;
+    return Math.round((this.partidosValidados / this.totalPartidos) * 100);
+  }
+  get proximosPartidos(): Calendario[] {
+    return this.todosLosPartidos.filter(p => p.estado < 3).slice(0, 6);
   }
 
   inicio() {
@@ -1851,21 +1873,57 @@ export class InfoTComponent implements OnInit {
 
   abrirModalSeleccionJEquipo(equipo: any) {
     this.equipoSelectJ = equipo;
+    this.categoriaSeleccionadaT = this.torneoSelect.categoria;
+    this.jugadorSeleccionadoIdClub = null;
+    this.filtroInscripcion = '';
+    this.jugadoresDisponiblesClub = [];
+    this.jugadoresInscritosTorneo = [];
 
     this.apiRest
       .get_jugadores_categoriasId(this.torneoSelect.categoria, this.idTorneo)
       .subscribe((res: any) => {
-        this.jugadoresDisponiblesClub = res.jugadoresDisponibles.map(
-          (j: any) => ({
-            ...j,
-            busqueda: `${j.nombre} ${j.identificacion}`,
-          }),
-        );
+        this.jugadoresDisponiblesClub = res.jugadoresDisponibles ?? [];
       });
 
-    this.categoriaSeleccionadaT = this.torneoSelect.categoria;
-    this.jugadorSeleccionadoIdClub = null;
-    console.log(this.jugadoresDisponiblesClub);
+    this.apiRest.jugadoresEquipoTorneo(this.idTorneo, equipo)
+      .subscribe((res: any) => {
+        this.jugadoresInscritosTorneo = res.jugadores ?? [];
+      });
+  }
+
+  estaInscritoEnTorneo(jugadorId: number): boolean {
+    return this.jugadoresInscritosTorneo.some(j => j.id === jugadorId || j.fk_jugador === jugadorId);
+  }
+
+  get jugadoresFiltrados(): any[] {
+    const f = this.filtroInscripcion.toLowerCase();
+    if (!f) return this.jugadoresDisponiblesClub;
+    return this.jugadoresDisponiblesClub.filter(j =>
+      j.nombre?.toLowerCase().includes(f) || j.identificacion?.toString().includes(f)
+    );
+  }
+
+  inscribirJugadorDirecto(jugador: any) {
+    if (this.inscribiendoJugadorId === jugador.id) return;
+    this.inscribiendoJugadorId = jugador.id;
+
+    this.apiRest.agregar_jugador_categoria_Club(
+      this.idTorneo, this.equipoSelectJ, this.categoriaSeleccionadaT, jugador.id
+    ).subscribe({
+      next: (res: any) => {
+        this.inscribiendoJugadorId = null;
+        if (res.success || res.msj?.toLowerCase().includes('exit') || res.msj?.toLowerCase().includes('agre')) {
+          this.jugadoresInscritosTorneo = [...this.jugadoresInscritosTorneo, jugador];
+          Swal.fire({ toast: true, position: 'top-end', icon: 'success', title: jugador.nombre + ' inscrito', showConfirmButton: false, timer: 2000 });
+        } else {
+          Swal.fire({ toast: true, position: 'top-end', icon: 'warning', title: res.msj ?? 'No se pudo inscribir', showConfirmButton: false, timer: 3000 });
+        }
+      },
+      error: () => {
+        this.inscribiendoJugadorId = null;
+        Swal.fire({ toast: true, position: 'top-end', icon: 'error', title: 'Error al inscribir', showConfirmButton: false, timer: 3000 });
+      }
+    });
   }
 
   onSeleccionarJugadorClub() {

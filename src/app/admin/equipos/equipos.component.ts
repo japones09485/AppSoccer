@@ -49,6 +49,9 @@ export class EquiposComponent implements OnInit {
   filtroNombre: string = '';
   filtroEmail: string = '';
   paginas = 0;
+  departamentos: any[] = [];
+  ciudades: any[] = [];
+  cargandoCiudades = false;
 
   constructor(
     public apiRest: ApiService,
@@ -59,11 +62,38 @@ export class EquiposComponent implements OnInit {
   ngOnInit(): void {
 
     this.loadCategorias();
+    this.loadDepartamentos();
     this.UserLog = this.apiRest.getUser();
     this.initForm();
     this.creando = false;
     this.loadEquipos();
 
+  }
+
+  loadDepartamentos() {
+    this.apiRest.get_departamentos().subscribe((res: any) => {
+      this.departamentos = res.departamentos || [];
+    });
+  }
+
+  loadCiudades(idDepto: number, selectedCiudad?: number) {
+    this.ciudades = [];
+    if (!idDepto) return;
+    this.apiRest.get_ciudades_by_departamento(idDepto).subscribe((res: any) => {
+      this.ciudades = res.ciudades || [];
+      if (selectedCiudad) {
+        this.EquipoForm.patchValue({ fk_ciudad: selectedCiudad }, { emitEvent: false });
+      }
+    });
+  }
+
+  onDepartamentoChange(idDepto: any) {
+    const id = parseInt(idDepto, 10);
+    this.EquipoForm.patchValue({ fk_ciudad: null });
+    this.ciudades = [];
+    if (id > 0) {
+      this.loadCiudades(id);
+    }
   }
 
   // Al cargar categorías, conviértelo a número:
@@ -119,15 +149,19 @@ export class EquiposComponent implements OnInit {
 
 
   initForm() {
+    this.ciudades = [];
     this.EquipoForm = this.fb.group({
       name: ['', Validators.required],
       estado: ['', Validators.required],
       tel1: ['', Validators.required],
       tel2: ['', Validators.required],
+      entrenador1: [''],
+      entrenador2: [''],
       mail: ['', [Validators.required, Validators.email]],
+      fk_departamento: [null],
+      fk_ciudad: [null],
       categorias: this.fb.array([])
     });
-
   }
 
   editEquipo(id: number) {
@@ -154,6 +188,8 @@ export class EquiposComponent implements OnInit {
       // Segundo: Ahora sí carga las selecciones
       this.cargarCategoriasEquipo();
 
+      const eq = res.equipo as any;
+
       // Tercero: Asigna el resto de campos
       this.EquipoForm.patchValue({
         name: this.equipoSelect.nombre,
@@ -161,7 +197,16 @@ export class EquiposComponent implements OnInit {
         mail: this.equipoSelect.email,
         tel1: this.equipoSelect.telefono1,
         tel2: this.equipoSelect.telefono2,
+        entrenador1: (this.equipoSelect as any).entrenador1 || '',
+        entrenador2: (this.equipoSelect as any).entrenador2 || '',
+        fk_departamento: this.equipoSelect.departamento,
+        fk_ciudad: this.equipoSelect.ciudad
       });
+
+      // Carga ciudades del departamento seleccionado (y vuelve a setear fk_ciudad)
+      if (eq.departamento) {
+        this.loadCiudades(+eq.departamento, +eq.ciudad);
+      }
 
       this.creando = true;
       this.editForm = true;

@@ -1,248 +1,362 @@
-<div class="min-h-screen  antialiased font-sans">
+﻿<div class="min-h-screen bg-slate-100 dark:bg-[#111114] antialiased font-sans">
 
-  <div *ngIf="!this.creando" class="w-full max-w-[98%] mx-auto p-0 md:p-8 space-y-0 md:space-y-6">
+  <!-- ── VISTA LISTA ─────────────────────────────────────────────── -->
+  <div *ngIf="!this.creando" class="w-full max-w-7xl mx-auto p-4 md:p-8 space-y-4 md:space-y-6">
 
-    <div class="p-6 md:p-0 space-y-4">
-      <div class="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
-        <div>
-          <h1 class="text-2xl md:text-3xl font-black text-white flex items-center gap-3">
-            <button *ngIf="UserLog.perfil != 2" (click)="Inicio()"
-              class="bg-white p-2 rounded-xl shadow-sm border border-slate-200 text-emerald-600 hover:bg-emerald-50 transition-all">
-              <i class="fa fa-arrow-left text-sm"></i>
-            </button>
-            <div class="bg-emerald-500 p-2.5 rounded-2xl shadow-lg shadow-emerald-500/20">
-              <i class="fa fa-users text-white"></i>
-            </div>
-            JUGADORES
-          </h1>
-          <p class="text-white text-[10px] mt-1 ml-1 font-black uppercase tracking-[0.2em] opacity-60 italic">
-            Gestión de Plantilla</p>
+    <!-- Header -->
+    <div class="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
+      <div class="flex items-center gap-4">
+        <button *ngIf="UserLog.perfil != 2" (click)="Inicio()"
+          class="shrink-0 bg-white dark:bg-[#1b1b1f] p-2.5 rounded-xl shadow-sm border border-slate-200 dark:border-[#303038] text-green-600 dark:text-green-400 hover:bg-slate-50 dark:hover:bg-[#202024] transition-all">
+          <i class="fa fa-arrow-left text-sm"></i>
+        </button>
+        <div class="w-14 h-14 bg-green-600 rounded-2xl flex items-center justify-center shadow-lg shadow-green-600/30">
+          <i class="fa fa-users text-xl text-white"></i>
         </div>
-
-        <div
-          class="grid grid-cols-1 md:flex items-center gap-2 bg-white md:bg-transparent p-4 md:p-0 rounded-2xl shadow-sm md:shadow-none border md:border-none border-slate-200">
-          <input type="text" [(ngModel)]="filtroNombre" placeholder="NOMBRE..."
-            class="bg-slate-100 md:bg-white border-none md:border-slate-200 rounded-xl text-[10px] font-black uppercase focus:ring-emerald-500 md:w-36">
-          <input type="text" [(ngModel)]="filtroIdentificacion" placeholder="ID..."
-            class="bg-slate-100 md:bg-white border-none md:border-slate-200 rounded-xl text-[10px] font-black uppercase focus:ring-emerald-500 md:w-36">
-          <input type="text" [(ngModel)]="filtroCorreo" placeholder="CORREO..."
-            class="bg-slate-100 md:bg-white border-none md:border-slate-200 rounded-xl text-[10px] font-black uppercase focus:ring-emerald-500 md:w-36">
-          <button (click)="aplicarFiltros()"
-            class="bg-slate-900 text-white px-5 py-2.5 rounded-xl hover:bg-emerald-500 transition-all font-black text-[10px] uppercase tracking-widest flex items-center justify-center">
-            <i class="fa fa-filter mr-2"></i> Filtrar
-          </button>
+        <div>
+          <h1 class="font-bebas text-4xl md:text-5xl tracking-widest text-slate-900 dark:text-white leading-none">JUGADORES</h1>
+          <p class="text-slate-500 dark:text-zinc-400 text-[10px] font-bold uppercase tracking-[0.25em] mt-1">Gestión de plantilla</p>
         </div>
       </div>
-    </div>
-
-    <div class="md:hidden fixed bottom-6 right-6 z-50">
       <button *ngIf="UserLog.perfil != 2" (click)="addJugador()"
-        class="bg-green-500 text-white w-16 h-16 rounded-2xl shadow-2xl flex items-center justify-center active:scale-95 transition-transform border-4 border-white">
-        <i class="fa fa-plus text-2xl"></i>
+        class="hidden md:flex bg-green-600 hover:bg-green-700 text-white font-black py-2.5 px-5 rounded-xl text-xs uppercase tracking-wider items-center gap-2 transition-all shadow-md shadow-green-600/20">
+        <i class="fa fa-plus"></i> Nuevo Jugador
       </button>
     </div>
 
-    <div
-      class="overflow-hidden md:shadow-2xl md:shadow-slate-200/50 md:rounded-[2.5rem] md:border md:border-slate-200 bg-white">
+    <!-- Línea decorativa -->
+    <div class="flex items-center gap-3">
+      <div class="h-px bg-green-600 w-12"></div>
+      <div class="w-1.5 h-1.5 bg-green-600 rounded-full"></div>
+      <div class="h-px bg-slate-200 dark:bg-zinc-800 flex-1"></div>
+    </div>
+
+    <!-- Panel filtros -->
+    <div class="bg-white dark:bg-[#1b1b1f] border border-slate-200 dark:border-[#303038] rounded-2xl p-4">
+      <div class="grid grid-cols-1 md:grid-cols-5 gap-3">
+        <div class="relative">
+          <i class="fa fa-search absolute left-4 top-3 text-slate-400 dark:text-zinc-500 text-xs"></i>
+          <input type="text" [(ngModel)]="filtroNombre" placeholder="Nombre..."
+            class="w-full rounded-xl pl-10 pr-4 py-2.5 bg-slate-50 dark:bg-zinc-900 border border-slate-200 dark:border-zinc-700 text-slate-700 dark:text-white text-xs font-bold uppercase focus:ring-1 focus:ring-green-500 focus:outline-none">
+        </div>
+        <div class="relative">
+          <i class="fa fa-id-card absolute left-4 top-3 text-slate-400 dark:text-zinc-500 text-xs"></i>
+          <input type="text" [(ngModel)]="filtroIdentificacion" placeholder="Identificación..."
+            class="w-full rounded-xl pl-10 pr-4 py-2.5 bg-slate-50 dark:bg-zinc-900 border border-slate-200 dark:border-zinc-700 text-slate-700 dark:text-white text-xs font-bold uppercase focus:ring-1 focus:ring-green-500 focus:outline-none">
+        </div>
+        <div class="relative">
+          <i class="fa fa-envelope absolute left-4 top-3 text-slate-400 dark:text-zinc-500 text-xs"></i>
+          <input type="text" [(ngModel)]="filtroCorreo" placeholder="Correo..."
+            class="w-full rounded-xl pl-10 pr-4 py-2.5 bg-slate-50 dark:bg-zinc-900 border border-slate-200 dark:border-zinc-700 text-slate-700 dark:text-white text-xs font-bold uppercase focus:ring-1 focus:ring-green-500 focus:outline-none">
+        </div>
+        <button (click)="aplicarFiltros()"
+          class="bg-slate-900 dark:bg-zinc-800 hover:bg-green-600 dark:hover:bg-green-600 text-white font-black py-2.5 px-5 rounded-xl text-xs uppercase tracking-wider flex items-center justify-center gap-2 transition-all">
+          <i class="fa fa-filter"></i> Filtrar
+        </button>
+        <button *ngIf="UserLog.perfil != 2" (click)="addJugador()"
+          class="bg-green-600 hover:bg-green-700 text-white font-black py-2.5 px-5 rounded-xl text-xs uppercase tracking-wider flex items-center justify-center gap-2 transition-all shadow-md shadow-green-600/20">
+          <i class="fa fa-plus"></i> Nuevo Jugador
+        </button>
+      </div>
+    </div>
+
+    <!-- FAB móvil -->
+    <div class="md:hidden fixed bottom-6 right-6 z-50 flex flex-col gap-3" *ngIf="UserLog.perfil != 2">
+      <button (click)="abrirEscaner()"
+        class="bg-slate-900 dark:bg-zinc-800 hover:bg-green-600 text-white w-14 h-14 rounded-2xl shadow-2xl flex items-center justify-center active:scale-90 transition-all"
+        title="Escanear documento">
+        <i class="fa fa-camera text-xl"></i>
+      </button>
+      <button (click)="addJugador()"
+        class="bg-green-600 hover:bg-green-700 text-white w-14 h-14 rounded-2xl shadow-2xl shadow-green-600/30 flex items-center justify-center active:scale-90 transition-all"
+        title="Nuevo jugador">
+        <i class="fa fa-plus text-xl"></i>
+      </button>
+    </div>
+
+    <!-- Panel tabla -->
+    <div class="bg-white dark:bg-[#1b1b1f] rounded-2xl overflow-hidden border border-slate-200 dark:border-[#303038] shadow-xl">
       <div class="overflow-x-auto">
         <table class="min-w-full border-separate border-spacing-0 block md:table">
-          <thead class="bg-slate-900 text-white hidden md:table-header-group">
+          <thead class="bg-slate-50 dark:bg-[#252529] hidden md:table-header-group">
             <tr class="text-center">
-              <th class="p-5 border-b border-slate-800">
-                <button *ngIf="UserLog.perfil != 2" (click)="addJugador()"
-                  class="bg-green-500 hover:bg-green-400 text-white px-4 py-2 rounded-xl text-[10px] font-black uppercase tracking-tighter transition-all">
-                  <i class="fa fa-plus mr-1"></i> Nuevo
-                </button>
+              <th class="p-5 border-b border-slate-200 dark:border-[#303038]">
+                <div class="flex items-center gap-2" *ngIf="UserLog.perfil != 2">
+                  <button (click)="addJugador()"
+                    class="bg-green-600 hover:bg-green-500 text-white px-4 py-2 rounded-xl text-[10px] font-black uppercase tracking-tighter transition-all">
+                    <i class="fa fa-plus mr-1"></i> Nuevo
+                  </button>
+                  <button (click)="abrirEscaner()"
+                    class="bg-slate-900 dark:bg-zinc-800 hover:bg-green-600 text-white px-4 py-2 rounded-xl text-[10px] font-black uppercase tracking-tighter transition-all flex items-center gap-1"
+                    title="Completar desde cédula o TI">
+                    <i class="fa fa-camera mr-1"></i> Escanear
+                  </button>
+                </div>
               </th>
-              <th class="p-5 font-black uppercase text-[9px] tracking-widest text-slate-500 border-b border-slate-800">
+              <th class="p-5 font-black uppercase text-[9px] tracking-widest text-slate-500 dark:text-zinc-400 border-b border-slate-200 dark:border-[#303038]">
                 ID</th>
-              <th class="p-5 font-black uppercase text-[9px] tracking-widest text-slate-500 border-b border-slate-800">
+              <th class="p-5 font-black uppercase text-[9px] tracking-widest text-slate-500 dark:text-zinc-400 border-b border-slate-200 dark:border-[#303038]">
                 Galería (1-4)</th>
-              <th class="p-5 font-black uppercase text-[9px] tracking-widest border-b border-slate-800 text-left">Datos
-                Jugador</th>
-              <th class="p-5 font-black uppercase text-[9px] tracking-widest border-b border-slate-800">Identificación
-              </th>
-              <th class="p-5 font-black uppercase text-[9px] tracking-widest border-b border-slate-800">Estado</th>
-
+              <th class="p-5 font-black uppercase text-[9px] tracking-widest text-slate-500 dark:text-zinc-400 border-b border-slate-200 dark:border-[#303038] text-left">Datos Jugador</th>
+              <th class="p-5 font-black uppercase text-[9px] tracking-widest text-green-600 dark:text-green-400 border-b border-slate-200 dark:border-[#303038] text-left">Documento / Nacimiento</th>
+              <th class="p-5 font-black uppercase text-[9px] tracking-widest text-slate-500 dark:text-zinc-400 border-b border-slate-200 dark:border-[#303038]">Estado</th>
             </tr>
           </thead>
 
-          <tbody class="block md:table-row-group divide-y divide-slate-100 md:divide-y-0">
-            <tr *ngFor="let jug of jugadores; let i = index" [ngClass]="i % 2 === 0 ? 'bg-white' : 'bg-slate-50'"
-              class="flex flex-col md:table-row p-6 md:p-0 transition-all md:hover:bg-emerald-50/40 group relative">
+          <tbody class="divide-y divide-slate-100 dark:divide-[#303038]">
+            <tr *ngFor="let jug of jugadores; let i = index"
+              [ngClass]="i % 2 === 0 ? 'bg-white dark:bg-[#1b1b1f]' : 'bg-slate-50/50 dark:bg-[#202024]'"
+              class="transition-colors hover:bg-green-50/40 dark:hover:bg-[#1e2420] group">
 
-              <td
-                class="block md:table-cell md:p-5 order-5 md:order-none border-t border-slate-100 md:border-none mt-4 md:mt-0 pt-4 md:pt-0">
-                <div class="flex items-center justify-between md:justify-center gap-4">
-                  <span class="md:hidden text-[9px] font-black text-slate-400 uppercase tracking-widest">Acciones</span>
-                  <div class="flex items-center gap-4">
+              <!-- ══ MÓVIL: tarjeta compacta ══ -->
+              <td class="md:hidden p-3" colspan="5">
+                <div class="flex items-start gap-3">
 
-                    <!-- EDITAR -->
-                    <button (click)="editJugador(jug.id!)" class="bg-amber-500 text-white w-14 h-14 rounded-2xl flex items-center justify-center 
-                 shadow-lg shadow-amber-500/30 hover:scale-110 active:scale-95 transition-all">
-                      <i class="fa fa-edit text-xl"></i>
-                    </button>
+                  <!-- Foto principal -->
+                  <img [src]="jug['img1'] ? pathIm + jug['img1'] : '../../../../assets/img/nd.png'"
+                    (click)="jug['img1'] ? openModal(pathIm + jug['img1'], jug.nombre) : null"
+                    data-bs-toggle="modal" data-bs-target="#exampleModal"
+                    class="w-14 h-14 rounded-xl object-cover border-2 border-slate-200 dark:border-[#303038] shadow flex-shrink-0 cursor-pointer">
 
-                    <!-- ELIMINAR -->
-                    <button *ngIf="UserLog.perfil == 1" (click)="deleteJugador(jug.id!)" class="bg-rose-500 text-white w-14 h-14 rounded-2xl flex items-center justify-center 
-                 shadow-lg shadow-rose-500/30 hover:scale-110 active:scale-95 transition-all">
-                      <i class="fa fa-trash text-xl"></i>
-                    </button>
+                  <!-- Info principal -->
+                  <div class="flex-1 min-w-0">
+                    <div class="flex items-start justify-between gap-2">
+                      <span class="font-oswald font-black text-slate-900 dark:text-white uppercase text-sm leading-tight">{{jug.nombre}}</span>
+                      <span [ngClass]="jug.estado == 1 ? 'bg-green-600' : 'bg-rose-500'"
+                        class="text-white text-[8px] font-black uppercase px-2 py-0.5 rounded flex-shrink-0">
+                        {{ jug.estado == 1 ? 'Activo' : 'Inactivo' }}
+                      </span>
+                    </div>
 
+                    <!-- Documento y fecha — PROTAGONISTAS en móvil -->
+                    <div class="flex items-center gap-2 mt-2 flex-wrap">
+                      <div class="flex items-center gap-1.5 bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-700/30 rounded-lg px-2.5 py-1">
+                        <i class="fa fa-id-card text-green-600 dark:text-green-400 text-[11px]"></i>
+                        <span class="font-mono font-black text-slate-900 dark:text-white text-base">{{jug.identificacion}}</span>
+                      </div>
+                      <div class="flex items-center gap-1.5 bg-slate-100 dark:bg-zinc-800 border border-slate-200 dark:border-zinc-700 rounded-lg px-2.5 py-1">
+                        <i class="fa fa-calendar text-slate-500 text-[11px]"></i>
+                        <span class="text-slate-700 dark:text-slate-200 text-sm font-bold">{{jug.fecha_nacimiento | date:'dd/MM/yyyy'}}</span>
+                      </div>
+                    </div>
+
+                    <!-- Badges -->
+                    <div class="flex items-center gap-1.5 mt-1.5 flex-wrap">
+                      <span class="bg-slate-200 dark:bg-zinc-700 text-slate-700 dark:text-white px-2 py-0.5 rounded text-[9px] font-black uppercase">
+                        {{ jug.posicion == 1 ? 'Arquero' : jug.posicion == 2 ? 'Defensa' : jug.posicion == 3 ? 'Volante' : 'Delantero' }}
+                      </span>
+                      <span class="text-[9px] font-bold text-slate-500 dark:text-zinc-400 uppercase">{{jug.genero}}</span>
+                      <span class="text-green-600 dark:text-green-400 text-[9px] lowercase truncate max-w-[140px]">{{jug.email}}</span>
+                    </div>
                   </div>
+
+                  <!-- Acciones -->
+                  <div class="flex flex-col gap-1.5 flex-shrink-0">
+                    <button (click)="editJugador(jug.id!)"
+                      class="w-8 h-8 rounded-lg flex items-center justify-center bg-amber-500/10 hover:bg-amber-500 text-amber-600 hover:text-white border border-amber-500/30 transition-all">
+                      <i class="fa fa-edit text-xs"></i>
+                    </button>
+                    <button *ngIf="UserLog.perfil == 1" (click)="deleteJugador(jug.id!)"
+                      class="w-8 h-8 rounded-lg flex items-center justify-center bg-red-500/10 hover:bg-red-500 text-red-500 hover:text-white border border-red-500/30 transition-all">
+                      <i class="fa fa-trash text-xs"></i>
+                    </button>
+                  </div>
+
                 </div>
               </td>
 
-              <td class="hidden md:table-cell md:p-5 text-center font-mono text-[14px] text-slate-800">#{{jug.id}}</td>
+              <!-- ══ DESKTOP: columnas normales ══ -->
 
-              <td class="block md:table-cell md:p-5 order-2 md:order-none mb-4 md:mb-0">
-                <div class="flex items-center gap-2 md:justify-center">
-                  <span
-                    class="md:hidden text-[9px] font-black text-slate-400 uppercase mr-auto tracking-widest">Fotos</span>
-
-                  <div class="flex -space-x-3 hover:space-x-2 transition-all duration-300 items-center p-1">
-                    <img *ngFor="let imgKey of ['img1', 'img2', 'img3', 'img4']"
-                      [src]="jug[imgKey] ? pathIm + jug[imgKey] : '../../../../assets/img/nd.png'"
-                      (click)="jug[imgKey] ? openModal(pathIm + jug[imgKey], jug.nombre) : null" data-bs-toggle="modal"
-                      data-bs-target="#exampleModal" title="Click para ampliar" class="w-12 h-12 md:w-10 md:h-10 rounded-xl border-2 border-white shadow-md object-cover cursor-pointer
-                  hover:z-50 hover:scale-125 hover:rotate-3 transition-all duration-200 bg-white relative">
-                  </div>
-
+              <!-- Acciones -->
+              <td class="hidden md:table-cell p-4 text-center">
+                <div class="flex items-center justify-center gap-2">
+                  <button (click)="editJugador(jug.id!)"
+                    class="w-8 h-8 rounded-xl flex items-center justify-center bg-amber-500/10 hover:bg-amber-500 text-amber-600 hover:text-white dark:text-amber-400 border border-amber-500/30 transition-all">
+                    <i class="fa fa-edit text-xs"></i>
+                  </button>
+                  <button *ngIf="UserLog.perfil == 1" (click)="deleteJugador(jug.id!)"
+                    class="w-8 h-8 rounded-xl flex items-center justify-center bg-red-500/10 hover:bg-red-500 text-red-600 hover:text-white dark:text-red-400 border border-red-500/30 transition-all">
+                    <i class="fa fa-trash text-xs"></i>
+                  </button>
                 </div>
               </td>
 
-              <td class="block md:table-cell md:p-5 order-1 md:order-none mb-4 md:mb-0">
-                <div class="flex flex-col">
-                  <span
-                    class="font-black text-slate-800 uppercase text-base md:text-sm leading-tight tracking-tight">{{jug.nombre}}</span>
-                  <span class="text-[11px] font-bold text-emerald-600 mt-0.5 break-all lowercase">{{jug.email}}</span>
-                  <div class="flex items-center gap-2 mt-2">
-                    <span class="bg-slate-200 text-slate-800 px-2 py-0.5 rounded text-[10px] font-black uppercase">
-                      {{ jug.posicion == 1 ? 'Arquero' : jug.posicion == 2 ? 'Defensa' : jug.posicion == 3 ? 'Volante' :
-                      'Delantero' }}
+              <!-- ID -->
+              <td class="hidden md:table-cell p-4 text-center font-mono text-[13px] text-slate-500 dark:text-zinc-400">#{{jug.id}}</td>
+
+              <!-- Galería -->
+              <td class="hidden md:table-cell p-4">
+                <div class="flex -space-x-2 hover:space-x-1 transition-all duration-300 items-center justify-center">
+                  <img *ngFor="let imgKey of ['img1', 'img2', 'img3', 'img4']"
+                    [src]="jug[imgKey] ? pathIm + jug[imgKey] : '../../../../assets/img/nd.png'"
+                    (click)="jug[imgKey] ? openModal(pathIm + jug[imgKey], jug.nombre) : null"
+                    data-bs-toggle="modal" data-bs-target="#exampleModal"
+                    class="w-9 h-9 rounded-lg border-2 border-white dark:border-[#303038] shadow object-cover cursor-pointer hover:z-50 hover:scale-110 transition-all bg-slate-100 dark:bg-[#1b1b1f]">
+                </div>
+              </td>
+
+              <!-- Datos jugador (nombre + email + posición) -->
+              <td class="hidden md:table-cell p-4">
+                <div class="flex flex-col gap-0.5">
+                  <span class="font-oswald font-black text-slate-900 dark:text-white uppercase text-sm leading-tight">{{jug.nombre}}</span>
+                  <span class="text-[10px] text-green-600 dark:text-green-400 lowercase">{{jug.email}}</span>
+                  <div class="flex items-center gap-2 mt-1">
+                    <span class="bg-slate-200 dark:bg-zinc-700 text-slate-700 dark:text-white px-2 py-0.5 rounded text-[9px] font-black uppercase">
+                      {{ jug.posicion == 1 ? 'Arquero' : jug.posicion == 2 ? 'Defensa' : jug.posicion == 3 ? 'Volante' : 'Delantero' }}
                     </span>
-                    <span class="text-[10px] font-black text-slate-800 uppercase italic">{{jug.genero}}</span>
-                    <span class="text-[10px] font-black text-slate-800 hidden md:inline">•
-                      {{jug.fecha_nacimiento}}</span>
+                    <span class="text-[9px] text-slate-500 dark:text-zinc-400 uppercase italic">{{jug.genero}}</span>
                   </div>
                 </div>
               </td>
 
-              <td class="block md:table-cell md:p-5 order-3 md:order-none mb-4 md:mb-0">
-                <div
-                  class="flex justify-between md:block items-center bg-white md:bg-transparent p-3 md:p-0 rounded-xl border border-slate-200 md:border-none shadow-sm md:shadow-none">
-                  <span
-                    class="md:hidden text-[9px] font-black text-slate-400 uppercase tracking-widest">Documento</span>
-                  <span class="font-mono font-bold text-slate-700 md:text-xs text-sm">{{jug.identificacion}}</span>
+              <!-- Documento + Fecha nacimiento — PROTAGONISTAS -->
+              <td class="hidden md:table-cell p-4">
+                <div class="flex flex-col gap-2">
+                  <div class="flex items-center gap-2 bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-700/30 rounded-lg px-3 py-1.5">
+                    <i class="fa fa-id-card text-green-600 dark:text-green-400"></i>
+                    <span class="font-mono font-black text-slate-900 dark:text-white text-base tracking-wide">{{jug.identificacion}}</span>
+                  </div>
+                  <div class="flex items-center gap-2 bg-slate-50 dark:bg-zinc-800/60 border border-slate-200 dark:border-zinc-700 rounded-lg px-3 py-1.5">
+                    <i class="fa fa-calendar text-slate-500 dark:text-zinc-400 text-xs"></i>
+                    <span class="text-slate-700 dark:text-slate-200 text-sm font-bold">{{jug.fecha_nacimiento | date:'dd/MM/yyyy'}}</span>
+                  </div>
                 </div>
               </td>
 
-              <td class="block md:table-cell md:p-5 order-4 md:order-none md:text-center">
-                <div class="flex justify-between md:justify-center items-center">
-                  <span class="md:hidden text-[9px] font-black text-slate-400 uppercase tracking-widest">Estado</span>
-                  <span
-                    [ngClass]="jug.estado == 1 ? 'bg-emerald-500 shadow-emerald-500/20' : 'bg-rose-500 shadow-rose-500/20'"
-                    class="text-white text-[9px] font-black uppercase px-3 py-1 rounded-lg italic shadow-lg">
-                    {{ jug.estado == 1 ? 'Activo' : 'Inactivo' }}
-                  </span>
-                </div>
+              <!-- Estado -->
+              <td class="hidden md:table-cell p-4 text-center">
+                <span [ngClass]="jug.estado == 1 ? 'bg-green-600 shadow-green-500/20' : 'bg-rose-500 shadow-rose-500/20'"
+                  class="text-white text-[9px] font-black uppercase px-3 py-1 rounded-lg italic shadow-lg">
+                  {{ jug.estado == 1 ? 'Activo' : 'Inactivo' }}
+                </span>
               </td>
-
 
             </tr>
           </tbody>
         </table>
       </div>
 
-      <div class="p-4 bg-slate-50 border-t border-slate-100">
+      <!-- Paginación -->
+      <div class="bg-slate-50 dark:bg-[#252529] border-t border-slate-100 dark:border-[#303038] p-4">
         <app-paginacion *ngIf="jugadores.length > 0" [nPaginas]="paginas" (irPagina)="sigPag($event)"></app-paginacion>
       </div>
     </div>
   </div>
 
+  <!-- ── FORMULARIO ──────────────────────────────────────────────── -->
   <div *ngIf="this.creando"
-    class="fixed inset-0 z-[100] flex items-center justify-center bg-[#0f172a]/95 backdrop-blur-md p-2 md:p-4">
+    class="fixed inset-0 z-[100] flex items-end md:items-center justify-center bg-black/70 backdrop-blur-sm">
     <div
-      class="w-full max-w-4xl bg-[#161d2f] rounded-[2.5rem] shadow-2xl relative overflow-hidden flex flex-col border border-white/5 max-h-[98vh] md:max-h-[95vh]">
+      class="w-full md:max-w-4xl bg-white dark:bg-[#1b1b1f] md:rounded-2xl shadow-2xl overflow-hidden flex flex-col border border-slate-200 dark:border-[#303038] max-h-[92vh]">
 
-      <div class="p-6 md:p-8 flex items-center justify-between bg-[#161d2f] border-b border-white/5">
+      <!-- Header -->
+      <div class="bg-slate-50 dark:bg-[#252529] p-5 border-b border-slate-200 dark:border-[#303038] flex items-center justify-between shrink-0">
         <div class="flex items-center gap-3">
-          <div
-            class="w-10 h-10 bg-emerald-500 rounded-xl flex items-center justify-center shadow-lg shadow-emerald-500/20">
-            <i class="fa fa-user-plus text-slate-900 text-lg"></i>
+          <div class="w-9 h-9 bg-green-600 rounded-xl flex items-center justify-center shadow-lg shadow-green-600/20">
+            <i class="fa fa-user-plus text-white text-sm"></i>
           </div>
           <div>
-            <h3 class="text-lg md:text-xl font-black text-white uppercase italic tracking-tighter">
+            <h3 class="text-lg font-bebas text-slate-900 dark:text-white uppercase tracking-wider">
               {{ editForm ? 'MODIFICAR PERFIL' : 'NUEVO REGISTRO' }}
             </h3>
-            <p class="text-[9px] text-emerald-400 font-bold tracking-widest uppercase opacity-60">Ficha técnica del
-              jugador</p>
+            <p class="text-[9px] text-green-600 dark:text-green-400 font-bold tracking-widest uppercase">Ficha técnica del jugador</p>
           </div>
         </div>
-        <button (click)="cancel()" class="text-white/20 hover:text-white transition-colors">
-          <i class="fa fa-times text-2xl"></i>
+        <button (click)="cancel()"
+          class="w-8 h-8 flex items-center justify-center text-slate-400 dark:text-zinc-500 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-zinc-800 rounded-lg transition-all">
+          <i class="fa fa-times"></i>
         </button>
       </div>
 
-      <div class="p-6 md:p-8 pt-4 overflow-y-auto custom-scrollbar flex-1">
-        <form [formGroup]="JugadorForm" (ngSubmit)="saveJugador()" class="space-y-6">
+      <!-- Cuerpo -->
+      <div class="p-5 md:p-7 overflow-y-auto flex-1">
+        <form [formGroup]="JugadorForm" (ngSubmit)="saveJugador()" class="space-y-4">
 
-          <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <div class="space-y-2">
-              <label
-                class="text-[10px] font-black text-emerald-400 uppercase tracking-widest ml-1 underline underline-offset-4 decoration-emerald-500/30">Nombres
-                Completos</label>
+          <!-- Nombre + correo -->
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div class="space-y-1.5">
+              <label class="text-[9px] font-black text-green-600 dark:text-green-500 uppercase tracking-widest ml-1">Nombres Completos</label>
               <input type="text" formControlName="name" [readonly]="UserLog.perfil == 3 || UserLog.perfil == 2"
-                class="w-full rounded-2xl px-5 py-3.5 bg-[#1e273a] text-white border border-white/10 focus:border-emerald-500 outline-none transition-all font-bold uppercase text-sm">
+                class="w-full rounded-xl px-4 py-3 bg-white dark:bg-zinc-900 text-slate-900 dark:text-white border border-slate-300 dark:border-zinc-700 focus:border-green-500 focus:outline-none focus:ring-1 focus:ring-green-500/20 transition-colors text-sm font-bold uppercase placeholder:text-slate-400">
             </div>
-            <div class="space-y-2">
-              <label
-                class="text-[10px] font-black text-emerald-400 uppercase tracking-widest ml-1 underline underline-offset-4 decoration-emerald-500/30">Correo
-                Electrónico</label>
+            <div class="space-y-1.5">
+              <label class="text-[9px] font-black text-slate-500 dark:text-zinc-400 uppercase tracking-widest ml-1">Correo Electrónico</label>
               <input type="email" formControlName="mail" [readonly]="UserLog.perfil == 3 || UserLog.perfil == 2"
-                class="w-full rounded-2xl px-5 py-3.5 bg-[#1e273a] text-white border border-white/10 focus:border-emerald-500 outline-none transition-all font-bold lowercase text-sm">
+                class="w-full rounded-xl px-4 py-3 bg-white dark:bg-zinc-900 text-slate-900 dark:text-white border border-slate-300 dark:border-zinc-700 focus:border-green-500 focus:outline-none focus:ring-1 focus:ring-green-500/20 transition-colors text-sm font-bold lowercase placeholder:text-slate-400">
             </div>
           </div>
 
-          <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-            <div class="space-y-2">
-              <label
-                class="text-[10px] font-black text-emerald-400 uppercase tracking-widest ml-1 underline underline-offset-4 decoration-emerald-500/30">Fecha
-                Nacimiento</label>
+          <!-- Fecha + posición + género -->
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <div class="space-y-1.5">
+              <label class="text-[9px] font-black text-green-600 dark:text-green-500 uppercase tracking-widest ml-1">Fecha Nacimiento</label>
               <input type="date" formControlName="fch_nacimiento" (change)="onFechaNacimientoChange($event)"
                 [readonly]="UserLog.perfil == 3 || UserLog.perfil == 2"
-                class="w-full rounded-2xl px-5 py-3.5 bg-[#1e273a] text-white border border-white/10 focus:border-emerald-500 outline-none font-bold text-sm">
+                class="w-full rounded-xl px-4 py-3 bg-white dark:bg-zinc-900 text-slate-900 dark:text-white border border-slate-300 dark:border-zinc-700 focus:border-green-500 focus:outline-none font-bold text-sm">
             </div>
-            <div class="space-y-2">
-              <label
-                class="text-[10px] font-black text-emerald-400 uppercase tracking-widest ml-1 underline underline-offset-4 decoration-emerald-500/30">Posición</label>
+            <div class="space-y-1.5">
+              <label class="text-[9px] font-black text-slate-500 dark:text-zinc-400 uppercase tracking-widest ml-1">Posición</label>
               <select formControlName="posicion"
-                class="w-full rounded-2xl px-5 py-3.5 bg-[#1e273a] text-white border border-white/10 focus:border-emerald-500 outline-none font-bold text-sm uppercase">
+                class="w-full rounded-xl px-4 py-3 bg-white dark:bg-zinc-900 text-slate-900 dark:text-white border border-slate-300 dark:border-zinc-700 focus:border-green-500 focus:outline-none font-bold text-sm uppercase appearance-none cursor-pointer">
                 <option [value]="1">Arquero</option>
                 <option [value]="2">Defensa</option>
                 <option [value]="3">Volante</option>
                 <option [value]="4">Delantero</option>
               </select>
             </div>
-            <div class="space-y-2">
-              <label
-                class="text-[10px] font-black text-emerald-400 uppercase tracking-widest ml-1 underline underline-offset-4 decoration-emerald-500/30">Género</label>
+            <div class="space-y-1.5">
+              <label class="text-[9px] font-black text-slate-500 dark:text-zinc-400 uppercase tracking-widest ml-1">Género</label>
               <select formControlName="genero"
-                class="w-full rounded-2xl px-5 py-3.5 bg-[#1e273a] text-white border border-white/10 focus:border-emerald-500 outline-none font-bold text-sm uppercase">
+                class="w-full rounded-xl px-4 py-3 bg-white dark:bg-zinc-900 text-slate-900 dark:text-white border border-slate-300 dark:border-zinc-700 focus:border-green-500 focus:outline-none font-bold text-sm uppercase appearance-none cursor-pointer">
                 <option value="Masculino">Masculino</option>
                 <option value="Femenino">Femenino</option>
               </select>
             </div>
           </div>
 
-          <div class="bg-black/20 p-6 rounded-[2.5rem] border border-white/5 space-y-6">
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-              <div class="space-y-2">
-                <label
-                  class="text-[10px] font-black text-emerald-400 uppercase tracking-widest underline underline-offset-4 decoration-emerald-500/30">Tipo
-                  de Documento</label>
+          <!-- Departamento + Ciudad -->
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div class="space-y-1.5">
+              <label class="text-[9px] font-black text-slate-500 dark:text-zinc-400 uppercase tracking-widest ml-1">
+                <i class="fa fa-map-marker text-green-500 mr-1"></i>Departamento
+              </label>
+              <div class="relative">
+                <select formControlName="fk_departamento"
+                  (change)="onDepartamentoChange($any($event.target).value)"
+                  class="w-full rounded-xl px-4 py-3 bg-white dark:bg-zinc-900 text-slate-900 dark:text-white border border-slate-300 dark:border-zinc-700 focus:border-green-500 focus:outline-none focus:ring-1 focus:ring-green-500/20 transition-colors text-sm appearance-none cursor-pointer">
+                  <option [ngValue]="null">-- Seleccione --</option>
+                  <option *ngFor="let dep of departamentos" [value]="dep.id">{{ dep.nombre }}</option>
+                </select>
+                <i class="fa fa-chevron-down absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 text-xs pointer-events-none"></i>
+              </div>
+            </div>
+            <div class="space-y-1.5">
+              <label class="text-[9px] font-black text-slate-500 dark:text-zinc-400 uppercase tracking-widest ml-1">
+                <i class="fa fa-building text-green-500 mr-1"></i>Ciudad / Municipio
+              </label>
+              <div class="relative">
+                <select formControlName="fk_ciudad"
+                  [class.opacity-40]="!JugadorForm.get('fk_departamento')?.value"
+                  [class.pointer-events-none]="!JugadorForm.get('fk_departamento')?.value"
+                  class="w-full rounded-xl px-4 py-3 bg-white dark:bg-zinc-900 text-slate-900 dark:text-white border border-slate-300 dark:border-zinc-700 focus:border-green-500 focus:outline-none focus:ring-1 focus:ring-green-500/20 transition-all text-sm appearance-none cursor-pointer">
+                  <option [ngValue]="null">
+                    {{ !JugadorForm.get('fk_departamento')?.value ? '← Primero seleccione departamento' : '-- Seleccione ciudad --' }}
+                  </option>
+                  <option *ngFor="let ciu of ciudades" [value]="ciu.id">{{ ciu.nombre }}</option>
+                </select>
+                <i *ngIf="!JugadorForm.get('fk_departamento')?.value" class="fa fa-lock absolute right-3 top-1/2 -translate-y-1/2 text-slate-300 dark:text-zinc-600 text-xs pointer-events-none"></i>
+                <i *ngIf="JugadorForm.get('fk_departamento')?.value" class="fa fa-chevron-down absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 text-xs pointer-events-none"></i>
+              </div>
+            </div>
+          </div>
+
+          <!-- Documento + slots -->
+          <div class="bg-slate-50 dark:bg-zinc-900/60 p-4 rounded-2xl border border-slate-200 dark:border-zinc-800 space-y-4">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div class="space-y-1.5">
+                <label class="text-[9px] font-black text-green-600 dark:text-green-500 uppercase tracking-widest">Tipo de Documento</label>
                 <select formControlName="TipoDoc" (change)="updateDocumento($event)"
-                  class="w-full rounded-2xl px-5 py-3.5 bg-[#0f172a] text-white border border-white/10 focus:border-emerald-500 outline-none font-bold text-sm uppercase">
+                  class="w-full rounded-xl px-4 py-3 bg-white dark:bg-[#0f172a] text-slate-900 dark:text-white border border-slate-300 dark:border-zinc-700 focus:border-green-500 focus:outline-none font-bold text-sm uppercase appearance-none cursor-pointer">
                   <option [value]="1">Registro civil</option>
                   <option [value]="2">Tarjeta Identidad</option>
                   <option [value]="3">Cedula de ciudadania</option>
@@ -250,122 +364,149 @@
                   <option [value]="5">Pasaporte</option>
                 </select>
               </div>
-              <div class="space-y-2" *ngIf="tipoDoc > 0">
-                <label
-                  class="text-[10px] font-black text-emerald-400 uppercase tracking-widest underline underline-offset-4 decoration-emerald-500/30">Número
-                  Identificación</label>
+              <div class="space-y-1.5" *ngIf="tipoDoc > 0">
+                <label class="text-[9px] font-black text-green-600 dark:text-green-500 uppercase tracking-widest">Número Identificación</label>
                 <input type="text" formControlName="identificacion"
                   [readonly]="UserLog.perfil == 3 || UserLog.perfil == 2"
-                  class="w-full rounded-2xl px-5 py-3.5 bg-[#0f172a] text-white border border-white/10 focus:border-emerald-500 outline-none font-bold text-sm">
+                  class="w-full rounded-xl px-4 py-3 bg-white dark:bg-[#0f172a] text-slate-900 dark:text-white border border-slate-300 dark:border-zinc-700 focus:border-green-500 focus:outline-none font-bold text-sm">
               </div>
             </div>
 
-            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4" *ngIf="tipoDoc > 0">
-              <div *ngFor="let i of [1,2,3,4,5]" class="space-y-1">
-                <label class="text-[9px] font-black text-white/30 uppercase ml-2">Soporte {{i}}</label>
-                <input type="file" (change)="uploadImage($event, i)" [disabled]="UserLog.perfil == 3"
-                  class="w-full bg-[#1e273a] text-white text-[10px] rounded-xl border border-white/10 file:bg-emerald-500 file:hover:bg-emerald-400 file:border-none file:text-slate-900 file:px-4 file:py-2 file:mr-3 file:font-black file:uppercase file:transition-all">
+            <!-- Slots de archivos -->
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3" *ngIf="tipoDoc > 0">
+              <div *ngFor="let i of [1,2,3,4,5]"
+                class="flex flex-col gap-2 bg-white dark:bg-[#0d1526] border rounded-2xl p-3 transition-all"
+                [ngClass]="fileNames[i] ? 'border-green-500/40' : 'border-slate-200 dark:border-white/8'">
+                <div class="flex items-center gap-2">
+                  <span class="w-5 h-5 rounded-lg flex items-center justify-center text-[9px] font-black shrink-0"
+                    [ngClass]="fileNames[i] ? 'bg-green-500 text-slate-900' : 'bg-slate-200 dark:bg-white/10 text-slate-500 dark:text-white/40'">
+                    {{i}}
+                  </span>
+                  <label class="text-[9px] font-black text-slate-600 dark:text-white/70 uppercase tracking-wide leading-tight">{{ getDocLabel(i) }}</label>
+                </div>
+                <input type="file" [id]="'fileInput'+i" (change)="uploadImage($event, i)" [disabled]="UserLog.perfil == 3" class="hidden">
+                <div *ngIf="filePreviews[i]" class="relative rounded-xl overflow-hidden border border-green-500/30">
+                  <img [src]="filePreviews[i]" class="w-full h-24 object-cover" alt="preview">
+                  <div class="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent px-2 py-1.5 flex items-center justify-between">
+                    <span class="text-[8px] text-white font-bold truncate flex-1">{{ fileNames[i] }}</span>
+                    <div class="flex gap-1 shrink-0">
+                      <button type="button" (click)="rotarSlot(i, 'left')" class="w-5 h-5 rounded-md bg-black/50 text-white/80 hover:bg-black/80 hover:text-white flex items-center justify-center transition-all"><i class="fa fa-rotate-left text-[8px]"></i></button>
+                      <button type="button" (click)="rotarSlot(i, 'right')" class="w-5 h-5 rounded-md bg-black/50 text-white/80 hover:bg-black/80 hover:text-white flex items-center justify-center transition-all"><i class="fa fa-rotate-right text-[8px]"></i></button>
+                    </div>
+                  </div>
+                </div>
+                <div *ngIf="fileNames[i] && !filePreviews[i]" class="flex items-center gap-2 bg-slate-50 dark:bg-black/20 rounded-xl px-3 py-2 border border-slate-200 dark:border-white/5">
+                  <i class="fa fa-file-pdf text-red-400 shrink-0"></i>
+                  <span class="text-[9px] text-slate-700 dark:text-white/80 font-bold truncate flex-1">{{ fileNames[i] }}</span>
+                </div>
+                <div class="flex gap-1.5 mt-auto">
+                  <button type="button" (click)="triggerInput(i)" [disabled]="UserLog.perfil == 3"
+                    class="flex-1 flex items-center justify-center gap-1 bg-slate-100 dark:bg-white/5 text-slate-700 dark:text-white border border-slate-300 dark:border-white/15 rounded-xl py-2 text-[9px] font-black uppercase hover:bg-slate-200 dark:hover:bg-white/10 transition-all disabled:opacity-30">
+                    <i class="fa fa-upload text-[10px]"></i>{{ fileNames[i] ? 'Cambiar' : 'Subir' }}
+                  </button>
+                  <button type="button" (click)="abrirCamara(i)" [disabled]="UserLog.perfil == 3"
+                    class="flex-1 flex items-center justify-center gap-1 bg-green-500/10 text-green-600 dark:text-green-300 border border-green-500/30 rounded-xl py-2 text-[9px] font-black uppercase hover:bg-green-500/20 hover:border-green-400 transition-all disabled:opacity-30">
+                    <i class="fa fa-camera text-[10px]"></i> Foto
+                  </button>
+                </div>
+                <p [id]="'labelFile'+i" class="hidden"></p>
               </div>
             </div>
           </div>
 
-          <div *ngIf="tipoDoc == 1 || tipoDoc == 2" class="space-y-4 animate-fade-in">
-            <h4 class="text-white/30 text-[9px] font-black uppercase tracking-[0.3em] border-b border-white/5 pb-2">
+          <!-- Acudientes -->
+          <div *ngIf="tipoDoc == 1 || tipoDoc == 2" class="space-y-3">
+            <h4 class="text-slate-400 dark:text-white/30 text-[9px] font-black uppercase tracking-[0.3em] border-b border-slate-200 dark:border-white/5 pb-2">
               Información de Acudientes</h4>
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-              <div class="bg-white/[0.02] p-5 rounded-2xl border border-white/5 space-y-3">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div class="bg-slate-50 dark:bg-white/[0.02] p-4 rounded-2xl border border-slate-200 dark:border-white/5 space-y-3">
                 <input type="text" formControlName="nomMadre" placeholder="NOMBRE MADRE"
-                  class="w-full bg-[#1e273a] rounded-xl px-4 py-3 text-xs text-white border border-white/5 font-bold uppercase">
+                  class="w-full bg-white dark:bg-zinc-900 rounded-xl px-4 py-2.5 text-xs text-slate-900 dark:text-white border border-slate-300 dark:border-white/5 font-bold uppercase placeholder:text-slate-400 focus:outline-none focus:border-green-500">
                 <input type="text" formControlName="telMadre" placeholder="TELÉFONO MADRE"
-                  class="w-full bg-[#1e273a] rounded-xl px-4 py-3 text-xs text-white border border-white/5 font-bold">
+                  class="w-full bg-white dark:bg-zinc-900 rounded-xl px-4 py-2.5 text-xs text-slate-900 dark:text-white border border-slate-300 dark:border-white/5 font-bold placeholder:text-slate-400 focus:outline-none focus:border-green-500">
               </div>
-              <div class="bg-white/[0.02] p-5 rounded-2xl border border-white/5 space-y-3">
+              <div class="bg-slate-50 dark:bg-white/[0.02] p-4 rounded-2xl border border-slate-200 dark:border-white/5 space-y-3">
                 <input type="text" formControlName="nomPadre" placeholder="NOMBRE PADRE"
-                  class="w-full bg-[#1e273a] rounded-xl px-4 py-3 text-xs text-white border border-white/5 font-bold uppercase">
+                  class="w-full bg-white dark:bg-zinc-900 rounded-xl px-4 py-2.5 text-xs text-slate-900 dark:text-white border border-slate-300 dark:border-white/5 font-bold uppercase placeholder:text-slate-400 focus:outline-none focus:border-green-500">
                 <input type="text" formControlName="telPadre" placeholder="TELÉFONO PADRE"
-                  class="w-full bg-[#1e273a] rounded-xl px-4 py-3 text-xs text-white border border-white/5 font-bold">
+                  class="w-full bg-white dark:bg-zinc-900 rounded-xl px-4 py-2.5 text-xs text-slate-900 dark:text-white border border-slate-300 dark:border-white/5 font-bold placeholder:text-slate-400 focus:outline-none focus:border-green-500">
               </div>
             </div>
           </div>
 
-          <div class="bg-amber-500/5 p-5 rounded-2xl border border-amber-500/20" *ngIf="UserLog.perfil == 1">
+          <!-- Estado de cuenta -->
+          <div class="bg-amber-500/5 p-4 rounded-2xl border border-amber-500/20" *ngIf="UserLog.perfil == 1">
             <div class="flex items-center justify-between">
-              <span class="text-amber-500 text-[10px] font-black uppercase tracking-widest">Estado de Cuenta</span>
+              <span class="text-amber-600 dark:text-amber-400 text-[10px] font-black uppercase tracking-widest">Estado de Cuenta</span>
               <select formControlName="estado"
-                class="bg-[#1e273a] text-white rounded-lg px-4 py-2 border-none font-bold text-xs uppercase cursor-pointer">
+                class="bg-white dark:bg-zinc-900 text-slate-900 dark:text-white rounded-lg px-4 py-2 border border-slate-300 dark:border-zinc-700 font-bold text-xs uppercase cursor-pointer focus:outline-none focus:border-green-500">
                 <option [value]="1">Activo</option>
                 <option [value]="0">Inactivo</option>
               </select>
             </div>
           </div>
 
-          <div *ngIf="editForm && (jugadorSelect.img1 || jugadorSelect.img2)" class="mt-10">
-            <h4 class="text-center text-white/20 text-[10px] font-black uppercase tracking-widest mb-6">Visualización de
-              Archivos actuales</h4>
-            <div class="relative max-w-sm mx-auto group">
+          <!-- Carrusel imágenes actuales (edición) -->
+          <div *ngIf="editForm && (jugadorSelect.img1 || jugadorSelect.img2)" class="mt-4">
+            <h4 class="text-center text-slate-400 dark:text-white/20 text-[10px] font-black uppercase tracking-widest mb-4">Archivos actuales</h4>
+            <div class="relative max-w-sm mx-auto">
               <div id="carouselExample" class="carousel slide" data-bs-ride="carousel">
-                <div
-                  class="carousel-inner rounded-[2.5rem] border-4 border-[#1e273a] shadow-2xl overflow-hidden aspect-[4/5] bg-black">
-                  <div class="carousel-item active h-full" *ngIf="jugadorSelect.img1">
-                    <img [src]="pathIm + jugadorSelect.img1"
-                      (click)="openModal(pathIm + jugadorSelect.img1, jugadorSelect.nombre)" data-bs-toggle="modal"
-                      data-bs-target="#exampleModal"
-                      class="w-full h-full object-cover cursor-pointer hover:scale-105 transition-transform duration-500"
-                      alt="Foto 1">
+                <div class="carousel-inner rounded-2xl border-4 border-slate-200 dark:border-[#1e273a] shadow-xl overflow-hidden aspect-[4/5] bg-slate-100 dark:bg-black">
+                  <div class="carousel-item active h-full relative" *ngIf="jugadorSelect.img1">
+                    <img [src]="carouselPreviews[1] || pathIm + jugadorSelect.img1" (click)="openModal(carouselPreviews[1] || pathIm + jugadorSelect.img1, jugadorSelect.nombre)" data-bs-toggle="modal" data-bs-target="#exampleModal" class="w-full h-full object-cover cursor-pointer hover:scale-105 transition-transform duration-500" alt="Foto 1">
+                    <div class="absolute bottom-3 right-3 flex gap-1.5 z-10">
+                      <button type="button" (click)="rotarCarrusel(1, 'left')" class="w-8 h-8 rounded-xl bg-black/60 text-white hover:bg-black/90 flex items-center justify-center transition-all"><i class="fa fa-rotate-left text-xs"></i></button>
+                      <button type="button" (click)="rotarCarrusel(1, 'right')" class="w-8 h-8 rounded-xl bg-black/60 text-white hover:bg-black/90 flex items-center justify-center transition-all"><i class="fa fa-rotate-right text-xs"></i></button>
+                    </div>
                   </div>
-                  <div class="carousel-item h-full" *ngIf="jugadorSelect.img2">
-                    <img [src]="pathIm + jugadorSelect.img2"
-                      (click)="openModal(pathIm + jugadorSelect.img2, jugadorSelect.nombre)" data-bs-toggle="modal"
-                      data-bs-target="#exampleModal"
-                      class="w-full h-full object-cover cursor-pointer hover:scale-105 transition-transform duration-500"
-                      alt="Foto 2">
+                  <div class="carousel-item h-full relative" *ngIf="jugadorSelect.img2">
+                    <img [src]="carouselPreviews[2] || pathIm + jugadorSelect.img2" (click)="openModal(carouselPreviews[2] || pathIm + jugadorSelect.img2, jugadorSelect.nombre)" data-bs-toggle="modal" data-bs-target="#exampleModal" class="w-full h-full object-cover cursor-pointer hover:scale-105 transition-transform duration-500" alt="Foto 2">
+                    <div class="absolute bottom-3 right-3 flex gap-1.5 z-10">
+                      <button type="button" (click)="rotarCarrusel(2, 'left')" class="w-8 h-8 rounded-xl bg-black/60 text-white hover:bg-black/90 flex items-center justify-center transition-all"><i class="fa fa-rotate-left text-xs"></i></button>
+                      <button type="button" (click)="rotarCarrusel(2, 'right')" class="w-8 h-8 rounded-xl bg-black/60 text-white hover:bg-black/90 flex items-center justify-center transition-all"><i class="fa fa-rotate-right text-xs"></i></button>
+                    </div>
                   </div>
-
-                  <div class="carousel-item h-full" *ngIf="jugadorSelect.img3">
-                    <img [src]="pathIm + jugadorSelect.img3"
-                      (click)="openModal(pathIm + jugadorSelect.img3, jugadorSelect.nombre)" data-bs-toggle="modal"
-                      data-bs-target="#exampleModal"
-                      class="w-full h-full object-cover cursor-pointer hover:scale-105 transition-transform duration-500"
-                      alt="Foto 3">
+                  <div class="carousel-item h-full relative" *ngIf="jugadorSelect.img3">
+                    <img [src]="carouselPreviews[3] || pathIm + jugadorSelect.img3" (click)="openModal(carouselPreviews[3] || pathIm + jugadorSelect.img3, jugadorSelect.nombre)" data-bs-toggle="modal" data-bs-target="#exampleModal" class="w-full h-full object-cover cursor-pointer hover:scale-105 transition-transform duration-500" alt="Foto 3">
+                    <div class="absolute bottom-3 right-3 flex gap-1.5 z-10">
+                      <button type="button" (click)="rotarCarrusel(3, 'left')" class="w-8 h-8 rounded-xl bg-black/60 text-white hover:bg-black/90 flex items-center justify-center transition-all"><i class="fa fa-rotate-left text-xs"></i></button>
+                      <button type="button" (click)="rotarCarrusel(3, 'right')" class="w-8 h-8 rounded-xl bg-black/60 text-white hover:bg-black/90 flex items-center justify-center transition-all"><i class="fa fa-rotate-right text-xs"></i></button>
+                    </div>
                   </div>
-
-                  <div class="carousel-item h-full" *ngIf="jugadorSelect.img4">
-                    <img [src]="pathIm + jugadorSelect.img4"
-                      (click)="openModal(pathIm + jugadorSelect.img4, jugadorSelect.nombre)" data-bs-toggle="modal"
-                      data-bs-target="#exampleModal"
-                      class="w-full h-full object-cover cursor-pointer hover:scale-105 transition-transform duration-500"
-                      alt="Foto 4">
+                  <div class="carousel-item h-full relative" *ngIf="jugadorSelect.img4">
+                    <img [src]="carouselPreviews[4] || pathIm + jugadorSelect.img4" (click)="openModal(carouselPreviews[4] || pathIm + jugadorSelect.img4, jugadorSelect.nombre)" data-bs-toggle="modal" data-bs-target="#exampleModal" class="w-full h-full object-cover cursor-pointer hover:scale-105 transition-transform duration-500" alt="Foto 4">
+                    <div class="absolute bottom-3 right-3 flex gap-1.5 z-10">
+                      <button type="button" (click)="rotarCarrusel(4, 'left')" class="w-8 h-8 rounded-xl bg-black/60 text-white hover:bg-black/90 flex items-center justify-center transition-all"><i class="fa fa-rotate-left text-xs"></i></button>
+                      <button type="button" (click)="rotarCarrusel(4, 'right')" class="w-8 h-8 rounded-xl bg-black/60 text-white hover:bg-black/90 flex items-center justify-center transition-all"><i class="fa fa-rotate-right text-xs"></i></button>
+                    </div>
                   </div>
-
-
                 </div>
-                <button class="carousel-control-prev" type="button" data-bs-target="#carouselExample"
-                  data-bs-slide="prev">
+                <button class="carousel-control-prev" type="button" data-bs-target="#carouselExample" data-bs-slide="prev">
                   <span class="carousel-control-prev-icon bg-black/40 rounded-full p-3" aria-hidden="true"></span>
                 </button>
-                <button class="carousel-control-next" type="button" data-bs-target="#carouselExample"
-                  data-bs-slide="next">
+                <button class="carousel-control-next" type="button" data-bs-target="#carouselExample" data-bs-slide="next">
                   <span class="carousel-control-next-icon bg-black/40 rounded-full p-3" aria-hidden="true"></span>
                 </button>
               </div>
             </div>
           </div>
 
-          <div class="flex flex-col md:flex-row justify-end gap-3 pt-8 border-t border-white/5">
+          <!-- Botones -->
+          <div class="flex flex-col-reverse md:flex-row gap-3 pt-4 border-t border-slate-100 dark:border-[#303038]">
             <button type="button" (click)="cancel()"
-              class="bg-[#1e273a] text-white/50 px-10 py-4 rounded-2xl font-black uppercase text-[10px] tracking-widest border border-white/5 hover:bg-white/5 transition-all">
+              class="w-full md:flex-1 bg-slate-100 dark:bg-zinc-800 hover:bg-slate-200 dark:hover:bg-zinc-700 text-slate-600 dark:text-zinc-400 hover:text-slate-900 dark:hover:text-white px-4 py-3 rounded-xl font-black uppercase text-[10px] tracking-widest transition-all">
               <i class="fa fa-ban mr-2"></i> Cancelar
             </button>
             <button type="submit" *ngIf="JugadorForm.valid"
-              class="bg-amber-500 text-slate-900 px-10 py-4 rounded-2xl font-black uppercase text-[10px] tracking-widest shadow-xl shadow-amber-500/20 active:scale-95 transition-all">
-              <i class="fa fa-save mr-2"></i> Guardar Cambios
+              class="w-full md:flex-[1.5] bg-green-600 hover:bg-green-700 dark:hover:bg-green-500 text-white px-4 py-3 rounded-xl font-black shadow-lg shadow-green-600/20 hover:-translate-y-0.5 active:translate-y-0 transition-all uppercase text-[10px] tracking-widest flex items-center justify-center gap-2">
+              <i class="fa fa-save"></i> Guardar Cambios
             </button>
           </div>
 
-          <div *ngIf="isLoading" class="flex flex-col items-center py-6 animate-bounce">
-            <img src="../../../assets/img/balon.png" class="w-14 h-14 animate-spin-slow" alt="Cargando...">
-            <span class="mt-4 text-amber-500 text-[11px] font-black uppercase italic tracking-tighter">Procesando
-              información del jugador...</span>
+          <!-- Loading -->
+          <div *ngIf="isLoading" class="flex items-center justify-center gap-3 py-3">
+            <div class="w-5 h-5 border-2 border-green-500 border-t-transparent rounded-full animate-spin"></div>
+            <p class="text-green-600 dark:text-green-500 font-black text-[9px] uppercase tracking-widest animate-pulse">Procesando información del jugador...</p>
           </div>
 
         </form>
@@ -373,12 +514,45 @@
     </div>
   </div>
 
+  <!-- ── MODAL ESCÁNER ───────────────────────────────────────────── -->
+  <div *ngIf="mostrarEscaner"
+    class="fixed inset-0 z-[200] flex items-center justify-center p-3 md:p-6 bg-black/75 backdrop-blur-sm"
+    (click)="cerrarEscaner()">
+
+    <div class="w-full max-w-md bg-[#0f172a] rounded-[2rem] shadow-2xl shadow-black/60 flex flex-col border border-green-500/20 max-h-[92vh]"
+      (click)="$event.stopPropagation()">
+
+      <!-- Header del modal escáner -->
+      <div class="flex items-center gap-4 px-5 py-4 border-b border-white/8 shrink-0 bg-green-950/40 rounded-t-[2rem]">
+        <div class="w-11 h-11 bg-green-600 rounded-2xl flex items-center justify-center shadow-lg shadow-green-600/40 shrink-0">
+          <i class="fa fa-camera text-white text-base"></i>
+        </div>
+        <div class="flex-1 min-w-0">
+          <h3 class="text-white font-black text-base leading-tight tracking-tight">Escanear Documento</h3>
+          <p class="text-green-400 text-xs font-semibold mt-0.5">
+            Fotografía el <span class="text-white font-bold">reverso</span> de la cédula o T.I.
+          </p>
+        </div>
+        <button (click)="cerrarEscaner()"
+          class="w-10 h-10 flex items-center justify-center rounded-xl bg-white/8 hover:bg-red-500/20 text-white/50 hover:text-red-400 transition-all shrink-0 border border-white/10">
+          <i class="fa fa-times"></i>
+        </button>
+      </div>
+
+      <!-- Contenido escáner -->
+      <div class="overflow-y-auto flex-1">
+        <app-escaner (datosConfirmados)="onDatosEscaneados($event)"></app-escaner>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── MODAL BOOTSTRAP (visor foto) ───────────────────────────── -->
   <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered modal-lg">
       <div class="modal-content bg-[#161d2f] rounded-[2.5rem] border border-white/10 overflow-hidden shadow-2xl">
         <div class="modal-header border-white/5 p-6">
           <div class="flex items-center gap-3">
-            <div class="w-2 h-8 bg-emerald-500 rounded-full"></div>
+            <div class="w-2 h-8 bg-green-500 rounded-full"></div>
             <h1 class="modal-title text-white text-xs font-black uppercase tracking-[0.2em]" id="exampleModalLabel">
               {{ nameSelect }}
             </h1>
@@ -395,10 +569,42 @@
             class="flex-1 py-3 bg-white/5 text-white/40 rounded-xl text-[10px] font-black uppercase tracking-widest hover:bg-white/10 transition-all"
             data-bs-dismiss="modal" (click)="closeModal()">Cerrar</button>
           <a *ngIf="imgSelect" [href]="imgSelect" target="_blank" download
-            class="flex-1 py-3 bg-emerald-600 text-white rounded-xl text-[10px] font-black uppercase tracking-widest text-center flex items-center justify-center gap-2 hover:bg-emerald-500 shadow-lg shadow-emerald-600/20">
+            class="flex-1 py-3 bg-green-600 text-white rounded-xl text-[10px] font-black uppercase tracking-widest text-center flex items-center justify-center gap-2 hover:bg-green-500 shadow-lg shadow-green-600/20">
             <i class="fa fa-download"></i> Descargar
           </a>
         </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── MODAL CÁMARA ───────────────────────────────────────────── -->
+  <div *ngIf="mostrarCamara"
+    class="fixed inset-0 z-[300] flex items-center justify-center bg-black/90 p-4"
+    (click)="cerrarCamara()">
+    <div class="w-full max-w-sm bg-[#0f172a] rounded-[2rem] border border-green-500/20 overflow-hidden flex flex-col shadow-2xl"
+      (click)="$event.stopPropagation()">
+
+      <div class="flex items-center justify-between px-5 py-4 border-b border-white/5">
+        <div class="flex items-center gap-3">
+          <div class="w-8 h-8 bg-green-600 rounded-xl flex items-center justify-center">
+            <i class="fa fa-camera text-white text-sm"></i>
+          </div>
+          <span class="text-white text-sm font-black uppercase tracking-tight">Tomar foto</span>
+        </div>
+        <button type="button" (click)="cerrarCamara()"
+          class="w-8 h-8 flex items-center justify-center rounded-xl bg-white/5 hover:bg-red-500/20 text-white/40 hover:text-red-400 transition-all">
+          <i class="fa fa-times text-sm"></i>
+        </button>
+      </div>
+
+      <video id="cameraVideo" autoplay playsinline
+        class="w-full aspect-[4/3] object-cover bg-black"></video>
+
+      <div class="p-4">
+        <button type="button" (click)="capturarFoto()"
+          class="w-full bg-green-600 hover:bg-green-500 text-white py-3.5 rounded-2xl font-black uppercase text-sm tracking-widest flex items-center justify-center gap-2 active:scale-95 transition-all shadow-lg shadow-green-600/30">
+          <i class="fa fa-circle text-lg"></i> Capturar
+        </button>
       </div>
     </div>
   </div>

@@ -1,111 +1,164 @@
-<div class="contenedorF min-h-screen flex flex-col md:flex-row" >
+﻿<div class="min-h-screen flex bg-slate-100 dark:bg-[#111114] text-slate-900 dark:text-white">
 
-  <header class="md:hidden bg-green-800 text-white p-4 flex justify-between items-center shadow-lg sticky top-0 z-50">
-    <div class="flex items-center gap-2">
-      <img src="assets/img/logo.png" alt="Logo" class="h-8 w-auto object-contain" />
-      <span class="font-bold text-xs uppercase tracking-wider">Más que fútbol</span>
+  <!-- ══════════ TOP BAR MÓVIL (siempre verde oscuro) ══════════ -->
+  <header class="md:hidden fixed top-0 left-0 right-0 z-50 h-14 bg-[#071a0d] border-b border-white/5 flex items-center justify-between px-4 shadow-lg">
+    <div class="flex items-center gap-3">
+      <div class="w-8 h-8 bg-white/10 rounded-lg flex items-center justify-center overflow-hidden border border-white/10">
+        <img src="assets/img/logo.png" alt="Logo" class="h-7 w-auto object-contain" />
+      </div>
+      <span class="font-bebas text-base tracking-widest text-white">MÁS QUE FÚTBOL</span>
     </div>
-    <button (click)="menuOpen = !menuOpen" class="text-white focus:outline-none p-2 rounded-lg bg-green-700">
-      <i class="fa" [ngClass]="menuOpen ? 'fa-times' : 'fa-bars'"></i>
+    <button (click)="menuOpen = !menuOpen"
+      class="w-9 h-9 rounded-xl bg-white/10 hover:bg-green-600 flex items-center justify-center transition-all border border-white/10 active:scale-90">
+      <i class="fa text-white text-sm" [ngClass]="menuOpen ? 'fa-times' : 'fa-bars'"></i>
     </button>
   </header>
 
-  <div *ngIf="menuOpen" (click)="menuOpen = false" class="fixed inset-0 bg-black/50 z-40 md:hidden animate-in fade-in duration-300"></div>
+  <!-- ══════════ OVERLAY MÓVIL ══════════ -->
+  <div *ngIf="menuOpen" (click)="menuOpen = false"
+    class="md:hidden fixed inset-0 bg-black/70 backdrop-blur-sm z-40"></div>
 
-  <aside [class.translate-x-0]="menuOpen" [class.-translate-x-full]="!menuOpen"
-    class="fixed inset-y-0 left-0 w-72 bg-green-900 text-white flex flex-col z-50 transform md:translate-x-0 transition-transform duration-300 ease-in-out md:sticky md:h-screen shadow-2xl md:shadow-none">
-    
-    <div class="hidden md:flex p-8 flex-col items-center border-b border-green-800/50">
-      <div class="bg-white p-2 rounded-2xl mb-3 shadow-lg">
-        <img src="assets/img/logo.png" alt="Logo" class="h-16 object-contain" />
+  <!-- ══════════════════════════ SIDEBAR — siempre verde oscuro ══════════════════════════ -->
+  <aside
+    [class.translate-x-0]="menuOpen"
+    [class.-translate-x-full]="!menuOpen"
+    class="fixed inset-y-0 left-0 z-50 w-64
+           bg-[#071a0d]
+           border-r border-white/5
+           flex flex-col
+           transform transition-transform duration-300 ease-in-out
+           md:translate-x-0 md:sticky md:top-0 md:h-screen md:shrink-0">
+
+    <!-- Logo -->
+    <div class="flex flex-col items-center pt-7 pb-5 px-4 border-b border-white/5">
+      <div class="relative mb-3">
+        <div class="absolute inset-0 bg-green-500 blur-xl opacity-20 rounded-2xl"></div>
+        <div class="relative w-16 h-16 bg-white/10 rounded-2xl flex items-center justify-center overflow-hidden border border-white/10">
+          <img src="assets/img/logo.png" alt="Logo" class="h-14 w-auto object-contain" />
+        </div>
       </div>
-      <p class="font-black text-xs uppercase tracking-[0.2em] text-green-400">Más que fútbol</p>
+      <p class="font-bebas text-sm tracking-[0.25em] text-white/50">MÁS QUE FÚTBOL</p>
+      <div class="flex items-center gap-1.5 mt-1">
+        <span class="w-1.5 h-1.5 bg-green-400 rounded-full animate-pulse"></span>
+        <span class="text-[9px] font-bold text-white/30 uppercase tracking-[0.2em]">Admin Panel</span>
+      </div>
     </div>
 
-    <nav class="flex-1 px-4 py-6 overflow-y-auto space-y-1 custom-scrollbar">
-      <a href="#" (click)="activarComp('panelV'); menuOpen = false; $event.preventDefault()" 
-          [class.bg-green-700]="estados['panelV']" class="menu-link group">
-          <span class="w-8">🏠</span> Inicio
+    <!-- Navegación -->
+    <nav class="flex-1 px-3 py-4 overflow-y-auto custom-scrollbar space-y-0.5">
+      <p class="text-[9px] font-black text-white/20 uppercase tracking-[0.25em] px-3 pb-2 pt-1">Navegación</p>
+
+      <a href="#" (click)="activarComp('panelV'); menuOpen=false; $event.preventDefault()" class="nav-link" [class.nav-active]="estados['panelV']" data-animate data-delay="1">
+        <span class="nav-icon"><i class="fa fa-home"></i></span><span>Inicio</span>
+      </a>
+      <a href="#" (click)="activarComp('torneosV'); menuOpen=false; $event.preventDefault()" class="nav-link" [class.nav-active]="estados['torneosV']" data-animate data-delay="2">
+        <span class="nav-icon"><i class="fa fa-trophy"></i></span><span>Torneos</span>
+      </a>
+      <a href="#" (click)="activarComp('equiposV'); menuOpen=false; $event.preventDefault()" class="nav-link" [class.nav-active]="estados['equiposV']" data-animate data-delay="2">
+        <span class="nav-icon"><i class="fa fa-shield"></i></span><span>Clubes</span>
+      </a>
+      <a href="#" (click)="activarComp('jugadoresV'); menuOpen=false; $event.preventDefault()" class="nav-link" [class.nav-active]="estados['jugadoresV']" data-animate data-delay="3">
+        <span class="nav-icon"><i class="fa fa-users"></i></span><span>Jugadores</span>
       </a>
 
-      <a href="#" (click)="activarComp('categoriasV'); menuOpen = false; $event.preventDefault()"
-          [class.bg-green-700]="estados['categoriasV']" class="menu-link group">
-          <span class="w-8">🏆</span> Categorías
-      </a>
+      <p class="text-[9px] font-black text-white/20 uppercase tracking-[0.25em] px-3 pb-2 pt-4">Configuración</p>
 
-      <a href="#" (click)="activarComp('canchasV'); menuOpen = false; $event.preventDefault()"
-          [class.bg-green-700]="estados['canchasV']" class="menu-link group">
-          <span class="w-8">📍</span> Canchas
+      <a href="#" (click)="activarComp('userV'); menuOpen=false; $event.preventDefault()" class="nav-link" [class.nav-active]="estados['userV']" data-animate data-delay="3">
+        <span class="nav-icon"><i class="fa fa-user"></i></span><span>Usuarios</span>
       </a>
-
-      <a href="#" (click)="activarComp('juecesV'); menuOpen = false; $event.preventDefault()"
-          [class.bg-green-700]="estados['juecesV']" class="menu-link group">
-          <span class="w-8">🚩</span> Jueces
+      <a href="#" (click)="activarComp('categoriasV'); menuOpen=false; $event.preventDefault()" class="nav-link" [class.nav-active]="estados['categoriasV']" data-animate data-delay="4">
+        <span class="nav-icon"><i class="fa fa-list-ul"></i></span><span>Categorías</span>
       </a>
-
-      <a href="#" (click)="activarComp('equiposV'); menuOpen = false; $event.preventDefault()"
-          [class.bg-green-700]="estados['equiposV']" class="menu-link group">
-          <span class="w-8">🏟️</span> Clubes
+      <a href="#" (click)="activarComp('canchasV'); menuOpen=false; $event.preventDefault()" class="nav-link" [class.nav-active]="estados['canchasV']" data-animate data-delay="4">
+        <span class="nav-icon"><i class="fa fa-map-marker"></i></span><span>Canchas</span>
       </a>
-
-      <a href="#" (click)="activarComp('jugadoresV'); menuOpen = false; $event.preventDefault()"
-          [class.bg-green-700]="estados['jugadoresV']" class="menu-link group">
-          <span class="w-8">👥</span> Jugadores
-      </a>
-
-      <a href="#" (click)="activarComp('userV'); menuOpen = false; $event.preventDefault()"
-          [class.bg-green-700]="estados['userV']" class="menu-link group">
-          <span class="w-8">👤</span> Usuarios
-      </a>
-
-      <a href="#" (click)="activarComp('torneosV'); menuOpen = false; $event.preventDefault()"
-          [class.bg-green-700]="estados['torneosV']" class="menu-link group">
-          <span class="w-8">⚽</span> Torneos
+      <a href="#" (click)="activarComp('juecesV'); menuOpen=false; $event.preventDefault()" class="nav-link" [class.nav-active]="estados['juecesV']" data-animate data-delay="5">
+        <span class="nav-icon"><i class="fa fa-gavel"></i></span><span>Árbitros</span>
       </a>
     </nav>
 
-    <div class="p-4 border-t border-green-800/50 bg-green-950/20">
-      <button (click)="cerrarSesion()" 
-          class="flex items-center justify-center gap-3 w-full bg-red-500/10 hover:bg-red-500 text-red-400 hover:text-white font-bold py-3 rounded-xl transition-all duration-300 border border-red-500/20">
-        <i class="fa fa-sign-out"></i> Cerrar sesión
+    <!-- Footer del sidebar -->
+    <div class="px-3 pb-5 pt-3 border-t border-white/5 space-y-2">
+
+      <!-- Toggle tema -->
+      <div class="flex items-center justify-between px-3 py-2.5 rounded-xl bg-white/5 border border-white/8">
+        <div class="flex items-center gap-2">
+          <i class="fa text-xs" [ngClass]="isDark ? 'fa-moon-o text-green-400' : 'fa-sun-o text-amber-400'"></i>
+          <span class="text-[10px] font-black text-white/50 uppercase tracking-wider">
+            {{ isDark ? 'Oscuro' : 'Claro' }}
+          </span>
+        </div>
+        <button (click)="toggleTheme()" type="button" class="theme-toggle" [class.toggle-on]="isDark">
+          <span class="toggle-thumb"></span>
+        </button>
+      </div>
+
+      <!-- Cerrar sesión -->
+      <button (click)="cerrarSesion()"
+        class="flex items-center gap-3 w-full px-4 py-2.5 rounded-xl
+               bg-red-500/10 hover:bg-red-500
+               border border-red-500/20 hover:border-red-500
+               text-red-400 hover:text-white
+               font-bold text-xs uppercase tracking-wider transition-all duration-200">
+        <i class="fa fa-sign-out text-sm"></i>
+        Cerrar sesión
       </button>
     </div>
   </aside>
 
-  <main class="flex-1 p-4 md:p-8 lg:p-12 w-full max-w-7xl mx-auto">
-    
-    <div class="animate-in fade-in slide-in-from-bottom-4 duration-500">
-      
-      <section *ngIf="estados['panelV']">
-        <div class="mb-8">
-          <h1 class="text-3xl font-[1000] text-white tracking-tighter uppercase italic leading-none drop-shadow-sm">Panel Principal</h1>
-          <p class="text-white font-bold text-sm">Bienvenido al sistema de gestión deportiva profesional.</p>
+  <!-- ══════════════════════════ CONTENIDO PRINCIPAL ══════════════════════════ -->
+  <main class="flex-1 min-w-0 mt-14 md:mt-0 overflow-x-hidden">
+
+    <!-- Panel Principal -->
+    <section *ngIf="estados['panelV']" class="p-4 md:p-8 max-w-5xl mx-auto">
+
+      <div class="relative overflow-hidden rounded-2xl bg-white dark:bg-[#1b1b1f] border border-slate-200 dark:border-[#303038] p-6 md:p-8 mb-8">
+        <div class="absolute -top-10 -right-10 w-48 h-48 bg-green-500/5 rounded-full blur-2xl pointer-events-none"></div>
+        <div class="absolute top-0 left-0 w-1 h-full bg-gradient-to-b from-green-500 to-transparent rounded-l-2xl"></div>
+        <div class="relative">
+          <p class="text-[10px] font-black text-green-600 dark:text-green-400 uppercase tracking-[0.3em] mb-2">Sistema de gestión deportiva</p>
+          <h1 class="font-bebas text-4xl md:text-5xl tracking-widest text-slate-900 dark:text-white leading-none mb-2">
+            PANEL <span class="text-green-600 dark:text-green-500">PRINCIPAL</span>
+          </h1>
+          <p class="text-slate-500 dark:text-zinc-400 text-sm">Bienvenido al sistema de administración de torneos de fútbol.</p>
+        </div>
+      </div>
+
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+        <div class="bg-white dark:bg-[#1b1b1f] border border-slate-200 dark:border-[#303038] rounded-2xl p-5 hover:border-slate-300 dark:hover:border-zinc-600 transition-colors group">
+          <div class="w-10 h-10 bg-green-50 dark:bg-green-500/10 border border-green-200 dark:border-green-500/20 rounded-xl flex items-center justify-center mb-4">
+            <i class="fa fa-file-pdf-o text-green-600 dark:text-green-400"></i>
+          </div>
+          <h5 class="font-oswald font-semibold text-slate-900 dark:text-white uppercase tracking-wide text-sm mb-1">Documentación General</h5>
+          <p class="text-slate-500 dark:text-zinc-500 text-xs mb-5 leading-relaxed">Descarga los formatos oficiales para la inscripción de menores de edad.</p>
+          <button (click)="abrirYDescargarPdf()"
+            class="w-full bg-green-600 hover:bg-green-700 dark:bg-green-600 dark:hover:bg-green-500 text-white font-bold py-2.5 rounded-xl
+                   transition-all duration-200 flex items-center justify-center gap-2
+                   text-[10px] uppercase tracking-wider shadow-lg shadow-green-600/20 hover:-translate-y-0.5 active:translate-y-0">
+            <i class="fa fa-download"></i> Carta Permiso Padres
+          </button>
         </div>
 
-        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-          <div class="bg-white/80 backdrop-blur-md rounded-3xl shadow-2xl shadow-emerald-900/5 border border-white p-6 hover:shadow-emerald-200 transition-all transform hover:-translate-y-1">
-            <div class="w-12 h-12 bg-emerald-100 text-white-700 rounded-2xl flex items-center justify-center mb-4">
-              <i class="fa fa-file-pdf-o text-xl"></i>
-            </div>
-            <h5 class="font-black text-slate-900 text-lg mb-2 uppercase italic tracking-tighter">Documentación General</h5>
-            <p class="text-slate-500 text-xs mb-6 font-medium leading-relaxed">Descarga los formatos oficiales para la inscripción de menores de edad.</p>
-
-            <button (click)="abrirYDescargarPdf()"
-              class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-black py-3 rounded-xl transition-all flex items-center justify-center gap-2 shadow-xl shadow-emerald-500/20 uppercase text-[10px] tracking-widest">
-              <i class="fa fa-download"></i> Carta Permiso Padres
-            </button>
+        <div (click)="activarComp('torneosV')"
+          class="bg-white dark:bg-[#1b1b1f] border border-slate-200 dark:border-[#303038] rounded-2xl p-5 hover:border-slate-300 dark:hover:border-zinc-600 transition-colors cursor-pointer group hover:bg-slate-50 dark:hover:bg-[#202024]">
+          <div class="w-10 h-10 bg-amber-50 dark:bg-amber-500/10 border border-amber-200 dark:border-amber-500/20 rounded-xl flex items-center justify-center mb-4">
+            <i class="fa fa-trophy text-amber-600 dark:text-amber-400"></i>
+          </div>
+          <h5 class="font-oswald font-semibold text-slate-900 dark:text-white uppercase tracking-wide text-sm mb-1">Torneos</h5>
+          <p class="text-slate-500 dark:text-zinc-500 text-xs mb-5 leading-relaxed">Administra y gestiona los torneos activos del sistema.</p>
+          <div class="flex items-center gap-2 text-[10px] font-bold text-slate-400 dark:text-zinc-600 uppercase tracking-wider group-hover:text-amber-600 dark:group-hover:text-amber-400 transition-colors">
+            <span>Ir a torneos</span><i class="fa fa-arrow-right text-xs"></i>
           </div>
         </div>
-      </section>
+      </div>
+    </section>
 
-      <app-users *ngIf="estados['userV']"></app-users>
-      <app-torneos *ngIf="estados['torneosV']"></app-torneos>
-      <app-equipos *ngIf="estados['equiposV']"></app-equipos>
-      <app-jugadores *ngIf="estados['jugadoresV']"></app-jugadores>
-      <app-categorias *ngIf="estados['categoriasV']"></app-categorias>
-      <app-canchas *ngIf="estados['canchasV']"></app-canchas>
-      <app-jueces *ngIf="estados['juecesV']"></app-jueces>
-      
-    </div>
+    <app-users      *ngIf="estados['userV']"></app-users>
+    <app-torneos    *ngIf="estados['torneosV']"></app-torneos>
+    <app-equipos    *ngIf="estados['equiposV']"></app-equipos>
+    <app-jugadores  *ngIf="estados['jugadoresV']"></app-jugadores>
+    <app-categorias *ngIf="estados['categoriasV']"></app-categorias>
+    <app-canchas    *ngIf="estados['canchasV']"></app-canchas>
+    <app-jueces     *ngIf="estados['juecesV']"></app-jueces>
   </main>
-</div> 
+</div>

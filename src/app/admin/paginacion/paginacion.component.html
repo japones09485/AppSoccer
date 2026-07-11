@@ -1,14 +1,14 @@
-<nav aria-label="Page navigation" class="mt-8 flex flex-col items-center gap-4">
-  
-  <ul #verTodo [attr.data-expanded]="false" 
-      class="grid grid-cols-5 sm:grid-cols-10 gap-2 list-none p-0 transition-all duration-500">
-    
+﻿<nav aria-label="Page navigation" class="mt-6 flex flex-col items-center gap-3">
+
+  <ul #verTodo [attr.data-expanded]="false"
+    class="flex flex-wrap justify-center gap-1.5 list-none p-0 transition-all duration-500">
+
     <li *ngFor="let item of (verTodo.getAttribute('data-expanded') === 'true' ? numberPags : numberPags.slice(0, 10))">
-      <a class="flex items-center justify-center w-10 h-10 md:w-12 md:h-12 bg-emerald-600 hover:bg-emerald-500 text-white font-bold rounded-xl shadow-md transition-all active:scale-90 text-lg" 
-         href="javascript:void(0)" 
-         (click)="cambiarPagina(item)">
+      <button
+        class="flex items-center justify-center w-9 h-9 md:w-10 md:h-10 bg-green-600 hover:bg-green-700 dark:hover:bg-green-500 text-white font-bold rounded-xl text-sm shadow-sm shadow-green-600/20 transition-all active:scale-90 border border-green-700/20 dark:border-green-500/20"
+        (click)="cambiarPagina(item)">
         {{ item }}
-      </a>
+      </button>
     </li>
 
   </ul>
@@ -16,15 +16,18 @@
   <button *ngIf="numberPags.length > 10"
     type="button"
     (click)="verTodo.getAttribute('data-expanded') === 'false' ? verTodo.setAttribute('data-expanded', 'true') : verTodo.setAttribute('data-expanded', 'false')"
-    class="flex items-center gap-2 px-6 py-2 bg-slate-800 hover:bg-slate-700 text-yellow-400 font-bold rounded-full border border-slate-700 shadow-lg transition-all text-sm uppercase tracking-widest">
-    
+    class="flex items-center gap-2 px-5 py-2 bg-white dark:bg-[#1b1b1f] hover:bg-slate-50 dark:hover:bg-[#202024] text-slate-600 dark:text-zinc-400 font-bold rounded-xl border border-slate-200 dark:border-[#303038] shadow-sm transition-all text-xs uppercase tracking-wider">
+
     <span *ngIf="verTodo.getAttribute('data-expanded') === 'false'">
-      <i class="fa fa-plus-circle"></i> Ver más páginas ({{ numberPags.length - 10 }}+)
+      <i class="fa fa-plus-circle text-green-600 dark:text-green-400 mr-1"></i>
+      Ver más páginas ({{ numberPags.length - 10 }}+)
     </span>
-    
+
     <span *ngIf="verTodo.getAttribute('data-expanded') === 'true'">
-      <i class="fa fa-minus-circle"></i> Ver menos
+      <i class="fa fa-minus-circle text-green-600 dark:text-green-400 mr-1"></i>
+      Ver menos
     </span>
 
   </button>
+
 </nav>

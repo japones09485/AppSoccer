@@ -1,0 +1,29 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(python \"C:/Users/Usuario/AppData/Local/Temp/claude/g--Desarrollo-GitHub-appSoccer/fd71db44-a07c-49e8-85f6-e294d06df2ef/scratchpad/redesign.py\")",
+      "Bash(python -c ' *)",
+      "Bash(sed -i 's/class=\"group transition-all duration-200 hover:bg-slate-50 dark:hover:bg-\\\\[#1c2128\\\\]\"/class=\"group transition-all duration-200 hover:bg-slate-50 dark:hover:bg-[#1c2128]\" data-animate/g' src/app/admin/canchas/canchas.component.html)",
+      "Bash(sed -i 's/class=\"bg-white dark:bg-\\\\[#161b22\\\\] border border-slate-200 dark:border-\\\\[#30363d\\\\] rounded-2xl overflow-hidden\"/class=\"bg-white dark:bg-[#161b22] border border-slate-200 dark:border-[#30363d] rounded-2xl overflow-hidden animate-fade-up\"/g' src/app/admin/canchas/canchas.component.html)",
+      "Bash(sed -i 's/class=\"group transition-all duration-200 hover:bg-slate-50 dark:hover:bg-\\\\[#1c2128\\\\]\"/class=\"group transition-all duration-200 hover:bg-slate-50 dark:hover:bg-[#1c2128]\" data-animate/g' src/app/admin/categorias/categorias.component.html)",
+      "Bash(sed -i 's/class=\"hover:bg-slate-50 dark:hover:bg-\\\\[#1c2128\\\\] transition-colors\"/class=\"hover:bg-slate-50 dark:hover:bg-[#1c2128] transition-colors\" data-animate/g' src/app/admin/jueces/jueces.component.html)",
+      "Bash(sed -i 's/class=\"bg-white dark:bg-\\\\[#161b22\\\\] rounded-2xl border border-slate-200 dark:border-\\\\[#30363d\\\\] p-4 space-y-3\"/class=\"bg-white dark:bg-[#161b22] rounded-2xl border border-slate-200 dark:border-[#30363d] p-4 space-y-3 animate-fade-up\"/g' src/app/admin/jueces/jueces.component.html)",
+      "Bash(sed -i 's/class=\"hover:bg-slate-50 dark:hover:bg-\\\\[#1c2128\\\\] transition-colors group\"/class=\"hover:bg-slate-50 dark:hover:bg-[#1c2128] transition-colors group\" data-animate/g' src/app/admin/equipos/equipos.component.html)",
+      "Bash(sed -i 's/class=\"group h-full\"/class=\"group h-full animate-fade-up\"/g' src/app/admin/torneos/torneos.component.html)",
+      "Bash(sed -i 's/class=\"group transition-all duration-200 hover:bg-slate-50 dark:hover:bg-\\\\[#1c2128\\\\]\"/class=\"group transition-all duration-200 hover:bg-slate-50 dark:hover:bg-[#1c2128]\" data-animate/g' src/app/admin/torneos/torneos.component.html)",
+      "Bash(sed -i 's/hover:border-green-500\\\\/30 hover:-translate-y-1/hover:border-green-500\\\\/30 card-hover/g' src/app/admin/torneos/torneos.component.html)",
+      "Bash(sed -i 's/class=\"group h-full\" \\\\*ngFor/class=\"group h-full animate-fade-up\" *ngFor/g' src/app/admin/equipos/equipos.component.html)",
+      "Bash(sed -i 's/bg-amber-500\\\\/10 hover:bg-amber-500/bg-amber-500\\\\/20 hover:bg-amber-500/g' src/app/admin/admin-equipo/admin-equipo.component.html)",
+      "Bash(sed -i 's/bg-red-500\\\\/10 hover:bg-red-500/bg-red-500\\\\/20 hover:bg-red-500/g' src/app/admin/admin-equipo/admin-equipo.component.html)",
+      "Bash(sed -i 's/bg-sky-500\\\\/10 hover:bg-sky-500/bg-sky-500\\\\/20 hover:bg-sky-500/g' src/app/admin/admin-equipo/admin-equipo.component.html)",
+      "Bash(sed -i 's/border-amber-500\\\\/20/border-amber-500\\\\/40/g' src/app/admin/admin-equipo/admin-equipo.component.html)",
+      "Bash(sed -i 's/border-red-500\\\\/20/border-red-500\\\\/40/g' src/app/admin/admin-equipo/admin-equipo.component.html)",
+      "Bash(Get-ChildItem -Path \"g:\\\\Desarrollo\\\\GitHub\\\\appSoccer\\\\src\\\\app\" -Recurse -Directory)",
+      "Bash(Select-Object FullName)",
+      "Bash(Head -50)",
+      "PowerShell(Get-ChildItem -Path \"g:\\\\Desarrollo\\\\GitHub\\\\appSoccer\\\\src\\\\app\" -Recurse -Directory | ForEach-Object { $_.FullName.Replace\\(\"g:\\\\Desarrollo\\\\GitHub\\\\appSoccer\\\\src\\\\app\\\\\", \"\"\\) })",
+      "Bash(git stash *)",
+      "Bash(git checkout *)"
+    ]
+  }
+}

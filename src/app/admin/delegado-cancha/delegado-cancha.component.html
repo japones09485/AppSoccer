@@ -1,141 +1,155 @@
-<div class="contenedorF min-h-screen py-4 md:py-8 text-slate-900 font-sans text-base" id="content">
-  
-  <div class="container mx-auto px-4 md:px-6">
+<div class="min-h-screen bg-slate-100 dark:bg-[#111114] antialiased" id="content">
 
-    <!-- BOTÓN CERRAR -->
-    <div class="flex justify-end mb-6">
-      <button class="bg-rose-600 hover:bg-rose-700 text-white w-12 h-12 rounded-xl shadow-md transition-all active:scale-95 flex items-center justify-center" (click)="cerrarSesion()">
-        <i class="fa fa-sign-out text-lg"></i>
-      </button>
-    </div>
+  <div class="w-full max-w-7xl mx-auto px-4 md:px-8 py-6 md:py-10">
 
     <!-- HEADER -->
-    <div id="title" class="text-center mb-12">
-      <img src="../../../assets/img/logo.png" class="h-24 md:h-32 mx-auto mb-6 drop-shadow-md" alt="Logo">
+    <div class="flex flex-col items-center gap-6 mb-8 text-center">
 
-      <h1 class="text-4xl md:text-6xl font-extrabold italic uppercase tracking-tight text-white leading-tight">
-        Eventos <span class="text-emerald-600">deportivos</span><br>
-        <span class="text-lg md:text-2xl not-italic tracking-[0.2em] text-white">Soccer Melgar</span>
-      </h1>
+      <img src="../../../assets/img/logo.png" class="h-20 md:h-28 drop-shadow-xl" alt="Logo">
 
-        <div class="d-flex justify-content-center mt-3">
-            <div class="col-md-3">
-              <select [(ngModel)]="filtroEstado" (change)="filtrarEstado(filtroEstado)" class="form-select">
-                <option [ngValue]="''">Todos los estados</option>
-                <option [ngValue]="0">Inactivo</option>
-                <option [ngValue]="1">En proceso</option>
-                <option [ngValue]="2">Finalizado</option>
-              </select>
-            </div>
-          </div>
+      <!-- Línea decorativa -->
+      <div class="flex items-center gap-3 w-full max-w-xs">
+        <div class="h-px bg-green-600 flex-1"></div>
+        <i class="fa fa-trophy text-green-600 dark:text-green-500 text-lg"></i>
+        <div class="h-px bg-green-600 flex-1"></div>
+      </div>
 
+      <div>
+        <h1 class="font-bebas text-5xl md:text-6xl tracking-widest text-slate-900 dark:text-white leading-none">
+          EVENTOS <span class="text-green-600 dark:text-green-500">DEPORTIVOS</span>
+        </h1>
+        <p class="text-slate-400 dark:text-zinc-500 font-bold uppercase tracking-[0.3em] text-xs mt-2">Soccer Melgar</p>
+      </div>
 
-      <div class="flex justify-center gap-4 mt-8">
-        <button class="bg-sky-100 hover:bg-sky-200 text-sky-900 w-14 h-14 rounded-full shadow-sm transition-all active:scale-90 flex items-center justify-center border border-sky-200" title="Equipos" (click)="Equipos()">
-          <i class="fa fa-table text-xl"></i>
+      <!-- ACCESOS RÁPIDOS + CERRAR SESIÓN -->
+      <div class="flex items-center gap-3">
+        <button title="Equipos" (click)="Equipos()"
+          class="bg-sky-500/15 dark:bg-sky-500/20 hover:bg-sky-500 text-sky-600 dark:text-sky-400 hover:text-white w-12 h-12 rounded-2xl transition-all active:scale-90 flex items-center justify-center border border-sky-500/40 hover:border-sky-500">
+          <i class="fa fa-table text-base"></i>
         </button>
-
-        <button class="bg-amber-100 hover:bg-amber-200 text-amber-900 w-14 h-14 rounded-full shadow-sm transition-all active:scale-90 flex items-center justify-center border border-amber-200" title="Jugadores" (click)="Jugadores()">
-          <i class="fa fa-user text-xl"></i>
+        <button title="Jugadores" (click)="Jugadores()"
+          class="bg-amber-500/15 dark:bg-amber-500/20 hover:bg-amber-500 text-amber-600 dark:text-amber-400 hover:text-white w-12 h-12 rounded-2xl transition-all active:scale-90 flex items-center justify-center border border-amber-500/40 hover:border-amber-500">
+          <i class="fa fa-user text-base"></i>
+        </button>
+        <button (click)="cerrarSesion()"
+          class="bg-red-500/15 dark:bg-red-500/20 hover:bg-red-500 text-red-600 dark:text-red-400 hover:text-white w-12 h-12 rounded-2xl transition-all active:scale-90 flex items-center justify-center border border-red-500/40 hover:border-red-500">
+          <i class="fa fa-sign-out text-base"></i>
         </button>
       </div>
+
     </div>
 
-    <!-- FILTRO -->
-    <div class="max-w-4xl mx-auto mb-16 space-y-6  p-6 md:p-8 rounded-2xl border border-slate-200 shadow-sm">
-      
-      <div class="text-center">
-        <p class="text-white text-sm md:text-base font-bold uppercase tracking-wide leading-relaxed">
-          Selecciona la fecha de inicio y fin para mostrar torneos dentro de ese rango.
-        </p>
-      </div>
+    <!-- FILTROS -->
+    <div class="bg-white dark:bg-[#1b1b1f] border border-slate-200 dark:border-[#303038] rounded-2xl p-5 md:p-6 mb-8 shadow-sm">
 
-      <div class="grid grid-cols-1 md:grid-cols-12 gap-4 items-center">
-        
-        <div class="md:col-span-4">
+      <p class="text-slate-500 dark:text-zinc-400 text-xs font-bold uppercase tracking-widest mb-4 text-center">
+        Filtrar torneos por rango de fechas o estado
+      </p>
+
+      <div class="grid grid-cols-1 md:grid-cols-12 gap-3 items-end">
+
+        <div class="md:col-span-3">
+          <label class="text-[9px] font-black uppercase tracking-widest text-green-600 dark:text-green-500 block mb-1.5">Fecha inicio</label>
           <input type="date" [(ngModel)]="fechaInicio"
-            class="w-full bg-white border border-slate-300 rounded-xl px-5 py-3 text-slate-900 text-sm font-bold outline-none focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 text-center">
+            class="w-full bg-white dark:bg-zinc-900 border border-slate-300 dark:border-zinc-700 rounded-xl px-4 py-2.5 text-slate-900 dark:text-white text-sm font-bold outline-none focus:border-green-500 focus:ring-1 focus:ring-green-500/20 transition-colors [color-scheme:light] dark:[color-scheme:dark]">
         </div>
 
-        <div class="md:col-span-4">
+        <div class="md:col-span-3">
+          <label class="text-[9px] font-black uppercase tracking-widest text-slate-500 dark:text-zinc-400 block mb-1.5">Fecha fin</label>
           <input type="date" [(ngModel)]="fechaFin"
-            class="w-full bg-white border border-slate-300 rounded-xl px-5 py-3 text-slate-900 text-sm font-bold outline-none focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 text-center">
+            class="w-full bg-white dark:bg-zinc-900 border border-slate-300 dark:border-zinc-700 rounded-xl px-4 py-2.5 text-slate-900 dark:text-white text-sm font-bold outline-none focus:border-green-500 focus:ring-1 focus:ring-green-500/20 transition-colors [color-scheme:light] dark:[color-scheme:dark]">
+        </div>
+
+        <div class="md:col-span-3">
+          <label class="text-[9px] font-black uppercase tracking-widest text-slate-500 dark:text-zinc-400 block mb-1.5">Estado</label>
+          <div class="relative">
+            <select [(ngModel)]="filtroEstado" (change)="filtrarEstado(filtroEstado)"
+              class="w-full bg-white dark:bg-zinc-900 border border-slate-300 dark:border-zinc-700 text-slate-900 dark:text-white rounded-xl px-4 py-2.5 font-black text-xs uppercase outline-none focus:border-green-500 appearance-none cursor-pointer">
+              <option [ngValue]="''">Todos los estados</option>
+              <option [ngValue]="0">Inactivo</option>
+              <option [ngValue]="1">En proceso</option>
+              <option [ngValue]="2">Finalizado</option>
+            </select>
+            <i class="fa fa-chevron-down absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 text-xs pointer-events-none"></i>
+          </div>
         </div>
 
         <div class="md:col-span-2">
-          <button (click)="tomarFechas()" 
-          class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-3 px-4 rounded-xl text-xs tracking-wide shadow-sm flex items-center justify-center gap-2">
+          <button (click)="tomarFechas()"
+            class="w-full bg-green-600 hover:bg-green-700 text-white font-black py-2.5 px-4 rounded-xl text-xs tracking-widest flex items-center justify-center gap-2 transition-all active:scale-95 shadow-md shadow-green-600/20">
             <i class="fa fa-search"></i> Buscar
           </button>
         </div>
 
-        <div class="md:col-span-2">
-          <button (click)="ngOnInit()" 
-          class="w-full bg-slate-200 hover:bg-rose-600 hover:text-white text-slate-800 font-bold py-3 px-4 rounded-xl text-xs tracking-wide shadow-sm flex items-center justify-center gap-2">
-            <i class="fa fa-trash"></i> Limpiar
+        <div class="md:col-span-1">
+          <button (click)="ngOnInit()"
+            class="w-full bg-slate-100 dark:bg-zinc-800 hover:bg-red-500/20 hover:text-red-500 text-slate-500 dark:text-zinc-400 border border-slate-200 dark:border-zinc-700 font-black py-2.5 px-3 rounded-xl text-xs flex items-center justify-center gap-1.5 transition-all active:scale-95">
+            <i class="fa fa-trash"></i>
           </button>
         </div>
 
       </div>
     </div>
 
-    <!-- CARDS -->
-    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+    <!-- CARDS TORNEOS -->
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5">
 
-      <div class="group h-full" *ngFor="let torneo of torneosFiltrados">
+      <div *ngFor="let torneo of torneosFiltrados"
+        class="bg-white dark:bg-[#1b1b1f] border border-slate-200 dark:border-[#303038] rounded-2xl overflow-hidden hover:border-green-500/40 dark:hover:border-green-500/30 hover:-translate-y-1 transition-all duration-300 flex flex-col shadow-sm group">
 
-        <div class="relative h-full bg-white/50 border border-slate-200 rounded-2xl overflow-hidden shadow-lg transition-all duration-300 hover:border-emerald-500 hover:-translate-y-2 flex flex-col">
+        <!-- Borde verde superior -->
+        <div class="h-0.5 bg-gradient-to-r from-green-600 to-transparent"></div>
 
-          <!-- IMAGEN -->
-          <div class="h-44 relative overflow-hidden bg-slate-100">
-            <img [src]="pathIm + torneo.img1" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105">
+        <!-- IMAGEN -->
+        <div class="h-44 relative overflow-hidden bg-slate-100 dark:bg-black/20">
+          <img [src]="pathIm + torneo.img1" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105">
+          <button title="Información del torneo"
+            class="absolute top-2 right-2 w-9 h-9 bg-indigo-600/90 hover:bg-indigo-600 text-white rounded-xl flex items-center justify-center text-xs transition-all shadow-md"
+            (click)="InfoTorneo(torneo.id)">
+            <i class="fa fa-info"></i>
+          </button>
+        </div>
 
-            <div class="absolute top-3 right-3">
-              <button title="Informacion del torneo" class="bg-blue-600 text-slate-800 w-10 h-10 rounded-lg flex items-center justify-center hover:bg-emerald-600 hover:text-white transition shadow-sm" (click)="InfoTorneo(torneo.id)">
-                <i class="fa fa-info"></i>
-              </button>
+        <!-- CONTENIDO -->
+        <div class="p-5 flex flex-col flex-grow gap-3">
 
-              
-            </div>
+          <h5 class="font-oswald font-black uppercase text-slate-900 dark:text-white leading-tight text-center group-hover:text-green-600 dark:group-hover:text-green-400 transition-colors">
+            {{ torneo.nombre }}
+          </h5>
+
+          <div>
+            <span class="text-green-600 dark:text-green-400 font-black uppercase block mb-1 text-[10px] tracking-widest">Descripción</span>
+            <p class="text-xs text-slate-500 dark:text-zinc-400 leading-relaxed">{{ torneo.descripcion | slice:0:80 }}...</p>
           </div>
 
-          <!-- CONTENIDO -->
-          <div class="p-5 flex flex-col flex-grow space-y-4">
+          <div class="flex justify-between text-[10px] font-bold text-slate-400 dark:text-zinc-500 uppercase">
+            <span>{{ torneo.fecha_inicio }}</span>
+            <span>{{ torneo.fecha_fin }}</span>
+          </div>
 
-            <h5 class="text-lg font-extrabold uppercase text-slate-900 text-center group-hover:text-emerald-600 transition">
-              {{ torneo.nombre }}
-            </h5>
+          <div class="flex justify-between text-xs font-bold pt-2 border-t border-slate-100 dark:border-zinc-800">
+            <span class="text-slate-400 dark:text-zinc-500">Fases</span>
+            <span class="bg-slate-100 dark:bg-zinc-800 text-slate-600 dark:text-zinc-300 px-2.5 py-0.5 rounded-lg font-mono">{{ torneo.num_fases }}</span>
+          </div>
 
-            <div class="text-sm text-slate-700">
-              <span class="text-emerald-600 text-xs font-bold uppercase block mb-1">Descripción</span>
-              {{ torneo.descripcion | slice:0:80 }}...
+          <div class="flex justify-between text-xs font-bold">
+            <span class="text-slate-400 dark:text-zinc-500">Categoría</span>
+            <span class="text-sky-600 dark:text-sky-400">{{ getNombreCategoria(torneo.categoria) }}</span>
+          </div>
+
+          <div class="mt-auto pt-1">
+            <div *ngIf="torneo.estado == 0"
+              class="w-full text-center py-1.5 rounded-xl bg-red-50 dark:bg-red-500/10 text-red-600 dark:text-red-400 border border-red-200 dark:border-red-500/20 text-[10px] font-black uppercase">
+              Inactivo
             </div>
-
-            <div class="flex justify-between text-xs font-bold text-slate-700">
-              <span>{{ torneo.fecha_inicio }}</span>
-              <span>{{ torneo.fecha_fin }}</span>
+            <div *ngIf="torneo.estado == 1"
+              class="w-full text-center py-1.5 rounded-xl bg-green-50 dark:bg-green-500/10 text-green-700 dark:text-green-400 border border-green-200 dark:border-green-500/20 text-[10px] font-black uppercase">
+              En proceso
             </div>
-
-            <div class="flex justify-between text-xs font-bold pt-2 border-t">
-              <span>Fases</span>
-              <span class="bg-slate-100 px-3 py-1 rounded-lg">{{ torneo.num_fases }}</span>
+            <div *ngIf="torneo.estado == 2"
+              class="w-full text-center py-1.5 rounded-xl bg-sky-50 dark:bg-sky-500/10 text-sky-600 dark:text-sky-400 border border-sky-200 dark:border-sky-500/20 text-[10px] font-black uppercase">
+              Finalizado
             </div>
-
-            <div class="flex justify-between text-xs font-bold">
-              <span>Categoría</span>
-              <span class="text-sky-600">{{ getNombreCategoria(torneo.categoria) }}</span>
-            </div>
-
-            <div class="pt-3 mt-auto">
-              <div *ngIf="torneo.estado == 1" class="w-full text-center py-2 rounded-xl bg-sky-600 text-white text-xs font-bold">
-                En proceso
-              </div>
-
-              <div *ngIf="torneo.estado == 2" class="w-full text-center py-2 rounded-xl bg-emerald-600 text-white text-xs font-bold">
-                Finalizado
-              </div>
-            </div>
-
           </div>
 
         </div>
@@ -145,11 +159,13 @@
     </div>
 
     <!-- VACÍO -->
-    <div *ngIf="torneos?.length === 0" class="text-center py-16 bg-slate-50 rounded-2xl mt-12 border border-slate-200">
-      <p class="text-slate-600 font-bold uppercase tracking-widest text-sm">
+    <div *ngIf="torneos?.length === 0"
+      class="text-center py-16 bg-white dark:bg-[#1b1b1f] border border-slate-200 dark:border-[#303038] rounded-2xl mt-8 shadow-sm">
+      <i class="fa fa-trophy text-slate-200 dark:text-zinc-700 text-5xl mb-4 block"></i>
+      <p class="text-slate-400 dark:text-zinc-500 font-black uppercase tracking-widest text-sm">
         No se encontraron torneos en este rango
       </p>
     </div>
 
   </div>
-</div> 
+</div>

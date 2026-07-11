@@ -1,121 +1,102 @@
-<div class="contenedorF min-h-screen bg-slate-50 antialiased">
+﻿<div class="min-h-screen bg-slate-100 dark:bg-[#111114] antialiased">
 
-  <div *ngIf="!this.creando" class="w-full max-w-7xl mx-auto p-0 md:p-8 space-y-0 md:space-y-6">
+  <!-- ══════════════════════════ VISTA LISTA ══════════════════════════ -->
+  <div *ngIf="!this.creando" class="w-full max-w-7xl mx-auto px-4 py-6 md:px-8 md:py-10">
 
     <!-- HEADER -->
-    <div
-      class="p-6 md:p-0 flex flex-col gap-4 md:flex-row md:items-center md:justify-between md:bg-transparent border-b md:border-none border-slate-200">
-      <div>
-        <h1 class="text-2xl md:text-3xl font-black text-white flex items-center gap-3">
-          <div class="bg-emerald-500 p-2 rounded-xl shadow-lg shadow-emerald-500/20">
-            <i class="fa fa-flag text-white"></i>
-          </div>
-          CANCHAS / SEDES
-        </h1>
-        <p class="text-white text-[10px] mt-1 ml-1 font-black uppercase tracking-[0.2em] opacity-60 italic">
-          Administración de escenarios deportivos
-        </p>
-      </div>
-    </div>
+    <div class="mb-8 flex flex-col gap-5 md:flex-row md:items-center md:justify-between">
 
-    <!-- BOTÓN FLOAT -->
-    <div class="md:hidden fixed bottom-6 right-6 z-50">
+      <div class="flex items-center gap-4">
+        <!-- Icono -->
+        <div class="relative shrink-0">
+          <div class="w-14 h-14 bg-green-600 rounded-2xl flex items-center justify-center shadow-lg shadow-green-600/30">
+            <i class="fa fa-flag text-xl text-white"></i>
+          </div>
+          <span class="absolute -top-1 -right-1 w-3.5 h-3.5 bg-green-400 rounded-full animate-ping opacity-60"></span>
+          <span class="absolute -top-1 -right-1 w-3.5 h-3.5 bg-green-500 rounded-full"></span>
+        </div>
+        <div>
+          <h1 class="font-bebas text-4xl md:text-5xl tracking-widest text-slate-900 dark:text-white leading-none">
+            CANCHAS <span class="text-green-600 dark:text-green-400">/</span> SEDES
+          </h1>
+          <p class="text-slate-500 dark:text-zinc-400 text-[10px] font-bold uppercase tracking-[0.25em] mt-1">
+            Administración de escenarios deportivos
+          </p>
+        </div>
+      </div>
+
+      <!-- Botón solo desktop -->
       <button (click)="addCancha()"
-        class="bg-emerald-500 text-white w-16 h-16 rounded-2xl shadow-2xl flex items-center justify-center active:scale-95 transition-transform border-4 border-white">
-        <i class="fa fa-plus text-2xl"></i>
+        class="hidden md:inline-flex items-center gap-2 bg-green-600 hover:bg-green-700 dark:hover:bg-green-500 text-white px-5 py-2.5 rounded-xl font-bold uppercase text-xs tracking-wider transition-all duration-200 shadow-lg shadow-green-600/25 hover:-translate-y-0.5 active:translate-y-0">
+        <i class="fa fa-plus text-xs"></i>
+        Nueva Cancha
       </button>
     </div>
 
-    <!-- MOBILE -->
-    <div class="grid grid-cols-1 md:hidden">
-      <div *ngFor="let cat of canchas; let i = index"
-        [ngClass]="i % 2 === 0 ? 'bg-white' : 'bg-slate-100/60'"
-        class="p-6 border-b border-slate-200 flex items-center justify-between gap-4">
-
-        <div class="flex-1 space-y-2">
-          <div class="flex items-center gap-2">
-            <span class="p-4 text-center font-mono text-[14px] text-bold-600">#{{cat.id}}</span>
-          </div>
-
-          <h2 class="text-xl font-black text-slate-800 uppercase leading-tight tracking-tight break-words">
-            {{cat.nombre}}
-          </h2>
-
-          <p class="text-xs text-slate-500 italic">
-            {{ cat.descripcion || 'Sin descripción disponible' }}
-          </p>
-
-          <div class="flex items-center gap-3">
-            <div [ngClass]="cat.estado == 1 ? 'bg-emerald-500' : 'bg-rose-500'"
-              class="w-2 h-2 rounded-full animate-pulse"></div>
-            <span class="text-[10px] font-black uppercase text-slate-400 tracking-widest italic">
-              {{ cat.estado == 1 ? 'Disponible' : 'Mantenimiento' }}
-            </span>
-          </div>
-        </div>
-
-        <div class="flex gap-2">
-          <button (click)="editCancha(cat.id!)"
-            class="bg-amber-500 text-white w-12 h-12 rounded-2xl flex items-center justify-center active:scale-95 transition-all shadow-lg shadow-amber-500/20">
-            <i class="fa fa-edit text-lg"></i>
-          </button>
-
-          <button (click)="deleteCancha(cat.id!)"
-            class="bg-rose-500 text-white w-12 h-12 rounded-2xl flex items-center justify-center active:scale-95 transition-all shadow-lg shadow-rose-500/20">
-            <i class="fa fa-trash text-lg"></i>
-          </button>
-        </div>
-      </div>
+    <!-- Línea decorativa -->
+    <div class="flex items-center gap-3 mb-6">
+      <div class="h-px bg-green-600 w-12"></div>
+      <div class="w-1.5 h-1.5 bg-green-600 rounded-full"></div>
+      <div class="h-px bg-slate-200 dark:bg-zinc-800 flex-1"></div>
     </div>
 
-    <!-- TABLA DESKTOP -->
-    <div
-      class="hidden md:block overflow-hidden shadow-2xl shadow-slate-200/50 rounded-[2rem] border border-slate-200 bg-white">
+    <!-- ─── TABLA DESKTOP ─── -->
+    <div class="hidden md:block rounded-2xl overflow-hidden border border-slate-200 dark:border-[#303038] bg-white dark:bg-[#1b1b1f] shadow-xl">
       <table class="min-w-full border-separate border-spacing-0">
-        <thead class="bg-slate-900 text-white">
-          <tr>
-            <th class="p-5 text-center w-24 border-b border-slate-800">
+        <thead>
+          <tr class="bg-slate-50 dark:bg-[#252529]">
+            <th class="p-4 w-28 border-b border-slate-200 dark:border-[#303038]">
               <button (click)="addCancha()"
-                class="bg-emerald-500 hover:bg-emerald-400 text-slate-900 w-10 h-10 rounded-xl transition-all flex items-center justify-center mx-auto shadow-lg">
-                <i class="fa fa-plus"></i>
+                class="bg-green-600 hover:bg-green-700 dark:hover:bg-green-500 text-white w-9 h-9 rounded-xl transition-all duration-200 flex items-center justify-center mx-auto shadow-md shadow-green-600/30 hover:scale-110 active:scale-95 btn-action">
+                <i class="fa fa-plus text-xs"></i>
               </button>
             </th>
-            <th class="p-5 text-center border-b border-slate-800 text-[10px] font-black uppercase">ID</th>
-            <th class="p-5 text-left border-b border-slate-800 text-[10px] font-black uppercase">Nombre</th>
-            <th class="p-5 text-left border-b border-slate-800 text-[10px] font-black uppercase">Descripción</th>
-            <th class="p-5 text-right pr-10 border-b border-slate-800 text-[10px] font-black uppercase">Estado</th>
+            <th class="p-4 text-center text-[10px] font-black uppercase tracking-[0.2em] text-slate-500 dark:text-zinc-400 border-b border-slate-200 dark:border-[#303038]">#</th>
+            <th class="p-4 text-left   text-[10px] font-black uppercase tracking-[0.2em] text-slate-500 dark:text-zinc-400 border-b border-slate-200 dark:border-[#303038]">Nombre</th>
+            <th class="p-4 text-left   text-[10px] font-black uppercase tracking-[0.2em] text-slate-500 dark:text-zinc-400 border-b border-slate-200 dark:border-[#303038]">Descripción</th>
+            <th class="p-4 text-right pr-8 text-[10px] font-black uppercase tracking-[0.2em] text-slate-500 dark:text-zinc-400 border-b border-slate-200 dark:border-[#303038]">Estado</th>
           </tr>
         </thead>
+        <tbody class="divide-y divide-slate-100 dark:divide-[#303038] anim-rows">
+          <tr *ngFor="let cat of canchas; let i = index"
+            class="group hover:bg-slate-50 dark:hover:bg-[#202024] transition-colors">
 
-        <tbody class="divide-y divide-slate-100">
-          <tr *ngFor="let cat of canchas" class="group hover:bg-slate-50 transition-all">
-
-            <td class="p-5 text-center flex gap-2 justify-center">
-              <button (click)="editCancha(cat.id!)"
-                class="bg-amber-500 text-white w-14 h-14 rounded-2xl flex items-center justify-center shadow-lg shadow-amber-500/30 hover:scale-110 active:scale-95 transition-all">
-                <i class="fa fa-edit text-xl"></i>
-              </button>
-
-              <button (click)="deleteCancha(cat.id!)"
-                class="bg-rose-500 text-white w-14 h-14 rounded-2xl flex items-center justify-center shadow-lg shadow-rose-500/30 hover:scale-110 active:scale-95 transition-all">
-                <i class="fa fa-trash text-xl"></i>
-              </button>
+            <!-- Acciones -->
+            <td class="p-4">
+              <div class="flex gap-2 justify-center">
+                <button (click)="editCancha(cat.id!)"
+                  class="bg-amber-500/15 dark:bg-amber-500/20 hover:bg-amber-500 text-amber-600 hover:text-white dark:text-amber-300 w-9 h-9 rounded-xl flex items-center justify-center border border-amber-500/40 hover:border-amber-500 transition-all duration-200 hover:scale-110 active:scale-95 btn-action">
+                  <i class="fa fa-edit text-xs"></i>
+                </button>
+                <button (click)="deleteCancha(cat.id!)"
+                  class="bg-red-500/15 dark:bg-red-500/20 hover:bg-red-500 text-red-600 hover:text-white dark:text-red-300 w-9 h-9 rounded-xl flex items-center justify-center border border-red-500/40 hover:border-red-500 transition-all duration-200 hover:scale-110 active:scale-95 btn-action">
+                  <i class="fa fa-trash text-xs"></i>
+                </button>
+              </div>
             </td>
 
-            <td class="p-4 text-center font-mono text-[14px]">#{{cat.id}}</td>
-
-            <td class="p-5 text-left font-black text-slate-700 uppercase tracking-tight">
-              {{cat.nombre}}
+            <td class="p-4 text-center">
+              <span class="text-slate-500 dark:text-zinc-400 font-mono text-xs">{{ i + 1 }}</span>
             </td>
 
-            <td class="p-5 text-left text-slate-500 text-sm max-w-xs">
-              {{cat.descripcion}}
+            <td class="p-4">
+              <span class="font-oswald font-semibold uppercase tracking-wide text-sm text-slate-900 dark:text-white group-hover:text-green-600 dark:group-hover:text-green-400 transition-colors duration-200">
+                {{ cat.nombre }}
+              </span>
             </td>
 
-            <td class="p-5 text-right pr-10">
+            <td class="p-4 max-w-xs">
+              <span class="text-slate-500 dark:text-zinc-400 text-sm">{{ cat.descripcion || '—' }}</span>
+            </td>
+
+            <td class="p-4 pr-8 text-right">
               <span
-                [ngClass]="cat.estado == 1 ? 'bg-emerald-50 text-emerald-700 border-emerald-100' : 'bg-rose-50 text-rose-700 border-rose-100'"
-                class="px-3 py-1 rounded-lg text-[10px] font-black uppercase border italic">
+                [ngClass]="cat.estado == 1
+                  ? 'bg-emerald-50 text-emerald-700 border-emerald-200 dark:bg-emerald-500/10 dark:text-emerald-400 dark:border-emerald-500/20'
+                  : 'bg-red-50 text-red-600 border-red-200 dark:bg-red-500/10 dark:text-red-300 dark:border-red-500/20'"
+                class="inline-flex items-center gap-1.5 px-3 py-1 rounded-lg text-[10px] font-bold uppercase border tracking-wider">
+                <span [ngClass]="cat.estado == 1 ? 'bg-emerald-500 dark:bg-emerald-400' : 'bg-red-500 dark:bg-red-400'"
+                  class="w-1.5 h-1.5 rounded-full animate-pulse"></span>
                 {{ cat.estado == 1 ? 'Disponible' : 'Mantenimiento' }}
               </span>
             </td>
@@ -123,85 +104,153 @@
           </tr>
         </tbody>
       </table>
+
+      <!-- Empty state desktop -->
+      <div *ngIf="canchas.length === 0" class="flex flex-col items-center justify-center py-16 text-slate-300 dark:text-zinc-700">
+        <i class="fa fa-flag text-5xl mb-4 opacity-30"></i>
+        <p class="font-bebas text-xl tracking-widest">SIN CANCHAS REGISTRADAS</p>
+      </div>
     </div>
+
+    <!-- ─── CARDS MOBILE ─── -->
+    <div class="md:hidden space-y-3">
+      <div *ngFor="let cat of canchas; let i = index"
+        class="bg-white dark:bg-[#1b1b1f] border border-slate-200 dark:border-[#303038] rounded-2xl overflow-hidden animate-fade-up">
+
+        <!-- Borde verde superior -->
+        <div class="h-0.5 bg-gradient-to-r from-green-600 to-transparent"></div>
+
+        <div class="p-4 flex items-start justify-between gap-3">
+          <div class="flex-1 space-y-2">
+
+            <div class="flex items-center gap-2">
+              <span class="text-slate-500 dark:text-zinc-400 font-mono text-[10px]">#{{ i + 1 }}</span>
+              <span
+                [ngClass]="cat.estado == 1
+                  ? 'bg-emerald-50 text-emerald-700 border-emerald-200 dark:bg-emerald-500/10 dark:text-emerald-400 dark:border-emerald-500/20'
+                  : 'bg-red-50 text-red-600 border-red-200 dark:bg-red-500/10 dark:text-red-300 dark:border-red-500/20'"
+                class="inline-flex items-center gap-1 px-2 py-0.5 rounded text-[9px] font-bold uppercase border tracking-wider">
+                <span [ngClass]="cat.estado == 1 ? 'bg-emerald-500 dark:bg-emerald-400' : 'bg-red-500 dark:bg-red-400'"
+                  class="w-1 h-1 rounded-full animate-pulse"></span>
+                {{ cat.estado == 1 ? 'Disponible' : 'Mantenimiento' }}
+              </span>
+            </div>
+
+            <h2 class="font-oswald font-semibold text-lg text-slate-900 dark:text-white uppercase tracking-wide leading-tight">
+              {{ cat.nombre }}
+            </h2>
+
+            <p class="text-xs text-slate-500 dark:text-zinc-400 leading-relaxed">
+              {{ cat.descripcion || 'Sin descripción disponible' }}
+            </p>
+          </div>
+
+          <div class="flex gap-2 shrink-0 mt-1">
+            <button (click)="editCancha(cat.id!)"
+              class="bg-amber-500/15 dark:bg-amber-500/20 hover:bg-amber-500 text-amber-600 hover:text-white dark:text-amber-300 w-9 h-9 rounded-xl flex items-center justify-center border border-amber-500/40 hover:border-amber-500 transition-all duration-200 hover:scale-110 active:scale-95 btn-action">
+              <i class="fa fa-edit text-sm"></i>
+            </button>
+            <button (click)="deleteCancha(cat.id!)"
+              class="bg-red-500/15 dark:bg-red-500/20 hover:bg-red-500 text-red-600 hover:text-white dark:text-red-300 w-9 h-9 rounded-xl flex items-center justify-center border border-red-500/40 hover:border-red-500 transition-all duration-200 hover:scale-110 active:scale-95 btn-action">
+              <i class="fa fa-trash text-sm"></i>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Empty state mobile -->
+      <div *ngIf="canchas.length === 0" class="flex flex-col items-center justify-center py-14 text-slate-300 dark:text-zinc-700">
+        <i class="fa fa-flag text-4xl mb-3 opacity-30"></i>
+        <p class="font-bebas text-lg tracking-widest">SIN CANCHAS REGISTRADAS</p>
+      </div>
+    </div>
+
+    <!-- FAB Mobile -->
+    <div class="md:hidden fixed bottom-6 right-6 z-50">
+      <button (click)="addCancha()"
+        class="bg-green-600 hover:bg-green-700 text-white w-14 h-14 rounded-2xl shadow-2xl shadow-green-600/30 flex items-center justify-center active:scale-90 transition-all">
+        <i class="fa fa-plus text-lg"></i>
+      </button>
+    </div>
+
   </div>
 
-  <!-- MODAL -->
+
+  <!-- ══════════════════════════ MODAL FORMULARIO ══════════════════════════ -->
   <div *ngIf="this.creando"
-    class="fixed inset-0 z-[100] flex items-end md:items-center justify-center bg-slate-900/90 backdrop-blur-md p-0 md:p-6">
+    class="fixed inset-0 z-[100] flex items-end md:items-center justify-center bg-black/70 backdrop-blur-sm">
 
-    <div
-      class="w-full h-[90vh] md:h-auto md:max-w-2xl bg-slate-900 md:rounded-[3rem] shadow-2xl relative overflow-hidden flex flex-col border border-slate-800">
+    <div class="modal-panel w-full md:max-w-lg bg-white dark:bg-[#1b1b1f] md:rounded-2xl shadow-2xl border border-slate-200 dark:border-[#303038] overflow-hidden flex flex-col max-h-[92vh]">
 
-      <div
-        class="sticky top-0 z-20 bg-slate-900/80 backdrop-blur-xl p-6 border-b border-slate-800 flex items-center justify-between">
-        <div class="flex items-center gap-4">
-          <div
-            class="w-10 h-10 bg-emerald-500 rounded-xl flex items-center justify-center shadow-lg shadow-emerald-500/30">
-            <i class="fa fa-flag text-slate-900"></i>
+      <!-- Header del modal -->
+      <div class="p-5 border-b border-slate-100 dark:border-[#303038] flex items-center justify-between bg-slate-50 dark:bg-[#252529] shrink-0">
+        <div class="flex items-center gap-3">
+          <div class="w-9 h-9 bg-green-600 rounded-xl flex items-center justify-center shadow-lg shadow-green-600/20">
+            <i class="fa fa-flag text-white text-sm"></i>
           </div>
           <div>
-            <h3 class="text-xl font-black text-white uppercase italic tracking-tighter leading-none">
-              {{ CanchaForm.get('id')?.value ? 'Editar' : 'Crear' }} Cancha
+            <h3 class="font-bebas text-xl tracking-widest text-slate-900 dark:text-white leading-none">
+              {{ CanchaForm.get('id')?.value ? 'EDITAR' : 'NUEVA' }} CANCHA
             </h3>
-            <p class="text-[10px] text-slate-500 font-bold uppercase tracking-[0.2em] mt-1">
-              Panel de Configuración
-            </p>
+            <p class="text-[9px] text-slate-500 dark:text-zinc-400 font-bold uppercase tracking-[0.2em] mt-0.5">Escenario deportivo</p>
           </div>
         </div>
         <button (click)="cancel()"
-          class="text-slate-400 hover:text-white transition-colors p-2 hover:bg-slate-800 rounded-full">
-          <i class="fa fa-times text-2xl"></i>
+          class="text-slate-400 hover:text-slate-900 dark:hover:text-white w-8 h-8 rounded-lg hover:bg-slate-100 dark:hover:bg-zinc-800 flex items-center justify-center transition-all">
+          <i class="fa fa-times"></i>
         </button>
       </div>
 
-      <div class="p-6 md:p-10 overflow-y-auto flex-1">
-        <form [formGroup]="CanchaForm" (ngSubmit)="saveCancha()" class="space-y-8">
+      <!-- Contenido del formulario -->
+      <div class="p-5 md:p-6 overflow-y-auto flex-1">
+        <form [formGroup]="CanchaForm" (ngSubmit)="saveCancha()" class="space-y-5">
 
-          <div class="space-y-3">
-            <label class="text-[10px] font-black text-emerald-500 uppercase tracking-[0.2em] ml-1">
+          <!-- Nombre -->
+          <div class="space-y-1.5">
+            <label class="text-[10px] font-black text-green-600 dark:text-green-400 uppercase tracking-[0.2em] block">
               Nombre de la Sede
             </label>
-            <input type="text" formControlName="nombre"
-              class="w-full rounded-2xl px-6 py-4 bg-slate-800/50 text-white border border-slate-700 focus:border-emerald-500 focus:outline-none font-black uppercase" />
+            <input type="text" formControlName="nombre" placeholder="Ej: Estadio Municipal"
+              class="w-full rounded-xl px-4 py-3 bg-white dark:bg-zinc-900 text-slate-900 dark:text-white border border-slate-300 dark:border-zinc-700 focus:border-green-500 dark:focus:border-green-500 focus:outline-none focus:ring-1 focus:ring-green-500/20 transition-colors text-sm" />
           </div>
 
-          <div class="space-y-3">
-            <label class="text-[10px] font-black text-slate-500 uppercase tracking-widest ml-1">
+          <!-- Descripción -->
+          <div class="space-y-1.5">
+            <label class="text-[10px] font-black text-green-600 dark:text-green-400 uppercase tracking-[0.2em] block">
               Descripción
             </label>
-            <textarea formControlName="descripcion"
-              class="w-full rounded-2xl px-6 py-4 bg-slate-800/50 text-white border border-slate-700 focus:border-emerald-500 focus:outline-none"></textarea>
+            <textarea formControlName="descripcion" rows="3" placeholder="Dirección, capacidad, detalles..."
+              class="w-full rounded-xl px-4 py-3 bg-white dark:bg-zinc-900 text-slate-900 dark:text-white border border-slate-300 dark:border-zinc-700 focus:border-green-500 dark:focus:border-green-500 focus:outline-none focus:ring-1 focus:ring-green-500/20 transition-colors text-sm resize-none"></textarea>
           </div>
 
-          <div class="space-y-3">
-            <label class="text-[10px] font-black text-slate-500 uppercase tracking-widest ml-1">
+          <!-- Estado -->
+          <div class="space-y-1.5">
+            <label class="text-[10px] font-black text-green-600 dark:text-green-400 uppercase tracking-[0.2em] block">
               Estado
             </label>
             <select formControlName="estado"
-              class="w-full rounded-2xl px-6 py-4 bg-slate-800/50 text-white border border-slate-700 focus:border-emerald-500 focus:outline-none">
+              class="w-full rounded-xl px-4 py-3 bg-white dark:bg-zinc-900 text-slate-900 dark:text-white border border-slate-300 dark:border-zinc-700 focus:border-green-500 dark:focus:border-green-500 focus:outline-none focus:ring-1 focus:ring-green-500/20 transition-colors text-sm cursor-pointer">
               <option [value]="1">Disponible</option>
               <option [value]="0">Mantenimiento</option>
             </select>
           </div>
 
-          <div class="flex flex-col-reverse md:flex-row gap-4 pt-10 pb-6">
-            <button type="button" (click)="cancel()"
-              class="w-full md:flex-1 bg-slate-800 text-slate-400 px-6 py-5 rounded-2xl font-black hover:bg-slate-700 uppercase text-xs tracking-widest">
-              Cancelar
-            </button>
-
-            <button type="submit" [disabled]="!CanchaForm.valid"
-              class="w-full md:flex-[2] bg-emerald-500 text-slate-900 px-6 py-5 rounded-2xl font-black shadow-xl hover:bg-emerald-400">
-              Guardar Cancha
-            </button>
+          <!-- Loading -->
+          <div *ngIf="isLoading" class="flex items-center justify-center gap-3 py-4 border-t border-slate-100 dark:border-[#303038]">
+            <div class="w-5 h-5 border-2 border-green-600 border-t-transparent rounded-full animate-spin"></div>
+            <p class="text-green-600 dark:text-green-400 font-black text-[9px] uppercase tracking-[0.3em]">Procesando...</p>
           </div>
 
-          <div *ngIf="isLoading" class="flex flex-col items-center py-6 space-y-4 border-t border-slate-800">
-            <div class="w-10 h-10 border-4 border-emerald-500 border-t-transparent rounded-full animate-spin"></div>
-            <p class="text-emerald-400 font-black text-[9px] uppercase tracking-[0.3em] animate-pulse text-center">
-              Procesando...
-            </p>
+          <!-- Botones -->
+          <div class="flex gap-3 pt-2 pb-2">
+            <button type="button" (click)="cancel()"
+              class="flex-1 bg-slate-100 hover:bg-slate-200 dark:bg-zinc-800 dark:hover:bg-zinc-700 text-slate-600 dark:text-zinc-400 px-4 py-3 rounded-xl font-bold uppercase text-xs tracking-wider transition-all">
+              Cancelar
+            </button>
+            <button type="submit" [disabled]="!CanchaForm.valid"
+              class="flex-[2] bg-green-600 hover:bg-green-700 disabled:opacity-40 disabled:cursor-not-allowed text-white px-4 py-3 rounded-xl font-bold uppercase text-xs tracking-wider shadow-lg shadow-green-600/20 hover:-translate-y-0.5 active:translate-y-0 transition-all">
+              Guardar Cancha
+            </button>
           </div>
 
         </form>

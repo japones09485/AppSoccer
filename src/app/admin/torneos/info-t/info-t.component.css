@@ -1,86 +1,397 @@
-/* Ajustes para móvil */
+/* ========================================
+   MODO OSCURO — TEXTOS BLANCOS Y VISIBLES
+   ======================================== */
+
+/* text-white siempre blanco puro */
+html.dark main .text-white,
+html.dark main h1, html.dark main h2,
+html.dark main h3, html.dark main h4 { color: #ffffff !important; }
+
+/* text-white con opacidad: más alto contraste */
+html.dark main .text-white\/90 { color: rgba(255,255,255,0.95) !important; }
+html.dark main .text-white\/80 { color: rgba(255,255,255,0.90) !important; }
+html.dark main .text-white\/70 { color: rgba(255,255,255,0.82) !important; }
+html.dark main .text-white\/60 { color: rgba(255,255,255,0.75) !important; }
+html.dark main .text-white\/50 { color: rgba(255,255,255,0.68) !important; }
+html.dark main .text-white\/40 { color: rgba(255,255,255,0.58) !important; }
+html.dark main .text-white\/30 { color: rgba(255,255,255,0.48) !important; }
+
+/* text-slate-* que el global puede oscurecer */
+html.dark main .text-slate-200 { color: #e2e8f0 !important; }
+html.dark main .text-slate-300 { color: #cbd5e1 !important; }
+html.dark main .text-slate-400 { color: #94a3b8 !important; }
+html.dark aside .text-slate-400 { color: rgba(255,255,255,0.55) !important; }
+
+/* ── CRÍTICO: text-gray-* son oscuros y quedan invisibles en dark ── */
+html.dark main .text-gray-900,
+html.dark main .text-gray-800 { color: #f1f5f9 !important; }
+html.dark main .text-gray-700 { color: #e2e8f0 !important; }
+html.dark main .text-gray-600 { color: #cbd5e1 !important; }
+html.dark main .text-gray-500 { color: #94a3b8 !important; }
+html.dark main .text-gray-400 { color: #64748b !important; }
+html.dark main .text-gray-300 { color: #475569 !important; }
+
+/* Tablas: fondo y texto */
+html.dark main tbody tr            { background-color: transparent !important; }
+html.dark main tbody tr:hover      { background-color: rgba(255,255,255,0.04) !important; }
+html.dark main td                  { color: #e2e8f0 !important; }
+html.dark main th                  { color: #34d399 !important; }
+html.dark main .divide-gray-200 > * + * { border-color: rgba(255,255,255,0.08) !important; }
+html.dark main .border-gray-200    { border-color: rgba(255,255,255,0.10) !important; }
+html.dark main .border-gray-300    { border-color: rgba(255,255,255,0.12) !important; }
+html.dark main .border-gray-100    { border-color: rgba(255,255,255,0.06) !important; }
+/* ── CABECERAS DE TABLA: Verde sólido (cambio más dramático) ── */
+html.dark main .bg-gray-100        { background-color: #064e3b !important; } /* emerald-900 sólido */
+html.dark main .hover\:bg-gray-50:hover { background-color: rgba(16,185,129,0.06) !important; }
+
+/* ── TARJETAS PRINCIPALES: near-black en dark ── */
+html.dark main .rounded-3xl.bg-white,
+html.dark main .rounded-2xl.bg-white {
+  background-color: #080e08 !important;
+  border-color: rgba(16,185,129,0.20) !important;
+  box-shadow: 0 4px 24px rgba(0,0,0,0.6), inset 0 1px 0 rgba(16,185,129,0.05) !important;
+}
+
+/* ── Franja de botones admin ── */
+html.dark main .bg-white.flex.flex-wrap {
+  background-color: rgba(6,78,59,0.15) !important;
+  border-color: rgba(16,185,129,0.15) !important;
+}
+
+/* Acentos de color: versiones brillantes para dark */
+html.dark main .text-emerald-600, html.dark main .text-emerald-700 { color: #34d399 !important; }
+html.dark main .text-green-600,   html.dark main .text-green-700   { color: #4ade80 !important; }
+html.dark main .text-cyan-600,    html.dark main .text-cyan-700    { color: #22d3ee !important; }
+html.dark main .text-blue-600,    html.dark main .text-blue-700    { color: #60a5fa !important; }
+html.dark main .text-amber-600,   html.dark main .text-amber-700   { color: #fbbf24 !important; }
+html.dark main .text-rose-600,    html.dark main .text-rose-700    { color: #fb7185 !important; }
+html.dark main .text-orange-500,  html.dark main .text-orange-600  { color: #fb923c !important; }
+html.dark main .text-purple-600,  html.dark main .text-purple-700  { color: #c084fc !important; }
+html.dark main .text-red-600                                        { color: #f87171 !important; }
+
+/* ── BOTONES: glassmorphism oscuro elegante ── */
+html.dark main .bg-amber-100   { background-color: rgba(251,191,36,0.10)  !important; border-color: rgba(251,191,36,0.25) !important; }
+html.dark main .bg-cyan-100    { background-color: rgba(6,182,212,0.10)   !important; border-color: rgba(6,182,212,0.25) !important; }
+html.dark main .bg-blue-100    { background-color: rgba(59,130,246,0.10)  !important; border-color: rgba(59,130,246,0.25) !important; }
+html.dark main .bg-rose-100    { background-color: rgba(244,63,94,0.10)   !important; border-color: rgba(244,63,94,0.25) !important; }
+html.dark main .bg-green-100   { background-color: rgba(34,197,94,0.10)   !important; border-color: rgba(34,197,94,0.25) !important; }
+html.dark main .bg-emerald-100 { background-color: rgba(16,185,129,0.10)  !important; border-color: rgba(16,185,129,0.25) !important; }
+html.dark main .bg-purple-100  { background-color: rgba(168,85,247,0.10)  !important; border-color: rgba(168,85,247,0.25) !important; }
+html.dark main .bg-orange-100  { background-color: rgba(249,115,22,0.10)  !important; border-color: rgba(249,115,22,0.25) !important; }
+
+/* Inputs en dark */
+html.dark main input:not([type="checkbox"]):not([type="radio"]),
+html.dark main select,
+html.dark main textarea {
+  background-color: rgba(0,0,0,0.30) !important;
+  border-color: rgba(255,255,255,0.10) !important;
+  color: #f1f5f9 !important;
+}
+
+/* ========================================
+   AJUSTES MÓVIL
+   ======================================== */
 @media (max-width: 768px) {
-  /* Reducir padding general */
-  .space-y-4 > * + * {
-    margin-top: 1rem;
-  }
-  
-  /* Mejorar contraste */
-  .bg-slate-900\/80 {
-    background-color: rgba(15, 23, 42, 0.9);
-  }
-  
-  /* Botones más táctiles */
-  button {
-    min-height: 36px;
-  }
-  
-  /* Textos más legibles */
-  .text-xs {
-    font-size: 0.7rem;
-    line-height: 1.1;
-  }
-  
-  /* Truncar textos largos */
-  .truncate {
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-  }
-  
-  /* Mejorar bordes */
-  .border-slate-700\/60 {
-    border-color: rgba(51, 65, 85, 0.6);
-  }
-  
-  /* Sombras más sutiles */
-  .shadow-lg {
-    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.2);
-  }
+  .space-y-4 > * + * { margin-top: 1rem; }
+  button { min-height: 36px; }
+  .text-xs { font-size: 0.7rem; line-height: 1.1; }
+  .truncate { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .shadow-lg { box-shadow: 0 4px 6px -1px rgba(0,0,0,0.2); }
 }
 
+/* ========================================
+   ANIMACIONES
+   ======================================== */
+@keyframes shimmer { 100% { transform: translateX(100%); } }
+.animate-spin-slow { animation: spin 3s linear infinite; }
+@keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
 
- @keyframes shimmer {
-          100% {
-            transform: translateX(100%);
-          }
-        }
-
-        .animate-spin-slow {
-          animation: spin 3s linear infinite;
-        }
-
-        @keyframes spin {
-          from {
-            transform: rotate(0deg);
-          }
-
-          to {
-            transform: rotate(360deg);
-          }
-        }
-
-
-        /* 1. Forza el color del texto que escribes en el buscador */
+/* ========================================
+   NG-SELECT (MODO CLARO)
+   ======================================== */
 ::ng-deep .custom-ng-select-green .ng-input > input {
-    color: #ffffff !important; /* Blanco puro */
-    font-weight: 900 !important; /* Negrita máxima */
-    text-shadow: 0px 0px 5px rgba(255, 255, 255, 0.2); /* Un pequeño brillo para el proyector */
+  color: #ffffff !important;
+  font-weight: 900 !important;
 }
-
-/* 2. Forza el color del texto cuando ya está seleccionado */
 ::ng-deep .custom-ng-select-green .ng-value-label {
-    color: #ffffff !important;
-    font-weight: 900 !important;
+  color: #ffffff !important;
+  font-weight: 900 !important;
 }
-
-/* 3. Asegura que el fondo del input no sea transparente si hay problemas de contraste */
 ::ng-deep .custom-ng-select-green .ng-select-container {
-    background-color: rgba(255, 255, 255, 0.05) !important;
-    border: 1px solid rgba(16, 185, 129, 0.3) !important;
+  background-color: rgba(255,255,255,0.05) !important;
+  border: 1px solid rgba(16,185,129,0.3) !important;
+}
+::ng-deep .custom-ng-select-green .ng-clear-wrapper { color: #ef4444 !important; }
+
+html:not(.dark) ::ng-deep .custom-ng-select-green .ng-select-container {
+  background-color: #ffffff !important;
+  border: 1px solid #bbf7d0 !important;
+}
+html:not(.dark) ::ng-deep .custom-ng-select-green .ng-input > input {
+  color: #0f172a !important;
+  text-shadow: none;
+}
+html:not(.dark) ::ng-deep .custom-ng-select-green .ng-value-label {
+  color: #0f172a !important;
 }
 
-/* 4. Color de la "X" para borrar la búsqueda */
-::ng-deep .custom-ng-select-green .ng-clear-wrapper {
-    color: #ef4444 !important; /* Rojo para que se vea claro */
+/* ========================================
+   MODALES — ESTILOS MEJORADOS
+   ======================================== */
+
+/* Tamaño máximo reducido para modales grandes */
+.modal-lg { max-width: 760px !important; }
+.modal-dialog { margin: 1rem auto !important; }
+
+/* Modal-content base */
+html:not(.dark) .modal-content {
+  border-radius: 1.5rem !important;
+  border: 1px solid #e2e8f0 !important;
+  box-shadow: 0 20px 60px -10px rgba(0,0,0,0.12) !important;
+  overflow: hidden;
+}
+html.dark .modal-content {
+  border-radius: 1.5rem !important;
+  border: 1px solid rgba(255,255,255,0.08) !important;
+  box-shadow: 0 20px 60px -10px rgba(0,0,0,0.5) !important;
+  overflow: hidden;
+}
+
+/* Cabeceras de modal en dark: texto visible */
+html.dark .modal-content .text-gray-900,
+html.dark .modal-content .text-gray-800 { color: #f1f5f9 !important; }
+html.dark .modal-content .text-gray-700 { color: #e2e8f0 !important; }
+html.dark .modal-content .text-gray-600 { color: #cbd5e1 !important; }
+html.dark .modal-content .text-gray-500 { color: #94a3b8 !important; }
+html.dark .modal-content .border-gray-200 { border-color: rgba(255,255,255,0.08) !important; }
+html.dark .modal-content .border-gray-300 { border-color: rgba(255,255,255,0.12) !important; }
+html.dark .modal-content .bg-gray-100    { background-color: rgba(255,255,255,0.05) !important; }
+html.dark .modal-content .bg-gray-50     { background-color: rgba(255,255,255,0.03) !important; }
+html.dark .modal-content td              { color: #e2e8f0 !important; }
+html.dark .modal-content th              { color: #34d399 !important; }
+html.dark .modal-content .divide-gray-200 > * + * { border-color: rgba(255,255,255,0.08) !important; }
+
+html.dark .modal-content .text-emerald-600 { color: #34d399 !important; }
+html.dark .modal-content .text-cyan-600    { color: #22d3ee !important; }
+html.dark .modal-content .text-blue-600   { color: #60a5fa !important; }
+html.dark .modal-content .text-amber-600  { color: #fbbf24 !important; }
+html.dark .modal-content .text-rose-600   { color: #fb7185 !important; }
+html.dark .modal-content .text-orange-500 { color: #fb923c !important; }
+
+html.dark .modal-content input:not([type="checkbox"]):not([type="radio"]),
+html.dark .modal-content select,
+html.dark .modal-content textarea {
+  background-color: rgba(0,0,0,0.30) !important;
+  border-color: rgba(255,255,255,0.12) !important;
+  color: #f1f5f9 !important;
+}
+html.dark .modal-content input::placeholder,
+html.dark .modal-content textarea::placeholder { color: rgba(255,255,255,0.3) !important; }
+
+/* ========================================
+   MODO CLARO — FONDO GENERAL
+   El aside (sidebar) siempre permanece oscuro.
+   ======================================== */
+
+html:not(.dark) .contenedorF {
+  background-image: none !important;
+  background-color: #f0fdf4 !important; /* verde-50: claramente diferente al modo oscuro */
+  color: #0f172a !important;
+}
+
+/* ── Textos blancos → oscuros ── */
+html:not(.dark) main .text-white,
+html:not(.dark) main .text-slate-200 {
+  color: #0f172a !important;
+}
+html:not(.dark) main .text-white\/90 { color: #1e293b !important; }
+html:not(.dark) main .text-white\/80 { color: #334155 !important; }
+html:not(.dark) main .text-white\/70 { color: #475569 !important; }
+html:not(.dark) main .text-white\/60 { color: #475569 !important; }
+html:not(.dark) main .text-white\/50 { color: #64748b !important; }
+html:not(.dark) main .text-white\/40 { color: #94a3b8 !important; }
+html:not(.dark) main .text-white\/30 { color: #cbd5e1 !important; }
+html:not(.dark) main .text-slate-200 { color: #334155 !important; }
+html:not(.dark) main .text-slate-300 { color: #475569 !important; }
+html:not(.dark) main .text-slate-400 { color: #64748b !important; }
+html:not(.dark) main h1,
+html:not(.dark) main h2,
+html:not(.dark) main h3 { color: #064e3b !important; } /* verde oscuro para títulos */
+html:not(.dark) main h4,
+html:not(.dark) main h5 { color: #065f46 !important; }
+
+/* ── Tarjetas: bg-white/5 ── */
+html:not(.dark) main .bg-white\/5 {
+  background-color: #ffffff !important;
+  border-color: #e2e8f0 !important;
+}
+html:not(.dark) main .bg-white\/3 {
+  background-color: #f8fafc !important;
+  border-color: #e2e8f0 !important;
+}
+html:not(.dark) main .bg-white\/10 {
+  background-color: rgba(255,255,255,0.9) !important;
+}
+
+/* ── Fondos oscuros → claros ── */
+html:not(.dark) main .bg-black\/40 { background-color: #f8fafc !important; }
+html:not(.dark) main .bg-slate-900\/95 { background-color: #ffffff !important; }
+html:not(.dark) main .bg-slate-900\/90 { background-color: #ffffff !important; }
+html:not(.dark) main .bg-slate-900 { background-color: #f1f5f9 !important; }
+html:not(.dark) main .bg-slate-800 { background-color: #e2e8f0 !important; }
+/* Cabeceras de tabla: verde sólido con texto blanco en modo claro */
+html:not(.dark) main .bg-gray-100  { background-color: #059669 !important; } /* emerald-600 sólido */
+html:not(.dark) main .bg-gray-900  { background-color: #ffffff !important; }
+
+/* Tarjetas: blancas con borde esmeralda */
+html:not(.dark) main .rounded-3xl.bg-white,
+html:not(.dark) main .rounded-2xl.bg-white {
+  background-color: #ffffff !important;
+  border-color: #a7f3d0 !important;
+  box-shadow: 0 2px 12px rgba(16,185,129,0.08), 0 1px 3px rgba(0,0,0,0.04) !important;
+}
+
+/* Franja de botones admin */
+html:not(.dark) main .bg-white.flex.flex-wrap {
+  background-color: #f0fdf4 !important;
+  border-color: #a7f3d0 !important;
+}
+
+/* Gradientes oscuros → claros */
+html:not(.dark) main .from-slate-800 {
+  --tw-gradient-from: #e2e8f0 var(--tw-gradient-from-position);
+  --tw-gradient-stops: var(--tw-gradient-from), var(--tw-gradient-to, rgba(226,232,240,0));
+}
+html:not(.dark) main .to-slate-900 {
+  --tw-gradient-to: #cbd5e1 var(--tw-gradient-to-position);
+}
+
+/* ── Bordes ── */
+html:not(.dark) main .border-white\/10 { border-color: #e2e8f0 !important; }
+html:not(.dark) main .border-white\/5  { border-color: #f1f5f9 !important; }
+html:not(.dark) main .divide-white\/10 > * + * { border-color: #e2e8f0 !important; }
+html:not(.dark) main .border-slate-700 { border-color: #e2e8f0 !important; }
+html:not(.dark) main .border-gray-800  { border-color: #e2e8f0 !important; }
+html:not(.dark) main .border-gray-700  { border-color: #cbd5e1 !important; }
+html:not(.dark) main .border-gray-200  { border-color: #e2e8f0 !important; }
+
+/* ── Hover ── */
+html:not(.dark) main .hover\:bg-white\/3:hover  { background-color: #f1f5f9 !important; }
+html:not(.dark) main .hover\:bg-white\/5:hover  { background-color: #f1f5f9 !important; }
+html:not(.dark) main .hover\:bg-gray-100:hover  { background-color: #f1f5f9 !important; }
+html:not(.dark) main .hover\:bg-gray-800:hover  { background-color: #f1f5f9 !important; }
+
+/* ── Tablas ── */
+html:not(.dark) main table { color: #0f172a; }
+html:not(.dark) main table td { color: #0f172a !important; }
+html:not(.dark) main table th { color: #ffffff !important; } /* blanco sobre verde sólido */
+html:not(.dark) main .divide-gray-200 > * + * { border-color: #e2e8f0 !important; }
+
+/* ── Inputs y selects ── */
+html:not(.dark) main input:not([type="checkbox"]):not([type="radio"]),
+html:not(.dark) main select,
+html:not(.dark) main textarea {
+  background-color: #ffffff !important;
+  border-color: #e2e8f0 !important;
+  color: #0f172a !important;
+}
+html:not(.dark) main input::placeholder,
+html:not(.dark) main textarea::placeholder { color: #94a3b8 !important; }
+
+/* ========================================
+   MODO CLARO — MODALES BOOTSTRAP
+   Bootstrap mueve los modales al <body>
+   pero conservan el atributo _ngcontent
+   ======================================== */
+
+html:not(.dark) .modal-content {
+  background-color: #ffffff !important;
+  border-color: #e2e8f0 !important;
+}
+html:not(.dark) .modal-content .text-white  { color: #0f172a !important; }
+html:not(.dark) .modal-content .text-white\/80 { color: #334155 !important; }
+html:not(.dark) .modal-content .text-white\/60 { color: #475569 !important; }
+html:not(.dark) .modal-content .text-white\/50 { color: #64748b !important; }
+html:not(.dark) .modal-content .text-white\/40 { color: #94a3b8 !important; }
+html:not(.dark) .modal-content .text-slate-200 { color: #334155 !important; }
+
+html:not(.dark) .modal-content .bg-white\/5  { background-color: #f8fafc !important; border-color: #e2e8f0 !important; }
+html:not(.dark) .modal-content .bg-white\/3  { background-color: #f1f5f9 !important; }
+html:not(.dark) .modal-content .bg-black\/40 { background-color: #f8fafc !important; color: #0f172a !important; }
+html:not(.dark) .modal-content .bg-slate-900\/95 { background-color: #ffffff !important; }
+html:not(.dark) .modal-content .bg-slate-900 { background-color: #f8fafc !important; }
+html:not(.dark) .modal-content .bg-slate-800 { background-color: #f1f5f9 !important; }
+html:not(.dark) .modal-content .bg-gray-100  { background-color: #f1f5f9 !important; }
+html:not(.dark) .modal-content .bg-gray-900  { background-color: #ffffff !important; }
+html:not(.dark) .modal-content .bg-\[#0d1f14\] { background-color: #ffffff !important; }
+
+html:not(.dark) .modal-content .border-white\/10 { border-color: #e2e8f0 !important; }
+html:not(.dark) .modal-content .border-white\/5  { border-color: #f1f5f9 !important; }
+html:not(.dark) .modal-content .border-slate-700 { border-color: #e2e8f0 !important; }
+html:not(.dark) .modal-content .border-gray-800  { border-color: #e2e8f0 !important; }
+html:not(.dark) .modal-content .border-gray-700  { border-color: #cbd5e1 !important; }
+
+html:not(.dark) .modal-content .hover\:bg-slate-700:hover { background-color: #e2e8f0 !important; }
+html:not(.dark) .modal-content .hover\:bg-gray-800:hover  { background-color: #f1f5f9 !important; }
+
+html:not(.dark) .modal-content input:not([type="checkbox"]):not([type="radio"]),
+html:not(.dark) .modal-content select,
+html:not(.dark) .modal-content textarea {
+  background-color: #f8fafc !important;
+  border-color: #e2e8f0 !important;
+  color: #0f172a !important;
+}
+html:not(.dark) .modal-content input::placeholder,
+html:not(.dark) .modal-content textarea::placeholder { color: #94a3b8 !important; }
+
+/* ========================================
+   MODO CLARO — MODALES ANGULAR CUSTOM
+   (modalInscritosAbierto, modalDireccionAbierto, etc.)
+   ======================================== */
+
+html:not(.dark) .bg-black\/50 .bg-white\/5  { background-color: #ffffff !important; border-color: #e2e8f0 !important; }
+html:not(.dark) .bg-black\/50 .bg-white\/3  { background-color: #f8fafc !important; }
+html:not(.dark) .bg-black\/50 .bg-white\/10 { background-color: rgba(255,255,255,0.9) !important; }
+html:not(.dark) .bg-black\/50 .bg-slate-900\/95 { background-color: #ffffff !important; }
+html:not(.dark) .bg-black\/50 .bg-slate-900 { background-color: #f8fafc !important; }
+html:not(.dark) .bg-black\/50 .bg-gray-100  { background-color: #f1f5f9 !important; }
+html:not(.dark) .bg-black\/50 .bg-gray-900  { background-color: #ffffff !important; }
+html:not(.dark) .bg-black\/50 .text-white   { color: #0f172a !important; }
+html:not(.dark) .bg-black\/50 .text-white\/90 { color: #1e293b !important; }
+html:not(.dark) .bg-black\/50 .text-white\/80 { color: #334155 !important; }
+html:not(.dark) .bg-black\/50 .text-white\/60 { color: #475569 !important; }
+html:not(.dark) .bg-black\/50 .text-white\/50 { color: #64748b !important; }
+html:not(.dark) .bg-black\/50 .text-white\/40 { color: #94a3b8 !important; }
+html:not(.dark) .bg-black\/50 .border-white\/10 { border-color: #e2e8f0 !important; }
+html:not(.dark) .bg-black\/50 .border-white\/5  { border-color: #f1f5f9 !important; }
+html:not(.dark) .bg-black\/50 table td { color: #0f172a !important; }
+html:not(.dark) .bg-black\/50 table th { color: #475569 !important; }
+html:not(.dark) .bg-black\/50 .divide-gray-200 > * + * { border-color: #e2e8f0 !important; }
+html:not(.dark) .bg-black\/50 .hover\:bg-gray-100:hover { background-color: #f1f5f9 !important; }
+html:not(.dark) .bg-black\/50 input:not([type="checkbox"]):not([type="radio"]),
+html:not(.dark) .bg-black\/50 select,
+html:not(.dark) .bg-black\/50 textarea {
+  background-color: #ffffff !important;
+  border-color: #e2e8f0 !important;
+  color: #0f172a !important;
+}
+
+/* ========================================
+   MODO CLARO — MODAL NUEVO PARTIDO (newPartido)
+   ======================================== */
+
+html:not(.dark) .bg-black\/70 .bg-gray-900  { background-color: #ffffff !important; }
+html:not(.dark) .bg-black\/70 .bg-slate-900 { background-color: #ffffff !important; }
+html:not(.dark) .bg-black\/70 .border-gray-800 { border-color: #e2e8f0 !important; }
+html:not(.dark) .bg-black\/70 .text-white    { color: #0f172a !important; }
+html:not(.dark) .bg-black\/70 .text-gray-300 { color: #475569 !important; }
+html:not(.dark) .bg-black\/70 .text-white\/40 { color: #94a3b8 !important; }
+html:not(.dark) .bg-black\/70 .bg-gray-800   { background-color: #f1f5f9 !important; }
+html:not(.dark) .bg-black\/70 .hover\:bg-gray-800:hover { background-color: #e2e8f0 !important; }
+html:not(.dark) .bg-black\/70 .border-gray-700 { border-color: #cbd5e1 !important; }
+html:not(.dark) .bg-black\/70 input:not([type="checkbox"]),
+html:not(.dark) .bg-black\/70 select {
+  background-color: #f8fafc !important;
+  border-color: #e2e8f0 !important;
+  color: #0f172a !important;
 }

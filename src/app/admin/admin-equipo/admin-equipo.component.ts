@@ -30,6 +30,9 @@ export class AdminEquipoComponent implements OnInit {
   jugadoresDisponibles: any[] = [];
   jugadorSeleccionadoIdClub: number | null = null;
   jugadoresDisponiblesClub: any[] = [];
+  jugadoresInscritosTorneo: any[] = [];
+  filtroInscripcion: string = '';
+  inscribiendoJugadorId: number | null = null;
   categoriasEquipo: any[] = [];
   jugadoresEquipo: any[] = [];
   modalVerJugador!: Modal;
@@ -127,26 +130,57 @@ export class AdminEquipoComponent implements OnInit {
   } 
 
   abrirModalSeleccionJEquipo(torneo: any) {
-
     this.IdTorneoSelect = torneo.IdTorneo;
-
-    this.apiRest.get_jugadores_categoriasId(torneo.categoria, this.IdTorneoSelect)
-      .subscribe((res: any) => {
-
-
-
-        this.jugadoresDisponiblesClub = res.jugadoresDisponibles.map((j: any) => ({
-          ...j,
-          busqueda: `${j.nombre} ${j.identificacion}`
-        }));
-
-
-      });
-
-
     this.categoriaSeleccionadaT = torneo.categoria;
     this.jugadorSeleccionadoIdClub = null;
+    this.filtroInscripcion = '';
+    this.jugadoresDisponiblesClub = [];
+    this.jugadoresInscritosTorneo = [];
 
+    this.apiRest.get_jugadores_categoriasId(torneo.categoria, torneo.IdTorneo)
+      .subscribe((res: any) => {
+        this.jugadoresDisponiblesClub = res.jugadoresDisponibles ?? [];
+      });
+
+    this.apiRest.jugadoresEquipoTorneo(torneo.IdTorneo, this.equipo.id)
+      .subscribe((res: any) => {
+        this.jugadoresInscritosTorneo = res.jugadores ?? [];
+      });
+  }
+
+  estaInscritoEnTorneo(jugadorId: number): boolean {
+    return this.jugadoresInscritosTorneo.some(j => j.id === jugadorId || j.fk_jugador === jugadorId);
+  }
+
+  get jugadoresFiltrados(): any[] {
+    const f = this.filtroInscripcion.toLowerCase();
+    if (!f) return this.jugadoresDisponiblesClub;
+    return this.jugadoresDisponiblesClub.filter(j =>
+      j.nombre?.toLowerCase().includes(f) || j.identificacion?.toString().includes(f)
+    );
+  }
+
+  inscribirJugadorDirecto(jugador: any) {
+    if (this.inscribiendoJugadorId === jugador.id) return;
+    this.inscribiendoJugadorId = jugador.id;
+
+    this.apiRest.agregar_jugador_categoria_Club(
+      this.IdTorneoSelect, this.usuario.fk_equipo, this.categoriaSeleccionadaT, jugador.id
+    ).subscribe({
+      next: (res: any) => {
+        this.inscribiendoJugadorId = null;
+        if (res.msj?.toLowerCase().includes('exit') || res.msj?.toLowerCase().includes('agre') || res.success) {
+          this.jugadoresInscritosTorneo = [...this.jugadoresInscritosTorneo, jugador];
+          Swal.fire({ toast: true, position: 'top-end', icon: 'success', title: jugador.nombre + ' inscrito', showConfirmButton: false, timer: 2000 });
+        } else {
+          Swal.fire({ toast: true, position: 'top-end', icon: 'warning', title: res.msj ?? 'No se pudo inscribir', showConfirmButton: false, timer: 3000 });
+        }
+      },
+      error: () => {
+        this.inscribiendoJugadorId = null;
+        Swal.fire({ toast: true, position: 'top-end', icon: 'error', title: 'Error al inscribir', showConfirmButton: false, timer: 3000 });
+      }
+    });
   }
 
 

@@ -1,66 +1,114 @@
-<div id="table" *ngIf="!this.creando" class="space-y-6 animate-in fade-in duration-500">
+﻿<div id="table" *ngIf="!this.creando" class="min-h-screen bg-slate-100 dark:bg-[#111114] antialiased space-y-0 p-4 md:p-8">
 
-  <h1
-    class="text-center text-3xl font-black text-emerald-600 uppercase tracking-tighter flex items-center justify-center gap-3">
-    <i class="fa fa-trophy" aria-hidden="true"></i> Torneos
-  </h1>
-
-  <div class="md:col-span-3 flex gap-2">
-
-    <input 
-      type="text" 
-      [(ngModel)]="filtroNombre" 
-      class="form-control" 
-      placeholder="Filtrar por nombre de torneo...">
-      
-    <button type="button" (click)="filtrarTorneos()"
-      class="flex-1 bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-2.5 rounded-xl transition-all shadow-md active:scale-95 flex items-center justify-center gap-2">
-      <i class="fa fa-filter"></i> Filtrar
-    </button>
-
-    <button type="button" (click)="mostrarModal = true"
-      class="px-4 bg-amber-400 hover:bg-amber-500 text-amber-900 font-bold py-2.5 rounded-xl transition-all shadow-md active:scale-95 flex items-center justify-center gap-2">
-      <i class="fa fa-upload"></i> Masivo
+  <!-- HEADER -->
+  <div class="flex flex-col gap-5 md:flex-row md:items-center md:justify-between mb-6 animate-fade-up">
+    <div class="flex items-center gap-4">
+      <div class="w-14 h-14 bg-green-600 rounded-2xl flex items-center justify-center shadow-lg shadow-green-600/30">
+        <i class="fa fa-trophy text-xl text-white"></i>
+      </div>
+      <div>
+        <h1 class="font-bebas text-4xl md:text-5xl tracking-widest text-slate-900 dark:text-white leading-none">
+          TORNEOS
+        </h1>
+        <p class="text-slate-500 dark:text-zinc-400 text-[10px] font-bold uppercase tracking-[0.25em] mt-1">
+          Gestión de competencias
+        </p>
+      </div>
+    </div>
+    <button (click)="addTorneos()"
+      class="hidden md:flex bg-green-600 hover:bg-green-700 text-white font-black py-2.5 px-5 rounded-xl text-xs uppercase tracking-wider items-center gap-2 transition-all shadow-md shadow-green-600/20">
+      <i class="fa fa-plus"></i> Nuevo Torneo
     </button>
   </div>
 
+  <!-- Línea decorativa -->
+  <div class="flex items-center gap-3 mb-6">
+    <div class="h-px bg-green-600 w-12"></div>
+    <div class="w-1.5 h-1.5 bg-green-600 rounded-full"></div>
+    <div class="h-px bg-slate-200 dark:bg-zinc-800 flex-1"></div>
+  </div>
+
+  <!-- FILTROS -->
+  <div class="bg-white dark:bg-[#1b1b1f] border border-slate-200 dark:border-[#303038] rounded-2xl p-4 mb-4">
+    <div class="grid grid-cols-1 md:grid-cols-4 gap-3">
+      <div class="relative">
+        <i class="fa fa-search absolute left-4 top-3 text-slate-400 dark:text-zinc-500 text-xs"></i>
+        <input type="text" [(ngModel)]="filtroNombre"
+          class="w-full rounded-xl pl-10 pr-4 py-2.5 bg-slate-50 dark:bg-zinc-900 border border-slate-200 dark:border-zinc-700 text-slate-700 dark:text-white text-xs font-bold focus:ring-1 focus:ring-green-500 focus:outline-none"
+          placeholder="Nombre del torneo...">
+      </div>
+      <button type="button" (click)="filtrarTorneos()"
+        class="bg-slate-900 dark:bg-zinc-800 hover:bg-green-600 dark:hover:bg-green-600 text-white font-black py-2.5 px-5 rounded-xl text-xs uppercase tracking-wider flex items-center justify-center gap-2 transition-all">
+        <i class="fa fa-filter"></i> Filtrar
+      </button>
+      <button type="button" (click)="mostrarModal = true"
+        class="bg-slate-100 dark:bg-zinc-800 hover:bg-sky-500 hover:text-white text-slate-600 dark:text-zinc-300 border border-slate-200 dark:border-zinc-700 font-black py-2.5 px-5 rounded-xl text-xs uppercase tracking-wider flex items-center justify-center gap-2 transition-all">
+        <i class="fa fa-upload"></i> Masivo
+      </button>
+      <button (click)="addTorneos()"
+        class="bg-green-600 hover:bg-green-700 text-white font-black py-2.5 px-5 rounded-xl text-xs uppercase tracking-wider flex items-center justify-center gap-2 transition-all shadow-md shadow-green-600/20">
+        <i class="fa fa-plus"></i> Nuevo Torneo
+      </button>
+    </div>
+  </div>
+
 <div *ngIf="mostrarModal"
-  class="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/50 backdrop-blur-sm p-4">
-  
-  <div class="bg-white rounded-2xl shadow-2xl border border-slate-200 w-full max-w-md overflow-hidden animate-in fade-in zoom-in duration-200">
-    
-    <div class="p-6 border-b border-slate-100 flex justify-between items-center bg-slate-50">
-      <h3 class="text-lg font-bold text-slate-800">Carga Masiva (CSV)</h3>
-      <button (click)="cerrarModal()" [disabled]="cargando" class="text-slate-400 hover:text-slate-600 transition-colors">
-        <i class="fa fa-times"></i>
+  class="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm p-4">
+
+  <div class="bg-white dark:bg-[#1b1b1f] rounded-2xl shadow-2xl border border-slate-200 dark:border-[#303038] w-full max-w-md overflow-hidden animate-fade-up">
+
+    <div class="p-5 border-b border-slate-100 dark:border-[#303038] flex justify-between items-center bg-slate-50 dark:bg-[#252529]">
+      <div class="flex items-center gap-3">
+        <div class="w-8 h-8 bg-amber-50 dark:bg-amber-500/10 rounded-lg flex items-center justify-center border border-amber-200 dark:border-amber-500/20">
+          <i class="fa fa-upload text-amber-600 dark:text-amber-400 text-xs"></i>
+        </div>
+        <h3 class="text-base font-bebas tracking-widest text-slate-900 dark:text-white">Carga Masiva (CSV)</h3>
+      </div>
+      <button (click)="cerrarModal()" [disabled]="cargando"
+        class="w-7 h-7 flex items-center justify-center rounded-lg text-slate-400 hover:text-slate-700 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-zinc-800 transition-all">
+        <i class="fa fa-times text-sm"></i>
       </button>
     </div>
 
-    <div class="p-6">
-      <div class="mb-4">
-        <label class="block text-sm font-medium text-slate-700 mb-2">Seleccione el archivo de torneos</label>
+    <div class="p-6 space-y-4">
+      <div class="space-y-1.5">
+        <label class="block text-[10px] font-black text-slate-600 dark:text-zinc-400 uppercase tracking-widest">Seleccione el archivo de torneos</label>
         <input #fileInput type="file" (change)="onFileSelected($event)" accept=".csv"
           [disabled]="cargando"
-          class="block w-full text-sm text-slate-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-amber-50 file:text-amber-700 hover:file:bg-amber-100 cursor-pointer border border-slate-200 rounded-xl p-2 focus:outline-none focus:ring-2 focus:ring-amber-500/20" />
+          class="block w-full text-sm text-slate-500 dark:text-zinc-400
+                 file:mr-3 file:py-2 file:px-4 file:rounded-lg file:border-0
+                 file:text-xs file:font-bold file:uppercase
+                 file:bg-amber-50 dark:file:bg-amber-500/10
+                 file:text-amber-700 dark:file:text-amber-400
+                 hover:file:bg-amber-100 dark:hover:file:bg-amber-500/20
+                 cursor-pointer border border-slate-200 dark:border-zinc-700
+                 rounded-xl p-2 bg-white dark:bg-zinc-900
+                 focus:outline-none focus:ring-2 focus:ring-amber-500/20 transition-colors" />
       </div>
-      
-      <div class="flex items-center gap-2 text-xs text-slate-500 italic">
-        <i class="fa fa-info-circle text-amber-500"></i>
+
+      <div class="flex items-center gap-2 text-[11px] text-slate-500 dark:text-zinc-500 bg-amber-50 dark:bg-amber-500/5 border border-amber-100 dark:border-amber-500/10 rounded-xl px-3 py-2">
+        <i class="fa fa-info-circle text-amber-500 shrink-0"></i>
         <span>Asegúrese de que el archivo esté delimitado por comas o punto y coma.</span>
       </div>
     </div>
 
-    <div class="p-6 bg-slate-50 border-t border-slate-100 flex gap-3">
+    <div class="px-6 pb-6 flex gap-3">
       <button type="button" (click)="cerrarModal()" [disabled]="cargando"
-        class="flex-1 px-4 py-2 text-slate-600 font-medium hover:bg-slate-100 rounded-xl transition-all disabled:opacity-50">
+        class="flex-1 px-4 py-2.5 text-slate-600 dark:text-zinc-400 font-bold text-xs uppercase tracking-wider
+               hover:bg-slate-100 dark:hover:bg-zinc-800 rounded-xl transition-all disabled:opacity-50
+               border border-slate-200 dark:border-zinc-700">
         Cancelar
       </button>
-      
-      <button type="button" (click)="procesarArchivo()" 
+
+      <button type="button" (click)="procesarArchivo()"
         [disabled]="!archivoSeleccionado || cargando"
-        class="flex-1 px-4 py-2 bg-emerald-600 text-white font-bold rounded-xl hover:bg-emerald-700 disabled:opacity-50 disabled:cursor-not-allowed transition-all shadow-lg flex items-center justify-center gap-2">
-        
+        class="flex-[1.5] px-4 py-2.5 bg-green-600 text-white font-bold text-xs uppercase tracking-wider
+               rounded-xl hover:bg-green-700 dark:hover:bg-green-500
+               disabled:opacity-40 disabled:cursor-not-allowed
+               transition-all shadow-lg shadow-green-600/20
+               flex items-center justify-center gap-2">
         <i *ngIf="cargando" class="fa fa-circle-notch fa-spin"></i>
+        <i *ngIf="!cargando" class="fa fa-check"></i>
         <span>{{ cargando ? 'Procesando...' : 'Procesar Archivo' }}</span>
       </button>
     </div>
@@ -68,171 +116,132 @@
   </div>
 </div>
 
-  <div class="grid grid-cols-1 gap-4 px-2 md:hidden">
-    <button (click)="addTorneos()"
-      class="bg-sky-500 text-white p-4 rounded-2xl shadow-lg font-black uppercase tracking-widest flex items-center justify-center gap-2">
-      <i class="fa fa-plus"></i> Nuevo Torneo
-    </button>
+  <!-- CARDS MOBILE -->
+  <div class="md:hidden space-y-3">
 
-    <div *ngFor="let tr of torneos" class="bg-white rounded-2xl p-4 shadow-md border border-slate-100 space-y-4">
-      <div class="flex items-center gap-4">
-        <img [ngSrc]="tr.img1 ? pathIm + tr.img1 : 'assets/img/nd.png'"
-          (click)="tr.img1 ? openModal(pathIm + tr.img1, tr.nombre) : null" width="64" height="64"
-          class="w-16 h-16 object-cover rounded-xl shadow-inner border border-slate-100"
-          alt="Foto del equipo {{tr.nombre}}">
-        <div class="flex-1">
-          <span class="text-[10px] font-bold text-emerald-600 uppercase">{{ getNombreCategoria(tr.categoria) }}</span>
-          <h2 class="text-base font-black text-slate-800 uppercase leading-tight">{{ tr.nombre }}</h2>
-          <span class="text-xs text-slate-400 font-mono">#{{ tr.id }}</span>
-        </div>
-        <div class="flex flex-col gap-2">
-          <select class="text-[9px] font-black uppercase rounded-lg border-slate-200 bg-slate-50 p-1"
+    <div *ngFor="let tr of torneos" class="bg-white dark:bg-[#1b1b1f] border border-slate-200 dark:border-[#303038] rounded-2xl overflow-hidden">
+      <div class="h-0.5 bg-gradient-to-r from-green-600 to-transparent"></div>
+      <div class="p-4 space-y-3">
+        <div class="flex items-center gap-3">
+          <img [ngSrc]="tr.img1 ? pathIm + tr.img1 : 'assets/img/nd.png'"
+            (click)="tr.img1 ? openModal(pathIm + tr.img1, tr.nombre) : null" width="56" height="56"
+            class="w-14 h-14 object-cover rounded-xl border border-slate-100 dark:border-zinc-700 cursor-pointer"
+            alt="{{tr.nombre}}">
+          <div class="flex-1 min-w-0">
+            <span class="text-[10px] font-bold text-green-600 dark:text-green-400 uppercase block">{{ getNombreCategoria(tr.categoria) }}</span>
+            <h2 class="font-oswald font-black text-slate-900 dark:text-white uppercase leading-tight truncate">{{ tr.nombre }}</h2>
+            <span class="text-[10px] text-slate-400 dark:text-zinc-500 font-mono">#{{ tr.id }}</span>
+          </div>
+          <select class="text-[9px] font-black uppercase rounded-lg border border-slate-200 dark:border-zinc-700 bg-slate-50 dark:bg-zinc-800 text-slate-700 dark:text-white p-1 outline-none"
             [ngModel]="tr.estado" (ngModelChange)="CambiarEstadoT($event, tr)">
             <option [value]="0">Inactivo</option>
-            <option [value]="1">Proceso</option>
-            <option [value]="2">Fin</option>
+            <option [value]="1">En proceso</option>
+            <option [value]="2">Finalizado</option>
           </select>
         </div>
-      </div>
-
-      <div class="bg-slate-50 p-3 rounded-xl flex justify-between text-center">
-        <div>
-          <p class="text-[9px] text-slate-400 uppercase font-bold">Fases</p>
-          <p class="font-black text-slate-700">{{ tr.num_fases }}</p>
+        <div class="bg-slate-50 dark:bg-zinc-900/50 p-2.5 rounded-xl flex justify-around text-center border border-slate-100 dark:border-zinc-800">
+          <div><p class="text-[9px] text-slate-400 dark:text-zinc-500 uppercase font-bold">Fases</p><p class="font-black text-slate-700 dark:text-white">{{ tr.num_fases }}</p></div>
+          <div><p class="text-[9px] text-slate-400 dark:text-zinc-500 uppercase font-bold">Grupos</p><p class="font-black text-slate-700 dark:text-white">{{ tr.num_gruposF1 }}</p></div>
+          <div><p class="text-[9px] text-slate-400 dark:text-zinc-500 uppercase font-bold">Edad</p>
+            <span class="text-[9px] font-black px-2 py-0.5 rounded" [ngClass]="tr.control_edad?.toString() === 'true' ? 'bg-indigo-50 dark:bg-indigo-500/10 text-indigo-600 dark:text-indigo-300' : 'bg-slate-100 dark:bg-zinc-800 text-slate-500 dark:text-zinc-400'">
+              {{ tr.control_edad?.toString() === 'true' ? 'SÍ' : 'NO' }}
+            </span>
+          </div>
         </div>
-        <div>
-          <p class="text-[9px] text-slate-400 uppercase font-bold">Grupos</p>
-          <p class="font-black text-slate-700">{{ tr.num_gruposF1 }}</p>
+        <div class="flex flex-wrap gap-2">
+          <button (click)="editTorneo(tr.id)" title="Editar"
+            class="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-amber-500/15 dark:bg-amber-500/20 hover:bg-amber-500 text-amber-600 hover:text-white dark:text-amber-300 border border-amber-500/40 hover:border-amber-500 transition-all active:scale-95 text-[10px] font-bold uppercase tracking-wide">
+            <i class="fa fa-edit text-xs"></i> Editar
+          </button>
+          <button (click)="deleteTorneo(tr.id)" title="Eliminar"
+            class="w-8 h-8 rounded-lg flex items-center justify-center bg-red-500/15 dark:bg-red-500/20 hover:bg-red-500 text-red-600 hover:text-white dark:text-red-300 border border-red-500/40 hover:border-red-500 transition-all active:scale-95">
+            <i class="fa fa-trash text-xs"></i>
+          </button>
+          <button (click)="goToInfo(tr.id)" title="Gestión del torneo"
+            class="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-green-500/10 hover:bg-green-500 text-green-600 hover:text-white dark:text-green-400 border border-green-500/40 hover:border-green-500 transition-all active:scale-95 text-[10px] font-bold uppercase tracking-wide">
+            <i class="fa fa-info text-xs"></i> Gestión
+          </button>
+          <button (click)="goToInfo1(tr.id)" title="Vista pública"
+            class="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-sky-500/15 dark:bg-sky-500/20 hover:bg-sky-500 text-sky-600 hover:text-white dark:text-sky-300 border border-sky-500/40 hover:border-sky-500 transition-all active:scale-95 text-[10px] font-bold uppercase tracking-wide">
+            <i class="fa fa-info-circle text-xs"></i> Info
+          </button>
+          <button (click)="ReporteJugadoresTorneo(tr.id)" title="Reporte de jugadores"
+            class="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-indigo-500/15 dark:bg-indigo-500/20 hover:bg-indigo-500 text-indigo-600 hover:text-white dark:text-indigo-300 border border-indigo-500/40 hover:border-indigo-500 transition-all active:scale-95 text-[10px] font-bold uppercase tracking-wide">
+            <i class="fa fa-file text-xs"></i> Reporte
+          </button>
         </div>
-        <div>
-          <p class="text-[9px] text-slate-400 uppercase font-bold">Edad</p>
-          <span class="text-[9px] font-black px-2 py-0.5 rounded bg-white border border-slate-200">
-            {{ tr.control_edad?.toString() === 'true' ? 'SÍ' : 'NO' }}
-          </span>
-        </div>
-      </div>
-
-      <div class="grid grid-cols-4 gap-3 justify-items-center">
-
-        <!-- EDITAR -->
-        <button (click)="editTorneo(tr.id)" title="Editar torneo" class="bg-amber-500 text-white w-8 h-8 rounded-2xl flex items-center justify-center 
-           shadow-lg shadow-amber-500/30 hover:scale-110 active:scale-95 transition-all">
-          <i class="fa fa-edit text-xl"></i>
-        </button>
-
-        <!-- ELIMINAR -->
-        <button (click)="deleteTorneo(tr.id)" title="Eliminar torneo" class="bg-rose-500 text-white w-8 h-8 rounded-2xl flex items-center justify-center 
-           shadow-lg shadow-rose-500/30 hover:scale-110 active:scale-95 transition-all">
-          <i class="fa fa-trash text-xl"></i>
-        </button>
-
-        <!-- INFO -->
-        <button (click)="goToInfo(tr.id)" title="Ver información" class="bg-emerald-500 text-white w-8 h-8 rounded-2xl flex items-center justify-center 
-           shadow-lg shadow-emerald-500/30 hover:scale-110 active:scale-95 transition-all">
-          <i class="fa fa-info text-xl"></i>
-        </button>
-
-        <!-- INFO 2 -->
-        <button (click)="goToInfo1(tr.id)" title="Ver información adicional" class="bg-emerald-600 text-white w-8 h-8 rounded-2xl flex items-center justify-center 
-           shadow-lg shadow-emerald-600/30 hover:scale-110 active:scale-95 transition-all">
-          <i class="fa fa-info text-xl"></i> - 2
-        </button>
-
-        <!-- REPORTE -->
-        <button (click)="ReporteJugadoresTorneo(tr.id)" title="Reporte de jugadores" class="bg-indigo-500 text-white w-8 h-8 rounded-2xl flex items-center justify-center 
-           shadow-lg shadow-indigo-500/30 hover:scale-110 active:scale-95 transition-all col-span-4">
-          <i class="fa fa-file text-xl"></i>
-        </button>
-
       </div>
     </div>
   </div>
 
-  <div class="hidden md:block overflow-hidden bg-white rounded-2xl shadow-2xl border border-slate-100 mx-4">
+  <!-- TABLA DESKTOP -->
+  <div class="hidden md:block bg-white dark:bg-[#1b1b1f] rounded-2xl overflow-hidden border border-slate-200 dark:border-[#303038] shadow-xl">
     <div class="overflow-x-auto">
       <table class="min-w-full border-separate border-spacing-0">
-        <thead class="bg-slate-900 text-white">
-          <tr>
-            <th class="p-4 text-center">
+        <thead>
+          <tr class="bg-slate-50 dark:bg-[#252529]">
+            <th class="p-4 text-center border-b border-slate-200 dark:border-[#303038]">
               <button (click)="addTorneos()"
-                class="bg-sky-500 hover:bg-sky-600 text-white w-10 h-10 rounded-xl transition-all shadow-lg active:scale-90 flex items-center justify-center mx-auto">
-                <i class="fa fa-plus"></i>
+                class="bg-green-600 hover:bg-green-700 text-white w-9 h-9 rounded-xl transition-all flex items-center justify-center mx-auto shadow-md shadow-green-600/30 hover:scale-110 active:scale-95 btn-action">
+                <i class="fa fa-plus text-xs"></i>
               </button>
             </th>
-            <th class="p-4 font-bold uppercase tracking-widest text-[10px] text-center">Logo</th>
-            <th class="p-4 font-bold uppercase tracking-widest text-[10px] text-center">Id</th>
-            <th class="p-4 font-bold uppercase tracking-widest text-[10px] text-left">Nombre / Categoría</th>
-            <th class="p-4 font-bold uppercase tracking-widest text-[10px] text-left text-nowrap">Control Edad</th>
-            <th class="p-4 font-bold uppercase tracking-widest text-[10px] text-center">Fases/Grupos</th>
-            <th class="p-4 font-bold uppercase tracking-widest text-[10px] text-center">Estado</th>
+            <th class="p-4 text-[10px] font-black uppercase tracking-widest text-slate-500 dark:text-zinc-400 text-center border-b border-slate-200 dark:border-[#303038]">Logo</th>
+            <th class="p-4 text-[10px] font-black uppercase tracking-widest text-slate-500 dark:text-zinc-400 text-center border-b border-slate-200 dark:border-[#303038]">#</th>
+            <th class="p-4 text-[10px] font-black uppercase tracking-widest text-slate-500 dark:text-zinc-400 text-left border-b border-slate-200 dark:border-[#303038]">Nombre / Categoría</th>
+            <th class="p-4 text-[10px] font-black uppercase tracking-widest text-slate-500 dark:text-zinc-400 text-center border-b border-slate-200 dark:border-[#303038]">Control Edad</th>
+            <th class="p-4 text-[10px] font-black uppercase tracking-widest text-slate-500 dark:text-zinc-400 text-center border-b border-slate-200 dark:border-[#303038]">Fases/Grupos</th>
+            <th class="p-4 text-[10px] font-black uppercase tracking-widest text-slate-500 dark:text-zinc-400 text-center border-b border-slate-200 dark:border-[#303038]">Estado</th>
           </tr>
         </thead>
-        <tbody class="divide-y divide-slate-100">
-          <tr *ngFor="let tr of torneos" class="hover:bg-slate-50 transition-colors group">
+        <tbody class="divide-y divide-slate-100 dark:divide-[#303038] anim-rows">
+          <tr *ngFor="let tr of torneos" class="hover:bg-slate-50 dark:hover:bg-[#202024] transition-colors group">
             <td class="p-3">
-              <div class="grid grid-cols-5 gap-2 justify-items-center">
-
-                <!-- EDITAR -->
-                <button (click)="editTorneo(tr.id)" title="Editar torneo" class="bg-amber-500 text-white w-8 h-8 rounded-2xl flex items-center justify-center 
-           shadow-lg shadow-amber-500/30 hover:scale-110 active:scale-95 transition-all">
-                  <i class="fa fa-edit text-xl"></i>
+              <div class="flex flex-wrap gap-2 justify-center min-w-[140px]">
+                <button (click)="editTorneo(tr.id)" title="Editar" class="bg-amber-500/15 dark:bg-amber-500/20 hover:bg-amber-500 text-amber-600 hover:text-white dark:text-amber-300 w-9 h-9 rounded-xl flex items-center justify-center border border-amber-500/40 hover:border-amber-500 transition-all hover:scale-110 active:scale-95 btn-action">
+                  <i class="fa fa-edit text-xs"></i>
                 </button>
-
-                <!-- ELIMINAR -->
-                <button (click)="deleteTorneo(tr.id)" title="Eliminar torneo" class="bg-rose-500 text-white w-8 h-8 rounded-2xl flex items-center justify-center 
-           shadow-lg shadow-rose-500/30 hover:scale-110 active:scale-95 transition-all">
-                  <i class="fa fa-trash text-xl"></i>
+                <button (click)="deleteTorneo(tr.id)" title="Eliminar" class="bg-red-500/15 dark:bg-red-500/20 hover:bg-red-500 text-red-600 hover:text-white dark:text-red-300 w-9 h-9 rounded-xl flex items-center justify-center border border-red-500/40 hover:border-red-500 transition-all hover:scale-110 active:scale-95 btn-action">
+                  <i class="fa fa-trash text-xs"></i>
                 </button>
-
-                <!-- INFO -->
-                <button (click)="goToInfo(tr.id)" title="Ver información" class="bg-emerald-500 text-white w-8 h-8 rounded-2xl flex items-center justify-center 
-           shadow-lg shadow-emerald-500/30 hover:scale-110 active:scale-95 transition-all">
-                  <i class="fa fa-info text-xl"></i>
+                <button (click)="goToInfo(tr.id)" title="Info torneo" class="bg-green-500/10 hover:bg-green-500 text-green-600 hover:text-white dark:text-green-400 w-9 h-9 rounded-xl flex items-center justify-center border border-green-500/40 hover:border-green-500 transition-all hover:scale-110 active:scale-95 btn-action">
+                  <i class="fa fa-info text-xs"></i>
                 </button>
-
-                <!-- INFO 2 -->
-                <button (click)="goToInfo1(tr.id)" title="Ver información adicional" class="bg-emerald-600 text-white w-8 h-8 rounded-2xl flex items-center justify-center 
-           shadow-lg shadow-emerald-600/30 hover:scale-110 active:scale-95 transition-all">
-                  <i class="fa fa-info text-xl"></i> - 2
+                <button (click)="goToInfo1(tr.id)" title="Info 2" class="bg-sky-500/15 dark:bg-sky-500/20 hover:bg-sky-500 text-sky-600 hover:text-white dark:text-sky-300 w-9 h-9 rounded-xl flex items-center justify-center border border-sky-500/40 hover:border-sky-500 transition-all hover:scale-110 active:scale-95 btn-action">
+                  <i class="fa fa-info-circle text-xs"></i>
                 </button>
-
-                <!-- REPORTE -->
-                <button (click)="ReporteJugadoresTorneo(tr.id)" title="Reporte de jugadores" class="bg-indigo-500 text-white w-8 h-8 rounded-2xl flex items-center justify-center 
-           shadow-lg shadow-indigo-500/30 hover:scale-110 active:scale-95 transition-all col-span-4">
-                  <i class="fa fa-file text-xl"></i>
+                <button (click)="ReporteJugadoresTorneo(tr.id)" title="Reporte" class="bg-indigo-500/15 dark:bg-indigo-500/20 hover:bg-indigo-500 text-indigo-600 hover:text-white dark:text-indigo-300 w-9 h-9 rounded-xl flex items-center justify-center border border-indigo-500/40 hover:border-indigo-500 transition-all hover:scale-110 active:scale-95 btn-action">
+                  <i class="fa fa-file text-xs"></i>
                 </button>
-
               </div>
             </td>
             <td class="p-3 text-center">
               <img [src]="tr.img1 ? pathIm + tr.img1 : 'assets/img/nd.png'"
                 (click)="tr.img1 ? openModal(pathIm + tr.img1, tr.nombre) : null"
-                class="w-10 h-10 object-cover rounded-xl shadow-md mx-auto cursor-pointer hover:scale-110 transition-transform"
+                class="w-10 h-10 object-cover rounded-xl mx-auto cursor-pointer hover:scale-110 transition-transform border border-slate-100 dark:border-zinc-700"
                 alt="imgnd">
             </td>
-            <td class="p-3 text-center font-mono text-xs text-slate-400">#{{ tr.id }}</td>
+            <td class="p-3 text-center font-mono text-xs text-slate-400 dark:text-zinc-500">#{{ tr.id }}</td>
             <td class="p-3 text-left">
               <div class="flex flex-col">
-                <span class="text-sm font-black text-slate-700 uppercase leading-tight">{{ tr.nombre }}</span>
-                <span class="text-[10px] text-emerald-600 font-bold uppercase">{{ getNombreCategoria(tr.categoria)
-                  }}</span>
+                <span class="font-oswald font-black text-slate-900 dark:text-white uppercase leading-tight">{{ tr.nombre }}</span>
+                <span class="text-[10px] text-green-600 dark:text-green-400 font-bold uppercase">{{ getNombreCategoria(tr.categoria) }}</span>
               </div>
             </td>
             <td class="p-3 text-center">
-              <span
-                [ngClass]="tr.control_edad?.toString() === 'true' ? 'bg-indigo-50 text-indigo-700 border-indigo-200' : 'bg-slate-100 text-slate-500 border-slate-200'"
-                class="text-[9px] font-black px-2 py-1 rounded-md border uppercase shadow-sm">
+              <span [ngClass]="tr.control_edad?.toString() === 'true' ? 'bg-indigo-50 text-indigo-700 border-indigo-200 dark:bg-indigo-500/10 dark:text-indigo-300 dark:border-indigo-500/20' : 'bg-slate-100 text-slate-500 border-slate-200 dark:bg-zinc-800 dark:text-zinc-400 dark:border-zinc-700'"
+                class="text-[9px] font-black px-2 py-1 rounded-md border uppercase">
                 {{ tr.control_edad?.toString() === 'true' ? 'Con Edad' : 'Sin Edad' }}
               </span>
             </td>
             <td class="p-3 text-center">
               <div class="flex flex-col text-[9px] font-bold">
-                <span class="text-slate-400">F: <b class="text-slate-700">{{ tr.num_fases }}</b></span>
-                <span class="text-slate-400">G: <b class="text-slate-700">{{ tr.num_gruposF1 }}</b></span>
+                <span class="text-slate-400 dark:text-zinc-500">F: <b class="text-slate-700 dark:text-white">{{ tr.num_fases }}</b></span>
+                <span class="text-slate-400 dark:text-zinc-500">G: <b class="text-slate-700 dark:text-white">{{ tr.num_gruposF1 }}</b></span>
               </div>
             </td>
             <td class="p-3 text-center">
-              <select class="text-[10px] font-black uppercase rounded-lg border-slate-200 bg-slate-50 p-1 outline-none"
+              <select class="text-[10px] font-black uppercase rounded-lg border border-slate-200 dark:border-zinc-700 bg-slate-50 dark:bg-zinc-800 text-slate-700 dark:text-white p-1 outline-none focus:ring-1 focus:ring-green-500"
                 [ngModel]="tr.estado" (ngModelChange)="CambiarEstadoT($event, tr)">
                 <option [value]="0">Inactivo</option>
                 <option [value]="1">En proceso</option>
@@ -245,164 +254,172 @@
     </div>
   </div>
 
-  <div class="px-4">
+  <div class="mt-4">
     <app-paginacion *ngIf="torneos.length > 0" [nPaginas]="paginas" (irPagina)="sigPag($event)"></app-paginacion>
+  </div>
+
+  <!-- FAB Mobile -->
+  <div class="md:hidden fixed bottom-6 right-6 z-50">
+    <button (click)="addTorneos()"
+      class="bg-green-600 hover:bg-green-700 text-white w-14 h-14 rounded-2xl shadow-2xl shadow-green-600/30 flex items-center justify-center active:scale-90 transition-all">
+      <i class="fa fa-plus text-lg"></i>
+    </button>
   </div>
 </div>
 
-<div class="min-h-screen flex items-start sm:items-center justify-center py-4 sm:py-10 px-2 sm:px-4"
+<div class="min-h-screen bg-slate-100 dark:bg-[#111114] flex items-start sm:items-center justify-center py-6 sm:py-10 px-3 sm:px-4"
   *ngIf="this.creando">
-  <div class="w-full max-w-4xl animate-in zoom-in duration-300">
-    <div class="bg-slate-900 rounded-2xl sm:rounded-[2.5rem] shadow-2xl overflow-hidden border border-slate-800">
+  <div class="w-full max-w-4xl animate-fade-up">
+    <div class="bg-white dark:bg-[#1b1b1f] rounded-2xl shadow-2xl overflow-hidden border border-slate-200 dark:border-[#303038]">
 
-      <div class="bg-emerald-600 p-5 text-center shadow-lg">
-        <h3 class="text-white text-xl font-black uppercase tracking-widest flex items-center justify-center gap-3">
-          <i class="fa fa-trophy text-amber-300"></i> Gestión de Torneo
-        </h3>
+      <!-- Header -->
+      <div class="bg-slate-50 dark:bg-[#252529] p-5 border-b border-slate-200 dark:border-[#303038] flex items-center justify-between shrink-0">
+        <div class="flex items-center gap-3">
+          <div class="w-9 h-9 bg-green-600 rounded-xl flex items-center justify-center shadow-lg shadow-green-600/20">
+            <i class="fa fa-trophy text-white text-sm"></i>
+          </div>
+          <h3 class="text-lg font-bebas text-slate-900 dark:text-white uppercase tracking-wider">Gestión de Torneo</h3>
+        </div>
+        <button type="button" (click)="cancel()"
+          class="w-8 h-8 flex items-center justify-center text-slate-400 dark:text-zinc-500 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-zinc-800 rounded-lg transition-all">
+          <i class="fa fa-times"></i>
+        </button>
       </div>
 
-      <form [formGroup]="TorneoForm" (ngSubmit)="saveTorneo()" class="p-4 sm:p-8 space-y-6">
+      <form [formGroup]="TorneoForm" (ngSubmit)="saveTorneo()" class="p-5 sm:p-8 space-y-6">
         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
 
+          <!-- Columna izquierda -->
           <div class="space-y-4">
-            <div>
-              <label class="text-[10px] font-black uppercase tracking-widest text-emerald-400 mb-1 block">Nombre</label>
-              <input type="text" formControlName="name"
-                class="w-full bg-slate-800 border border-slate-700 rounded-xl px-4 py-3 text-white focus:ring-2 focus:ring-emerald-500 outline-none transition-all">
+            <div class="space-y-1.5">
+              <label class="text-[9px] font-black uppercase tracking-widest text-green-600 dark:text-green-500 block">Nombre del Torneo</label>
+              <input type="text" formControlName="name" placeholder="Ej: Copa Élite 2025"
+                class="w-full bg-white dark:bg-zinc-900 border border-slate-300 dark:border-zinc-700 rounded-xl px-4 py-3 text-slate-900 dark:text-white placeholder:text-slate-400 focus:ring-1 focus:ring-green-500 focus:border-green-500 focus:outline-none transition-colors text-sm">
             </div>
 
-            <div>
-              <label
-                class="text-[10px] font-black uppercase tracking-widest text-emerald-400 mb-1 block">Descripción</label>
-              <textarea formControlName="descripcion" rows="3"
-                class="w-full bg-slate-800 border border-slate-700 rounded-xl px-4 py-3 text-white focus:ring-2 focus:ring-emerald-500 outline-none text-sm"></textarea>
+            <div class="space-y-1.5">
+              <label class="text-[9px] font-black uppercase tracking-widest text-slate-500 dark:text-zinc-400 block">Descripción</label>
+              <textarea formControlName="descripcion" rows="3" placeholder="Descripción del torneo..."
+                class="w-full bg-white dark:bg-zinc-900 border border-slate-300 dark:border-zinc-700 rounded-xl px-4 py-3 text-slate-900 dark:text-white placeholder:text-slate-400 focus:ring-1 focus:ring-green-500 focus:border-green-500 focus:outline-none text-sm resize-none transition-colors"></textarea>
             </div>
 
             <div class="grid grid-cols-2 gap-3">
-              <div>
-                <label
-                  class="text-[10px] font-black uppercase tracking-widest text-emerald-400 mb-1 block">Inicio</label>
+              <div class="space-y-1.5">
+                <label class="text-[9px] font-black uppercase tracking-widest text-slate-500 dark:text-zinc-400 block">Inicio</label>
                 <input type="date" formControlName="Finicio"
-                  class="w-full bg-slate-800 border border-slate-700 rounded-xl px-3 py-3 text-white text-xs">
+                  class="w-full bg-white dark:bg-zinc-900 border border-slate-300 dark:border-zinc-700 rounded-xl px-3 py-3 text-slate-900 dark:text-white text-xs focus:ring-1 focus:ring-green-500 focus:outline-none transition-colors">
               </div>
-              <div>
-                <label class="text-[10px] font-black uppercase tracking-widest text-emerald-400 mb-1 block">Fin</label>
+              <div class="space-y-1.5">
+                <label class="text-[9px] font-black uppercase tracking-widest text-slate-500 dark:text-zinc-400 block">Fin</label>
                 <input type="date" formControlName="Ffin"
-                  class="w-full bg-slate-800 border border-slate-700 rounded-xl px-3 py-3 text-white text-xs">
+                  class="w-full bg-white dark:bg-zinc-900 border border-slate-300 dark:border-zinc-700 rounded-xl px-3 py-3 text-slate-900 dark:text-white text-xs focus:ring-1 focus:ring-green-500 focus:outline-none transition-colors">
               </div>
             </div>
 
             <div class="grid grid-cols-2 gap-3">
-              <div>
-                <label class="text-[10px] font-black uppercase tracking-widest text-emerald-400 mb-1 block">Control
-                  Edad</label>
+              <div class="space-y-1.5">
+                <label class="text-[9px] font-black uppercase tracking-widest text-slate-500 dark:text-zinc-400 block">Control Edad</label>
                 <select formControlName="controlEdad" (change)="onControlEdadChange($event)"
-                  class="w-full bg-slate-800 border border-slate-700 rounded-xl px-4 py-3 text-white text-sm">
+                  class="w-full bg-white dark:bg-zinc-900 border border-slate-300 dark:border-zinc-700 rounded-xl px-4 py-3 text-slate-900 dark:text-white text-sm focus:ring-1 focus:ring-green-500 focus:outline-none appearance-none transition-colors cursor-pointer">
                   <option [value]="true">Sí</option>
                   <option [value]="false">No</option>
                 </select>
               </div>
-              <div *ngIf="controlEdad">
-                <label
-                  class="text-[10px] font-black uppercase tracking-widest text-amber-400 mb-1 block">Categoría</label>
+              <div *ngIf="controlEdad" class="space-y-1.5">
+                <label class="text-[9px] font-black uppercase tracking-widest text-slate-500 dark:text-zinc-400 block">Categoría</label>
                 <select formControlName="categoria"
-                  class="w-full bg-slate-800 border border-amber-900/30 rounded-xl px-4 py-3 text-white text-sm">
+                  class="w-full bg-white dark:bg-zinc-900 border border-slate-300 dark:border-zinc-700 rounded-xl px-4 py-3 text-slate-900 dark:text-white text-sm focus:ring-1 focus:ring-green-500 focus:outline-none appearance-none transition-colors cursor-pointer">
                   <option *ngFor="let cat of categoriasDisponibles" [ngValue]="cat.id">{{ cat.nombre }}</option>
                 </select>
               </div>
-
-              <div *ngIf="controlEdad">
-                <label class="text-[10px] font-black uppercase tracking-widest text-amber-400 mb-1 block">Rango edad
-                  niñas</label>
-
+              <div *ngIf="controlEdad" class="space-y-1.5">
+                <label class="text-[9px] font-black uppercase tracking-widest text-slate-500 dark:text-zinc-400 block">Rango edad niñas</label>
                 <input type="number" formControlName="Rninas"
-                  class="w-full bg-slate-800 border border-slate-700 rounded-xl px-3 py-3 text-white text-xs">
-
+                  class="w-full bg-white dark:bg-zinc-900 border border-slate-300 dark:border-zinc-700 rounded-xl px-3 py-3 text-slate-900 dark:text-white text-xs focus:ring-1 focus:ring-green-500 focus:outline-none transition-colors">
               </div>
-
-
             </div>
           </div>
 
+          <!-- Columna derecha -->
           <div class="space-y-4">
             <div class="grid grid-cols-2 gap-3">
-              <div>
-                <label class="text-[10px] font-black uppercase tracking-widest text-emerald-400 mb-1 block">Límite
-                  Nómina</label>
+              <div class="space-y-1.5">
+                <label class="text-[9px] font-black uppercase tracking-widest text-slate-500 dark:text-zinc-400 block">Límite Nómina</label>
                 <input type="date" formControlName="fecha_limite"
-                  class="w-full bg-slate-800 border border-slate-700 rounded-xl px-4 py-3 text-white text-xs">
+                  class="w-full bg-white dark:bg-zinc-900 border border-slate-300 dark:border-zinc-700 rounded-xl px-4 py-3 text-slate-900 dark:text-white text-xs focus:ring-1 focus:ring-green-500 focus:outline-none transition-colors">
               </div>
-              <div>
-                <label class="text-[10px] font-black uppercase tracking-widest text-emerald-400 mb-1 block">Max
-                  Jug.</label>
+              <div class="space-y-1.5">
+                <label class="text-[9px] font-black uppercase tracking-widest text-slate-500 dark:text-zinc-400 block">Máx. Jugadores</label>
                 <input type="number" formControlName="numero_maximo_jug"
-                  class="w-full bg-slate-800 border border-slate-700 rounded-xl px-4 py-3 text-white text-sm">
+                  class="w-full bg-white dark:bg-zinc-900 border border-slate-300 dark:border-zinc-700 rounded-xl px-4 py-3 text-slate-900 dark:text-white text-sm focus:ring-1 focus:ring-green-500 focus:outline-none transition-colors">
               </div>
             </div>
 
-            <div>
-              <label class="text-[10px] font-black uppercase tracking-widest text-emerald-400 mb-1 block">Nº de
-                Fases</label>
+            <div class="space-y-1.5">
+              <label class="text-[9px] font-black uppercase tracking-widest text-slate-500 dark:text-zinc-400 block">Nº de Fases</label>
               <input [(ngModel)]="cantFase" type="number" formControlName="num_fases"
-                class="w-full bg-slate-800 border border-slate-700 rounded-xl px-4 py-3 text-white text-sm">
+                class="w-full bg-white dark:bg-zinc-900 border border-slate-300 dark:border-zinc-700 rounded-xl px-4 py-3 text-slate-900 dark:text-white text-sm focus:ring-1 focus:ring-green-500 focus:outline-none transition-colors">
             </div>
 
-            <div class="grid grid-cols-3 gap-2 bg-slate-800/30 p-3 rounded-xl border border-slate-800"
+            <div class="grid grid-cols-3 gap-2 bg-slate-50 dark:bg-zinc-900/60 p-3 rounded-xl border border-slate-200 dark:border-zinc-800"
               *ngIf="cantFase > 0">
               <div *ngFor="let f of [1,2,3,4,5,6,7]; let i = index">
                 <div *ngIf="cantFase > i">
-                  <label class="text-[8px] font-bold text-slate-500 uppercase block">Fase {{ f }} (G)</label>
+                  <label class="text-[9px] font-bold text-slate-500 dark:text-zinc-400 uppercase block mb-0.5">Fase {{ f }} (G)</label>
                   <input type="number" [formControlName]="'num_gruposF' + f"
-                    class="w-full bg-slate-900 border border-slate-700 rounded-lg px-2 py-1 text-white text-xs focus:border-emerald-500 outline-none">
+                    class="w-full bg-white dark:bg-zinc-900 border border-slate-300 dark:border-zinc-700 rounded-lg px-2 py-1.5 text-slate-900 dark:text-white text-xs focus:border-green-500 focus:outline-none transition-colors">
                 </div>
               </div>
             </div>
 
             <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
-              <div class="bg-slate-900/50 p-3 rounded-xl border border-slate-800">
-                <label class="text-[9px] font-black uppercase text-emerald-400 block mb-2">Img 1</label>
+              <div class="bg-slate-50 dark:bg-zinc-900/60 p-3 rounded-xl border border-slate-200 dark:border-zinc-800">
+                <label class="text-[9px] font-black uppercase text-green-600 dark:text-green-500 block mb-2">Imagen 1</label>
                 <input type="file" (change)="uploadImage($event, 1)"
-                  class="text-[9px] text-slate-400 file:bg-emerald-600 file:text-white file:border-0 file:rounded-full file:px-2 file:py-1">
+                  class="text-[9px] text-slate-500 dark:text-zinc-400 file:bg-slate-200 dark:file:bg-zinc-800 file:text-slate-700 dark:file:text-white file:border-none file:rounded-lg file:px-3 file:py-1.5 file:mr-2 file:text-[10px] file:font-black file:uppercase file:cursor-pointer hover:file:bg-slate-300 dark:hover:file:bg-zinc-700 transition-all">
               </div>
-              <div class="bg-slate-900/50 p-3 rounded-xl border border-slate-800">
-                <label class="text-[9px] font-black uppercase text-emerald-400 block mb-2">Img 2</label>
+              <div class="bg-slate-50 dark:bg-zinc-900/60 p-3 rounded-xl border border-slate-200 dark:border-zinc-800">
+                <label class="text-[9px] font-black uppercase text-green-600 dark:text-green-500 block mb-2">Imagen 2</label>
                 <input type="file" (change)="uploadImage($event, 2)"
-                  class="text-[9px] text-slate-400 file:bg-emerald-600 file:text-white file:border-0 file:rounded-full file:px-2 file:py-1">
+                  class="text-[9px] text-slate-500 dark:text-zinc-400 file:bg-slate-200 dark:file:bg-zinc-800 file:text-slate-700 dark:file:text-white file:border-none file:rounded-lg file:px-3 file:py-1.5 file:mr-2 file:text-[10px] file:font-black file:uppercase file:cursor-pointer hover:file:bg-slate-300 dark:hover:file:bg-zinc-700 transition-all">
               </div>
             </div>
           </div>
         </div>
 
+        <!-- Preview imágenes actuales -->
         <div *ngIf="editForm && (torneoSelect.img1 || torneoSelect.img2)"
-          class="mt-4 rounded-2xl overflow-hidden border-4 border-slate-800 shadow-2xl max-w-sm mx-auto bg-slate-950 relative group aspect-video flex items-center justify-center">
-          <img alt="Imagen torneo 2" *ngIf="currentSlide === 0 && torneoSelect.img1" [src]="pathIm + torneoSelect.img1"
-            class="h-full w-full object-contain animate-in fade-in zoom-in duration-500">
-          <img alt="Imagen torneo 2" *ngIf="currentSlide === 1 && torneoSelect.img2" [src]="pathIm + torneoSelect.img2"
-            class="h-full w-full object-contain animate-in fade-in zoom-in duration-500">
-
+          class="rounded-2xl overflow-hidden border-2 border-slate-200 dark:border-zinc-700 shadow-lg max-w-sm mx-auto bg-slate-100 dark:bg-zinc-900 relative group aspect-video flex items-center justify-center">
+          <img alt="Imagen torneo" *ngIf="currentSlide === 0 && torneoSelect.img1" [src]="pathIm + torneoSelect.img1"
+            class="h-full w-full object-contain">
+          <img alt="Imagen torneo" *ngIf="currentSlide === 1 && torneoSelect.img2" [src]="pathIm + torneoSelect.img2"
+            class="h-full w-full object-contain">
           <button type="button" (click)="prevSlide()"
-            class="absolute left-2 w-8 h-8 flex items-center justify-center bg-black/60 text-white rounded-full hover:bg-emerald-500 transition-all opacity-0 group-hover:opacity-100">
-            <i class="fa fa-chevron-left text-xs"></i></button>
+            class="absolute left-2 w-8 h-8 flex items-center justify-center bg-black/50 text-white rounded-full hover:bg-green-500 transition-all opacity-0 group-hover:opacity-100">
+            <i class="fa fa-chevron-left text-xs"></i>
+          </button>
           <button type="button" (click)="nextSlide()"
-            class="absolute right-2 w-8 h-8 flex items-center justify-center bg-black/60 text-white rounded-full hover:bg-emerald-500 transition-all opacity-0 group-hover:opacity-100">
-            <i class="fa fa-chevron-right text-xs"></i></button>
+            class="absolute right-2 w-8 h-8 flex items-center justify-center bg-black/50 text-white rounded-full hover:bg-green-500 transition-all opacity-0 group-hover:opacity-100">
+            <i class="fa fa-chevron-right text-xs"></i>
+          </button>
         </div>
 
-        <div class="flex flex-col sm:flex-row justify-end gap-3 pt-4">
+        <!-- Botones -->
+        <div class="flex flex-col-reverse sm:flex-row gap-3 pt-4 border-t border-slate-100 dark:border-[#303038]">
           <button type="button" (click)="cancel()"
-            class="order-2 sm:order-1 px-8 py-3 rounded-xl text-slate-400 font-bold hover:bg-slate-800 transition-all uppercase text-[10px] tracking-widest">
+            class="w-full sm:flex-1 bg-slate-100 dark:bg-zinc-800 hover:bg-slate-200 dark:hover:bg-zinc-700 text-slate-600 dark:text-zinc-400 hover:text-slate-900 dark:hover:text-white px-4 py-3 rounded-xl font-black uppercase text-[10px] tracking-widest transition-all">
             <i class="fa fa-ban mr-2"></i> Cancelar
           </button>
           <button type="submit" *ngIf="TorneoForm.valid"
-            class="order-1 sm:order-2 px-10 py-3 rounded-xl bg-amber-500 hover:bg-amber-600 text-slate-900 font-black uppercase text-[10px] tracking-widest shadow-lg active:scale-95 transition-all">
-            <i class="fa fa-floppy-o mr-2"></i> Guardar Torneo
+            class="w-full sm:flex-[1.5] bg-green-600 hover:bg-green-700 dark:hover:bg-green-500 text-white px-4 py-3 rounded-xl font-black shadow-lg shadow-green-600/20 hover:-translate-y-0.5 active:translate-y-0 transition-all uppercase text-[10px] tracking-widest flex items-center justify-center gap-2">
+            <i class="fa fa-save"></i> Guardar Torneo
           </button>
         </div>
 
-        <div *ngIf="isLoading"
-          class="flex flex-col items-center justify-center p-4 bg-slate-800/50 rounded-2xl border border-slate-700 animate-pulse">
-          <div class="w-8 h-8 border-4 border-emerald-500 border-t-transparent rounded-full animate-spin"></div>
-          <span class="mt-2 text-amber-400 font-black text-[9px] uppercase tracking-widest">Transmitiendo...</span>
+        <!-- Loading -->
+        <div *ngIf="isLoading" class="flex items-center justify-center gap-3 py-3">
+          <div class="w-5 h-5 border-2 border-green-500 border-t-transparent rounded-full animate-spin"></div>
+          <span class="text-green-600 dark:text-green-500 font-black text-[9px] uppercase tracking-widest animate-pulse">Procesando...</span>
         </div>
       </form>
     </div>
@@ -411,19 +428,20 @@
 
 <div class="modal fade" id="exampleModal" tabindex="-1" aria-hidden="true">
   <div class="modal-dialog modal-dialog-centered px-4">
-    <div class="modal-content bg-slate-900 border border-slate-800 rounded-3xl overflow-hidden shadow-2xl">
-      <div class="modal-header border-slate-800 p-4 bg-emerald-600 flex justify-between items-center">
-        <h1 class="modal-title text-sm font-black text-white uppercase tracking-widest">{{ this.TorneoVisi }}</h1>
-        <button type="button" class="text-white hover:rotate-90 transition-transform" data-bs-dismiss="modal"><i
-            class="fa fa-times"></i></button>
+    <div class="modal-content bg-white dark:bg-[#1b1b1f] border border-slate-200 dark:border-[#303038] rounded-3xl overflow-hidden shadow-2xl">
+      <div class="modal-header p-4 bg-green-600 flex justify-between items-center border-0">
+        <h1 class="modal-title text-sm font-black text-white uppercase tracking-widest truncate">{{ this.TorneoVisi }}</h1>
+        <button type="button" class="text-white hover:rotate-90 transition-transform shrink-0 ml-3" data-bs-dismiss="modal">
+          <i class="fa fa-times"></i>
+        </button>
       </div>
-      <div class="modal-body p-2 flex justify-center bg-slate-900">
+      <div class="modal-body p-3 flex justify-center bg-slate-50 dark:bg-[#111114]">
         <img alt="Imagen torneo" [src]="this.imgVisi"
-          class="rounded-2xl shadow-2xl max-h-[60vh] object-contain border border-slate-800">
+          class="rounded-2xl shadow-lg max-h-[60vh] object-contain border border-slate-200 dark:border-slate-700">
       </div>
-      <div class="modal-footer border-slate-800 bg-slate-950/50 flex justify-center p-3">
+      <div class="modal-footer bg-white dark:bg-[#1b1b1f] border-t border-slate-100 dark:border-[#303038] flex justify-center p-3">
         <button type="button"
-          class="w-full sm:w-auto px-10 py-2 rounded-xl bg-slate-800 text-white font-bold text-[10px] uppercase tracking-widest"
+          class="w-full sm:w-auto px-10 py-2.5 rounded-xl bg-slate-100 dark:bg-zinc-800 hover:bg-slate-200 dark:hover:bg-zinc-700 text-slate-700 dark:text-white font-bold text-[10px] uppercase tracking-widest transition-all"
           data-bs-dismiss="modal">Cerrar
         </button>
       </div>

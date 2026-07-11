@@ -9,9 +9,8 @@ import { JugadoresComponent } from "../jugadores/jugadores.component";
 import { CategoriasComponent } from "../categorias/categorias.component";
 import { CanchasComponent } from "../canchas/canchas.component";
 import { JuecesComponent } from "../jueces/jueces.component";
+import { ThemeService } from "../../services/theme.service";
 import { environment } from "../../../environments/environment";
-
-import { } from "../jugadores/jugadores.component";
 
 @Component({
   selector: 'app-admin-temp',
@@ -40,26 +39,26 @@ export class AdminTempComponent implements OnInit {
     juecesV: false
   };
   menuOpen: boolean = false;
-
   pathIm = environment.apiURL;
 
-  constructor(private apiRest: ApiService, private router: Router) { }
+  constructor(
+    private apiRest: ApiService,
+    private router: Router,
+    public themeService: ThemeService
+  ) { }
 
   ngOnInit(): void { }
 
+  get isDark(): boolean { return this.themeService.isDark; }
+
+  toggleTheme(): void { this.themeService.toggle(); }
+
   activarComp(campoValid: string): void {
-    // Cambiar la propiedad del objeto a true según el nombre recibido
     if (this.estados.hasOwnProperty(campoValid)) {
-      // Primero, pon todos los valores a false
       for (let key in this.estados) {
-        if (this.estados.hasOwnProperty(key)) {
-          this.estados[key] = false;
-        }
+        if (this.estados.hasOwnProperty(key)) this.estados[key] = false;
       }
-
-      // Luego, activa el campo específico
       this.estados[campoValid] = true;
-
     }
   }
 
@@ -68,27 +67,17 @@ export class AdminTempComponent implements OnInit {
     this.router.navigate(['/home']);
   }
 
-abrirYDescargarPdf(): void {
-  const url = this.pathIm + 'doc/PADRES_DOC.pdf';
-
-  // Abrir nueva pestaña
-  const nuevaPestana = window.open('', '_blank');
-
-  if (nuevaPestana) {
-    // Insertar un pequeño HTML que fuerza la descarga
-    nuevaPestana.document.write(`
-      <html>
-        <body>
-          <a href="${url}" download="PADRES_DOC.pdf" id="descarga"></a>
-          <script>
-            document.getElementById('descarga').click();
-          </script>
-          <p>Si no inicia la descarga, <a href="${url}" download="PADRES_DOC.pdf">haz clic aquí</a>.</p>
-        </body>
-      </html>
-    `);
+  abrirYDescargarPdf(): void {
+    const url = this.pathIm + 'doc/PADRES_DOC.pdf';
+    const nuevaPestana = window.open('', '_blank');
+    if (nuevaPestana) {
+      nuevaPestana.document.write(`
+        <html><body>
+          <a href="${url}" download="PADRES_DOC.pdf" id="d"></a>
+          <script>document.getElementById('d').click();<\/script>
+          <p>Si no inicia, <a href="${url}" download>haz clic aquí</a>.</p>
+        </body></html>
+      `);
+    }
   }
-}
-
-
 }

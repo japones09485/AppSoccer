@@ -1,4 +1,5 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
+import { ImageCropperComponent, ImageTransform } from 'ngx-image-cropper';
 import Swal from 'sweetalert2';
 import { ApiService } from "../../services/api.service";
 import { CommonModule } from '@angular/common';
@@ -13,7 +14,7 @@ import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-admin-equipo',
-  imports: [CommonModule, ReactiveFormsModule, FormsModule, NgSelectModule],
+  imports: [CommonModule, ReactiveFormsModule, FormsModule, NgSelectModule, ImageCropperComponent],
   templateUrl: './admin-equipo.component.html',
   styleUrl: './admin-equipo.component.css'
 })
@@ -47,10 +48,19 @@ export class AdminEquipoComponent implements OnInit {
   EquipoSelect !: number;
   mostrarDescripcionCompleta = false;
   filtroEstado: string = '';
-  direccionEquipo: any;
+  imgPreview: string = '';
+  direccionEquipo: any[] = [];
+  cropperVisible = false;
+  cropperSlot = 0;
+  cropperImageFile: File | undefined = undefined;
+  cropperTransform: ImageTransform = {};
+  filePreviews: { [key: number]: string } = {};
+  fileNames: { [key: number]: string } = {};
+  @ViewChild('imageCropperRef') private imageCropperRef!: ImageCropperComponent;
   creandoD = false;
   DireccionForm!: FormGroup;
   isLoading = false;
+
   frmGuardar = new FormData();
 
   ngOnInit(): void {
@@ -72,11 +82,10 @@ export class AdminEquipoComponent implements OnInit {
         backdrop: true,
         keyboard: true
       });
-
     }
 
     // Obtener usuario
-    this.usuario = this.apiRest.getUsuario();
+    this.usuario = this.apiRest.getUsuario()!;
      this.perfilUsuario = this.usuario ? this.usuario.perfil : 0;
     
 
@@ -422,21 +431,213 @@ export class AdminEquipoComponent implements OnInit {
     console.log('Jugador seleccionado:', seleccionado);
   }
 
-  CarnetsEquipo(IdTorneo: number) {
-    this.apiRest.CarnetsEquipo(IdTorneo, this.usuario.fk_equipo).subscribe((res: any) => {
-      if (res.success && res.ur) {
-        // Crear enlace temporal
-        const a = document.createElement('a');
-        a.href = res.ur;
-        a.target = '_blank'; // abre en nueva pestaña
-        a.download = 'carnets_equipo.pdf'; // fuerza descarga
-        document.body.appendChild(a);
-        a.click();
-        document.body.removeChild(a);
-      } else {
-        Swal.fire(res.msj);
-      }
-    });
+  async CarnetsEquipo(torneo: any) {
+    Swal.fire({ title: 'Generando carnets...', text: 'Por favor espere', allowOutsideClick: false, didOpen: () => Swal.showLoading() });
+
+    let jugadores: any[] = [];
+    try {
+      const res: any = await this.apiRest.jugadoresEquipoTorneo(torneo.IdTorneo, this.equipo.id).toPromise();
+      jugadores = res?.jugadores ?? [];
+    } catch {
+      Swal.fire({ icon: 'error', title: 'Error', text: 'No se pudo obtener los jugadores.' });
+      return;
+    }
+
+    if (!jugadores.length) {
+      Swal.fire({ icon: 'warning', title: 'Sin jugadores', text: 'No hay jugadores inscritos en este torneo.' });
+      return;
+    }
+
+    const { jsPDF } = await import('jspdf');
+    const doc = new jsPDF({ orientation: 'p', unit: 'mm', format: 'a4' });
+
+    // Dimensiones página A4
+    const marginX = 8, marginY = 8, gapX = 4, gapY = 4;
+    const cW = (210 - marginX * 2 - gapX) / 2;  // ~95mm
+    const cH = 65;
+    const perPagina = 8; // 2 col × 4 filas
+
+    const logoApp  = await this.imgToBase64('assets/img/logo.png');
+    // ImgEq viene en cada jugador del endpoint; usamos el primero disponible (el autogol tiene ImgEq=null)
+    const imgEq    = jugadores.find((j: any) => j.ImgEq)?.ImgEq ?? this.equipo?.img1 ?? '';
+    const logoClub = imgEq ? await this.imgToBase64(this.pathIm + imgEq) : '';
+    const fondo    = await this.imgToBase64(this.pathIm + 'imagenes/fondo.jpg');
+
+    for (let i = 0; i < jugadores.length; i++) {
+      if (i > 0 && i % perPagina === 0) doc.addPage();
+
+      const posEnPag = i % perPagina;
+      const col = posEnPag % 2;
+      const row = Math.floor(posEnPag / 2);
+      const x   = marginX + col * (cW + gapX);
+      const y   = marginY + row * (cH + gapY);
+
+      const jug  = jugadores[i];
+      const foto = jug.img1 ? await this.imgToBase64(this.pathIm + jug.img1) : '';
+
+      this.dibujarCarnet(doc, jug, torneo, x, y, cW, cH, logoApp, logoClub, foto, fondo);
+    }
+
+    Swal.close();
+    doc.save(`carnets_${(this.equipo?.nombre ?? 'equipo').replace(/\s+/g, '_')}.pdf`);
+  }
+
+  private dibujarCarnet(
+    doc: any, jug: any, torneo: any,
+    x: number, y: number, w: number, h: number,
+    logoApp: string, logoClub: string, foto: string, _fondo: string = ''
+  ) {
+    const G  = [27, 94, 32]    as [number,number,number];
+    const GL = [232, 245, 233]  as [number,number,number];
+    const B  = [255, 255, 255]  as [number,number,number];
+    const D  = [26, 26, 26]    as [number,number,number];
+    const fmt = (d: string) => d.startsWith('data:image/png') ? 'PNG' : 'JPEG';
+
+    // ── Fondo blanco base ─────────────────────────────────────────
+    doc.setFillColor(...B);
+    doc.rect(x, y, w, h, 'F');
+
+    // ── HEADER (fondo verde oscuro) ───────────────────────────────
+    const hH = 22;
+    doc.setFillColor(...G);
+    doc.rect(x, y, w, hH, 'F');
+
+    // Etiqueta "TORNEO OFICIAL XXXX" semitransparente
+    const year = String(torneo.fecha_inicio ?? '').substring(0, 4) || String(new Date().getFullYear());
+    doc.setGState(doc.GState({ opacity: 0.55 }));
+    doc.setFont('helvetica', 'bold');
+    doc.setFontSize(4.8);
+    doc.setTextColor(...B);
+    doc.text(`TORNEO OFICIAL ${year}`, x + 4, y + 3.8);
+    doc.setGState(doc.GState({ opacity: 1 }));
+
+    // Logos con fondo circular blanco
+    const lSz = 13;    // tamaño imagen logo
+    const lBg = 16;    // diámetro círculo de fondo
+    const lR  = lBg / 2;
+    const lPad = (lBg - lSz) / 2;
+    const lY  = y + hH - lBg - 2;   // alineados al fondo del header
+
+    const l1X = x + 4;
+    const l2X = l1X + lBg + 3;
+
+    doc.setFillColor(...B);
+    doc.roundedRect(l1X, lY, lBg, lBg, lR, lR, 'F');
+    doc.roundedRect(l2X, lY, lBg, lBg, lR, lR, 'F');
+
+    const cx1 = l1X + lBg / 2, cx2 = l2X + lBg / 2, cyCtr = lY + lBg / 2;
+
+    doc.internal.write('q');
+    this.clipToCircle(doc, cx1, cyCtr, lSz / 2);
+    if (logoApp)  try { doc.addImage(logoApp,  fmt(logoApp),  l1X + lPad, lY + lPad, lSz, lSz); } catch {}
+    doc.internal.write('Q');
+
+    doc.internal.write('q');
+    this.clipToCircle(doc, cx2, cyCtr, lSz / 2);
+    if (logoClub) try { doc.addImage(logoClub, fmt(logoClub), l2X + lPad, lY + lPad, lSz, lSz); } catch {}
+    doc.internal.write('Q');
+
+    // Nombre del torneo (a la derecha de los logos)
+    const tnX = l2X + lBg + 4;
+    const tnW = x + w - tnX - 3;
+    doc.setTextColor(...B);
+    doc.setFont('helvetica', 'bold');
+    doc.setFontSize(7.5);
+    const tnL  = doc.splitTextToSize((torneo.nombre ?? '').toUpperCase(), tnW);
+    const tnTH = Math.min(tnL.length, 3) * 4.2;
+    const tnY  = y + (hH - tnTH) / 2 + 3.8;
+    tnL.slice(0, 3).forEach((l: string, i: number) => doc.text(l, tnX, tnY + i * 4.2));
+
+    // ── CUERPO (blanco) ───────────────────────────────────────────
+    const bY = y + hH;
+    const bH = h - hH - 8;
+
+    // Foto jugador
+    const pX = x + 4, pY = bY + 3, pW = 25, pH = bH - 6;
+    if (foto) {
+      try { doc.addImage(foto, fmt(foto), pX, pY, pW, pH); } catch {}
+    } else {
+      doc.setFillColor(208, 228, 208);
+      doc.rect(pX, pY, pW, pH, 'F');
+      doc.setFontSize(5);
+      doc.setTextColor(140, 170, 140);
+      doc.text('Sin foto', pX + pW / 2, pY + pH / 2, { align: 'center' });
+    }
+    doc.setDrawColor(...G); doc.setLineWidth(0.6);
+    doc.rect(pX, pY, pW, pH, 'S');
+
+    // Nombre + campos con chip
+    const dX = pX + pW + 4;
+    const dW = x + w - dX - 3;
+    let   dY = bY + 7;
+
+    doc.setFont('helvetica', 'bold'); doc.setFontSize(8); doc.setTextColor(...G);
+    const nL = doc.splitTextToSize((jug.nombre ?? '').toUpperCase(), dW);
+    nL.slice(0, 2).forEach((l: string, i: number) => doc.text(l, dX, dY + i * 4.5));
+    dY += Math.min(nL.length, 2) * 4.5 + 2;
+
+    const chipW = 13;
+    const filas: [string, string][] = [
+      ['PERÍODO', `${torneo.fecha_inicio ?? ''} / ${torneo.fecha_fin ?? ''}`],
+      ['CÉDULA',  String(jug.identificacion ?? '')],
+      ['NAC.',    jug.fecha_nacimiento ?? ''],
+      ['CLUB',    this.equipo?.nombre ?? ''],
+    ];
+    for (const [label, valor] of filas) {
+      if (dY > bY + bH - 1) break;
+      doc.setFillColor(...GL);
+      doc.rect(dX, dY - 3.4, chipW, 4.6, 'F');
+      doc.setFontSize(4.8); doc.setFont('helvetica', 'bold'); doc.setTextColor(...G);
+      doc.text(label, dX + 0.8, dY);
+      doc.setFontSize(5.8); doc.setFont('helvetica', 'normal'); doc.setTextColor(...D);
+      const vL = doc.splitTextToSize(valor, dW - chipW - 2);
+      doc.text(vL[0] ?? '', dX + chipW + 2, dY);
+      dY += 4.8;
+    }
+
+    // ── FOOTER ───────────────────────────────────────────────────
+    const fY = y + h - 8;
+    doc.setFillColor(...G);
+    doc.rect(x, fY, w, 8, 'F');
+    doc.setTextColor(...B); doc.setFont('helvetica', 'bold'); doc.setFontSize(6.5);
+    doc.text((this.equipo?.nombre ?? '').toUpperCase(), x + w / 2, fY + 5.2, { align: 'center' });
+
+    // ── Borde exterior ───────────────────────────────────────────
+    doc.setDrawColor(...G); doc.setLineWidth(0.8);
+    doc.rect(x, y, w, h, 'S');
+  }
+
+  private clipToCircle(doc: any, cx: number, cy: number, r: number): void {
+    const sf = doc.internal.scaleFactor;
+    const pH = doc.internal.pageSize.getHeight();
+    const k = 0.5523, kr = k * r;
+    const tx = (v: number) => (v * sf).toFixed(3);
+    const ty = (v: number) => ((pH - v) * sf).toFixed(3);
+    const ops = [
+      `${tx(cx)} ${ty(cy - r)} m`,
+      `${tx(cx + kr)} ${ty(cy - r)} ${tx(cx + r)} ${ty(cy - kr)} ${tx(cx + r)} ${ty(cy)} c`,
+      `${tx(cx + r)} ${ty(cy + kr)} ${tx(cx + kr)} ${ty(cy + r)} ${tx(cx)} ${ty(cy + r)} c`,
+      `${tx(cx - kr)} ${ty(cy + r)} ${tx(cx - r)} ${ty(cy + kr)} ${tx(cx - r)} ${ty(cy)} c`,
+      `${tx(cx - r)} ${ty(cy - kr)} ${tx(cx - kr)} ${ty(cy - r)} ${tx(cx)} ${ty(cy - r)} c`,
+      'h W n'
+    ].join(' ');
+    doc.internal.write(ops);
+  }
+
+  private async imgToBase64(url: string): Promise<string> {
+    try {
+      const res = await fetch(url, { mode: 'cors' });
+      if (!res.ok) return '';
+      const blob = await res.blob();
+      return await new Promise<string>((resolve) => {
+        const reader = new FileReader();
+        reader.onload  = () => resolve(reader.result as string);
+        reader.onerror = () => resolve('');
+        reader.readAsDataURL(blob);
+      });
+    } catch {
+      return '';
+    }
   }
 
   AddAllJugadores() {
@@ -498,10 +699,11 @@ export class AdminEquipoComponent implements OnInit {
   }
 
   addTecnico() {
-
     this.creandoD = true;
     this.initFormDir();
-
+    this.frmGuardar = new FormData();
+    this.filePreviews = {};
+    this.fileNames = {};
   }
 
   cancel() {
@@ -571,6 +773,51 @@ InfoJugadores(Idtorneo: number) {
   window.open(url, '_blank');
 }
 
+verImagen(url: string) { this.imgPreview = url; }
+cerrarImagen() { this.imgPreview = ''; }
+
+abrirCropper(ev: any, numFile: number) {
+  const file: File | undefined = ev.target?.files?.[0];
+  if (!file) return;
+  if (!file.type.startsWith('image/')) { this.uploadImage(ev, numFile); return; }
+  this.cropperSlot = numFile;
+  this.cropperImageFile = file;
+  this.cropperTransform = {};
+  this.fileNames[numFile] = file.name;
+  this.cropperVisible = true;
+}
+cropperRotarLeft()  { this.cropperTransform = { ...this.cropperTransform, rotate: (this.cropperTransform.rotate ?? 0) - 90 }; }
+cropperRotarRight() { this.cropperTransform = { ...this.cropperTransform, rotate: (this.cropperTransform.rotate ?? 0) + 90 }; }
+confirmarCrop() {
+  if (!this.imageCropperRef) return;
+  const result = this.imageCropperRef.crop('base64');
+  if (!result?.base64) return;
+  const slot = this.cropperSlot;
+  const fname = this.fileNames[slot] || `foto_${slot}.jpg`;
+  this.filePreviews[slot] = result.base64;
+  const file = this.base64ToFile(result.base64, fname);
+  this.frmGuardar.delete(String(slot));
+  this.frmGuardar.append(String(slot), file);
+  this.cerrarCropper();
+}
+cerrarCropper() {
+  this.cropperVisible = false;
+  this.cropperImageFile = undefined;
+  this.cropperTransform = {};
+  const input = document.getElementById(`fileInput${this.cropperSlot}`) as HTMLInputElement;
+  if (input) input.value = '';
+}
+triggerInput(n: number) { (document.getElementById(`fileInput${n}`) as HTMLInputElement)?.click(); }
+private base64ToFile(dataUrl: string, filename: string): File {
+  const arr = dataUrl.split(',');
+  const mime = arr[0].match(/:(.*?);/)![1];
+  const bstr = atob(arr[1]);
+  let n = bstr.length;
+  const u8arr = new Uint8Array(n);
+  while (n--) u8arr[n] = bstr.charCodeAt(n);
+  return new File([u8arr], filename, { type: mime });
+}
+
 esFechaPasada(fecha: string | Date): boolean {
   const fechaSeleccionada = new Date(fecha);
   const fechaActual = new Date();
@@ -586,9 +833,6 @@ esFechaPasada(fecha: string | Date): boolean {
   } else {
     return false;
   }
-}
-
-
-
+  }
 
 }

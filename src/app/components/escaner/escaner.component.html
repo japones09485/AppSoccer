@@ -1,16 +1,38 @@
-<div class="escaner">
+<div class="escaner" [attr.data-tema]="tema()">
 
-  <!-- Input oculto para cargar foto -->
+  <!-- Inputs ocultos -->
   <input #archivoInput type="file" accept="image/*" style="display:none" (change)="onArchivoSeleccionado($event)">
+  <input #fotoInput    type="file" accept="image/*" capture="environment" style="display:none" (change)="onFotoTomada($event)">
 
-  <!-- Video SIEMPRE en DOM — ViewChild necesita el elemento disponible -->
+  <!-- ── VISOR CÁMARA (fullscreen) ──────────────────────────────── -->
   <div class="visor-wrap" [class.activo]="estado() === 'camara'">
     <video #videoEl autoplay playsinline muted class="visor-video"></video>
 
+    @if (detectado()) {
+      <div class="detectado-overlay">
+        <div class="check-grande">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3">
+            <polyline points="20 6 9 17 4 12"/>
+          </svg>
+        </div>
+      </div>
+    }
+
     <div class="visor-ui">
       <div class="visor-top">
-        <button class="btn-cancelar-cam" (click)="cancelarCamara()">← Cancelar</button>
-        <span class="visor-titulo">Apunte al reverso del documento</span>
+        <button class="btn-cancelar-cam" (click)="cancelarCamara()">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" width="15" height="15"><path d="M19 12H5M12 5l-7 7 7 7"/></svg>
+          Cancelar
+        </button>
+        <div class="visor-titulo-wrap">
+          <span class="dot-activo"></span>
+          <span class="visor-titulo">Buscando automáticamente…</span>
+          @if (motorActivo() === 'nativo') {
+            <span class="motor-badge nativo">⚡ Nativo</span>
+          } @else if (motorActivo() === 'wasm') {
+            <span class="motor-badge wasm">WASM</span>
+          }
+        </div>
       </div>
 
       <div class="visor-marco">
@@ -18,73 +40,214 @@
         <div class="marco-esquina tr"></div>
         <div class="marco-esquina bl"></div>
         <div class="marco-esquina br"></div>
-        <span class="marco-texto">Código PDF417</span>
+        <div class="scan-line"></div>
+        <span class="marco-texto">Reverso · franja de barras inferior</span>
       </div>
 
       <div class="visor-bottom">
+        @if (mostrarHint()) {
+          <p class="visor-hint">Acerque más · mejor luz · sin reflejos</p>
+        }
         <button class="btn-capturar" (click)="capturar()">
           <div class="capturar-anillo"></div>
           <div class="capturar-centro"></div>
         </button>
+        <span class="btn-cap-label">{{ mostrarHint() ? 'Forzar captura' : 'Captura manual' }}</span>
       </div>
     </div>
   </div>
 
-  <!-- ── INICIO ──────────────────────────────────────────────── -->
+  <!-- ── INICIO ────────────────────────────────────────────────── -->
   @if (estado() === 'inicio') {
     <div class="pantalla-inicio">
 
-      <div class="doc-icon">
-        <svg viewBox="0 0 96 64" fill="none" xmlns="http://www.w3.org/2000/svg">
-          <rect width="96" height="64" rx="7" fill="#003893"/>
-          <rect x="7" y="9" width="26" height="32" rx="3" fill="#FCD116" opacity=".9"/>
-          <circle cx="20" cy="21" r="7" fill="#003893"/>
-          <rect x="8" y="30" width="24" height="2.5" rx="1.2" fill="#003893"/>
-          <rect x="40" y="11" width="46" height="4" rx="2" fill="white" opacity=".9"/>
-          <rect x="40" y="19" width="36" height="2.5" rx="1.2" fill="white" opacity=".6"/>
-          <rect x="40" y="25" width="40" height="2.5" rx="1.2" fill="white" opacity=".6"/>
-          <rect x="40" y="31" width="30" height="2.5" rx="1.2" fill="white" opacity=".5"/>
-          <rect x="7" y="47" width="82" height="2.5" rx="1.2" fill="#FCD116" opacity=".4"/>
-          <rect x="7" y="52" width="60" height="2" rx="1" fill="#FCD116" opacity=".3"/>
-          <rect x="7" y="57" width="74" height="2" rx="1" fill="#FCD116" opacity=".25"/>
-        </svg>
+      <!-- Header oscuro de app -->
+      <div class="inicio-header">
+        <div class="inicio-titulo-wrap">
+          <div class="inicio-icono-wrap">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" width="22" height="22">
+              <rect x="1" y="4" width="22" height="16" rx="3"/>
+              <line x1="1" y1="10" x2="23" y2="10"/>
+              <line x1="6" y1="15" x2="10" y2="15"/>
+              <line x1="13" y1="15" x2="18" y2="15"/>
+            </svg>
+          </div>
+          <div>
+            <h2 class="inicio-titulo">Lector de Cédula</h2>
+            <p class="inicio-sub">PDF417 · CC &amp; TI Colombia</p>
+          </div>
+        </div>
+        <button class="btn-tema" (click)="toggleTema()" [title]="tema() === 'dark' ? 'Tema claro' : 'Tema oscuro'">
+          @if (tema() === 'dark') {
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="17" height="17">
+              <circle cx="12" cy="12" r="5"/>
+              <line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/>
+              <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/>
+              <line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/>
+              <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/>
+            </svg>
+          } @else {
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="17" height="17">
+              <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>
+            </svg>
+          }
+        </button>
       </div>
 
-      <div class="instruccion">
-        <h2>Leer Documento</h2>
-        <p>Fotografíe el <strong>reverso</strong> de la cédula o tarjeta de identidad.</p>
+      <!-- Zona central: ilustración + instrucción -->
+      <div class="inicio-cuerpo">
+        <div class="cedula-wrap">
+          <svg viewBox="0 0 280 176" fill="none" xmlns="http://www.w3.org/2000/svg" class="cedula-svg">
+            <rect width="280" height="176" rx="14" fill="var(--c-card-alt, #f0f4ff)"/>
+            <rect width="280" height="176" rx="14" fill="url(#g1)" opacity=".5"/>
+            <!-- Franja superior azul -->
+            <rect width="280" height="52" rx="14" fill="#002f7a"/>
+            <rect y="38" width="280" height="14" fill="#002f7a"/>
+            <!-- Foto / escudo -->
+            <rect x="18" y="14" width="52" height="60" rx="6" fill="#FCD116" opacity=".9"/>
+            <circle cx="44" cy="35" r="13" fill="#002f7a"/>
+            <rect x="20" y="54" width="48" height="4" rx="2" fill="#002f7a"/>
+            <!-- Datos nombre -->
+            <rect x="82" y="20" width="92" height="7" rx="3.5" fill="white" opacity=".88"/>
+            <rect x="82" y="33" width="70" height="5" rx="2.5" fill="white" opacity=".5"/>
+            <rect x="82" y="43" width="78" height="5" rx="2.5" fill="white" opacity=".4"/>
+            <!-- Área de huella -->
+            <rect x="18" y="86" width="52" height="52" rx="6" fill="rgba(0,0,0,.07)"/>
+            <!-- Campos de datos -->
+            <rect x="82" y="88" width="110" height="7" rx="3.5" fill="var(--c-texto, #0b1a3b)" opacity=".15"/>
+            <rect x="82" y="101" width="86" height="5" rx="2.5" fill="var(--c-texto, #0b1a3b)" opacity=".1"/>
+            <rect x="82" y="112" width="95" height="5" rx="2.5" fill="var(--c-texto, #0b1a3b)" opacity=".1"/>
+            <rect x="82" y="123" width="72" height="5" rx="2.5" fill="var(--c-texto, #0b1a3b)" opacity=".09"/>
+            <!-- Zona PDF417 resaltada -->
+            <rect x="8" y="149" width="264" height="22" rx="6" fill="rgba(13,82,219,.08)" stroke="#0D52DB" stroke-width="1.5" stroke-dasharray="5 3"/>
+            <!-- Barras del código -->
+            <g fill="#0D52DB" opacity=".65">
+              <rect x="14"  y="152" width="2" height="15" rx="1"/>
+              <rect x="18"  y="152" width="4" height="15" rx="1"/>
+              <rect x="24"  y="152" width="1" height="15" rx="1"/>
+              <rect x="27"  y="152" width="3" height="15" rx="1"/>
+              <rect x="32"  y="152" width="2" height="15" rx="1"/>
+              <rect x="36"  y="152" width="5" height="15" rx="1"/>
+              <rect x="43"  y="152" width="2" height="15" rx="1"/>
+              <rect x="47"  y="152" width="4" height="15" rx="1"/>
+              <rect x="53"  y="152" width="1" height="15" rx="1"/>
+              <rect x="56"  y="152" width="3" height="15" rx="1"/>
+              <rect x="61"  y="152" width="2" height="15" rx="1"/>
+              <rect x="65"  y="152" width="5" height="15" rx="1"/>
+              <rect x="72"  y="152" width="1" height="15" rx="1"/>
+              <rect x="75"  y="152" width="4" height="15" rx="1"/>
+              <rect x="81"  y="152" width="2" height="15" rx="1"/>
+              <rect x="85"  y="152" width="3" height="15" rx="1"/>
+              <rect x="90"  y="152" width="5" height="15" rx="1"/>
+              <rect x="97"  y="152" width="1" height="15" rx="1"/>
+              <rect x="100" y="152" width="3" height="15" rx="1"/>
+              <rect x="105" y="152" width="2" height="15" rx="1"/>
+              <rect x="109" y="152" width="4" height="15" rx="1"/>
+              <rect x="115" y="152" width="1" height="15" rx="1"/>
+              <rect x="118" y="152" width="5" height="15" rx="1"/>
+              <rect x="125" y="152" width="2" height="15" rx="1"/>
+              <rect x="129" y="152" width="3" height="15" rx="1"/>
+              <rect x="134" y="152" width="4" height="15" rx="1"/>
+              <rect x="140" y="152" width="1" height="15" rx="1"/>
+              <rect x="143" y="152" width="3" height="15" rx="1"/>
+              <rect x="148" y="152" width="5" height="15" rx="1"/>
+              <rect x="155" y="152" width="2" height="15" rx="1"/>
+              <rect x="159" y="152" width="4" height="15" rx="1"/>
+              <rect x="165" y="152" width="1" height="15" rx="1"/>
+              <rect x="168" y="152" width="3" height="15" rx="1"/>
+              <rect x="173" y="152" width="2" height="15" rx="1"/>
+              <rect x="177" y="152" width="5" height="15" rx="1"/>
+              <rect x="184" y="152" width="1" height="15" rx="1"/>
+              <rect x="187" y="152" width="4" height="15" rx="1"/>
+              <rect x="193" y="152" width="2" height="15" rx="1"/>
+              <rect x="197" y="152" width="3" height="15" rx="1"/>
+              <rect x="202" y="152" width="1" height="15" rx="1"/>
+              <rect x="205" y="152" width="5" height="15" rx="1"/>
+              <rect x="212" y="152" width="2" height="15" rx="1"/>
+              <rect x="216" y="152" width="4" height="15" rx="1"/>
+              <rect x="222" y="152" width="1" height="15" rx="1"/>
+              <rect x="225" y="152" width="3" height="15" rx="1"/>
+              <rect x="230" y="152" width="2" height="15" rx="1"/>
+              <rect x="234" y="152" width="5" height="15" rx="1"/>
+              <rect x="241" y="152" width="1" height="15" rx="1"/>
+              <rect x="244" y="152" width="4" height="15" rx="1"/>
+              <rect x="250" y="152" width="2" height="15" rx="1"/>
+              <rect x="254" y="152" width="3" height="15" rx="1"/>
+              <rect x="259" y="152" width="2" height="15" rx="1"/>
+            </g>
+            <text x="140" y="148" text-anchor="middle" font-size="7.5" fill="#0D52DB" font-family="monospace" opacity=".6">▼ PDF417 — escanear aquí ▼</text>
+            <defs>
+              <linearGradient id="g1" x1="0" y1="0" x2="280" y2="176" gradientUnits="userSpaceOnUse">
+                <stop offset="0%" stop-color="#0D52DB" stop-opacity=".06"/>
+                <stop offset="100%" stop-color="#003893" stop-opacity=".12"/>
+              </linearGradient>
+            </defs>
+          </svg>
+        </div>
+
+        <div class="inicio-instruccion">
+          <p>Apunte al <strong>reverso</strong> de la cédula o tarjeta de identidad. El código se lee <strong>automáticamente</strong>.</p>
+        </div>
       </div>
 
-      <div class="botones-inicio">
-        <button class="btn-opcion" (click)="activarCamara()">
-          <div class="btn-icono azul">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+      <!-- Botones de acción -->
+      <div class="inicio-acciones">
+
+        <div class="sep-label"><span>Seleccione una opción</span></div>
+
+        <!-- Primario: cámara en vivo -->
+        <button class="btn-principal" (click)="activarCamara()">
+          <div class="btn-principal-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="24" height="24">
               <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/>
               <circle cx="12" cy="13" r="4"/>
             </svg>
           </div>
-          <span class="btn-label">Tomar foto</span>
-          <span class="btn-sub">Abre la cámara</span>
-        </button>
-
-        <button class="btn-opcion" (click)="cargarArchivo()">
-          <div class="btn-icono verde">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-              <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
-              <polyline points="17 8 12 3 7 8"/>
-              <line x1="12" y1="3" x2="12" y2="15"/>
+          <div class="btn-principal-texto">
+            <span class="btn-principal-label">Escanear con cámara</span>
+            <span class="btn-principal-sub">Detección automática en tiempo real</span>
+          </div>
+          <div class="btn-principal-arrow">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" width="18" height="18">
+              <polyline points="9 18 15 12 9 6"/>
             </svg>
           </div>
-          <span class="btn-label">Cargar foto</span>
-          <span class="btn-sub">Desde galería</span>
         </button>
-      </div>
 
-      <p class="tip">Detecta automáticamente cédula o tarjeta de identidad</p>
+        <!-- Secundarios -->
+        <div class="opciones-row" [class.solo-galeria]="!esMobile">
+          @if (esMobile) {
+            <button class="opcion-sec" (click)="tomarFoto()">
+              <div class="opcion-icon-wrap azul">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="22" height="22">
+                  <path d="M14.5 4h-5L7 7H4a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3z"/>
+                  <circle cx="12" cy="13" r="3"/>
+                  <circle cx="12" cy="13" r="1" fill="currentColor"/>
+                </svg>
+              </div>
+              <span class="opcion-label-sm">Tomar foto</span>
+              <span class="opcion-sub-sm">Sin guardar</span>
+            </button>
+          }
+
+          <button class="opcion-sec" (click)="cargarArchivo()">
+            <div class="opcion-icon-wrap morado">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="22" height="22">
+                <rect x="3" y="3" width="18" height="18" rx="3"/>
+                <circle cx="8.5" cy="8.5" r="1.5"/>
+                <polyline points="21 15 16 10 5 21"/>
+              </svg>
+            </div>
+            <span class="opcion-label-sm">Cargar foto</span>
+            <span class="opcion-sub-sm">Desde galería</span>
+          </button>
+        </div>
+
+      </div>
     </div>
   }
 
-  <!-- ── PROCESANDO ──────────────────────────────────────────── -->
+  <!-- ── PROCESANDO ─────────────────────────────────────────────── -->
   @if (estado() === 'procesando') {
     <div class="pantalla-procesando">
       @if (preview()) {
@@ -104,52 +267,48 @@
     </div>
   }
 
-  <!-- ── ERROR ───────────────────────────────────────────────── -->
+  <!-- ── ERROR ───────────────────────────────────────────────────── -->
   @if (estado() === 'error') {
     <div class="pantalla-error">
 
       @if (tipoError() === 'sin-codigo') {
-        <div class="error-card">
-          <div class="error-icono rojo">
+        <div class="error-card tipo-err">
+          <div class="error-icono err">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
               <circle cx="12" cy="12" r="10"/>
-              <line x1="12" y1="8" x2="12" y2="12"/>
-              <line x1="12" y1="16" x2="12.01" y2="16"/>
+              <line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/>
             </svg>
           </div>
           @if (preview()) { <img [src]="preview()!" class="error-preview"> }
           <p class="error-titulo">No se detectó código de barras</p>
-          <p class="error-desc">
-            Fotografíe el <strong>reverso completo</strong> del documento con buena iluminación y sin reflejos.
-          </p>
+          <ul class="error-tips">
+            <li>Fotografíe el <strong>reverso completo</strong> del documento</li>
+            <li>Buena iluminación, sin reflejos ni sombras</li>
+            <li>La franja de barras está en la <strong>parte inferior</strong></li>
+          </ul>
         </div>
       }
 
       @if (tipoError() === 'codigo-invalido') {
-        <div class="error-card amarillo">
-          <div class="error-icono amarillo">
+        <div class="error-card tipo-warn">
+          <div class="error-icono warn">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
               <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/>
-              <line x1="12" y1="9" x2="12" y2="13"/>
-              <line x1="12" y1="17" x2="12.01" y2="17"/>
+              <line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/>
             </svg>
           </div>
           @if (preview()) { <img [src]="preview()!" class="error-preview"> }
           <p class="error-titulo">Código no válido</p>
-          <p class="error-desc">
-            El código leído <strong>no corresponde a un documento colombiano válido</strong>.<br>
-            Verifique que está fotografiando el <strong>reverso</strong> de la cédula o tarjeta.
-          </p>
+          <p class="error-desc">No corresponde a una cédula colombiana. Verifique que está fotografiando el <strong>reverso</strong>.</p>
         </div>
       }
 
       @if (tipoError() === 'generico') {
-        <div class="error-card">
-          <div class="error-icono rojo">
+        <div class="error-card tipo-err">
+          <div class="error-icono err">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
               <circle cx="12" cy="12" r="10"/>
-              <line x1="12" y1="8" x2="12" y2="12"/>
-              <line x1="12" y1="16" x2="12.01" y2="16"/>
+              <line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/>
             </svg>
           </div>
           <p class="error-titulo">Error al procesar</p>
@@ -157,107 +316,92 @@
         </div>
       }
 
-      <div class="botones-error">
-        <button class="btn-err" (click)="activarCamara()">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+      <div class="botones-error" [class.dos-col]="!esMobile">
+        <button class="btn-err principal" (click)="activarCamara()">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16">
             <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/>
             <circle cx="12" cy="13" r="4"/>
           </svg>
-          Nueva foto
+          Reintentar cámara
         </button>
+        @if (esMobile) {
+          <button class="btn-err" (click)="tomarFoto()">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16">
+              <path d="M14.5 4h-5L7 7H4a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3z"/>
+              <circle cx="12" cy="13" r="3"/>
+            </svg>
+            Tomar foto
+          </button>
+        }
         <button class="btn-err" (click)="cargarArchivo()">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16">
             <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
-            <polyline points="17 8 12 3 7 8"/>
-            <line x1="12" y1="3" x2="12" y2="15"/>
+            <polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/>
           </svg>
-          Cargar foto
+          Galería
         </button>
       </div>
     </div>
   }
 
-  <!-- ── RESULTADO ───────────────────────────────────────────── -->
+  <!-- ── RESULTADO ──────────────────────────────────────────────── -->
   @if (estado() === 'resultado' && datos(); as d) {
     <div class="pantalla-resultado">
 
       <div class="id-card">
-        <div class="id-header" [class.ti]="d.tipoDocumento === 'TI'">
+        <div class="id-header">
           <div class="banderita">
             <span class="a"></span><span class="b"></span><span class="c"></span>
           </div>
-          <span class="id-titulo">{{ d.tipoDocumento === 'TI' ? 'TARJETA DE IDENTIDAD' : 'CÉDULA DE CIUDADANÍA' }}</span>
-          <div class="id-check">✓</div>
+          <span class="id-titulo">{{ d.tipoDocumento === 'TI' ? 'Tarjeta de Identidad' : 'Cédula de Ciudadanía' }}</span>
+          <div class="id-check">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" width="11" height="11">
+              <polyline points="20 6 9 17 4 12"/>
+            </svg>
+          </div>
         </div>
         <div class="id-body">
           <div class="id-avatar">{{ iniciales }}</div>
-          <div>
-            <div class="id-nombre">{{ d.nombreCompleto || d.primerNombre }}</div>
-            <div class="id-apellido">{{ d.apellidosCompletos || d.primerApellido }}</div>
-            <div class="id-cc">{{ d.tipoDocumento === 'TI' ? 'T.I.' : 'C.C.' }} {{ d.numeroCedula }}</div>
+          <div class="id-info">
+            <div class="id-nombre">{{ d.primerNombre }} {{ d.segundoNombre }}</div>
+            <div class="id-apellido">{{ d.primerApellido }} {{ d.segundoApellido }}</div>
+            <div class="id-badge">{{ d.tipoDocumento === 'TI' ? 'T.I.' : 'C.C.' }} {{ d.numeroCedula }}</div>
           </div>
         </div>
       </div>
 
       <div class="rejilla">
         <div class="celda full">
-          <span class="clave">{{ d.tipoDocumento === 'TI' ? 'Número de tarjeta' : 'Número de cédula' }}</span>
-          <span class="valor grande">{{ d.numeroCedula }}</span>
+          <span class="clave">Número de documento</span>
+          <span class="valor destac">{{ d.numeroCedula }}</span>
         </div>
-        @if (d.primerNombre) {
-          <div class="celda">
-            <span class="clave">Primer nombre</span>
-            <span class="valor">{{ d.primerNombre }}</span>
-          </div>
-        }
-        @if (d.segundoNombre) {
-          <div class="celda">
-            <span class="clave">Segundo nombre</span>
-            <span class="valor">{{ d.segundoNombre }}</span>
-          </div>
-        }
-        @if (d.primerApellido) {
-          <div class="celda">
-            <span class="clave">Primer apellido</span>
-            <span class="valor">{{ d.primerApellido }}</span>
-          </div>
-        }
-        @if (d.segundoApellido) {
-          <div class="celda">
-            <span class="clave">Segundo apellido</span>
-            <span class="valor">{{ d.segundoApellido }}</span>
-          </div>
-        }
-        @if (d.fechaNacimiento) {
-          <div class="celda">
-            <span class="clave">Fecha nacimiento</span>
-            <span class="valor">{{ d.fechaNacimiento }}</span>
-          </div>
-        }
-        @if (d.sexo) {
-          <div class="celda">
-            <span class="clave">Sexo</span>
-            <span class="valor">{{ d.sexo }}</span>
-          </div>
-        }
-        @if (d.grupoSanguineo) {
-          <div class="celda">
-            <span class="clave">Grupo sanguíneo</span>
-            <span class="valor rojo">{{ d.grupoSanguineo }}</span>
-          </div>
-        }
+        @if (d.primerNombre)       { <div class="celda"><span class="clave">Primer nombre</span><span class="valor">{{ d.primerNombre }}</span></div> }
+        @if (d.segundoNombre)      { <div class="celda"><span class="clave">Segundo nombre</span><span class="valor">{{ d.segundoNombre }}</span></div> }
+        @if (d.primerApellido)     { <div class="celda"><span class="clave">Primer apellido</span><span class="valor">{{ d.primerApellido }}</span></div> }
+        @if (d.segundoApellido)    { <div class="celda"><span class="clave">Segundo apellido</span><span class="valor">{{ d.segundoApellido }}</span></div> }
+        @if (d.fechaNacimiento)    { <div class="celda"><span class="clave">Nacimiento</span><span class="valor">{{ d.fechaNacimiento }}</span></div> }
+        @if (d.sexo)               { <div class="celda"><span class="clave">Sexo</span><span class="valor">{{ d.sexo }}</span></div> }
+        @if (d.grupoSanguineo)     { <div class="celda"><span class="clave">Grupo sanguíneo</span><span class="valor rojo">{{ d.grupoSanguineo }}</span></div> }
       </div>
 
       <button class="btn-json-toggle" (click)="verJson.set(!verJson())">
-        {{ verJson() ? '▲ Ocultar JSON' : '▼ Ver datos JSON' }}
+        {{ verJson() ? '▲ Ocultar datos raw' : '▼ Ver datos raw' }}
       </button>
-      @if (verJson()) {
-        <pre class="json-box">{{ jsonDatos() }}</pre>
-      }
+      @if (verJson()) { <pre class="json-box">{{ jsonDatos() }}</pre> }
 
       <div class="acciones">
-        <button class="btn-confirmar" (click)="confirmar()">Confirmar datos</button>
-        <button class="btn-nuevo" (click)="reiniciar()">↺ Nueva lectura</button>
+        <button class="btn-confirmar" (click)="confirmar()">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" width="16" height="16">
+            <polyline points="20 6 9 17 4 12"/>
+          </svg>
+          Confirmar datos
+        </button>
+        <button class="btn-nuevo" (click)="reiniciar()">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="14" height="14">
+            <polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 .49-3.43"/>
+          </svg>
+          Nueva
+        </button>
       </div>
 
     </div>

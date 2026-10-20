@@ -100,6 +100,77 @@ html.dark main textarea {
 }
 
 /* ========================================
+   SWITCH W/N — MODO DE CAPTURA RESULTADO
+   ======================================== */
+.switch {
+  position: relative;
+  display: inline-block;
+  width: 86px;
+  height: 38px;
+}
+
+.switch input {
+  opacity: 0;
+  width: 0;
+  height: 0;
+  position: absolute;
+}
+
+.slider {
+  position: absolute;
+  cursor: pointer;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background-color: #ef4444;
+  border-radius: 38px;
+  transition: background-color 0.3s;
+}
+
+.slider::before {
+  content: "";
+  position: absolute;
+  height: 30px;
+  width: 30px;
+  right: 4px;
+  bottom: 4px;
+  background-color: #ffffff;
+  border-radius: 50%;
+  transition: transform 0.3s;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+}
+
+input:checked + .slider {
+  background-color: #10b981;
+}
+
+input:checked + .slider::before {
+  transform: translateX(-48px);
+}
+
+.off-text {
+  position: absolute;
+  left: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: #ffffff;
+  font-size: 13px;
+  pointer-events: none;
+}
+
+.on-text {
+  position: absolute;
+  right: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: #ffffff;
+  font-size: 13px;
+  pointer-events: none;
+  display: none;
+}
+
+input:checked + .slider .off-text { display: none; }
+input:checked + .slider .on-text  { display: block; }
+
+/* ========================================
    ANIMACIONES
    ======================================== */
 @keyframes shimmer { 100% { transform: translateX(100%); } }
@@ -323,7 +394,7 @@ html:not(.dark) .modal-content .bg-slate-900 { background-color: #f8fafc !import
 html:not(.dark) .modal-content .bg-slate-800 { background-color: #f1f5f9 !important; }
 html:not(.dark) .modal-content .bg-gray-100  { background-color: #f1f5f9 !important; }
 html:not(.dark) .modal-content .bg-gray-900  { background-color: #ffffff !important; }
-html:not(.dark) .modal-content .bg-\[#0d1f14\] { background-color: #ffffff !important; }
+html:not(.dark) .modal-content [class*="0d1f14"] { background-color: #ffffff !important; }
 
 html:not(.dark) .modal-content .border-white\/10 { border-color: #e2e8f0 !important; }
 html:not(.dark) .modal-content .border-white\/5  { border-color: #f1f5f9 !important; }
@@ -395,3 +466,297 @@ html:not(.dark) .bg-black\/70 select {
   border-color: #e2e8f0 !important;
   color: #0f172a !important;
 }
+
+/* ========================================
+   GLASSMORPHISM CALENDARIO (Desktop PC)
+   ======================================== */
+
+/* --- Encabezado de Fase — base: light mode --- */
+.it-fase-line {
+  width: 100%;
+  border-top: 1px solid #a7f3d0;
+}
+html.dark .it-fase-line { border-top-color: rgba(16,185,129,.25); }
+
+.it-fase-pill {
+  position: relative;
+  z-index: 10;
+  padding: 0.375rem 1.25rem;
+  font-size: 0.875rem;
+  font-weight: 900;
+  font-style: italic;
+  text-transform: uppercase;
+  letter-spacing: -0.025em;
+  color: #064e3b;
+  background: #ecfdf5;
+  border: 1px solid #6ee7b7;
+  border-radius: 9999px;
+  box-shadow: 0 2px 8px rgba(16,185,129,.12);
+  margin: 0;
+}
+html.dark .it-fase-pill {
+  color: #34d399;
+  background: rgba(16,185,129,.12);
+  border-color: rgba(16,185,129,.30);
+  backdrop-filter: blur(12px);
+  box-shadow: 0 0 20px rgba(16,185,129,.15);
+}
+
+/* --- Contenedor de Grupo — base: light mode --- */
+.it-grupo-card {
+  padding: 0.75rem 1rem;
+  border-radius: 1rem;
+  background: #f0fdf4;
+  border: 1px solid #d1fae5;
+}
+html.dark .it-grupo-card {
+  background: rgba(255,255,255,.03);
+  border-color: rgba(255,255,255,.08);
+}
+
+/* --- Card de partido (fila glassmorphism) --- */
+/* backdrop-filter va en ::before para no crear stacking context y permitir que
+   los modales Bootstrap (position:fixed) salgan del card sin quedar atrapados */
+.it-cal-card {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 0.625rem;
+  padding: 0.5rem 0.75rem;
+  border-radius: 0.75rem;
+  background: #ffffff;
+  border: 1px solid #d1fae5;
+  box-shadow: 0 1px 4px rgba(16,185,129,.06);
+  transition: background 0.2s, border-color 0.2s, box-shadow 0.2s;
+}
+.it-cal-card::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  z-index: -1;
+  pointer-events: none;
+}
+.it-cal-card:hover {
+  background: #f0fdf4;
+  border-color: #6ee7b7;
+  box-shadow: 0 2px 10px rgba(16,185,129,.12);
+}
+html.dark .it-cal-card {
+  background: rgba(255,255,255,.05);
+  border-color: rgba(255,255,255,.07);
+  box-shadow: none;
+}
+html.dark .it-cal-card::before {
+  backdrop-filter: blur(10px);
+}
+html.dark .it-cal-card:hover {
+  background: rgba(255,255,255,.09);
+  border-color: rgba(16,185,129,.22);
+  box-shadow: 0 2px 16px rgba(16,185,129,.08);
+}
+
+/* ============================================================
+   GLASSMORPHISM CALENDAR — SECCIONES
+   BASE = light mode  |  html.dark override = dark mode
+   ============================================================ */
+.it-cal-actions { display: flex; flex-wrap: wrap; gap: 0.3rem; align-items: center; flex: 0 0 auto; }
+
+/* ID del partido */
+.it-cal-id {
+  flex: 0 0 2.25rem; font-family: monospace; font-size: 0.6rem;
+  color: #94a3b8; white-space: nowrap; text-align: center;
+}
+html.dark .it-cal-id { color: rgba(255,255,255,.35); }
+
+/* Nombres de equipos */
+.it-cal-eq1 { flex: 1 1 0; min-width: 0; display: flex; align-items: center; gap: 0.375rem; justify-content: flex-end; }
+.it-cal-eq1 span { font-size: 0.7rem; font-weight: 900; text-transform: uppercase; font-style: italic; color: #0f172a; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+html.dark .it-cal-eq1 span { color: rgba(255,255,255,.88); }
+
+.it-cal-eq2 { flex: 1 1 0; min-width: 0; display: flex; align-items: center; gap: 0.375rem; justify-content: flex-start; }
+.it-cal-eq2 span { font-size: 0.7rem; font-weight: 900; text-transform: uppercase; font-style: italic; color: #0f172a; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+html.dark .it-cal-eq2 span { color: rgba(255,255,255,.88); }
+
+/* Escudos */
+.it-cal-eq1 img, .it-cal-eq2 img {
+  width: 1.75rem; height: 1.75rem; border-radius: 50%; object-fit: cover;
+  border: 1px solid #a7f3d0; flex-shrink: 0; cursor: pointer;
+}
+html.dark .it-cal-eq1 img, html.dark .it-cal-eq2 img { border-color: rgba(255,255,255,.15); }
+
+/* Marcador */
+.it-cal-score { flex: 0 0 5rem; display: flex; align-items: center; justify-content: center; gap: 0.25rem; font-weight: 900; font-style: italic; }
+.it-cal-score span:not(.it-cal-sep) {
+  min-width: 1.5rem; text-align: center; font-size: 1rem; color: #059669;
+  padding: 0.1rem 0.3rem; background: #d1fae5; border-radius: 0.3rem; border: 1px solid #6ee7b7;
+}
+html.dark .it-cal-score span:not(.it-cal-sep) { color: #34d399; background: rgba(16,185,129,.12); border-color: rgba(16,185,129,.25); }
+.it-cal-sep { font-size: 0.75rem; color: #94a3b8; }
+html.dark .it-cal-sep { color: rgba(255,255,255,.3); }
+
+/* Fecha / Cancha */
+.it-cal-meta { flex: 0 0 7rem; display: flex; flex-direction: column; font-size: 0.6rem; font-weight: 700; color: #475569; line-height: 1.5; overflow: hidden; }
+.it-cal-meta span:last-child { font-weight: 900; text-transform: uppercase; color: #1e293b; }
+html.dark .it-cal-meta { color: rgba(255,255,255,.5); }
+html.dark .it-cal-meta span:last-child { color: rgba(255,255,255,.72); }
+
+.it-cal-estado { flex: 0 0 6rem; display: flex; justify-content: center; }
+
+/* --- Badges de estado — base: light mode --- */
+.it-cal-badge {
+  display: inline-block; padding: 0.2rem 0.6rem; border-radius: 9999px;
+  font-size: 0.6rem; font-weight: 900; text-transform: uppercase; letter-spacing: 0.05em;
+  border: 1px solid transparent; white-space: nowrap;
+}
+.it-cal-badge-gray  { color: #6b7280; background: #f3f4f6; border-color: #d1d5db; }
+.it-cal-badge-green { color: #065f46; background: #d1fae5; border-color: #6ee7b7; }
+.it-cal-badge-blue  { color: #1d4ed8; background: #dbeafe; border-color: #93c5fd; }
+.it-cal-badge-amber { color: #92400e; background: #fef3c7; border-color: #fcd34d; }
+.it-cal-badge-red   { color: #991b1b; background: #fee2e2; border-color: #fca5a5; }
+html.dark .it-cal-badge-gray  { color: rgba(255,255,255,.5); background: rgba(255,255,255,.06); border-color: rgba(255,255,255,.10); }
+html.dark .it-cal-badge-green { color: #34d399; background: rgba(16,185,129,.12); border-color: rgba(16,185,129,.28); }
+html.dark .it-cal-badge-blue  { color: #60a5fa; background: rgba(59,130,246,.12); border-color: rgba(59,130,246,.28); }
+html.dark .it-cal-badge-amber { color: #fbbf24; background: rgba(251,191,36,.12); border-color: rgba(251,191,36,.28); }
+html.dark .it-cal-badge-red   { color: #f87171; background: rgba(239,68,68,.12); border-color: rgba(239,68,68,.28); }
+
+/* --- Botones Admin — base: light mode --- */
+.it-cal-admin { flex: 0 0 auto; display: flex; flex-wrap: wrap; gap: 0.25rem; align-items: center; }
+.it-cal-adm-btn {
+  display: inline-flex; align-items: center; gap: 0.2rem;
+  padding: 0.2rem 0.45rem; font-size: 0.6rem; font-weight: 900; text-transform: uppercase;
+  letter-spacing: 0.04em; color: #374151; background: #f9fafb;
+  border: 1px solid #d1d5db; border-radius: 0.4rem; cursor: pointer;
+  transition: all 0.15s; white-space: nowrap;
+}
+.it-cal-adm-btn:hover { background: #e5e7eb; color: #111827; }
+html.dark .it-cal-adm-btn { color: rgba(255,255,255,.75); background: rgba(255,255,255,.08); border-color: rgba(255,255,255,.12); }
+html.dark .it-cal-adm-btn:hover { background: rgba(255,255,255,.15); color: #fff; }
+/* Colores de botones admin — light mode */
+.it-cal-adm-btn.it-cal-adm-green { color: #065f46; border-color: #6ee7b7; background: #ecfdf5; }
+.it-cal-adm-btn.it-cal-adm-amber { color: #92400e; border-color: #fcd34d; background: #fffbeb; }
+.it-cal-adm-btn.it-cal-adm-red   { color: #991b1b; border-color: #fca5a5; background: #fff1f2; }
+.it-cal-adm-btn.it-cal-adm-cyan  { color: #155e75; border-color: #67e8f9; background: #ecfeff; }
+/* Colores de botones admin — dark mode */
+html.dark .it-cal-adm-btn.it-cal-adm-green { color: #34d399; border-color: rgba(16,185,129,.4); background: transparent; }
+html.dark .it-cal-adm-btn.it-cal-adm-green:hover { background: rgba(16,185,129,.15); }
+html.dark .it-cal-adm-btn.it-cal-adm-amber { color: #fbbf24; border-color: rgba(251,191,36,.4); background: transparent; }
+html.dark .it-cal-adm-btn.it-cal-adm-amber:hover { background: rgba(251,191,36,.12); }
+html.dark .it-cal-adm-btn.it-cal-adm-red   { color: #f87171; border-color: rgba(239,68,68,.4); background: transparent; }
+html.dark .it-cal-adm-btn.it-cal-adm-red:hover { background: rgba(239,68,68,.12); }
+html.dark .it-cal-adm-btn.it-cal-adm-cyan  { color: #22d3ee; border-color: rgba(6,182,212,.4); background: transparent; }
+html.dark .it-cal-adm-btn.it-cal-adm-cyan:hover { background: rgba(6,182,212,.12); }
+
+/* --- Botones de acción (icono) — base: light mode --- */
+.it-cal-btn-action {
+  display: inline-flex; align-items: center; justify-content: center;
+  width: 1.75rem; height: 1.75rem; border-radius: 0.45rem;
+  border: 1px solid transparent; cursor: pointer; transition: all 0.15s; font-size: 0.7rem;
+  background: none;
+}
+.it-cal-btn-rose  { color: #e11d48; background: #fff1f2; border-color: #fca5a5; }
+.it-cal-btn-rose:hover  { background: #e11d48; color: #fff; border-color: #e11d48; }
+.it-cal-btn-amber { color: #d97706; background: #fffbeb; border-color: #fcd34d; }
+.it-cal-btn-amber:hover { background: #d97706; color: #fff; border-color: #d97706; }
+.it-cal-btn-cyan  { color: #0891b2; background: #ecfeff; border-color: #67e8f9; }
+.it-cal-btn-cyan:hover  { background: #0891b2; color: #fff; border-color: #0891b2; }
+.it-cal-btn-blue  { color: #2563eb; background: #eff6ff; border-color: #93c5fd; }
+.it-cal-btn-blue:hover  { background: #2563eb; color: #fff; border-color: #2563eb; }
+/* Dark mode override para botones de acción */
+html.dark .it-cal-btn-rose  { color: #f87171; background: rgba(244,63,94,.10); border-color: rgba(244,63,94,.25); }
+html.dark .it-cal-btn-amber { color: #fbbf24; background: rgba(251,191,36,.10); border-color: rgba(251,191,36,.25); }
+html.dark .it-cal-btn-cyan  { color: #22d3ee; background: rgba(6,182,212,.10); border-color: rgba(6,182,212,.25); }
+html.dark .it-cal-btn-blue  { color: #60a5fa; background: rgba(59,130,246,.10); border-color: rgba(59,130,246,.25); }
+
+/* ========================================
+   MODAL RESULTADOS — clases it-modal-*
+   BASE = light mode | html.dark = dark mode
+   ======================================== */
+
+/* Contenedor modal */
+.it-modal-content {
+  background: #ffffff;
+  border: 1px solid #e5e7eb;
+}
+html.dark .it-modal-content {
+  background: #0d1b2a;
+  border-color: rgba(255,255,255,.08);
+}
+
+/* Header */
+.it-modal-header {
+  background: #f3f4f6;
+  border-color: #e5e7eb;
+}
+html.dark .it-modal-header {
+  background: #0f2035;
+  border-color: rgba(255,255,255,.07);
+}
+
+/* Título */
+.it-modal-title { color: #111827; }
+html.dark .it-modal-title { color: #f1f5f9; }
+
+/* Botón cerrar */
+.it-modal-close { background: #e5e7eb; color: #374151; }
+html.dark .it-modal-close { background: rgba(255,255,255,.08); color: #94a3b8; }
+
+/* Cuerpo */
+.it-modal-body { background: #ffffff; }
+html.dark .it-modal-body { background: #0d1b2a; }
+
+/* Tarjeta de equipo */
+.it-modal-eq-card { background: #f3f4f6; border-color: #e5e7eb; }
+html.dark .it-modal-eq-card { background: #112240; border-color: rgba(255,255,255,.07); }
+
+/* Logo equipo */
+.it-modal-logo { background: #ffffff; border-color: #d1d5db; }
+html.dark .it-modal-logo { background: rgba(255,255,255,.07); border-color: rgba(255,255,255,.12); }
+
+/* Label "GOLES" */
+.it-modal-label { color: #6b7280; }
+html.dark .it-modal-label { color: #64748b; }
+
+/* Número de goles */
+.it-modal-score { color: #111827; }
+html.dark .it-modal-score { color: #f1f5f9; }
+
+/* Penaltis valor */
+.it-modal-score-alt { color: #0891b2; }
+html.dark .it-modal-score-alt { color: #22d3ee; }
+
+/* Badge Juego Limpio verde (Eq1) */
+.it-modal-jl-green { background: #d1fae5; border-color: #6ee7b7; color: #065f46; }
+html.dark .it-modal-jl-green { background: rgba(16,185,129,.15); border-color: rgba(16,185,129,.25); color: #6ee7b7; }
+
+/* Badge Juego Limpio azul (Eq2) */
+.it-modal-jl-blue { background: #dbeafe; border-color: #93c5fd; color: #1d4ed8; }
+html.dark .it-modal-jl-blue { background: rgba(59,130,246,.15); border-color: rgba(59,130,246,.25); color: #93c5fd; }
+
+/* Divisor de sección */
+.it-modal-divider { border-color: #d1d5db; }
+html.dark .it-modal-divider { border-color: rgba(255,255,255,.10); }
+
+/* Label de sección (Goleadores / Sanciones) */
+.it-modal-section-label { color: #4b5563; }
+html.dark .it-modal-section-label { color: #94a3b8; }
+
+/* Tarjeta de goleador */
+.it-modal-gol-card { background: #e5e7eb; border-color: #d1d5db; color: #111827; }
+html.dark .it-modal-gol-card { background: rgba(255,255,255,.07); border-color: rgba(255,255,255,.10); color: #e2e8f0; }
+
+/* Sección Penaltis */
+.it-modal-penaltis { background: #e5e7eb; border-color: #d1d5db; }
+html.dark .it-modal-penaltis { background: rgba(255,255,255,.07); border-color: rgba(255,255,255,.10); }
+
+/* Sanción amarilla */
+.it-modal-san-yellow { background: #fef9c3; border-color: #fde047; color: #713f12; }
+html.dark .it-modal-san-yellow { background: rgba(251,191,36,.15); border-color: rgba(251,191,36,.28); color: #fbbf24; }
+
+/* Sanción roja */
+.it-modal-san-red { background: #ffe4e6; border-color: #fda4af; color: #881337; }
+html.dark .it-modal-san-red { background: rgba(244,63,94,.13); border-color: rgba(244,63,94,.28); color: #fca5a5; }
+
+/* Sin sanciones */
+.it-modal-empty { color: #9ca3af; }
+html.dark .it-modal-empty { color: #475569; }

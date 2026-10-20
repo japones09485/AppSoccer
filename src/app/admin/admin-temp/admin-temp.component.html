@@ -1,113 +1,89 @@
-﻿<div class="min-h-screen flex bg-slate-100 dark:bg-[#111114] text-slate-900 dark:text-white">
+<div class="min-h-screen bg-[#F2F5EE] dark:bg-[#0E1209] text-[#141A10] dark:text-[#E8F5D4]">
 
-  <!-- ══════════ TOP BAR MÓVIL (siempre verde oscuro) ══════════ -->
-  <header class="md:hidden fixed top-0 left-0 right-0 z-50 h-14 bg-[#071a0d] border-b border-white/5 flex items-center justify-between px-4 shadow-lg">
-    <div class="flex items-center gap-3">
-      <div class="w-8 h-8 bg-white/10 rounded-lg flex items-center justify-center overflow-hidden border border-white/10">
-        <img src="assets/img/logo.png" alt="Logo" class="h-7 w-auto object-contain" />
+  <!-- ════════════════════════ TOP NAV ════════════════════════ -->
+  <header class="top-nav">
+    <div class="top-nav-logo">
+      <div class="w-7 h-7 rounded-lg overflow-hidden flex-shrink-0 bg-white/10 border border-white/10 flex items-center justify-center">
+        <img src="assets/img/logo.png" alt="Logo" class="h-6 w-auto object-contain" />
       </div>
-      <span class="font-bebas text-base tracking-widest text-white">MÁS QUE FÚTBOL</span>
-    </div>
-    <button (click)="menuOpen = !menuOpen"
-      class="w-9 h-9 rounded-xl bg-white/10 hover:bg-green-600 flex items-center justify-center transition-all border border-white/10 active:scale-90">
-      <i class="fa text-white text-sm" [ngClass]="menuOpen ? 'fa-times' : 'fa-bars'"></i>
-    </button>
-  </header>
-
-  <!-- ══════════ OVERLAY MÓVIL ══════════ -->
-  <div *ngIf="menuOpen" (click)="menuOpen = false"
-    class="md:hidden fixed inset-0 bg-black/70 backdrop-blur-sm z-40"></div>
-
-  <!-- ══════════════════════════ SIDEBAR — siempre verde oscuro ══════════════════════════ -->
-  <aside
-    [class.translate-x-0]="menuOpen"
-    [class.-translate-x-full]="!menuOpen"
-    class="fixed inset-y-0 left-0 z-50 w-64
-           bg-[#071a0d]
-           border-r border-white/5
-           flex flex-col
-           transform transition-transform duration-300 ease-in-out
-           md:translate-x-0 md:sticky md:top-0 md:h-screen md:shrink-0">
-
-    <!-- Logo -->
-    <div class="flex flex-col items-center pt-7 pb-5 px-4 border-b border-white/5">
-      <div class="relative mb-3">
-        <div class="absolute inset-0 bg-green-500 blur-xl opacity-20 rounded-2xl"></div>
-        <div class="relative w-16 h-16 bg-white/10 rounded-2xl flex items-center justify-center overflow-hidden border border-white/10">
-          <img src="assets/img/logo.png" alt="Logo" class="h-14 w-auto object-contain" />
-        </div>
-      </div>
-      <p class="font-bebas text-sm tracking-[0.25em] text-white/50">MÁS QUE FÚTBOL</p>
-      <div class="flex items-center gap-1.5 mt-1">
-        <span class="w-1.5 h-1.5 bg-green-400 rounded-full animate-pulse"></span>
-        <span class="text-[9px] font-bold text-white/30 uppercase tracking-[0.2em]">Admin Panel</span>
-      </div>
+      <span class="top-nav-brand">Más que Fútbol</span>
     </div>
 
-    <!-- Navegación -->
-    <nav class="flex-1 px-3 py-4 overflow-y-auto custom-scrollbar space-y-0.5">
-      <p class="text-[9px] font-black text-white/20 uppercase tracking-[0.25em] px-3 pb-2 pt-1">Navegación</p>
-
-      <a href="#" (click)="activarComp('panelV'); menuOpen=false; $event.preventDefault()" class="nav-link" [class.nav-active]="estados['panelV']" data-animate data-delay="1">
-        <span class="nav-icon"><i class="fa fa-home"></i></span><span>Inicio</span>
-      </a>
-      <a href="#" (click)="activarComp('torneosV'); menuOpen=false; $event.preventDefault()" class="nav-link" [class.nav-active]="estados['torneosV']" data-animate data-delay="2">
-        <span class="nav-icon"><i class="fa fa-trophy"></i></span><span>Torneos</span>
-      </a>
-      <a href="#" (click)="activarComp('equiposV'); menuOpen=false; $event.preventDefault()" class="nav-link" [class.nav-active]="estados['equiposV']" data-animate data-delay="2">
-        <span class="nav-icon"><i class="fa fa-shield"></i></span><span>Clubes</span>
-      </a>
-      <a href="#" (click)="activarComp('jugadoresV'); menuOpen=false; $event.preventDefault()" class="nav-link" [class.nav-active]="estados['jugadoresV']" data-animate data-delay="3">
-        <span class="nav-icon"><i class="fa fa-users"></i></span><span>Jugadores</span>
-      </a>
-
-      <p class="text-[9px] font-black text-white/20 uppercase tracking-[0.25em] px-3 pb-2 pt-4">Configuración</p>
-
-      <a href="#" (click)="activarComp('userV'); menuOpen=false; $event.preventDefault()" class="nav-link" [class.nav-active]="estados['userV']" data-animate data-delay="3">
-        <span class="nav-icon"><i class="fa fa-user"></i></span><span>Usuarios</span>
-      </a>
-      <a href="#" (click)="activarComp('categoriasV'); menuOpen=false; $event.preventDefault()" class="nav-link" [class.nav-active]="estados['categoriasV']" data-animate data-delay="4">
-        <span class="nav-icon"><i class="fa fa-list-ul"></i></span><span>Categorías</span>
-      </a>
-      <a href="#" (click)="activarComp('canchasV'); menuOpen=false; $event.preventDefault()" class="nav-link" [class.nav-active]="estados['canchasV']" data-animate data-delay="4">
-        <span class="nav-icon"><i class="fa fa-map-marker"></i></span><span>Canchas</span>
-      </a>
-      <a href="#" (click)="activarComp('juecesV'); menuOpen=false; $event.preventDefault()" class="nav-link" [class.nav-active]="estados['juecesV']" data-animate data-delay="5">
-        <span class="nav-icon"><i class="fa fa-gavel"></i></span><span>Árbitros</span>
-      </a>
+    <!-- Links desktop -->
+    <nav class="top-nav-links">
+      <a href="#" (click)="activarComp('panelV'); $event.preventDefault()" class="top-nav-link" [class.is-active]="estados['panelV']"><i class="fa fa-home"></i><span>Inicio</span></a>
+      <a href="#" (click)="activarComp('torneosV'); $event.preventDefault()" class="top-nav-link" [class.is-active]="estados['torneosV']"><i class="fa fa-trophy"></i><span>Torneos</span></a>
+      <a href="#" (click)="activarComp('equiposV'); $event.preventDefault()" class="top-nav-link" [class.is-active]="estados['equiposV']"><i class="fa fa-shield"></i><span>Clubes</span></a>
+      <a href="#" (click)="activarComp('jugadoresV'); $event.preventDefault()" class="top-nav-link" [class.is-active]="estados['jugadoresV']"><i class="fa fa-users"></i><span>Jugadores</span></a>
+      <a href="#" (click)="activarComp('userV'); $event.preventDefault()" class="top-nav-link" [class.is-active]="estados['userV']"><i class="fa fa-user"></i><span>Usuarios</span></a>
+      <a href="#" (click)="activarComp('categoriasV'); $event.preventDefault()" class="top-nav-link" [class.is-active]="estados['categoriasV']"><i class="fa fa-list-ul"></i><span>Categorías</span></a>
+      <a href="#" (click)="activarComp('canchasV'); $event.preventDefault()" class="top-nav-link" [class.is-active]="estados['canchasV']"><i class="fa fa-map-marker"></i><span>Canchas</span></a>
+      <a href="#" (click)="activarComp('juecesV'); $event.preventDefault()" class="top-nav-link" [class.is-active]="estados['juecesV']"><i class="fa fa-gavel"></i><span>Árbitros</span></a>
+      <a href="#" (click)="activarComp('ciudadesV'); $event.preventDefault()" class="top-nav-link" [class.is-active]="estados['ciudadesV']"><i class="fa fa-globe"></i><span>Ciudades</span></a>
+      <a href="#" (click)="activarComp('formulariosV'); $event.preventDefault()" class="top-nav-link" [class.is-active]="estados['formulariosV']"><i class="fa fa-file-text-o"></i><span>Formularios</span></a>
     </nav>
 
-    <!-- Footer del sidebar -->
-    <div class="px-3 pb-5 pt-3 border-t border-white/5 space-y-2">
-
-      <!-- Toggle tema -->
-      <div class="flex items-center justify-between px-3 py-2.5 rounded-xl bg-white/5 border border-white/8">
-        <div class="flex items-center gap-2">
-          <i class="fa text-xs" [ngClass]="isDark ? 'fa-moon-o text-green-400' : 'fa-sun-o text-amber-400'"></i>
-          <span class="text-[10px] font-black text-white/50 uppercase tracking-wider">
-            {{ isDark ? 'Oscuro' : 'Claro' }}
-          </span>
-        </div>
-        <button (click)="toggleTheme()" type="button" class="theme-toggle" [class.toggle-on]="isDark">
-          <span class="toggle-thumb"></span>
-        </button>
-      </div>
-
-      <!-- Cerrar sesión -->
-      <button (click)="cerrarSesion()"
-        class="flex items-center gap-3 w-full px-4 py-2.5 rounded-xl
-               bg-red-500/10 hover:bg-red-500
-               border border-red-500/20 hover:border-red-500
-               text-red-400 hover:text-white
-               font-bold text-xs uppercase tracking-wider transition-all duration-200">
-        <i class="fa fa-sign-out text-sm"></i>
-        Cerrar sesión
+    <div class="top-nav-right">
+      <button (click)="cerrarSesion()" class="top-nav-logout">
+        <i class="fa fa-sign-out"></i>
+        <span class="hidden lg:inline">Cerrar sesión</span>
+      </button>
+      <button (click)="menuOpen = !menuOpen" class="top-nav-burger md:hidden">
+        <i class="fa" [ngClass]="menuOpen ? 'fa-times' : 'fa-bars'"></i>
       </button>
     </div>
-  </aside>
+  </header>
 
-  <!-- ══════════════════════════ CONTENIDO PRINCIPAL ══════════════════════════ -->
-  <main class="flex-1 min-w-0 mt-14 md:mt-0 overflow-x-hidden">
+  <!-- ════ OVERLAY MÓVIL ════ -->
+  <div *ngIf="menuOpen" (click)="menuOpen = false" class="top-nav-mobile-overlay md:hidden"></div>
+
+  <!-- ════ MENÚ DESPLEGABLE MÓVIL ════ -->
+  <div *ngIf="menuOpen" class="top-nav-mobile-dropdown md:hidden">
+    <a href="#" (click)="activarComp('panelV'); menuOpen=false; $event.preventDefault()" class="top-nav-mobile-link" [class.is-active]="estados['panelV']">
+      <i class="fa fa-home"></i>Inicio
+    </a>
+    <a href="#" (click)="activarComp('torneosV'); menuOpen=false; $event.preventDefault()" class="top-nav-mobile-link" [class.is-active]="estados['torneosV']">
+      <i class="fa fa-trophy"></i>Torneos
+    </a>
+    <a href="#" (click)="activarComp('equiposV'); menuOpen=false; $event.preventDefault()" class="top-nav-mobile-link" [class.is-active]="estados['equiposV']">
+      <i class="fa fa-shield"></i>Clubes
+    </a>
+    <a href="#" (click)="activarComp('jugadoresV'); menuOpen=false; $event.preventDefault()" class="top-nav-mobile-link" [class.is-active]="estados['jugadoresV']">
+      <i class="fa fa-users"></i>Jugadores
+    </a>
+    <a href="#" (click)="activarComp('userV'); menuOpen=false; $event.preventDefault()" class="top-nav-mobile-link" [class.is-active]="estados['userV']">
+      <i class="fa fa-user"></i>Usuarios
+    </a>
+    <a href="#" (click)="activarComp('categoriasV'); menuOpen=false; $event.preventDefault()" class="top-nav-mobile-link" [class.is-active]="estados['categoriasV']">
+      <i class="fa fa-list-ul"></i>Categorías
+    </a>
+    <a href="#" (click)="activarComp('canchasV'); menuOpen=false; $event.preventDefault()" class="top-nav-mobile-link" [class.is-active]="estados['canchasV']">
+      <i class="fa fa-map-marker"></i>Canchas
+    </a>
+    <a href="#" (click)="activarComp('juecesV'); menuOpen=false; $event.preventDefault()" class="top-nav-mobile-link" [class.is-active]="estados['juecesV']">
+      <i class="fa fa-gavel"></i>Árbitros
+    </a>
+    <a href="#" (click)="activarComp('ciudadesV'); menuOpen=false; $event.preventDefault()" class="top-nav-mobile-link" [class.is-active]="estados['ciudadesV']">
+      <i class="fa fa-map-marker"></i>Ciudades
+    </a>
+    <a href="#" (click)="activarComp('formulariosV'); menuOpen=false; $event.preventDefault()" class="top-nav-mobile-link" [class.is-active]="estados['formulariosV']">
+      <i class="fa fa-wpforms"></i>Formularios
+    </a>
+    <button type="button" (click)="toggleTheme(); menuOpen=false" class="top-nav-mobile-link top-nav-mobile-theme"
+      [style.opacity]="isClasico ? '1' : '0.35'" [style.pointer-events]="isClasico ? 'auto' : 'none'">
+      <i class="fa" [class.fa-lightbulb-o]="!isDark" [class.fa-moon-o]="isDark"></i>
+      {{ isDark ? 'Modo claro' : 'Modo oscuro' }}
+    </button>
+    <button type="button" (click)="toggleSkinPanel(); menuOpen=false" class="top-nav-mobile-link top-nav-mobile-theme">
+      <i class="fa fa-paint-brush"></i>Apariencia
+    </button>
+    <button type="button" (click)="cerrarSesion()" class="top-nav-mobile-link top-nav-mobile-logout">
+      <i class="fa fa-sign-out"></i>Cerrar sesión
+    </button>
+  </div>
+
+  <!-- ════════════════════════ CONTENIDO PRINCIPAL ════════════════════════ -->
+  <main class="pt-[80px] overflow-x-hidden">
 
     <!-- Panel Principal -->
     <section *ngIf="estados['panelV']" class="p-4 md:p-8 max-w-5xl mx-auto">
@@ -160,5 +136,7 @@
     <app-categorias *ngIf="estados['categoriasV']"></app-categorias>
     <app-canchas    *ngIf="estados['canchasV']"></app-canchas>
     <app-jueces     *ngIf="estados['juecesV']"></app-jueces>
+    <app-ciudades      *ngIf="estados['ciudadesV']"></app-ciudades>
+    <app-formularios   *ngIf="estados['formulariosV']"></app-formularios>
   </main>
 </div>

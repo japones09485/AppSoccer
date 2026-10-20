@@ -9,6 +9,8 @@ import { JugadoresComponent } from "../jugadores/jugadores.component";
 import { CategoriasComponent } from "../categorias/categorias.component";
 import { CanchasComponent } from "../canchas/canchas.component";
 import { JuecesComponent } from "../jueces/jueces.component";
+import { CiudadesComponent } from "../ciudades/ciudades.component";
+import { FormulariosComponent } from "../formularios/formularios.component";
 import { ThemeService } from "../../services/theme.service";
 import { environment } from "../../../environments/environment";
 
@@ -23,7 +25,9 @@ import { environment } from "../../../environments/environment";
     JugadoresComponent,
     CategoriasComponent,
     CanchasComponent,
-    JuecesComponent
+    JuecesComponent,
+    CiudadesComponent,
+    FormulariosComponent,
   ],
   styleUrls: ['./admin-temp.component.css']
 })
@@ -36,7 +40,9 @@ export class AdminTempComponent implements OnInit {
     jugadoresV: false,
     categoriasV: false,
     canchasV: false,
-    juecesV: false
+    juecesV: false,
+    ciudadesV: false,
+    formulariosV: false,
   };
   menuOpen: boolean = false;
   pathIm = environment.apiURL;
@@ -49,9 +55,11 @@ export class AdminTempComponent implements OnInit {
 
   ngOnInit(): void { }
 
-  get isDark(): boolean { return this.themeService.isDark; }
+  get isDark():     boolean { return this.themeService.isDark; }
+  get isClasico():  boolean { return this.themeService.isClasico; }
 
-  toggleTheme(): void { this.themeService.toggle(); }
+  toggleTheme():        void { this.themeService.toggle(); }
+  toggleSkinPanel():    void { this.themeService.toggleSkinPanel(); }
 
   activarComp(campoValid: string): void {
     if (this.estados.hasOwnProperty(campoValid)) {

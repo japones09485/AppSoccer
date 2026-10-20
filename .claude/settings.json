@@ -23,7 +23,37 @@
       "Bash(Head -50)",
       "PowerShell(Get-ChildItem -Path \"g:\\\\Desarrollo\\\\GitHub\\\\appSoccer\\\\src\\\\app\" -Recurse -Directory | ForEach-Object { $_.FullName.Replace\\(\"g:\\\\Desarrollo\\\\GitHub\\\\appSoccer\\\\src\\\\app\\\\\", \"\"\\) })",
       "Bash(git stash *)",
-      "Bash(git checkout *)"
+      "Bash(git checkout *)",
+      "PowerShell(& \"G:\\\\xampp\\\\mysql\\\\bin\\\\mysql.exe\" -u root -e \"ALTER TABLE rel_torneos_participantes ADD COLUMN IF NOT EXISTS max_jugadores INT NULL DEFAULT NULL; SELECT 'OK' as resultado;\" appsoccer)",
+      "PowerShell(& \"G:\\\\xampp\\\\mysql\\\\bin\\\\mysql.exe\" -u root -e \"SHOW DATABASES;\")",
+      "PowerShell(& \"G:\\\\xampp\\\\mysql\\\\bin\\\\mysql.exe\" -u root -e \"ALTER TABLE rel_torneos_participantes ADD COLUMN IF NOT EXISTS max_jugadores INT NULL DEFAULT NULL; SELECT 'OK columna agregada' as resultado;\" soccerme_appsoccer)",
+      "PowerShell(Get-ChildItem -Path \"g:\\\\Desarrollo\\\\GitHub\\\\appSoccer\\\\src\\\\app\\\\admin\" -Recurse | Where-Object { $_.Extension -in \".html\",\".css\",\".scss\",\".ts\" } | Select-Object FullName | Sort-Object FullName | Format-Table -AutoSize -Wrap)",
+      "PowerShell($f = \"g:\\\\Desarrollo\\\\GitHub\\\\appSoccer\\\\src\\\\app\\\\admin\\\\torneos\\\\info-t\\\\info-t.component.html\"; \\(Get-Item $f\\).Length; \\(Get-Content $f | Measure-Object -Line\\).Lines)",
+      "PowerShell(Select-String -Path \"g:\\\\Desarrollo\\\\GitHub\\\\appSoccer\\\\src\\\\app\\\\admin\\\\torneos\\\\info-torneo\\\\info-torneo.component.html\" -Pattern \"bg-\\\\[#\" | Select-Object -First 10 | ForEach-Object { $_.Line.Trim\\(\\) })",
+      "Bash(npm list *)",
+      "WebFetch(domain:docs.google.com)",
+      "Bash(mysql -u root soccerme_appsoccer -e \"DESCRIBE formularios; DESCRIBE torneos;\")",
+      "Bash(\"G:/xampp/mysql/bin/mysql.exe\" -u root soccerme_appsoccer -e \"DESCRIBE formularios; DESCRIBE torneos;\")",
+      "Bash(G:/xampp/mysql/bin/mysql.exe -u root soccerme_appsoccer -e ' *)",
+      "Bash(\"G:/xampp/mysql/bin/mysql.exe\" -u root soccerme_appsoccer -e \"SELECT id, titulo, activo FROM formularios; SELECT id, fk_formulario, tipo, orden, label FROM formulario_campos ORDER BY fk_formulario, orden;\")",
+      "Bash(\"G:/xampp/mysql/bin/mysql.exe\" -u root soccerme_appsoccer)",
+      "PowerShell(& \"G:\\\\xampp\\\\mysql\\\\bin\\\\mysql.exe\" -u root soccerme_appsoccer --default-character-set=utf8 -e \"source C:/Users/Usuario/AppData/Local/Temp/claude/g--Desarrollo-GitHub-appSoccer/ed44f048-0c03-41fc-8509-1c16dca1e748/scratchpad/insert_campos.sql\")",
+      "Bash(mysql -u root -e \"SHOW TABLES LIKE '%respuesta%'; SHOW TABLES LIKE '%inscripcion%'; SHOW TABLES LIKE '%formulario%';\" AppSoccerB)",
+      "Bash(awk -F: '$2 > 4120 && $2 < 5400')",
+      "Bash(awk -F: '$2 > 4100 && $2 < 5490')",
+      "Bash(python3 -c ' *)",
+      "Bash(node -e ' *)",
+      "Bash(echo.)",
+      "Bash(node -e \"const p=require\\('./package.json'\\); console.log\\('tailwind:', p.dependencies?.tailwindcss || p.devDependencies?.tailwindcss\\)\")",
+      "Bash(node -e \"const p=require\\('./package.json'\\); console.log\\('xlsx:', p.dependencies?.xlsx || p.devDependencies?.xlsx || 'NO'\\)\")",
+      "Bash(xargs grep -l \"formulario\\\\|Formulario\")",
+      "Bash(xargs grep -n \"descripcion\")",
+      "Bash(grep -n \"CREATE TABLE\\\\|^\\\\`\\\\|^  \\\\`\" \"G:/Desarrollo/GitHub/appSoccer/BD/produccion.sql\")",
+      "Bash(grep -v \"^.*//\\\\|function\\\\|foreach\\\\|count_by\\\\|get_all\\\\|get_many\\\\|get_by\\\\|get_campos\\\\|response\\\\|data\\\\[\")"
+    ],
+    "additionalDirectories": [
+      "G:\\xampp\\htdocs\\AppSoccerB\\application\\controllers",
+      "G:\\xampp\\htdocs\\AppSoccerB\\application\\models"
     ]
   }
 }

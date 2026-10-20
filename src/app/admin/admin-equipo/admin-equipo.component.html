@@ -1,131 +1,115 @@
-<div class="min-h-screen bg-slate-100 dark:bg-[#111114] antialiased">
+<div class="min-h-screen bg-[#ECEEF2] dark:bg-[#0F1923] text-[#0F1923] dark:text-[#E8F0F8] antialiased">
 
-  <div class="w-full px-4 md:px-8 mx-auto max-w-7xl py-6 md:py-10">
+  <!-- ════ TOP NAV ════ -->
+  <header class="top-nav">
+    <div class="top-nav-logo">
+      <div class="w-7 h-7 rounded-lg overflow-hidden flex-shrink-0 bg-white/10 border border-white/10 flex items-center justify-center">
+        <img src="assets/img/logo.png" alt="Logo" class="h-6 w-auto object-contain" />
+      </div>
+      <span class="top-nav-brand">Admin de Equipo</span>
+    </div>
 
-    <!-- NAV TABS -->
-    <nav class="bg-white dark:bg-[#1b1b1f] border border-slate-200 dark:border-[#303038] rounded-2xl p-2 mb-6 flex overflow-x-auto gap-2 shadow-sm">
-
-      <button (click)="validMenu(1)"
-        [ngClass]="validInfo
-          ? 'bg-green-600 text-white shadow-md shadow-green-600/20'
-          : 'text-slate-600 dark:text-zinc-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-zinc-800'"
-        class="px-5 py-2.5 rounded-xl font-black uppercase text-xs tracking-wider flex items-center gap-2 transition-all shrink-0">
-        <i class="fa fa-info-circle"></i> Información del equipo
+    <nav class="top-nav-links-scrollable">
+      <button type="button" (click)="validMenu(1)" class="top-nav-link" [class.is-active]="validInfo">
+        <i class="fa fa-info-circle"></i> Información
       </button>
-
-      <button (click)="validMenu(2)"
-        [ngClass]="validTecnico
-          ? 'bg-green-600 text-white shadow-md shadow-green-600/20'
-          : 'text-slate-600 dark:text-zinc-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-zinc-800'"
-        class="px-5 py-2.5 rounded-xl font-black uppercase text-xs tracking-wider flex items-center gap-2 transition-all shrink-0">
-        <i class="fa fa-users"></i> Dirección técnica
+      <button type="button" (click)="validMenu(2)" class="top-nav-link" [class.is-active]="validTecnico">
+        <i class="fa fa-users"></i> Dirección Técnica
       </button>
-
-      <button (click)="validMenu(3)"
-        [ngClass]="validTorneos
-          ? 'bg-green-600 text-white shadow-md shadow-green-600/20'
-          : 'text-slate-600 dark:text-zinc-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-zinc-800'"
-        class="px-5 py-2.5 rounded-xl font-black uppercase text-xs tracking-wider flex items-center gap-2 transition-all shrink-0">
+      <button type="button" (click)="validMenu(3)" class="top-nav-link" [class.is-active]="validTorneos">
         <i class="fa fa-trophy"></i> Torneos
       </button>
-
-      <button (click)="cerrarSesion()"
-        class="text-red-500 hover:text-white hover:bg-red-500 px-5 py-2.5 rounded-xl font-black uppercase text-xs tracking-wider flex items-center gap-2 transition-all ml-auto shrink-0 border border-red-200 dark:border-red-500/20">
-        <i class="fa fa-sign-out"></i> Cerrar sesión
-      </button>
-
     </nav>
 
-    <!-- Línea decorativa -->
-    <div class="flex items-center gap-3 mb-6">
-      <div class="h-px bg-green-600 w-12"></div>
-      <div class="w-1.5 h-1.5 bg-green-600 rounded-full"></div>
-      <div class="h-px bg-slate-200 dark:bg-zinc-800 flex-1"></div>
+    <div class="top-nav-right">
+      <button type="button" (click)="cerrarSesion()" class="top-nav-logout">
+        <i class="fa fa-sign-out"></i>
+        <span class="hidden lg:inline">Cerrar sesión</span>
+      </button>
     </div>
+  </header>
+
+  <div class="pt-[80px] pb-8 w-full px-4 md:px-8 mx-auto max-w-7xl">
 
     <!-- ══════════ INFO DEL EQUIPO ══════════ -->
     <div *ngIf="validInfo">
+      <div *ngIf="equipo" class="flex flex-col lg:flex-row gap-6 items-start">
 
-      <div *ngIf="equipo" class="space-y-6">
+        <!-- ── SPORT CARD ── -->
+        <div class="w-full lg:w-48 xl:w-56 flex-shrink-0">
+          <div class="relative rounded-2xl overflow-hidden shadow-2xl sc-card-ratio"
+               style="background: linear-gradient(160deg, #0F1923 0%, #0D2B1E 30%, #064E3B 65%, #10B981 100%)">
 
-        <!-- Card principal del equipo -->
-        <div class="bg-white dark:bg-[#1b1b1f] border border-slate-200 dark:border-[#303038] rounded-2xl p-6 md:p-8 flex flex-col lg:flex-row items-center gap-8 shadow-sm">
+            <!-- Diagonal texture -->
+            <div class="absolute inset-0 opacity-[0.04]"
+                 style="background-image: repeating-linear-gradient(45deg, rgba(255,255,255,1) 0, rgba(255,255,255,1) 1px, transparent 1px, transparent 12px)"></div>
 
-          <!-- Logo -->
-          <div class="shrink-0">
-            <div class="bg-slate-50 dark:bg-zinc-900 border border-slate-200 dark:border-zinc-700 rounded-2xl p-5 shadow-inner">
-              <img [src]="pathIm + equipo.img1" class="w-40 h-40 object-contain drop-shadow-lg">
-            </div>
-          </div>
+            <!-- Light stripe -->
+            <div class="absolute top-0 right-10 w-px h-full opacity-[0.10]"
+                 style="background: linear-gradient(to bottom, transparent, rgba(255,255,255,0.9), transparent); transform: rotate(15deg) scaleY(1.4)"></div>
 
-          <!-- Datos -->
-          <div class="flex-1 space-y-5 text-center lg:text-left">
+            <!-- Circular glow -->
+            <div class="absolute -bottom-10 -right-10 w-40 h-40 rounded-full opacity-20"
+                 style="background: radial-gradient(circle, #10B981, transparent 70%)"></div>
 
-            <div>
-              <h2 class="font-bebas text-4xl md:text-5xl text-slate-900 dark:text-white tracking-widest">{{ equipo.nombre }}</h2>
-              <span class="inline-block mt-2 px-4 py-1 rounded-full text-[10px] font-black tracking-widest uppercase bg-green-50 dark:bg-green-500/10 text-green-700 dark:text-green-400 border border-green-200 dark:border-green-500/20">
+            <!-- CLUB REGISTRADO badge -->
+            <div class="absolute top-3 inset-x-0 flex justify-center">
+              <span class="flex items-center gap-1 bg-black/50 backdrop-blur-sm border border-white/20 rounded-full px-2.5 py-1 text-[8px] font-black text-white uppercase tracking-widest">
+                <span class="w-1 h-1 rounded-full bg-emerald-400 animate-pulse"></span>
                 Club Registrado
               </span>
             </div>
 
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-
-              <div class="bg-slate-50 dark:bg-zinc-900/60 border border-slate-200 dark:border-zinc-800 rounded-xl p-5 hover:border-green-500/30 transition-colors">
-                <span class="text-green-600 dark:text-green-400 block mb-1 text-[10px] font-black uppercase tracking-widest">Email Corporativo</span>
-                <span class="text-slate-900 dark:text-white font-semibold text-sm break-all">{{ equipo.email }}</span>
+            <!-- Logo centered -->
+            <div class="absolute inset-0 flex items-center justify-center">
+              <div class="w-20 h-20 xl:w-24 xl:h-24 rounded-full bg-white/15 backdrop-blur-sm border-2 border-white/25 flex items-center justify-center shadow-xl">
+                <img [src]="pathIm + equipo.img1" class="w-16 h-16 xl:w-20 xl:h-20 object-contain p-1.5">
               </div>
+            </div>
 
-              <div class="bg-slate-50 dark:bg-zinc-900/60 border border-slate-200 dark:border-zinc-800 rounded-xl p-5 hover:border-green-500/30 transition-colors">
-                <span class="text-green-600 dark:text-green-400 block mb-1 text-[10px] font-black uppercase tracking-widest">Estado del Equipo</span>
-                <span [ngClass]="equipo.estado == '1' ? 'text-emerald-600 dark:text-emerald-400' : 'text-red-600 dark:text-red-400'"
-                  class="text-sm font-semibold flex items-center justify-center lg:justify-start gap-2">
-                  <span class="w-2.5 h-2.5 rounded-full"
-                    [ngClass]="equipo.estado == '1' ? 'bg-emerald-500 animate-pulse' : 'bg-red-500'"></span>
-                  {{ equipo.estado == '1' ? 'Activo' : 'Inactivo' }}
-                </span>
-              </div>
-
-              <div class="bg-slate-50 dark:bg-zinc-900/60 border border-slate-200 dark:border-zinc-800 rounded-xl p-5 hover:border-green-500/30 transition-colors md:col-span-2 text-center">
-                <span class="text-green-600 dark:text-green-400 block mb-1 text-[10px] font-black uppercase tracking-widest">Fecha de Vinculación</span>
-                <span class="text-slate-900 dark:text-white font-semibold text-sm">{{ equipo.fecha_creacion }}</span>
-              </div>
-
+            <!-- Bottom: team name -->
+            <div class="absolute bottom-0 inset-x-0 p-4"
+                 style="background: linear-gradient(to top, rgba(0,0,0,0.85) 0%, transparent 100%)">
+              <p class="text-emerald-400 text-[7px] font-black uppercase tracking-[0.35em] mb-1">Club de Fútbol</p>
+              <h2 class="text-white font-black text-sm xl:text-base uppercase leading-tight">{{ equipo.nombre }}</h2>
             </div>
           </div>
-
         </div>
 
-        <!-- Categorías del equipo -->
-        <div *ngIf="categorias && categorias.length > 0">
-          <h3 class="font-bebas text-2xl text-slate-900 dark:text-white tracking-widest mb-3">
-            Categorías <span class="text-green-600 dark:text-green-400">Registradas</span>
-          </h3>
-          <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-            <div *ngFor="let cat of categorias"
-              class="bg-white dark:bg-[#1b1b1f] border border-slate-200 dark:border-[#303038] rounded-2xl p-5 hover:border-green-500/30 transition-all shadow-sm flex flex-col gap-3">
-              <div class="flex items-center gap-3">
-                <div class="w-10 h-10 bg-green-600 rounded-xl flex items-center justify-center shadow-lg shadow-green-600/20 shrink-0">
-                  <i class="fa fa-shield text-white text-sm"></i>
-                </div>
-                <div>
-                  <h4 class="font-black uppercase text-sm text-slate-900 dark:text-white">{{ cat.nombre }}</h4>
-                  <p class="text-[10px] text-slate-400 dark:text-zinc-500 font-bold uppercase tracking-widest">Categoría</p>
-                </div>
-              </div>
-              <div class="flex gap-2 pt-1 border-t border-slate-100 dark:border-zinc-800">
-                <button (click)="VerJugador(cat)"
-                  data-bs-toggle="modal" data-bs-target="#modalVerJugador"
-                  class="flex-1 flex items-center justify-center gap-1.5 py-2 rounded-xl bg-sky-500/15 dark:bg-sky-500/20 hover:bg-sky-500 hover:text-white text-sky-600 dark:text-sky-300 border border-sky-500/40 text-[10px] font-black uppercase transition-all">
-                  <i class="fa fa-users"></i> Ver
-                </button>
-                <button (click)="abrirModalSeleccion(cat)"
-                  data-bs-toggle="modal" data-bs-target="#modalSeleccionarJugador"
-                  class="flex-1 flex items-center justify-center gap-1.5 py-2 rounded-xl bg-green-500/15 dark:bg-green-500/20 hover:bg-green-600 hover:text-white text-green-600 dark:text-green-300 border border-green-500/40 text-[10px] font-black uppercase transition-all">
-                  <i class="fa fa-plus"></i> Agregar
-                </button>
-              </div>
+        <!-- ── INFO CARDS ── -->
+        <div class="flex-1 grid grid-cols-1 sm:grid-cols-2 gap-3">
+
+          <div class="bg-white dark:bg-[#1A2535] border border-[#D8DCE8] dark:border-[#1E3050] rounded-xl p-4 shadow-sm">
+            <p class="text-[9px] font-black uppercase tracking-widest text-slate-400 dark:text-slate-500 mb-1.5"><i class="fa fa-envelope mr-1.5"></i>Correo</p>
+            <p class="text-sm font-bold text-[#0F1923] dark:text-white break-all">{{ equipo.email }}</p>
+          </div>
+
+          <div class="bg-white dark:bg-[#1A2535] border border-[#D8DCE8] dark:border-[#1E3050] rounded-xl p-4 shadow-sm">
+            <p class="text-[9px] font-black uppercase tracking-widest text-slate-400 dark:text-slate-500 mb-1.5"><i class="fa fa-circle mr-1.5"></i>Estado</p>
+            <span class="inline-flex items-center gap-1.5 font-black text-sm"
+              [ngClass]="equipo.estado == '1' ? 'text-emerald-600 dark:text-emerald-400' : 'text-red-500'">
+              <span class="w-2 h-2 rounded-full flex-shrink-0"
+                [ngClass]="equipo.estado == '1' ? 'bg-emerald-500 animate-pulse' : 'bg-red-500'"></span>
+              {{ equipo.estado == '1' ? 'Activo' : 'Inactivo' }}
+            </span>
+          </div>
+
+          <div class="bg-white dark:bg-[#1A2535] border border-[#D8DCE8] dark:border-[#1E3050] rounded-xl p-4 shadow-sm">
+            <p class="text-[9px] font-black uppercase tracking-widest text-slate-400 dark:text-slate-500 mb-1.5"><i class="fa fa-calendar mr-1.5"></i>Fecha de Creación</p>
+            <p class="text-sm font-bold text-[#0F1923] dark:text-white">{{ equipo.fecha_creacion }}</p>
+          </div>
+
+          <div class="bg-white dark:bg-[#1A2535] border border-[#D8DCE8] dark:border-[#1E3050] rounded-xl p-4 shadow-sm">
+            <p class="text-[9px] font-black uppercase tracking-widest text-slate-400 dark:text-slate-500 mb-1.5"><i class="fa fa-shield mr-1.5"></i>Categorías</p>
+            <div class="flex flex-wrap gap-1 mt-1">
+              <span *ngFor="let cat of categorias"
+                class="text-[9px] font-black uppercase px-2 py-0.5 rounded-full bg-[#0F1923]/10 dark:bg-white/10 text-[#0F1923] dark:text-white border border-[#0F1923]/15 dark:border-white/10">
+                {{ cat.nombre }}
+              </span>
+              <span *ngIf="!categorias?.length" class="text-xs text-slate-400">Sin categorías</span>
             </div>
           </div>
+
         </div>
 
       </div>
@@ -134,77 +118,76 @@
     <!-- ══════════ DIRECCIÓN TÉCNICA ══════════ -->
     <div *ngIf="validTecnico">
 
-      <div class="flex justify-between items-center mb-6">
+      <div class="flex items-center justify-between mb-6">
         <div>
-          <h2 class="font-bebas text-3xl md:text-4xl text-slate-900 dark:text-white tracking-widest">Dirección <span class="text-green-600 dark:text-green-400">Técnica</span></h2>
-          <p class="text-slate-500 dark:text-zinc-400 text-[10px] font-bold uppercase tracking-[0.2em] mt-0.5">Personal del cuerpo técnico</p>
+          <h2 class="font-bebas text-3xl md:text-4xl text-[#0F1923] dark:text-white tracking-widest">
+            Dirección <span class="text-emerald-600 dark:text-emerald-400">Técnica</span>
+          </h2>
+          <p class="text-slate-400 dark:text-slate-500 text-[10px] font-bold uppercase tracking-[0.2em] mt-0.5">Personal del cuerpo técnico</p>
         </div>
         <button (click)="addTecnico()"
-          class="bg-green-600 hover:bg-green-700 text-white w-10 h-10 rounded-xl shadow-lg shadow-green-600/20 hover:scale-105 transition-all flex items-center justify-center">
-          <i class="fa fa-plus text-sm"></i>
+          class="flex items-center gap-2 bg-[#0F1923] hover:bg-[#1A2535] dark:bg-emerald-600 dark:hover:bg-emerald-700 text-white px-4 py-2.5 rounded-xl shadow-lg text-[10px] font-black uppercase tracking-wider transition-all">
+          <i class="fa fa-plus"></i> Agregar
         </button>
       </div>
 
-      <!-- Tabla técnicos -->
-      <div *ngIf="!creandoD" class="bg-white dark:bg-[#1b1b1f] border border-slate-200 dark:border-[#303038] rounded-2xl overflow-hidden shadow-sm">
-        <div class="overflow-x-auto">
-          <table class="w-full text-sm border-separate border-spacing-0">
-            <thead class="bg-slate-50 dark:bg-[#252529]">
-              <tr>
-                <th class="p-4 text-[10px] font-black uppercase tracking-widest text-slate-500 dark:text-zinc-400 border-b border-slate-200 dark:border-[#303038] text-center">Gestión</th>
-                <th class="p-4 text-[10px] font-black uppercase tracking-widest text-slate-500 dark:text-zinc-400 border-b border-slate-200 dark:border-[#303038] text-center">Perfil</th>
-                <th class="p-4 text-[10px] font-black uppercase tracking-widest text-slate-500 dark:text-zinc-400 border-b border-slate-200 dark:border-[#303038] text-left">Nombre</th>
-                <th class="p-4 text-[10px] font-black uppercase tracking-widest text-slate-500 dark:text-zinc-400 border-b border-slate-200 dark:border-[#303038] text-left">Documento</th>
-                <th class="p-4 text-[10px] font-black uppercase tracking-widest text-slate-500 dark:text-zinc-400 border-b border-slate-200 dark:border-[#303038] text-left">Email</th>
-                <th class="p-4 text-[10px] font-black uppercase tracking-widest text-slate-500 dark:text-zinc-400 border-b border-slate-200 dark:border-[#303038] text-left">Teléfono</th>
-                <th class="p-4 text-[10px] font-black uppercase tracking-widest text-slate-500 dark:text-zinc-400 border-b border-slate-200 dark:border-[#303038] text-center">Cargo</th>
-              </tr>
-            </thead>
-            <tbody class="divide-y divide-slate-100 dark:divide-[#303038]">
-              <tr *ngFor="let dir of direccionEquipo" class="hover:bg-slate-50 dark:hover:bg-[#202024] transition-colors">
+      <!-- Person Cards -->
+      <div *ngIf="!creandoD">
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
 
-                <td class="p-4 text-center">
-                  <button (click)="deletedireccion(dir.id!)"
-                    class="w-9 h-9 rounded-xl flex items-center justify-center bg-red-500/15 dark:bg-red-500/20 hover:bg-red-500 text-red-600 hover:text-white dark:text-red-300 border border-red-500/40 hover:border-red-500 transition-all active:scale-95 mx-auto">
-                    <i class="fa fa-trash text-sm"></i>
-                  </button>
-                </td>
+          <div *ngFor="let dir of direccionEquipo"
+            class="bg-white dark:bg-[#1A2535] border border-[#D8DCE8] dark:border-[#1E3050] rounded-2xl p-5 shadow-sm hover:shadow-md transition-all flex flex-col gap-4">
 
-                <td class="p-4 text-center">
-                  <img [src]="pathIm + dir.img1" class="w-12 h-12 rounded-xl object-cover mx-auto border border-slate-200 dark:border-zinc-700">
-                </td>
-
-                <td class="p-4">
-                  <span class="font-oswald font-semibold text-slate-900 dark:text-white uppercase text-sm">{{dir.nombre}}</span>
-                </td>
-                <td class="p-4">
-                  <span class="font-mono text-sm text-slate-600 dark:text-zinc-300">{{dir.identificacion}}</span>
-                </td>
-                <td class="p-4">
-                  <span class="text-sm text-green-600 dark:text-green-400">{{dir.correo}}</span>
-                </td>
-                <td class="p-4">
-                  <span class="text-sm text-slate-600 dark:text-zinc-300">{{dir.telefono}}</span>
-                </td>
-
-                <td class="p-4 text-center">
-                  <span class="px-2.5 py-1 rounded-lg text-[10px] font-black uppercase border" [ngClass]="{
-                    'bg-rose-50 text-rose-600 border-rose-200 dark:bg-rose-500/10 dark:text-rose-300 dark:border-rose-500/20': dir.tipo == 1,
-                    'bg-sky-50 text-sky-600 border-sky-200 dark:bg-sky-500/10 dark:text-sky-300 dark:border-sky-500/20': dir.tipo == 2,
-                    'bg-amber-50 text-amber-600 border-amber-200 dark:bg-amber-500/10 dark:text-amber-300 dark:border-amber-500/20': dir.tipo == 3
+            <!-- Avatar + nombre + cargo -->
+            <div class="flex items-center gap-3">
+              <img [src]="pathIm + dir.img1"
+                (click)="verImagen(pathIm + dir.img1)"
+                class="w-12 h-12 rounded-full object-cover border-2 border-[#D8DCE8] dark:border-[#1E3050] cursor-pointer hover:scale-105 transition-transform flex-shrink-0">
+              <div class="flex-1 min-w-0">
+                <p class="font-black uppercase text-sm text-[#0F1923] dark:text-white truncate leading-tight">{{ dir.nombre }}</p>
+                <span class="inline-block mt-1 text-[9px] font-black uppercase px-2.5 py-0.5 rounded-full"
+                  [ngClass]="{
+                    'bg-rose-100 text-rose-600 dark:bg-rose-500/15 dark:text-rose-300': dir.tipo == 1,
+                    'bg-sky-100 text-sky-600 dark:bg-sky-500/15 dark:text-sky-300': dir.tipo == 2,
+                    'bg-amber-100 text-amber-600 dark:bg-amber-500/15 dark:text-amber-300': dir.tipo == 3
                   }">
-                    {{ dir.tipo == 1 ? 'Entrenador' : dir.tipo == 2 ? 'Delegado' : 'Asistente' }}
-                  </span>
-                </td>
+                  {{ dir.tipo == 1 ? 'Entrenador' : dir.tipo == 2 ? 'Delegado' : 'Asistente' }}
+                </span>
+              </div>
+            </div>
 
-              </tr>
-            </tbody>
-          </table>
-        </div>
+            <!-- Datos -->
+            <div class="space-y-2 border-t border-[#ECEEF2] dark:border-[#1E3050] pt-3">
+              <div class="flex items-center gap-2">
+                <i class="fa fa-id-card text-slate-400 dark:text-slate-500 text-[10px] w-4 text-center flex-shrink-0"></i>
+                <span class="font-mono text-xs text-slate-600 dark:text-slate-300">{{ dir.identificacion }}</span>
+              </div>
+              <div class="flex items-center gap-2">
+                <i class="fa fa-envelope text-slate-400 dark:text-slate-500 text-[10px] w-4 text-center flex-shrink-0"></i>
+                <span class="text-xs text-emerald-600 dark:text-emerald-400 truncate">{{ dir.correo }}</span>
+              </div>
+              <div class="flex items-center gap-2">
+                <i class="fa fa-phone text-slate-400 dark:text-slate-500 text-[10px] w-4 text-center flex-shrink-0"></i>
+                <span class="text-xs text-slate-600 dark:text-slate-300">{{ dir.telefono }}</span>
+              </div>
+            </div>
 
-        <div *ngIf="direccionEquipo.length === 0" class="py-12 text-center text-slate-300 dark:text-zinc-600">
-          <i class="fa fa-users text-4xl mb-3 opacity-30 block"></i>
-          <p class="font-bebas text-lg tracking-widest uppercase">Sin personal registrado</p>
+            <!-- Eliminar -->
+            <button (click)="deletedireccion(dir.id!)"
+              class="w-full flex items-center justify-center gap-1.5 py-2 rounded-xl bg-red-50 dark:bg-red-500/10 hover:bg-red-500 hover:text-white text-red-500 dark:text-red-400 border border-red-200 dark:border-red-500/20 text-[10px] font-black uppercase transition-all">
+              <i class="fa fa-trash"></i> Eliminar
+            </button>
+
+          </div>
+
+          <!-- Empty state -->
+          <div *ngIf="!direccionEquipo?.length" class="col-span-full py-16 text-center">
+            <div class="w-16 h-16 rounded-2xl bg-[#0F1923]/5 dark:bg-white/5 flex items-center justify-center mx-auto mb-3">
+              <i class="fa fa-users text-2xl text-slate-300 dark:text-slate-600"></i>
+            </div>
+            <p class="font-bebas text-lg tracking-widest uppercase text-slate-400 dark:text-slate-500">Sin personal registrado</p>
+          </div>
+
         </div>
       </div>
 
@@ -214,15 +197,15 @@
         <div class="w-full md:max-w-lg bg-white dark:bg-[#1b1b1f] md:rounded-2xl shadow-2xl border border-slate-200 dark:border-[#303038] overflow-hidden flex flex-col max-h-[92vh]">
 
           <!-- Header -->
-          <div class="bg-slate-50 dark:bg-[#252529] p-5 border-b border-slate-200 dark:border-[#303038] flex items-center justify-between shrink-0">
+          <div class="bg-[#0F1923] p-5 flex items-center justify-between shrink-0">
             <div class="flex items-center gap-3">
-              <div class="w-9 h-9 bg-green-600 rounded-xl flex items-center justify-center shadow-lg shadow-green-600/20">
+              <div class="w-9 h-9 bg-white/10 rounded-xl flex items-center justify-center">
                 <i class="fa fa-users text-white text-sm"></i>
               </div>
-              <h3 class="font-bebas text-xl tracking-widest text-slate-900 dark:text-white">Crear Técnico</h3>
+              <h3 class="font-bebas text-xl tracking-widest text-white">Crear Técnico</h3>
             </div>
             <button type="button" (click)="cancel()"
-              class="w-8 h-8 flex items-center justify-center text-slate-400 dark:text-zinc-500 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-zinc-800 rounded-lg transition-all">
+              class="w-8 h-8 flex items-center justify-center text-white/60 hover:text-white hover:bg-white/10 rounded-lg transition-all">
               <i class="fa fa-times"></i>
             </button>
           </div>
@@ -231,34 +214,34 @@
             <form [formGroup]="DireccionForm" (ngSubmit)="saveTecnico()" enctype="multipart/form-data" class="space-y-4">
 
               <div class="space-y-1.5">
-                <label class="text-[9px] font-black text-green-600 dark:text-green-500 uppercase tracking-widest block">Nombre Completo</label>
+                <label class="text-[9px] font-black text-emerald-600 dark:text-emerald-500 uppercase tracking-widest block">Nombre Completo</label>
                 <input type="text" formControlName="nombre"
-                  class="w-full rounded-xl px-4 py-3 bg-white dark:bg-zinc-900 text-slate-900 dark:text-white border border-slate-300 dark:border-zinc-700 focus:border-green-500 focus:outline-none focus:ring-1 focus:ring-green-500/20 transition-colors text-sm">
+                  class="w-full rounded-xl px-4 py-3 bg-white dark:bg-zinc-900 text-slate-900 dark:text-white border border-slate-300 dark:border-zinc-700 focus:border-emerald-500 focus:outline-none focus:ring-1 focus:ring-emerald-500/20 transition-colors text-sm">
               </div>
 
               <div class="space-y-1.5">
                 <label class="text-[9px] font-black text-slate-500 dark:text-zinc-400 uppercase tracking-widest block">Número de Identificación</label>
                 <input type="text" formControlName="identificacion"
-                  class="w-full rounded-xl px-4 py-3 bg-white dark:bg-zinc-900 text-slate-900 dark:text-white border border-slate-300 dark:border-zinc-700 focus:border-green-500 focus:outline-none focus:ring-1 focus:ring-green-500/20 transition-colors text-sm">
+                  class="w-full rounded-xl px-4 py-3 bg-white dark:bg-zinc-900 text-slate-900 dark:text-white border border-slate-300 dark:border-zinc-700 focus:border-emerald-500 focus:outline-none focus:ring-1 focus:ring-emerald-500/20 transition-colors text-sm">
               </div>
 
               <div class="space-y-1.5">
                 <label class="text-[9px] font-black text-slate-500 dark:text-zinc-400 uppercase tracking-widest block">Correo Electrónico</label>
                 <input type="email" formControlName="correo"
-                  class="w-full rounded-xl px-4 py-3 bg-white dark:bg-zinc-900 text-slate-900 dark:text-white border border-slate-300 dark:border-zinc-700 focus:border-green-500 focus:outline-none focus:ring-1 focus:ring-green-500/20 transition-colors text-sm">
+                  class="w-full rounded-xl px-4 py-3 bg-white dark:bg-zinc-900 text-slate-900 dark:text-white border border-slate-300 dark:border-zinc-700 focus:border-emerald-500 focus:outline-none focus:ring-1 focus:ring-emerald-500/20 transition-colors text-sm">
               </div>
 
               <div class="space-y-1.5">
                 <label class="text-[9px] font-black text-slate-500 dark:text-zinc-400 uppercase tracking-widest block">Teléfono de Contacto</label>
                 <input type="text" formControlName="telefono"
-                  class="w-full rounded-xl px-4 py-3 bg-white dark:bg-zinc-900 text-slate-900 dark:text-white border border-slate-300 dark:border-zinc-700 focus:border-green-500 focus:outline-none focus:ring-1 focus:ring-green-500/20 transition-colors text-sm">
+                  class="w-full rounded-xl px-4 py-3 bg-white dark:bg-zinc-900 text-slate-900 dark:text-white border border-slate-300 dark:border-zinc-700 focus:border-emerald-500 focus:outline-none focus:ring-1 focus:ring-emerald-500/20 transition-colors text-sm">
               </div>
 
               <div class="space-y-1.5">
                 <label class="text-[9px] font-black text-slate-500 dark:text-zinc-400 uppercase tracking-widest block">Tipo de Cargo</label>
                 <div class="relative">
                   <select formControlName="tipo"
-                    class="w-full rounded-xl px-4 py-3 bg-white dark:bg-zinc-900 text-slate-900 dark:text-white border border-slate-300 dark:border-zinc-700 focus:border-green-500 focus:outline-none focus:ring-1 focus:ring-green-500/20 transition-colors text-sm appearance-none cursor-pointer">
+                    class="w-full rounded-xl px-4 py-3 bg-white dark:bg-zinc-900 text-slate-900 dark:text-white border border-slate-300 dark:border-zinc-700 focus:border-emerald-500 focus:outline-none focus:ring-1 focus:ring-emerald-500/20 transition-colors text-sm appearance-none cursor-pointer">
                     <option [value]="1">Entrenador</option>
                     <option [value]="2">Delegado</option>
                     <option [value]="3">Asistente</option>
@@ -268,18 +251,30 @@
               </div>
 
               <div class="space-y-1.5">
-                <label class="text-[9px] font-black text-green-600 dark:text-green-500 uppercase tracking-widest block">Foto de Perfil</label>
-                <input type="file" (change)="uploadImage($event, 1)"
-                  class="w-full text-[10px] text-slate-500 dark:text-zinc-400
-                         file:bg-slate-200 dark:file:bg-zinc-800 file:text-slate-700 dark:file:text-white
-                         file:border-none file:rounded-lg file:px-3 file:py-1.5 file:mr-2
-                         file:text-[10px] file:font-black file:uppercase file:cursor-pointer
-                         hover:file:bg-slate-300 dark:hover:file:bg-zinc-700 transition-all">
+                <label class="text-[9px] font-black text-emerald-600 dark:text-emerald-500 uppercase tracking-widest block">Foto de Perfil</label>
+                <input type="file" id="fileInput1" class="hidden" accept="image/jpeg,image/png" (change)="abrirCropper($event, 1)">
+                <label for="fileInput1" class="block cursor-pointer">
+                  <div *ngIf="filePreviews[1]; else noFotoTecnico"
+                    class="relative rounded-xl overflow-hidden border border-emerald-500/40 group">
+                    <img [src]="filePreviews[1]" class="w-full h-32 object-cover">
+                    <div class="absolute inset-0 bg-black/0 group-hover:bg-black/50 flex items-center justify-center transition-all">
+                      <span class="opacity-0 group-hover:opacity-100 text-white text-[9px] font-black uppercase bg-emerald-600/90 px-3 py-1.5 rounded-lg transition-all">
+                        <i class="fa fa-pencil mr-1"></i>Cambiar
+                      </span>
+                    </div>
+                  </div>
+                  <ng-template #noFotoTecnico>
+                    <div class="w-full flex items-center justify-center gap-2 py-4 rounded-xl border-2 border-dashed border-slate-300 dark:border-zinc-600 hover:border-emerald-500 dark:hover:border-emerald-500 text-slate-400 dark:text-zinc-500 hover:text-emerald-600 transition-all">
+                      <i class="fa fa-camera text-base"></i>
+                      <span class="text-[10px] font-black uppercase">Seleccionar foto</span>
+                    </div>
+                  </ng-template>
+                </label>
               </div>
 
               <div *ngIf="isLoading" class="flex items-center justify-center gap-3 py-3">
-                <div class="w-5 h-5 border-2 border-green-500 border-t-transparent rounded-full animate-spin"></div>
-                <p class="text-green-600 dark:text-green-500 font-black text-[9px] uppercase tracking-widest animate-pulse">Procesando...</p>
+                <div class="w-5 h-5 border-2 border-emerald-500 border-t-transparent rounded-full animate-spin"></div>
+                <p class="text-emerald-600 dark:text-emerald-500 font-black text-[9px] uppercase tracking-widest animate-pulse">Procesando...</p>
               </div>
 
               <div class="flex flex-col-reverse sm:flex-row gap-3 pt-2 border-t border-slate-100 dark:border-[#303038]">
@@ -288,7 +283,7 @@
                   <i class="fa fa-ban mr-2"></i> Cancelar
                 </button>
                 <button type="submit" *ngIf="DireccionForm.valid"
-                  class="flex-[1.5] bg-green-600 hover:bg-green-700 dark:hover:bg-green-500 text-white px-4 py-3 rounded-xl font-black shadow-lg shadow-green-600/20 hover:-translate-y-0.5 active:translate-y-0 transition-all uppercase text-xs tracking-wider flex items-center justify-center gap-2">
+                  class="flex-[1.5] bg-[#0F1923] hover:bg-[#1A2535] text-white px-4 py-3 rounded-xl font-black shadow-lg hover:-translate-y-0.5 active:translate-y-0 transition-all uppercase text-xs tracking-wider flex items-center justify-center gap-2">
                   <i class="fa fa-save"></i> Guardar
                 </button>
               </div>
@@ -305,13 +300,15 @@
 
       <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-6">
         <div>
-          <h2 class="font-bebas text-3xl md:text-4xl text-slate-900 dark:text-white tracking-widest">Torneos <span class="text-green-600 dark:text-green-400">Actuales</span></h2>
-          <p class="text-slate-500 dark:text-zinc-400 text-[10px] font-bold uppercase tracking-[0.2em] mt-0.5">Competencias del equipo</p>
+          <h2 class="font-bebas text-3xl md:text-4xl text-[#0F1923] dark:text-white tracking-widest">
+            Torneos <span class="text-emerald-600 dark:text-emerald-400">del Club</span>
+          </h2>
+          <p class="text-slate-400 dark:text-slate-500 text-[10px] font-bold uppercase tracking-[0.2em] mt-0.5">Competencias activas e historial</p>
         </div>
-        <div class="relative w-full md:w-56">
+        <div class="relative w-full md:w-52">
           <select [(ngModel)]="filtroEstado" (change)="filtrarEstado(filtroEstado)"
-            class="w-full bg-white dark:bg-zinc-900 border border-slate-300 dark:border-zinc-700 text-slate-900 dark:text-white rounded-xl px-4 py-2.5 font-black text-xs uppercase focus:outline-none focus:border-green-500 appearance-none cursor-pointer">
-            <option [ngValue]="''">Todos los estados</option>
+            class="w-full bg-white dark:bg-[#1A2535] border border-[#D8DCE8] dark:border-[#1E3050] text-[#0F1923] dark:text-white rounded-xl px-4 py-2.5 font-black text-xs uppercase focus:outline-none focus:border-emerald-500 appearance-none cursor-pointer">
+            <option [ngValue]="''">Todos</option>
             <option [ngValue]="0">Inactivo</option>
             <option [ngValue]="1">En proceso</option>
             <option [ngValue]="2">Finalizado</option>
@@ -320,72 +317,83 @@
         </div>
       </div>
 
-      <!-- Grid torneos -->
+      <!-- Grid de torneos -->
       <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
 
         <div *ngFor="let torneo of torneosFiltrados"
-          class="bg-white dark:bg-[#1b1b1f] border border-slate-200 dark:border-[#303038] rounded-2xl overflow-hidden hover:border-green-500/40 dark:hover:border-green-500/30 transition-all duration-300 group flex flex-col shadow-sm">
+          class="bg-white dark:bg-[#1A2535] border border-[#D8DCE8] dark:border-[#1E3050] rounded-2xl overflow-hidden hover:shadow-lg hover:-translate-y-0.5 transition-all duration-200 flex flex-col shadow-sm group">
 
-          <!-- Borde verde superior -->
-          <div class="h-0.5 bg-gradient-to-r from-green-600 to-transparent"></div>
-
-          <!-- Imagen -->
-          <div class="h-40 relative overflow-hidden bg-slate-100 dark:bg-black/20 flex-shrink-0">
+          <!-- Imagen con badge de estado -->
+          <div class="h-36 relative overflow-hidden bg-slate-100 dark:bg-[#0F1923] flex-shrink-0">
             <img [src]="pathIm + torneo.img1" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105">
-            <span class="absolute top-2 right-2 text-[9px] font-black uppercase px-2 py-1 rounded-lg"
+            <!-- Gradient overlay bottom -->
+            <div class="absolute inset-0 pointer-events-none"
+                 style="background: linear-gradient(to top, rgba(0,0,0,0.55) 0%, transparent 55%)"></div>
+            <!-- Estado badge -->
+            <span class="absolute top-2 right-2 text-[8px] font-black uppercase px-2 py-1 rounded-lg shadow"
               [ngClass]="{
                 'bg-red-500 text-white': torneo.estado == 0,
-                'bg-green-600 text-white': torneo.estado == 1,
-                'bg-sky-500 text-white': torneo.estado == 2
+                'bg-emerald-600 text-white': torneo.estado == 1,
+                'bg-slate-600 text-white': torneo.estado == 2
               }">
               {{ torneo.estado == 0 ? 'Inactivo' : (torneo.estado == 1 ? 'En proceso' : 'Finalizado') }}
             </span>
           </div>
 
           <!-- Card body -->
-          <div class="p-4 flex flex-col gap-2 flex-1">
-            <h5 class="font-oswald font-black text-slate-900 dark:text-white uppercase leading-tight text-sm">{{ torneo.nombre }}</h5>
-            <p class="text-slate-500 dark:text-zinc-400 text-xs leading-relaxed line-clamp-2">{{ torneo.descripcion | slice:0:80 }}...</p>
-            <div class="grid grid-cols-3 gap-1 mt-auto pt-2 border-t border-slate-100 dark:border-zinc-800">
-              <div class="text-center">
-                <p class="text-[8px] text-slate-400 dark:text-zinc-500 uppercase font-bold">Inicio</p>
-                <p class="text-slate-700 dark:text-zinc-200 text-[10px] font-bold">{{ torneo.fecha_inicio | date:'dd/MM/yy' }}</p>
-              </div>
-              <div class="text-center border-x border-slate-100 dark:border-zinc-800">
-                <p class="text-[8px] text-slate-400 dark:text-zinc-500 uppercase font-bold">Fin</p>
-                <p class="text-slate-700 dark:text-zinc-200 text-[10px] font-bold">{{ torneo.fecha_fin | date:'dd/MM/yy' }}</p>
-              </div>
-              <div class="text-center">
-                <p class="text-[8px] text-slate-400 dark:text-zinc-500 uppercase font-bold">Límite</p>
-                <p class="text-[10px] font-bold" [ngClass]="esFechaPasada(torneo.fecha_limite) ? 'text-red-500 dark:text-red-400' : 'text-amber-600 dark:text-amber-400'">
-                  {{ torneo.fecha_limite | date:'dd/MM/yy' }}
-                </p>
-              </div>
+          <div class="p-3.5 flex flex-col gap-2.5 flex-1">
+
+            <!-- Nombre -->
+            <h5 class="font-oswald font-black text-[#0F1923] dark:text-white uppercase leading-tight text-sm line-clamp-2">{{ torneo.nombre }}</h5>
+
+            <!-- Fecha chips -->
+            <div class="flex gap-1.5 flex-wrap">
+              <span class="flex items-center gap-1 text-[9px] font-bold bg-[#ECEEF2] dark:bg-[#0F1923] text-slate-500 dark:text-slate-400 px-2 py-1 rounded-lg">
+                <i class="fa fa-play text-[7px] text-emerald-500"></i>{{ torneo.fecha_inicio | date:'dd/MM/yy' }}
+              </span>
+              <span class="flex items-center gap-1 text-[9px] font-bold bg-[#ECEEF2] dark:bg-[#0F1923] text-slate-500 dark:text-slate-400 px-2 py-1 rounded-lg">
+                <i class="fa fa-flag text-[7px] text-slate-400"></i>{{ torneo.fecha_fin | date:'dd/MM/yy' }}
+              </span>
+              <span class="flex items-center gap-1 text-[9px] font-bold px-2 py-1 rounded-lg"
+                [ngClass]="esFechaPasada(torneo.fecha_limite)
+                  ? 'bg-red-50 dark:bg-red-500/10 text-red-500 dark:text-red-400'
+                  : 'bg-amber-50 dark:bg-amber-500/10 text-amber-600 dark:text-amber-400'">
+                <i class="fa fa-clock-o text-[7px]"></i>Lím: {{ torneo.fecha_limite | date:'dd/MM/yy' }}
+              </span>
             </div>
+
           </div>
 
           <!-- Acciones -->
-          <div class="border-t border-slate-100 dark:border-[#303038] px-3 py-2.5 flex items-center gap-2">
+          <div class="border-t border-[#ECEEF2] dark:border-[#1E3050] px-3 pt-2.5 pb-2.5 flex flex-col gap-2">
+
+            <!-- INFO -->
             <button (click)="InfoTorneo(torneo.IdTorneo)"
-              class="flex-1 flex items-center justify-center gap-1.5 py-1.5 rounded-lg bg-indigo-500/15 dark:bg-indigo-500/20 hover:bg-indigo-600 hover:text-white text-indigo-600 dark:text-indigo-300 border border-indigo-500/40 text-[10px] font-black uppercase transition-all">
-              <i class="fa fa-info-circle"></i> Info
+              class="w-full flex items-center justify-center gap-1.5 py-2 rounded-xl bg-[#0F1923] hover:bg-[#1A2535] text-white text-[10px] font-black uppercase transition-all shadow-sm">
+              <i class="fa fa-info-circle text-emerald-400"></i> Info
             </button>
-            <button *ngIf="torneo.estado == 1 && !esFechaPasada(torneo.fecha_limite)"
-              class="flex-1 flex items-center justify-center gap-1.5 py-1.5 rounded-lg bg-amber-500/15 dark:bg-amber-500/20 hover:bg-amber-500 hover:text-white text-amber-600 dark:text-amber-300 border border-amber-500/40 text-[10px] font-black uppercase transition-all"
-              data-bs-toggle="modal" data-bs-target="#modalSeleccionarJugadorT"
-              (click)="abrirModalSeleccionJEquipo(torneo)">
-              <i class="fa fa-plus"></i> Inscribir
-            </button>
-            <button *ngIf="torneo.estado == 1 && !esFechaPasada(torneo.fecha_limite)"
-              class="flex-1 flex items-center justify-center gap-1.5 py-1.5 rounded-lg bg-sky-500/15 dark:bg-sky-500/20 hover:bg-sky-500 hover:text-white text-sky-600 dark:text-sky-300 border border-sky-500/40 text-[10px] font-black uppercase transition-all"
-              (click)="VerJugadorTorneo(torneo.IdTorneo)">
-              <i class="fa fa-users"></i> Jugadores
-            </button>
-            <button *ngIf="torneo.estado == 1 && !esFechaPasada(torneo.fecha_limite)"
-              class="w-8 h-8 flex items-center justify-center rounded-lg bg-green-500/15 dark:bg-green-500/20 hover:bg-green-600 hover:text-white text-green-600 dark:text-green-300 border border-green-500/40 text-xs transition-all shrink-0"
-              (click)="CarnetsEquipo(torneo.IdTorneo)">
-              <i class="fa fa-id-card"></i>
-            </button>
+
+            <!-- Botones de gestión (solo torneo activo y dentro de plazo) -->
+            <div *ngIf="torneo.estado == 1 && !esFechaPasada(torneo.fecha_limite)"
+              class="flex items-center gap-1.5">
+              <button
+                class="flex-1 flex items-center justify-center gap-1 py-2 rounded-xl bg-amber-50 dark:bg-amber-500/10 hover:bg-amber-500 hover:text-white text-amber-600 dark:text-amber-300 border border-amber-200 dark:border-amber-500/20 text-[9px] font-black uppercase transition-all"
+                data-bs-toggle="modal" data-bs-target="#modalSeleccionarJugadorT"
+                (click)="abrirModalSeleccionJEquipo(torneo)">
+                <i class="fa fa-plus"></i> Inscribir
+              </button>
+              <button
+                class="flex-1 flex items-center justify-center gap-1 py-2 rounded-xl bg-sky-50 dark:bg-sky-500/10 hover:bg-sky-500 hover:text-white text-sky-600 dark:text-sky-300 border border-sky-200 dark:border-sky-500/20 text-[9px] font-black uppercase transition-all"
+                (click)="VerJugadorTorneo(torneo.IdTorneo)">
+                <i class="fa fa-users"></i> Nómina
+              </button>
+              <button
+                class="w-9 h-9 flex items-center justify-center rounded-xl bg-emerald-50 dark:bg-emerald-500/10 hover:bg-emerald-600 hover:text-white text-emerald-600 dark:text-emerald-400 border border-emerald-200 dark:border-emerald-500/20 text-xs transition-all shrink-0"
+                title="Carnets PDF" (click)="CarnetsEquipo(torneo)">
+                <i class="fa fa-id-card"></i>
+              </button>
+            </div>
+
           </div>
 
         </div>
@@ -401,7 +409,7 @@
 <div class="modal fade" id="modalSeleccionarJugador" tabindex="-1" aria-hidden="true">
   <div class="modal-dialog modal-dialog-centered px-4">
     <div class="modal-content bg-white dark:bg-[#1b1b1f] border border-slate-200 dark:border-[#303038] rounded-2xl shadow-2xl overflow-hidden">
-      <div class="bg-green-600 p-5 flex justify-between items-center">
+      <div class="bg-emerald-600 p-5 flex justify-between items-center">
         <h5 class="text-lg font-bebas text-white uppercase tracking-widest">
           Agregar · {{ categoriaSeleccionada?.nombre }}
         </h5>
@@ -428,7 +436,7 @@
           </ng-template>
         </ng-select>
         <button
-          class="w-full bg-green-600 hover:bg-green-700 text-white py-3 rounded-xl font-black uppercase text-xs tracking-widest shadow-lg shadow-green-600/20 active:scale-95 transition-all disabled:opacity-30 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+          class="w-full bg-emerald-600 hover:bg-emerald-700 text-white py-3 rounded-xl font-black uppercase text-xs tracking-widest shadow-lg shadow-emerald-600/20 active:scale-95 transition-all disabled:opacity-30 disabled:cursor-not-allowed flex items-center justify-center gap-2"
           (click)="agregarJugadorSeleccionado()" [disabled]="!jugadorSeleccionadoId">
           <i class="fa fa-check-circle"></i> Confirmar Inscripción
         </button>
@@ -467,7 +475,8 @@
         <div *ngFor="let j of jugadoresFiltrados"
           class="flex items-center gap-3 px-4 py-3 border-b border-slate-100 dark:border-[#303038] hover:bg-slate-50 dark:hover:bg-[#202024] transition-colors">
           <img [src]="j.img1 ? pathIm + j.img1 : 'assets/img/nd.png'"
-            class="w-10 h-10 rounded-xl object-cover bg-slate-100 dark:bg-zinc-800 flex-shrink-0 border border-slate-200 dark:border-zinc-700">
+            (click)="verImagen(j.img1 ? (pathIm + j.img1) : 'assets/img/nd.png')"
+            class="w-10 h-10 rounded-xl object-cover bg-slate-100 dark:bg-zinc-800 flex-shrink-0 border border-slate-200 dark:border-zinc-700 cursor-pointer hover:scale-110 transition-transform">
           <div class="flex-1 min-w-0">
             <p class="text-slate-900 dark:text-white font-bold text-sm truncate">{{ j.nombre }}</p>
             <p class="text-slate-400 dark:text-zinc-500 text-[10px] font-mono">CC: {{ j.identificacion }}</p>
@@ -507,7 +516,7 @@
     <div class="modal-content bg-white dark:bg-[#1b1b1f] border border-slate-200 dark:border-[#303038] rounded-2xl shadow-2xl overflow-hidden">
       <div class="p-5 border-b border-slate-100 dark:border-[#303038] flex justify-between items-center bg-slate-50 dark:bg-[#252529]">
         <h5 class="font-bebas text-xl text-slate-900 dark:text-white uppercase tracking-widest">
-          Gestión <span class="text-green-600 dark:text-green-400">Nómina</span>
+          Gestión <span class="text-emerald-600 dark:text-emerald-400">Nómina</span>
         </h5>
         <button type="button" class="w-8 h-8 flex items-center justify-center text-slate-400 dark:text-zinc-500 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-zinc-800 rounded-lg transition-all"
           (click)="cerrarModalVerJugador()">
@@ -516,7 +525,7 @@
       </div>
       <div class="max-h-[60vh] overflow-y-auto custom-scrollbar">
         <table class="w-full text-left border-separate border-spacing-0">
-          <thead class="bg-slate-50 dark:bg-[#252529] text-[10px] font-black uppercase tracking-widest text-green-600 dark:text-green-500 sticky top-0">
+          <thead class="bg-slate-50 dark:bg-[#252529] text-[10px] font-black uppercase tracking-widest text-emerald-600 dark:text-emerald-500 sticky top-0">
             <tr>
               <th class="p-4 text-center w-20 border-b border-slate-200 dark:border-[#303038]">Perfil</th>
               <th class="p-4 border-b border-slate-200 dark:border-[#303038]">Nombre</th>
@@ -530,11 +539,12 @@
             <tr *ngFor="let jugador of jugadoresEquipo" class="hover:bg-slate-50 dark:hover:bg-[#202024] transition-colors group">
               <td class="p-3 text-center">
                 <img [src]="jugador.img1 ? (pathIm + jugador.img1) : 'assets/img/nd.png'"
-                  class="w-10 h-10 rounded-xl object-cover mx-auto shadow group-hover:scale-105 transition-transform">
+                  (click)="verImagen(jugador.img1 ? (pathIm + jugador.img1) : 'assets/img/nd.png')"
+                  class="w-10 h-10 rounded-xl object-cover mx-auto shadow cursor-pointer group-hover:scale-105 hover:scale-110 transition-transform">
               </td>
               <td class="p-3 font-black uppercase text-slate-900 dark:text-white text-xs">{{ jugador.nombre }}</td>
               <td class="p-3 hidden md:table-cell text-slate-400 dark:text-zinc-500 font-bold italic text-xs">{{ jugador.fecha_nacimiento }}</td>
-              <td class="p-3 text-center font-mono text-green-600 dark:text-green-400 font-black text-sm">{{ apiRest.calcularEdad(jugador.fecha_nacimiento) }}</td>
+              <td class="p-3 text-center font-mono text-emerald-600 dark:text-emerald-400 font-black text-sm">{{ apiRest.calcularEdad(jugador.fecha_nacimiento) }}</td>
               <td class="p-3">
                 <span class="text-[9px] font-black uppercase text-sky-600 dark:text-sky-400 border border-sky-200 dark:border-sky-500/30 px-2.5 py-0.5 rounded-full">
                   {{ jugador.posicion == 1 ? 'Arquero' : jugador.posicion == 2 ? 'Defensa' : jugador.posicion == 3 ? 'Volante' : 'Delantero' }}
@@ -554,6 +564,65 @@
   </div>
 </div>
 
+<!-- OVERLAY: Editor de imagen (cropper) -->
+<div *ngIf="cropperVisible"
+  class="fixed inset-0 z-[300] flex items-center justify-center bg-black/85 backdrop-blur-sm p-3">
+  <div class="bg-white dark:bg-[#111C35] rounded-2xl shadow-2xl border border-zinc-200 dark:border-white/10 w-full max-w-2xl flex flex-col overflow-hidden"
+    style="max-height:92vh">
+    <div class="px-5 py-3.5 border-b border-zinc-100 dark:border-white/8 flex items-center justify-between bg-zinc-50 dark:bg-[#162040] shrink-0">
+      <div class="flex items-center gap-2.5">
+        <div class="w-7 h-7 rounded-lg bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center">
+          <i class="fa fa-crop text-emerald-500 text-xs"></i>
+        </div>
+        <h3 class="text-sm font-bold text-zinc-900 dark:text-white">Editor de imagen</h3>
+      </div>
+      <button type="button" (click)="cerrarCropper()"
+        class="w-7 h-7 flex items-center justify-center text-zinc-400 hover:text-zinc-900 dark:hover:text-white hover:bg-zinc-100 dark:hover:bg-white/10 rounded-lg transition-all">
+        <i class="fa fa-times"></i>
+      </button>
+    </div>
+    <div class="flex-1 overflow-hidden bg-zinc-900 flex items-center justify-center min-h-0">
+      <image-cropper #imageCropperRef [imageFile]="cropperImageFile" [maintainAspectRatio]="false"
+        [resizeToWidth]="1200" [format]="'jpeg'" [imageQuality]="92" [backgroundColor]="'#18181b'"
+        [transform]="cropperTransform" output="base64" style="max-height:55vh;width:100%">
+      </image-cropper>
+    </div>
+    <div class="px-5 py-4 border-t border-zinc-100 dark:border-white/8 bg-zinc-50 dark:bg-[#162040] shrink-0">
+      <div class="flex flex-wrap items-center gap-3">
+        <div class="flex items-center gap-2">
+          <span class="text-[9px] font-bold text-zinc-400 uppercase tracking-widest">Rotar</span>
+          <button type="button" (click)="cropperRotarLeft()" class="w-9 h-9 flex items-center justify-center rounded-xl bg-zinc-200 dark:bg-white/10 text-zinc-700 dark:text-white hover:bg-zinc-300 dark:hover:bg-white/20 transition-all">
+            <i class="fa fa-rotate-left text-sm"></i>
+          </button>
+          <button type="button" (click)="cropperRotarRight()" class="w-9 h-9 flex items-center justify-center rounded-xl bg-zinc-200 dark:bg-white/10 text-zinc-700 dark:text-white hover:bg-zinc-300 dark:hover:bg-white/20 transition-all">
+            <i class="fa fa-rotate-right text-sm"></i>
+          </button>
+        </div>
+        <div class="flex items-center gap-2 ml-auto">
+          <button type="button" (click)="cerrarCropper()" class="px-4 py-2 rounded-xl text-sm font-semibold text-zinc-600 dark:text-zinc-300 bg-zinc-200 dark:bg-white/10 hover:bg-zinc-300 dark:hover:bg-white/20 transition-all">Cancelar</button>
+          <button type="button" (click)="confirmarCrop()" class="px-5 py-2 rounded-xl text-sm font-bold text-white bg-emerald-500 hover:bg-emerald-600 transition-all flex items-center gap-2 shadow-md shadow-emerald-600/25">
+            <i class="fa fa-check text-xs"></i> Confirmar
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- OVERLAY: Preview imagen grande -->
+<div *ngIf="imgPreview"
+  class="fixed inset-0 z-[9999] flex items-center justify-center bg-black/90 backdrop-blur-sm"
+  (click)="cerrarImagen()">
+  <button type="button"
+    class="absolute top-4 right-4 w-10 h-10 bg-white/10 hover:bg-white/25 text-white rounded-full flex items-center justify-center text-lg transition-all border border-white/20"
+    (click)="cerrarImagen()">
+    <i class="fa fa-times"></i>
+  </button>
+  <img [src]="imgPreview"
+    class="max-w-[92vw] max-h-[88vh] object-contain rounded-2xl shadow-2xl border border-white/10"
+    (click)="$event.stopPropagation()">
+</div>
+
 <!-- MODAL: Ver Jugadores Torneo -->
 <div class="modal fade" id="modalVerJugadorTorneo" tabindex="-1" aria-hidden="true">
   <div class="modal-dialog modal-dialog-centered modal-lg px-4">
@@ -571,6 +640,7 @@
         <table class="w-full text-left border-separate border-spacing-0">
           <thead class="bg-slate-50 dark:bg-[#252529] text-[10px] font-black uppercase tracking-widest text-sky-600 dark:text-sky-500 sticky top-0">
             <tr>
+              <th class="p-4 text-center w-10 border-b border-slate-200 dark:border-[#303038]">#</th>
               <th class="p-4 text-center w-20 border-b border-slate-200 dark:border-[#303038]">Perfil</th>
               <th class="p-4 border-b border-slate-200 dark:border-[#303038]">Nombre</th>
               <th class="p-4 border-b border-slate-200 dark:border-[#303038]">Nacimiento</th>
@@ -580,10 +650,12 @@
             </tr>
           </thead>
           <tbody class="divide-y divide-slate-100 dark:divide-[#303038]">
-            <tr *ngFor="let jugador of jugadoresEquipo" class="hover:bg-slate-50 dark:hover:bg-[#202024] transition-colors group">
+            <tr *ngFor="let jugador of jugadoresEquipo; let i = index" class="hover:bg-slate-50 dark:hover:bg-[#202024] transition-colors group">
+              <td class="p-3 text-center font-black text-xs text-slate-400 dark:text-zinc-500 font-mono">{{ i + 1 }}</td>
               <td class="p-3 text-center">
                 <img [src]="jugador.img1 ? (pathIm + jugador.img1) : 'assets/img/nd.png'"
-                  class="w-10 h-10 rounded-xl object-cover mx-auto shadow group-hover:scale-105 transition-transform">
+                  (click)="verImagen(jugador.img1 ? (pathIm + jugador.img1) : 'assets/img/nd.png')"
+                  class="w-10 h-10 rounded-xl object-cover mx-auto shadow cursor-pointer group-hover:scale-105 hover:scale-110 transition-transform">
               </td>
               <td class="p-3 font-black uppercase text-slate-900 dark:text-white text-xs">{{ jugador.nombre }}</td>
               <td class="p-3 text-slate-400 dark:text-zinc-500 font-bold italic text-xs">{{ jugador.fecha_nacimiento }}</td>
@@ -602,3 +674,4 @@
     </div>
   </div>
 </div>
+

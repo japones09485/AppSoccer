@@ -31,8 +31,9 @@ export interface Torneos {
   ValidF7?: number;
   expanded?: boolean;
   info_jugadores?: number;
-  
- 
+  fk_formulario?: number;
+
+
 }
 
 export interface Equipos {
@@ -50,8 +51,8 @@ export interface Equipos {
   telefono1: number;
   telefono2: number;
   departamento: number;
-  ciudad: number
- 
+  ciudad: number;
+  max_jugadores?: number | null;
 }
 
 
@@ -161,7 +162,7 @@ export const Categoria: string[] = [
 ];
 
 
-interface EventoJugador {
+export interface EventoJugador {
   id: string;
   fk_torneo: string;
   fk_grupo: string;
@@ -177,6 +178,29 @@ export interface Juez {
   email: string;
   img1 ?: string;
   estado ?:number;
+}
+
+export interface FormularioCampo {
+  id?: number;
+  fk_formulario?: number;
+  orden: number;
+  tipo: string;
+  label: string;
+  descripcion?: string;
+  opciones?: string[];
+  requerido: boolean;
+  placeholder?: string;
+}
+
+export interface Formulario {
+  id?: number;
+  fk_torneo?: number;
+  titulo: string;
+  descripcion?: string;
+  activo?: number;
+  link_pago?: string;
+  whatsapp?: string;
+  campos?: FormularioCampo[];
 }
 
 

@@ -1,460 +1,576 @@
-﻿<div class="min-h-screen bg-slate-100 dark:bg-[#111114] antialiased">
+﻿<div class="min-h-screen bg-zinc-50 dark:bg-[#09090b] antialiased font-sans">
 
   <!-- ===================== VISTA PRINCIPAL ===================== -->
-  <div id="table" *ngIf="!this.creando && !this.Valcategorias"
-    class="w-full max-w-7xl mx-auto p-4 md:p-8 space-y-4 md:space-y-6">
+  <div id="table" *ngIf="!this.creando && !this.Valcategorias">
 
-    <!-- Header -->
-    <div class="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
-      <div class="flex items-center gap-4">
-        <div class="w-14 h-14 bg-green-600 rounded-2xl flex items-center justify-center shadow-lg shadow-green-600/30">
-          <i class="fa fa-shield text-xl text-white"></i>
-        </div>
-        <div>
-          <h1 class="font-bebas text-4xl md:text-5xl tracking-widest text-slate-900 dark:text-white leading-none">CLUBES</h1>
-          <p class="text-slate-500 dark:text-zinc-400 text-[10px] font-bold uppercase tracking-[0.25em] mt-1">Gestión de equipos y clubs</p>
-        </div>
+    <!-- ESTADIO HEADER -->
+    <div class="relative overflow-hidden bg-white dark:bg-[#080f09] border-b border-zinc-200 dark:border-green-950/80 px-8 py-10 md:px-12 md:py-12">
+      <div class="absolute right-0 top-0 h-full w-[38%] bg-gradient-to-br from-green-600 to-green-800 dark:from-green-800/30 dark:to-green-950/15 [clip-path:polygon(16%_0%,100%_0%,100%_100%,0%_100%)]">
+        <span class="absolute left-[58%] -translate-x-1/2 top-[36%] -translate-y-1/2 text-[3.5rem] leading-none opacity-[0.14] dark:opacity-[0.50] select-none pointer-events-none">🛡️</span>
+        <span class="absolute left-[58%] -translate-x-1/2 top-[66%] -translate-y-1/2 text-[2.3rem] font-black text-white/[0.22] dark:text-green-300/[0.90] leading-none tracking-tighter whitespace-nowrap select-none pointer-events-none">EQUIPOS</span>
+        <div class="hidden dark:block absolute -right-4 -top-4 w-44 h-44 rounded-full border-2 border-green-400/[0.45] pointer-events-none"></div>
+        <div class="hidden dark:block absolute -right-8 -top-8 w-60 h-60 rounded-full border border-green-400/[0.25] pointer-events-none"></div>
       </div>
-      <button (click)="addEquipo()"
-        class="hidden md:flex bg-green-600 hover:bg-green-700 text-white font-black py-2.5 px-5 rounded-xl text-xs uppercase tracking-wider items-center gap-2 transition-all shadow-md shadow-green-600/20">
-        <i class="fa fa-plus"></i> Nuevo Club
+      <div class="hidden dark:block absolute inset-0 pointer-events-none" style="background:radial-gradient(ellipse at 80% 50%,rgba(34,197,94,0.10) 0%,transparent 60%)"></div>
+      <div class="relative z-10 max-w-[58%]">
+        <div class="inline-flex items-center gap-2 bg-green-600/10 dark:bg-green-500/10 border border-green-600/25 dark:border-green-500/20 text-green-700 dark:text-green-400 text-[9px] font-bold tracking-[0.2em] uppercase px-3 py-1.5 rounded-full mb-4">
+          <span class="w-1.5 h-1.5 rounded-full bg-green-500 dark:bg-green-400 animate-pulse"></span>Clubes y plantillas
+        </div>
+        <h1 class="text-5xl md:text-6xl font-black tracking-tight uppercase leading-none text-zinc-900 dark:text-white">
+          EQU<span class="text-green-600 dark:text-green-400">IPOS</span>
+        </h1>
+        <div class="w-10 h-[3px] bg-green-600 dark:bg-green-400 rounded-full mt-4 mb-3"></div>
+        <p class="text-zinc-500 dark:text-zinc-400 text-sm font-medium">Gestión de equipos y clubs participantes</p>
+      </div>
+    </div>
+
+    <!-- TOOLBAR -->
+    <div class="bg-white dark:bg-[#111113] border-b border-zinc-100 dark:border-[#1c1c1f] px-4 md:px-8 py-3 flex flex-wrap gap-2 items-center">
+      <div class="relative flex-1 min-w-[160px] max-w-xs">
+        <i class="fa fa-search absolute left-3 top-1/2 -translate-y-1/2 text-zinc-400 dark:text-zinc-500 text-xs"></i>
+        <input type="text" [(ngModel)]="filtroNombre"
+          class="w-full rounded-lg pl-9 pr-4 py-2 bg-zinc-50 dark:bg-[#18181b] border border-zinc-200 dark:border-[#27272a] text-zinc-900 dark:text-zinc-100 placeholder-zinc-400 dark:placeholder-zinc-500 focus:border-green-500 focus:outline-none focus:ring-1 focus:ring-green-500/20 text-sm transition-colors"
+          placeholder="Nombre del club...">
+      </div>
+      <div class="relative flex-1 min-w-[160px] max-w-xs">
+        <i class="fa fa-envelope absolute left-3 top-1/2 -translate-y-1/2 text-zinc-400 dark:text-zinc-500 text-xs"></i>
+        <input type="text" [(ngModel)]="filtroEmail"
+          class="w-full rounded-lg pl-9 pr-4 py-2 bg-zinc-50 dark:bg-[#18181b] border border-zinc-200 dark:border-[#27272a] text-zinc-900 dark:text-zinc-100 placeholder-zinc-400 dark:placeholder-zinc-500 focus:border-green-500 focus:outline-none focus:ring-1 focus:ring-green-500/20 text-sm transition-colors"
+          placeholder="Email de contacto...">
+      </div>
+      <button (click)="aplicarFiltros()"
+        class="px-4 py-2 bg-zinc-900 dark:bg-zinc-800 hover:bg-green-600 dark:hover:bg-green-600 text-white rounded-lg text-sm font-bold flex items-center gap-2 transition-all">
+        <i class="fa fa-filter text-xs"></i> Filtrar
+      </button>
+      <button (click)="addEquipo()" title="Crear nuevo equipo"
+        class="hidden md:inline-flex items-center gap-2 bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg font-bold text-sm transition-all shadow-sm shadow-green-600/20">
+        <i class="fa fa-plus text-xs"></i> Nuevo Club
       </button>
     </div>
 
-    <!-- Línea decorativa -->
-    <div class="flex items-center gap-3 mb-6">
-      <div class="h-px bg-green-600 w-12"></div>
-      <div class="w-1.5 h-1.5 bg-green-600 rounded-full"></div>
-      <div class="h-px bg-slate-200 dark:bg-zinc-800 flex-1"></div>
-    </div>
+    <!-- CONTENT -->
+    <div class="max-w-[1400px] mx-auto px-4 py-6 md:px-8 md:py-6">
 
-    <!-- Panel de filtros -->
-    <div class="bg-white dark:bg-[#1b1b1f] border border-slate-200 dark:border-[#303038] rounded-2xl p-4 mb-4 mx-0">
-      <div class="grid grid-cols-1 md:grid-cols-4 gap-3">
-        <div class="relative">
-          <i class="fa fa-search absolute left-4 top-3 text-slate-400 dark:text-zinc-500 text-xs"></i>
-          <input type="text" [(ngModel)]="filtroNombre"
-            class="rounded-xl pl-10 pr-4 py-2.5 bg-slate-50 dark:bg-zinc-900 border border-slate-200 dark:border-zinc-700 text-slate-700 dark:text-white text-xs font-bold uppercase focus:ring-1 focus:ring-green-500 focus:outline-none w-full"
-            placeholder="Nombre del club...">
-        </div>
-        <div class="relative">
-          <i class="fa fa-envelope absolute left-4 top-3 text-slate-400 dark:text-zinc-500 text-xs"></i>
-          <input type="text" [(ngModel)]="filtroEmail"
-            class="rounded-xl pl-10 pr-4 py-2.5 bg-slate-50 dark:bg-zinc-900 border border-slate-200 dark:border-zinc-700 text-slate-700 dark:text-white text-xs font-bold uppercase focus:ring-1 focus:ring-green-500 focus:outline-none w-full"
-            placeholder="Email de contacto...">
-        </div>
-        <button (click)="aplicarFiltros()"
-          class="bg-slate-900 dark:bg-zinc-800 hover:bg-green-600 dark:hover:bg-green-600 text-white font-black py-2.5 px-5 rounded-xl text-xs uppercase tracking-wider flex items-center justify-center gap-2 transition-all">
-          <i class="fa fa-filter"></i> Filtrar
-        </button>
-        <button (click)="addEquipo()"
-          class="bg-green-600 hover:bg-green-700 text-white font-black py-2.5 px-5 rounded-xl text-xs uppercase tracking-wider flex items-center justify-center gap-2 transition-all shadow-md shadow-green-600/20">
-          <i class="fa fa-plus"></i> Nuevo Club
-        </button>
-      </div>
-    </div>
-
-    <!-- Cards mobile -->
-    <div class="md:hidden space-y-2.5 mb-4">
-      <div *ngFor="let eq of equipos; let i = index"
-        class="bg-white dark:bg-[#1b1b1f] border border-slate-200 dark:border-[#303038] rounded-2xl overflow-hidden animate-fade-up">
-
-        <!-- Acento verde superior -->
-        <div class="h-0.5 bg-gradient-to-r from-green-600 to-transparent"></div>
-
-        <!-- Fila principal: logo + info + estado -->
-        <div class="p-3 flex items-start gap-3">
-
-          <!-- Logo -->
-          <div class="shrink-0">
-            <img [src]="eq.img1 ? pathIm + eq.img1 : 'assets/img/nd.png'"
-              class="w-14 h-14 object-contain rounded-xl bg-white dark:bg-zinc-900 border border-slate-100 dark:border-zinc-700 shadow-sm p-1">
-          </div>
-
-          <!-- Info -->
-          <div class="flex-1 min-w-0 space-y-1.5">
-            <div class="flex items-start justify-between gap-2">
-              <h2 class="font-oswald font-bold text-base uppercase text-slate-900 dark:text-white leading-tight truncate">
-                {{eq.nombre}}
-              </h2>
-              <span
-                [ngClass]="{'bg-red-50 text-red-600 border-red-200 dark:bg-red-500/10 dark:text-red-300 dark:border-red-500/20': eq.estado == 0, 'bg-emerald-50 text-emerald-700 border-emerald-200 dark:bg-emerald-500/10 dark:text-emerald-400 dark:border-emerald-500/20': eq.estado == 1, 'bg-amber-50 text-amber-700 border-amber-200 dark:bg-amber-500/10 dark:text-amber-300 dark:border-amber-500/20': eq.estado == 2}"
-                class="shrink-0 px-2 py-0.5 rounded-lg text-[9px] font-black uppercase border">
-                {{ eq.estado == 0 ? 'Inactivo' : (eq.estado == 1 ? 'Activo' : 'En curso') }}
-              </span>
-            </div>
-
-            <p class="text-[11px] text-slate-500 dark:text-zinc-400 flex items-center gap-1 truncate">
-              <i class="fa fa-envelope text-green-500 dark:text-green-400 text-[10px] shrink-0"></i>
-              {{eq.email}}
-            </p>
-
-            <div class="flex flex-wrap gap-1">
-              <span *ngFor="let cat of $any(eq).categorias"
-                class="text-[9px] font-black uppercase bg-slate-50 dark:bg-zinc-800/60 text-slate-500 dark:text-zinc-400 border border-slate-200 dark:border-zinc-700 px-2 py-0.5 rounded-md">
-                {{getNombreCategoria(cat)}}
-              </span>
-            </div>
-          </div>
-        </div>
-
-        <!-- Barra de acciones -->
-        <div class="px-3 pb-3 flex justify-end gap-2 border-t border-slate-100 dark:border-[#303038] pt-2">
-          <button *ngIf="UserLog.perfil == 1" (click)="editEquipo(eq.id)"
-            class="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-amber-500/15 dark:bg-amber-500/20 hover:bg-amber-500 text-amber-600 hover:text-white dark:text-amber-300 border border-amber-500/40 hover:border-amber-500 transition-all active:scale-95 text-[10px] font-bold uppercase tracking-wide">
-            <i class="fa fa-edit text-xs"></i> Editar
-          </button>
-          <button *ngIf="UserLog.perfil == 1" (click)="deleteEquipo(eq.id)"
-            class="w-8 h-8 rounded-lg flex items-center justify-center bg-red-500/15 dark:bg-red-500/20 hover:bg-red-500 text-red-600 hover:text-white dark:text-red-300 border border-red-500/40 hover:border-red-500 transition-all active:scale-95">
-            <i class="fa fa-trash text-xs"></i>
-          </button>
-          <button (click)="categoriasEq(eq.id)"
-            class="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-indigo-500/15 dark:bg-indigo-500/20 hover:bg-indigo-600 text-indigo-600 hover:text-white dark:text-indigo-300 border border-indigo-500/40 hover:border-indigo-500 transition-all active:scale-95 text-[10px] font-bold uppercase tracking-wide">
-            <i class="fa fa-list text-xs"></i> Categorías
-          </button>
-        </div>
-      </div>
-    </div>
-
-    <!-- Tabla desktop -->
-    <div class="hidden md:block overflow-hidden bg-white dark:bg-[#1b1b1f] rounded-2xl border border-slate-200 dark:border-[#303038] shadow-sm">
-      <table class="min-w-full border-separate border-spacing-0">
-        <thead class="bg-slate-50 dark:bg-[#252529]">
-          <tr>
-            <th class="p-5 text-center w-20 border-b border-slate-200 dark:border-[#303038] font-bold uppercase tracking-widest text-[10px] text-slate-500 dark:text-zinc-400">ID</th>
-            <th class="p-5 font-bold uppercase tracking-widest text-[10px] text-center border-b border-slate-200 dark:border-[#303038] text-slate-500 dark:text-zinc-400">Acciones</th>
-            <th class="p-5 font-bold uppercase tracking-widest text-[10px] text-center border-b border-slate-200 dark:border-[#303038] text-slate-500 dark:text-zinc-400">Logo</th>
-            <th class="p-5 font-bold uppercase tracking-widest text-[10px] text-left border-b border-slate-200 dark:border-[#303038] text-slate-500 dark:text-zinc-400">Nombre</th>
-            <th class="p-5 font-bold uppercase tracking-widest text-[10px] text-center border-b border-slate-200 dark:border-[#303038] text-slate-500 dark:text-zinc-400">Estado</th>
-            <th class="p-5 font-bold uppercase tracking-widest text-[10px] text-left border-b border-slate-200 dark:border-[#303038] text-slate-500 dark:text-zinc-400">Email</th>
-            <th class="p-5 font-bold uppercase tracking-widest text-[10px] text-center border-b border-slate-200 dark:border-[#303038] text-slate-500 dark:text-zinc-400">Categorías</th>
-          </tr>
-        </thead>
-        <tbody class="divide-y divide-slate-100 dark:divide-[#303038] anim-rows">
-          <tr *ngFor="let eq of equipos" class="hover:bg-slate-50 dark:hover:bg-[#202024] transition-colors group">
-            <td class="p-4 text-center font-mono text-sm text-slate-500 dark:text-zinc-400">#{{eq.id}}</td>
-            <td class="p-4 text-center">
-              <div class="flex items-center justify-center gap-2">
-
-                <!-- EDITAR -->
-                <div class="relative group/btn">
-                  <button *ngIf="UserLog.perfil == 1" (click)="editEquipo(eq.id)"
-                    class="w-9 h-9 rounded-xl flex items-center justify-center bg-amber-500/15 dark:bg-amber-500/20 hover:bg-amber-500 text-amber-600 hover:text-white dark:text-amber-300 border border-amber-500/40 hover:border-amber-500 transition-all hover:scale-110 active:scale-95 btn-action">
-                    <i class="fa fa-edit text-sm"></i>
-                  </button>
-                  <span class="absolute -top-9 left-1/2 -translate-x-1/2 bg-slate-900 dark:bg-zinc-800 text-white text-[10px] px-3 py-1 rounded-lg opacity-0 group-hover/btn:opacity-100 transition-all whitespace-nowrap shadow-lg pointer-events-none">
-                    Editar equipo
-                  </span>
-                </div>
-
-                <!-- ELIMINAR -->
-                <div class="relative group/btn">
-                  <button *ngIf="UserLog.perfil == 1" (click)="deleteEquipo(eq.id)"
-                    class="w-9 h-9 rounded-xl flex items-center justify-center bg-red-500/15 dark:bg-red-500/20 hover:bg-red-500 text-red-600 hover:text-white dark:text-red-300 border border-red-500/40 hover:border-red-500 transition-all hover:scale-110 active:scale-95 btn-action">
-                    <i class="fa fa-trash text-sm"></i>
-                  </button>
-                  <span class="absolute -top-9 left-1/2 -translate-x-1/2 bg-slate-900 dark:bg-zinc-800 text-white text-[10px] px-3 py-1 rounded-lg opacity-0 group-hover/btn:opacity-100 transition-all whitespace-nowrap shadow-lg pointer-events-none">
-                    Eliminar equipo
-                  </span>
-                </div>
-
-                <!-- CATEGORÍAS -->
-                <div class="relative group/btn">
-                  <button (click)="categoriasEq(eq.id)"
-                    class="w-9 h-9 rounded-xl flex items-center justify-center bg-indigo-500/15 dark:bg-indigo-500/20 hover:bg-indigo-600 text-indigo-600 hover:text-white dark:text-indigo-300 border border-indigo-500/40 hover:border-indigo-500 transition-all hover:scale-110 active:scale-95 btn-action">
-                    <i class="fa fa-list text-sm"></i>
-                  </button>
-                  <span class="absolute -top-9 left-1/2 -translate-x-1/2 bg-slate-900 dark:bg-zinc-800 text-white text-[10px] px-3 py-1 rounded-lg opacity-0 group-hover/btn:opacity-100 transition-all whitespace-nowrap shadow-lg pointer-events-none">
-                    Ver categorías
-                  </span>
-                </div>
-
-              </div>
-            </td>
-            <td class="p-4 text-center">
+      <!-- Cards mobile -->
+      <div class="md:hidden space-y-2.5 mb-4">
+        <div *ngFor="let eq of equipos; let i = index"
+          class="bg-white dark:bg-[#111113] border border-zinc-200 dark:border-[#27272a] rounded-xl overflow-hidden hover:border-green-500/30 transition-all">
+          <div class="p-3 flex items-start gap-3">
+            <div class="shrink-0">
               <img [src]="eq.img1 ? pathIm + eq.img1 : 'assets/img/nd.png'"
-                class="w-10 h-10 object-contain rounded-xl border border-slate-100 dark:border-zinc-700 bg-white dark:bg-zinc-900 mx-auto shadow-sm">
-            </td>
-            <td class="p-4 text-left">
-              <span class="font-oswald font-semibold uppercase text-sm text-slate-900 dark:text-white group-hover:text-green-600 dark:group-hover:text-green-400 transition-colors">{{eq.nombre}}</span>
-            </td>
-            <td class="p-4 text-center">
-              <span
-                [ngClass]="{'bg-red-50 text-red-600 border-red-200 dark:bg-red-500/10 dark:text-red-300 dark:border-red-500/20': eq.estado == 0, 'bg-emerald-50 text-emerald-700 border-emerald-200 dark:bg-emerald-500/10 dark:text-emerald-400 dark:border-emerald-500/20': eq.estado == 1, 'bg-amber-50 text-amber-700 border-amber-200 dark:bg-amber-500/10 dark:text-amber-300 dark:border-amber-500/20': eq.estado == 2}"
-                class="px-3 py-1 rounded-full text-[9px] font-black uppercase border">
-                {{ eq.estado == 0 ? 'Inactivo' : (eq.estado == 1 ? 'Activo' : 'En curso') }}
-              </span>
-            </td>
-            <td class="p-4 text-left text-xs text-slate-500 dark:text-zinc-400">{{eq.email}}</td>
-            <td class="p-4">
-              <div class="flex flex-wrap gap-1 justify-center max-w-[180px] mx-auto">
+                (click)="eq.img1 && openModal(pathIm + eq.img1, eq.nombre)"
+                [attr.data-bs-toggle]="eq.img1 ? 'modal' : null"
+                [attr.data-bs-target]="eq.img1 ? '#eqFotoModal' : null"
+                [class.cursor-pointer]="eq.img1"
+                class="w-12 h-12 object-contain rounded-lg bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-700 shadow-sm p-1 hover:scale-105 hover:border-green-400 transition-all">
+            </div>
+            <div class="flex-1 min-w-0 space-y-1">
+              <div class="flex items-start justify-between gap-2">
+                <h2 class="font-black text-sm text-zinc-900 dark:text-zinc-100 leading-tight truncate uppercase tracking-tight">
+                  {{eq.nombre}}
+                </h2>
+                <span class="inline-flex items-center gap-1 text-[11px] font-medium shrink-0"
+                  [ngClass]="{'text-red-500 dark:text-red-400': eq.estado == 0, 'text-emerald-600 dark:text-emerald-400': eq.estado == 1, 'text-amber-600 dark:text-amber-400': eq.estado == 2}">
+                  <span class="w-1.5 h-1.5 rounded-full"
+                    [ngClass]="{'bg-red-500': eq.estado == 0, 'bg-emerald-500': eq.estado == 1, 'bg-amber-500': eq.estado == 2}"></span>
+                  {{ eq.estado == 0 ? 'Inactivo' : (eq.estado == 1 ? 'Activo' : 'En curso') }}
+                </span>
+              </div>
+              <p class="text-[11px] text-zinc-500 dark:text-zinc-400 flex items-center gap-1 truncate">
+                <i class="fa fa-envelope text-green-500 dark:text-green-400 text-[10px] shrink-0"></i>
+                {{eq.email}}
+              </p>
+              <div class="flex flex-wrap gap-1">
                 <span *ngFor="let cat of $any(eq).categorias"
-                  class="text-[9px] font-black text-slate-600 dark:text-zinc-400 uppercase bg-slate-50 dark:bg-zinc-900 border border-slate-200 dark:border-zinc-700 px-2 py-0.5 rounded-md">
+                  class="text-[10px] font-medium bg-zinc-100 dark:bg-zinc-800 text-zinc-500 dark:text-zinc-400 border border-zinc-200 dark:border-zinc-700 px-1.5 py-0.5 rounded">
                   {{getNombreCategoria(cat)}}
                 </span>
               </div>
-            </td>
-          </tr>
-        </tbody>
-      </table>
+            </div>
+          </div>
+          <div *ngIf="eq.img1 || eq.img2" class="flex gap-1.5 px-3 pb-2 flex-wrap">
+            <img *ngIf="eq.img1" [src]="pathIm + eq.img1"
+              (click)="openModal(pathIm + eq.img1, eq.nombre)"
+              data-bs-toggle="modal" data-bs-target="#eqFotoModal"
+              class="w-10 h-10 rounded-lg object-contain border-2 border-zinc-200 dark:border-[#27272a] cursor-pointer hover:scale-105 hover:border-green-400 transition-all bg-white dark:bg-zinc-900 p-0.5">
+            <img *ngIf="eq.img2" [src]="pathIm + eq.img2"
+              (click)="openModal(pathIm + eq.img2, eq.nombre)"
+              data-bs-toggle="modal" data-bs-target="#eqFotoModal"
+              class="w-10 h-10 rounded-lg object-contain border-2 border-zinc-200 dark:border-[#27272a] cursor-pointer hover:scale-105 hover:border-green-400 transition-all bg-white dark:bg-zinc-900 p-0.5">
+          </div>
+          <div class="px-3 pb-3 flex justify-end gap-1.5 border-t border-zinc-100 dark:border-[#27272a] pt-2">
+            <button *ngIf="UserLog.perfil == 1" (click)="editEquipo(eq.id)" title="Editar equipo"
+              class="w-8 h-8 rounded-lg flex items-center justify-center bg-amber-50 dark:bg-amber-500/10 text-amber-600 dark:text-amber-400 border border-amber-200 dark:border-amber-500/20 hover:bg-amber-100 dark:hover:bg-amber-500/20 transition-all duration-150">
+              <i class="fa fa-edit text-xs"></i>
+            </button>
+            <button *ngIf="UserLog.perfil == 1" (click)="deleteEquipo(eq.id)" title="Eliminar equipo"
+              class="w-8 h-8 rounded-lg flex items-center justify-center bg-red-50 dark:bg-red-500/10 text-red-600 dark:text-red-400 border border-red-200 dark:border-red-500/20 hover:bg-red-100 dark:hover:bg-red-500/20 transition-all duration-150">
+              <i class="fa fa-trash text-xs"></i>
+            </button>
+            <button *ngIf="UserLog.perfil == 1" (click)="abrirModalCredenciales(eq.id, eq.nombre)" title="Enviar credenciales a usuarios del equipo"
+              class="w-8 h-8 rounded-lg flex items-center justify-center bg-sky-50 dark:bg-sky-500/10 text-sky-600 dark:text-sky-400 border border-sky-200 dark:border-sky-500/20 hover:bg-sky-100 dark:hover:bg-sky-500/20 transition-all duration-150">
+              <i class="fa fa-paper-plane text-xs"></i>
+            </button>
+            <button (click)="categoriasEq(eq.id)" title="Ver categorías del equipo"
+              class="w-8 h-8 rounded-lg flex items-center justify-center bg-indigo-50 dark:bg-indigo-500/10 text-indigo-600 dark:text-indigo-400 border border-indigo-200 dark:border-indigo-500/20 hover:bg-indigo-100 dark:hover:bg-indigo-500/20 transition-all duration-150">
+              <i class="fa fa-list text-xs"></i>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Tabla desktop -->
+      <div class="hidden md:block overflow-hidden bg-white dark:bg-[#111113] rounded-xl border border-zinc-200 dark:border-[#27272a]">
+        <table class="min-w-full border-separate border-spacing-0">
+          <thead class="bg-zinc-50 dark:bg-[#0d0d0f]">
+            <tr>
+              <th class="p-4 text-center w-16 border-b border-zinc-200 dark:border-[#1c1c1f] text-[11px] font-bold text-zinc-400 dark:text-zinc-600 tracking-widest uppercase">ID</th>
+              <th class="p-4 text-center border-b border-zinc-200 dark:border-[#1c1c1f]">
+                <button (click)="addEquipo()" title="Nuevo club" class="bg-green-600 hover:bg-green-700 text-white w-8 h-8 rounded-lg flex items-center justify-center mx-auto transition-all">
+                  <i class="fa fa-plus text-xs"></i>
+                </button>
+              </th>
+              <th class="p-4 text-center border-b border-zinc-200 dark:border-[#1c1c1f] text-[11px] font-bold text-zinc-400 dark:text-zinc-600 tracking-widest uppercase">Logo</th>
+              <th class="p-4 text-left border-b border-zinc-200 dark:border-[#1c1c1f] text-[11px] font-bold text-zinc-400 dark:text-zinc-600 tracking-widest uppercase">Nombre</th>
+              <th class="p-4 text-center border-b border-zinc-200 dark:border-[#1c1c1f] text-[11px] font-bold text-zinc-400 dark:text-zinc-600 tracking-widest uppercase">Estado</th>
+              <th class="p-4 text-left border-b border-zinc-200 dark:border-[#1c1c1f] text-[11px] font-bold text-zinc-400 dark:text-zinc-600 tracking-widest uppercase">Email</th>
+              <th class="p-4 text-center border-b border-zinc-200 dark:border-[#1c1c1f] text-[11px] font-bold text-zinc-400 dark:text-zinc-600 tracking-widest uppercase">Categorías</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let eq of equipos; let i = index"
+              class="border-b border-zinc-50 dark:border-[#1a1a1c] hover:bg-green-50/40 dark:hover:bg-green-950/20 transition-colors"
+              [ngClass]="i % 2 !== 0 ? 'bg-zinc-50/70 dark:bg-[#0f0f11]' : 'bg-white dark:bg-[#111113]'">
+              <td class="p-4 text-center font-mono text-xs text-zinc-400 dark:text-zinc-500">#{{eq.id}}</td>
+              <td class="p-4 text-center">
+                <div class="flex items-center justify-center gap-1.5">
+                  <button *ngIf="UserLog.perfil == 1" (click)="editEquipo(eq.id)" title="Editar equipo"
+                    class="w-8 h-8 rounded-lg flex items-center justify-center bg-amber-50 dark:bg-amber-500/10 text-amber-600 dark:text-amber-400 border border-amber-200 dark:border-amber-500/20 hover:bg-amber-100 dark:hover:bg-amber-500/20 transition-all duration-150">
+                    <i class="fa fa-edit text-xs"></i>
+                  </button>
+                  <button *ngIf="UserLog.perfil == 1" (click)="deleteEquipo(eq.id)" title="Eliminar equipo"
+                    class="w-8 h-8 rounded-lg flex items-center justify-center bg-red-50 dark:bg-red-500/10 text-red-600 dark:text-red-400 border border-red-200 dark:border-red-500/20 hover:bg-red-100 dark:hover:bg-red-500/20 transition-all duration-150">
+                    <i class="fa fa-trash text-xs"></i>
+                  </button>
+                  <button *ngIf="UserLog.perfil == 1" (click)="abrirModalCredenciales(eq.id, eq.nombre)" title="Enviar credenciales a usuarios del equipo"
+                    class="w-8 h-8 rounded-lg flex items-center justify-center bg-sky-50 dark:bg-sky-500/10 text-sky-600 dark:text-sky-400 border border-sky-200 dark:border-sky-500/20 hover:bg-sky-100 dark:hover:bg-sky-500/20 transition-all duration-150">
+                    <i class="fa fa-paper-plane text-xs"></i>
+                  </button>
+                  <button (click)="categoriasEq(eq.id)" title="Ver categorías del equipo"
+                    class="w-8 h-8 rounded-lg flex items-center justify-center bg-indigo-50 dark:bg-indigo-500/10 text-indigo-600 dark:text-indigo-400 border border-indigo-200 dark:border-indigo-500/20 hover:bg-indigo-100 dark:hover:bg-indigo-500/20 transition-all duration-150">
+                    <i class="fa fa-list text-xs"></i>
+                  </button>
+                </div>
+              </td>
+              <td class="p-4 text-center">
+                <div class="flex items-center justify-center gap-1.5">
+                  <img [src]="eq.img1 ? pathIm + eq.img1 : 'assets/img/nd.png'"
+                    (click)="eq.img1 && openModal(pathIm + eq.img1, eq.nombre)"
+                    [attr.data-bs-toggle]="eq.img1 ? 'modal' : null"
+                    [attr.data-bs-target]="eq.img1 ? '#eqFotoModal' : null"
+                    [class.cursor-pointer]="eq.img1"
+                    class="w-9 h-9 object-contain rounded-lg border border-zinc-200 dark:border-zinc-700 bg-white dark:bg-zinc-900 hover:scale-110 hover:border-green-400 transition-all">
+                  <img *ngIf="eq.img2" [src]="pathIm + eq.img2"
+                    (click)="openModal(pathIm + eq.img2, eq.nombre)"
+                    data-bs-toggle="modal" data-bs-target="#eqFotoModal"
+                    class="w-9 h-9 object-contain rounded-lg border border-zinc-200 dark:border-zinc-700 bg-white dark:bg-zinc-900 cursor-pointer hover:scale-110 hover:border-green-400 transition-all">
+                </div>
+              </td>
+              <td class="p-4 text-left">
+                <span class="font-black text-sm text-zinc-900 dark:text-zinc-100 uppercase tracking-tight">{{eq.nombre}}</span>
+              </td>
+              <td class="p-4 text-center">
+                <span class="inline-flex items-center gap-1.5 text-xs font-semibold"
+                  [ngClass]="{'text-red-500 dark:text-red-400': eq.estado == 0, 'text-emerald-600 dark:text-emerald-400': eq.estado == 1, 'text-amber-600 dark:text-amber-400': eq.estado == 2}">
+                  <span class="w-1.5 h-1.5 rounded-full"
+                    [ngClass]="{'bg-red-500': eq.estado == 0, 'bg-emerald-500 animate-pulse': eq.estado == 1, 'bg-amber-500': eq.estado == 2}"></span>
+                  {{ eq.estado == 0 ? 'Inactivo' : (eq.estado == 1 ? 'Activo' : 'En curso') }}
+                </span>
+              </td>
+              <td class="p-4 text-left text-xs text-green-600 dark:text-green-400 font-medium">{{eq.email}}</td>
+              <td class="p-4">
+                <div class="flex flex-wrap gap-1 justify-center max-w-[180px] mx-auto">
+                  <span *ngFor="let cat of $any(eq).categorias"
+                    class="text-[10px] font-medium text-zinc-500 dark:text-zinc-400 bg-zinc-100 dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700 px-1.5 py-0.5 rounded">
+                    {{getNombreCategoria(cat)}}
+                  </span>
+                </div>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+        <div *ngIf="equipos.length === 0" class="flex flex-col items-center justify-center py-16 text-zinc-300 dark:text-zinc-700">
+          <i class="fa fa-shield text-5xl mb-4 opacity-30"></i>
+          <p class="text-sm font-medium">Sin clubes registrados</p>
+        </div>
+      </div>
+
+      <div class="flex justify-center pt-6">
+        <app-paginacion *ngIf="equipos.length > 0" [nPaginas]="paginas" (irPagina)="sigPag($event)"></app-paginacion>
+      </div>
+
+    </div><!-- /content -->
+
+    <!-- Modal credenciales por usuario -->
+    <div class="modal fade" id="modalCredencialesEquipo" tabindex="-1" aria-hidden="true">
+      <div class="modal-dialog modal-dialog-centered" style="max-width:640px">
+        <div class="modal-content rounded-2xl border-0 shadow-2xl overflow-hidden">
+
+          <!-- Header -->
+          <div class="flex items-center justify-between px-6 py-4 bg-sky-600">
+            <div class="flex items-center gap-3">
+              <i class="fa fa-paper-plane text-white text-base"></i>
+              <div>
+                <p class="font-black text-white text-sm uppercase tracking-wide leading-tight">Enviar Credenciales</p>
+                <p class="text-sky-100 text-xs font-semibold">{{ nombreEquipoModal }}</p>
+              </div>
+            </div>
+            <button type="button" data-bs-dismiss="modal"
+              class="text-white/70 hover:text-white transition-colors text-2xl leading-none">&times;</button>
+          </div>
+
+          <!-- Cargando -->
+          <div *ngIf="cargandoCredenciales" class="flex flex-col items-center justify-center py-12 gap-3">
+            <i class="fa fa-spinner fa-spin text-sky-500 text-3xl"></i>
+            <p class="text-zinc-400 text-sm">Cargando usuarios...</p>
+          </div>
+
+          <!-- Sin usuarios -->
+          <div *ngIf="!cargandoCredenciales && usuariosEquipoModal.length === 0" class="px-6 py-6 text-center">
+            <div class="bg-rose-50 rounded-xl p-5 border border-rose-200">
+              <i class="fa fa-exclamation-circle text-rose-400 text-3xl mb-2 block"></i>
+              <p class="text-rose-600 text-sm font-semibold">Sin usuarios activos asociados a este equipo.</p>
+            </div>
+          </div>
+
+          <!-- Lista de usuarios -->
+          <div *ngIf="!cargandoCredenciales && usuariosEquipoModal.length > 0" class="px-6 py-5">
+
+            <!-- Leyenda -->
+            <div class="flex items-center gap-5 mb-4 text-xs text-zinc-400 font-medium">
+              <span class="font-bold text-zinc-600">{{ usuariosEquipoModal.length }} usuario(s)</span>
+              <span class="flex items-center gap-1.5">
+                <span class="inline-flex w-6 h-6 rounded-md bg-zinc-100 border border-zinc-300 items-center justify-center">
+                  <i class="fa fa-copy text-[11px] text-zinc-500"></i>
+                </span>
+                Copiar usuario + contraseña
+              </span>
+              <span class="flex items-center gap-1.5">
+                <span class="inline-flex w-6 h-6 rounded-md bg-sky-500 items-center justify-center">
+                  <i class="fa fa-paper-plane text-[11px] text-white"></i>
+                </span>
+                Enviar por correo
+              </span>
+            </div>
+
+            <!-- Filas -->
+            <div class="space-y-2 max-h-80 overflow-y-auto">
+              <div *ngFor="let u of usuariosEquipoModal"
+                class="flex items-center gap-3 bg-zinc-50 border border-zinc-200 rounded-xl px-4 py-3">
+
+                <!-- Avatar -->
+                <div class="shrink-0 w-9 h-9 rounded-full bg-sky-100 border border-sky-200 flex items-center justify-center">
+                  <i class="fa fa-user text-sky-500 text-xs"></i>
+                </div>
+
+                <!-- Nombre y correo -->
+                <div class="flex-1 min-w-0">
+                  <p class="font-bold text-sm text-zinc-900 leading-tight">{{ u.nombre }}</p>
+                  <p class="text-xs text-zinc-500 font-mono">{{ u.usuario }}</p>
+                </div>
+
+                <!-- Contraseña visible -->
+                <div class="shrink-0 bg-white border border-zinc-200 rounded-lg px-3 py-1.5 text-center min-w-[100px]">
+                  <p class="text-[9px] text-zinc-400 uppercase tracking-wider leading-none mb-0.5">Contraseña</p>
+                  <p class="font-black text-xs text-zinc-800 font-mono">{{ u.password }}</p>
+                </div>
+
+                <!-- Botón copiar -->
+                <button (click)="copiarCredencialIndividual(u)" title="Copiar usuario y contraseña"
+                  class="shrink-0 w-9 h-9 rounded-xl flex items-center justify-center bg-zinc-100 text-zinc-600 border border-zinc-300 hover:bg-zinc-200 transition-all">
+                  <i class="fa fa-copy text-sm"></i>
+                </button>
+
+                <!-- Botón enviar correo -->
+                <button (click)="enviarCredencialIndividual(u.id)" title="Enviar credenciales por correo"
+                  [disabled]="enviandoIdUsuario === u.id"
+                  class="shrink-0 w-9 h-9 rounded-xl flex items-center justify-center bg-sky-500 text-white hover:bg-sky-600 disabled:opacity-40 transition-all">
+                  <i [class]="enviandoIdUsuario === u.id ? 'fa fa-spinner fa-spin text-sm' : 'fa fa-paper-plane text-sm'"></i>
+                </button>
+
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </div>
     </div>
 
-    <!-- Paginación -->
-    <div class="flex justify-center p-6">
-      <app-paginacion *ngIf="equipos.length > 0" [nPaginas]="paginas" (irPagina)="sigPag($event)"></app-paginacion>
+    <!-- FAB Mobile -->
+    <div class="md:hidden fixed bottom-6 right-6 z-50">
+      <button (click)="addEquipo()"
+        class="bg-green-600 hover:bg-green-700 text-white w-12 h-12 rounded-xl shadow-xl shadow-green-600/30 flex items-center justify-center active:scale-90 transition-all">
+        <i class="fa fa-plus text-base"></i>
+      </button>
     </div>
   </div>
 
   <!-- ===================== MODAL CREAR / EDITAR ===================== -->
   <div *ngIf="this.creando && !this.Valcategorias"
-    class="fixed inset-0 z-[100] flex items-end md:items-center justify-center bg-black/70 backdrop-blur-sm">
+    class="fixed inset-0 z-[100] flex items-end md:items-center justify-center bg-black/60 backdrop-blur-sm">
     <div
-      class="modal-panel w-full md:max-w-2xl bg-white dark:bg-[#1b1b1f] md:rounded-2xl shadow-2xl border border-slate-200 dark:border-[#303038] overflow-hidden flex flex-col max-h-[92vh]">
+      class="modal-panel w-full md:max-w-2xl bg-white dark:bg-[#111113] md:rounded-xl shadow-2xl border border-zinc-200 dark:border-[#27272a] overflow-hidden flex flex-col max-h-[92vh]">
 
-      <!-- Header modal -->
-      <div class="bg-slate-50 dark:bg-[#252529] p-5 border-b border-slate-200 dark:border-[#303038] flex items-center justify-between shrink-0">
+      <div class="px-5 py-4 border-b border-zinc-100 dark:border-[#27272a] flex items-center justify-between bg-zinc-50 dark:bg-[#0d0d0f] shrink-0">
         <div class="flex items-center gap-3">
-          <div class="w-9 h-9 bg-green-600 rounded-xl flex items-center justify-center shadow-lg shadow-green-600/20">
-            <i class="fa fa-shield text-white text-sm"></i>
+          <div class="w-8 h-8 bg-green-500/10 border border-green-500/20 rounded-lg flex items-center justify-center">
+            <i class="fa fa-shield text-green-500 text-sm"></i>
           </div>
-          <h3 class="text-lg font-bebas text-slate-900 dark:text-white uppercase tracking-wider">
-            CREAR / GESTIONAR CLUB
-          </h3>
+          <div>
+            <h3 class="text-[15px] font-black uppercase text-zinc-900 dark:text-zinc-50 leading-none tracking-tight">
+              Crear / Gestionar club
+            </h3>
+            <p class="text-[11px] text-green-600 dark:text-green-400 font-semibold mt-0.5">Clubes y plantillas</p>
+          </div>
         </div>
         <button (click)="cancel()"
-          class="w-8 h-8 flex items-center justify-center text-slate-400 dark:text-zinc-500 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-zinc-800 rounded-lg transition-all">
+          class="w-8 h-8 flex items-center justify-center text-zinc-400 dark:text-zinc-500 hover:text-zinc-900 dark:hover:text-zinc-50 hover:bg-zinc-100 dark:hover:bg-zinc-800 rounded-lg transition-all">
           <i class="fa fa-times"></i>
         </button>
       </div>
 
-      <!-- Body modal -->
-      <div class="p-6 md:p-8 overflow-y-auto flex-1">
+      <div class="p-5 md:p-6 overflow-y-auto flex-1">
         <form [formGroup]="EquipoForm" (ngSubmit)="saveEquipo()" class="space-y-4">
-
           <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div class="space-y-1.5">
-              <label class="text-[9px] font-black text-green-600 dark:text-green-500 uppercase tracking-widest ml-1">Nombre Oficial</label>
+              <label class="text-[11px] font-bold text-zinc-500 dark:text-zinc-400 block uppercase tracking-wider">Nombre oficial</label>
               <input type="text" formControlName="name" placeholder="Nombre del club"
-                class="w-full rounded-xl px-4 py-3 bg-white dark:bg-zinc-900 text-slate-900 dark:text-white border border-slate-300 dark:border-zinc-700 focus:border-green-500 focus:outline-none focus:ring-1 focus:ring-green-500/20 transition-colors text-sm placeholder:text-slate-400" />
+                class="w-full rounded-lg px-3 py-2.5 bg-white dark:bg-[#0c0c0e] text-zinc-900 dark:text-zinc-100 border border-zinc-300 dark:border-[#27272a] focus:border-green-500 focus:outline-none focus:ring-1 focus:ring-green-500/20 transition-colors text-sm placeholder:text-zinc-400" />
             </div>
             <div class="space-y-1.5">
-              <label class="text-[9px] font-black text-slate-500 dark:text-zinc-400 uppercase tracking-widest ml-1">Correo Electrónico</label>
+              <label class="text-[11px] font-bold text-zinc-500 dark:text-zinc-400 block uppercase tracking-wider">Correo electrónico</label>
               <input type="email" formControlName="mail" placeholder="contacto@club.com"
-                class="w-full rounded-xl px-4 py-3 bg-white dark:bg-zinc-900 text-slate-900 dark:text-white border border-slate-300 dark:border-zinc-700 focus:border-green-500 focus:outline-none focus:ring-1 focus:ring-green-500/20 transition-colors text-sm placeholder:text-slate-400" />
+                class="w-full rounded-lg px-3 py-2.5 bg-white dark:bg-[#0c0c0e] text-zinc-900 dark:text-zinc-100 border border-zinc-300 dark:border-[#27272a] focus:border-green-500 focus:outline-none focus:ring-1 focus:ring-green-500/20 transition-colors text-sm placeholder:text-zinc-400" />
             </div>
           </div>
-
           <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div class="space-y-1.5">
-              <label class="text-[9px] font-black text-slate-500 dark:text-zinc-400 uppercase tracking-widest ml-1">Teléfono 1</label>
+              <label class="text-[11px] font-bold text-zinc-500 dark:text-zinc-400 block uppercase tracking-wider">Teléfono 1</label>
               <input type="text" formControlName="tel1" placeholder="Ej. 099999999"
-                class="w-full rounded-xl px-4 py-3 bg-white dark:bg-zinc-900 text-slate-900 dark:text-white border border-slate-300 dark:border-zinc-700 focus:border-green-500 focus:outline-none focus:ring-1 focus:ring-green-500/20 transition-colors text-sm placeholder:text-slate-400">
+                class="w-full rounded-lg px-3 py-2.5 bg-white dark:bg-[#0c0c0e] text-zinc-900 dark:text-zinc-100 border border-zinc-300 dark:border-[#27272a] focus:border-green-500 focus:outline-none focus:ring-1 focus:ring-green-500/20 transition-colors text-sm placeholder:text-zinc-400">
             </div>
             <div class="space-y-1.5">
-              <label class="text-[9px] font-black text-slate-500 dark:text-zinc-400 uppercase tracking-widest ml-1">Teléfono 2</label>
+              <label class="text-[11px] font-bold text-zinc-500 dark:text-zinc-400 block uppercase tracking-wider">Teléfono 2</label>
               <input type="text" formControlName="tel2" placeholder="Opcional"
-                class="w-full rounded-xl px-4 py-3 bg-white dark:bg-zinc-900 text-slate-900 dark:text-white border border-slate-300 dark:border-zinc-700 focus:border-green-500 focus:outline-none focus:ring-1 focus:ring-green-500/20 transition-colors text-sm placeholder:text-slate-400">
+                class="w-full rounded-lg px-3 py-2.5 bg-white dark:bg-[#0c0c0e] text-zinc-900 dark:text-zinc-100 border border-zinc-300 dark:border-[#27272a] focus:border-green-500 focus:outline-none focus:ring-1 focus:ring-green-500/20 transition-colors text-sm placeholder:text-zinc-400">
             </div>
           </div>
-
           <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div class="space-y-1.5">
-              <label class="text-[9px] font-black text-slate-500 dark:text-zinc-400 uppercase tracking-widest ml-1">
-                <i class="fa fa-user text-green-500 mr-1"></i>Entrenador 1
-              </label>
+              <label class="text-[11px] font-bold text-zinc-500 dark:text-zinc-400 block uppercase tracking-wider">Entrenador 1</label>
               <input type="text" formControlName="entrenador1" placeholder="Nombre del entrenador (opcional)"
-                class="w-full rounded-xl px-4 py-3 bg-white dark:bg-zinc-900 text-slate-900 dark:text-white border border-slate-300 dark:border-zinc-700 focus:border-green-500 focus:outline-none focus:ring-1 focus:ring-green-500/20 transition-colors text-sm placeholder:text-slate-400">
+                class="w-full rounded-lg px-3 py-2.5 bg-white dark:bg-[#0c0c0e] text-zinc-900 dark:text-zinc-100 border border-zinc-300 dark:border-[#27272a] focus:border-green-500 focus:outline-none focus:ring-1 focus:ring-green-500/20 transition-colors text-sm placeholder:text-zinc-400">
             </div>
             <div class="space-y-1.5">
-              <label class="text-[9px] font-black text-slate-500 dark:text-zinc-400 uppercase tracking-widest ml-1">
-                <i class="fa fa-user text-green-500 mr-1"></i>Entrenador 2
-              </label>
+              <label class="text-[11px] font-bold text-zinc-500 dark:text-zinc-400 block uppercase tracking-wider">Entrenador 2</label>
               <input type="text" formControlName="entrenador2" placeholder="Nombre del entrenador (opcional)"
-                class="w-full rounded-xl px-4 py-3 bg-white dark:bg-zinc-900 text-slate-900 dark:text-white border border-slate-300 dark:border-zinc-700 focus:border-green-500 focus:outline-none focus:ring-1 focus:ring-green-500/20 transition-colors text-sm placeholder:text-slate-400">
+                class="w-full rounded-lg px-3 py-2.5 bg-white dark:bg-[#0c0c0e] text-zinc-900 dark:text-zinc-100 border border-zinc-300 dark:border-[#27272a] focus:border-green-500 focus:outline-none focus:ring-1 focus:ring-green-500/20 transition-colors text-sm placeholder:text-zinc-400">
             </div>
           </div>
-
           <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
             <div class="space-y-1.5">
-              <label class="text-[9px] font-black text-slate-500 dark:text-zinc-400 uppercase tracking-widest ml-1">Estado</label>
+              <label class="text-[11px] font-bold text-zinc-500 dark:text-zinc-400 block uppercase tracking-wider">Estado</label>
               <select formControlName="estado"
-                class="w-full rounded-xl px-4 py-3 bg-white dark:bg-zinc-900 text-slate-900 dark:text-white border border-slate-300 dark:border-zinc-700 focus:border-green-500 focus:outline-none focus:ring-1 focus:ring-green-500/20 transition-colors text-sm appearance-none cursor-pointer">
+                class="w-full rounded-lg px-3 py-2.5 bg-white dark:bg-[#0c0c0e] text-zinc-900 dark:text-zinc-100 border border-zinc-300 dark:border-[#27272a] focus:border-green-500 focus:outline-none focus:ring-1 focus:ring-green-500/20 transition-colors text-sm appearance-none cursor-pointer font-semibold">
                 <option [value]="1">Activo</option>
                 <option [value]="0">Inactivo</option>
               </select>
             </div>
             <div class="space-y-1.5">
-              <label class="text-[9px] font-black text-green-600 dark:text-green-500 uppercase tracking-widest ml-1">Logo Equipo</label>
-              <input type="file" (change)="uploadImage($event, 1)"
-                class="w-full text-[10px] text-slate-500 dark:text-zinc-400
-                       file:bg-slate-200 dark:file:bg-zinc-800
-                       file:text-slate-700 dark:file:text-white
-                       file:border-none file:rounded-lg file:px-3 file:py-1.5 file:mr-2
-                       file:text-[10px] file:font-black file:uppercase file:cursor-pointer
-                       hover:file:bg-slate-300 dark:hover:file:bg-zinc-700 transition-all">
+              <label class="text-[11px] font-bold text-zinc-500 dark:text-zinc-400 block uppercase tracking-wider">Logo equipo</label>
+              <input type="file" id="fileInput1" class="sr-only" accept="image/jpeg,image/png" (change)="abrirCropper($event, 1)">
+              <div *ngIf="filePreviews[1]; else noFoto1Eq" class="relative rounded-xl overflow-hidden border border-green-500/40">
+                <img [src]="filePreviews[1]" class="w-full h-28 object-cover">
+                <div class="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent px-2 py-1.5 flex items-center justify-between">
+                  <button type="button" (click)="triggerInput(1)" class="text-[9px] text-white font-semibold bg-green-600/80 hover:bg-green-500 px-2 py-0.5 rounded transition-all"><i class="fa fa-pencil mr-1"></i>Cambiar</button>
+                  <div class="flex gap-1 shrink-0">
+                    <button type="button" (click)="rotarSlot(1, 'left')" class="w-6 h-6 rounded bg-black/50 text-white hover:bg-black/80 flex items-center justify-center transition-all"><i class="fa fa-rotate-left text-[9px]"></i></button>
+                    <button type="button" (click)="rotarSlot(1, 'right')" class="w-6 h-6 rounded bg-black/50 text-white hover:bg-black/80 flex items-center justify-center transition-all"><i class="fa fa-rotate-right text-[9px]"></i></button>
+                  </div>
+                </div>
+              </div>
+              <ng-template #noFoto1Eq>
+                <button type="button" (click)="triggerInput(1)" class="w-full flex items-center justify-center gap-2 py-3 rounded-xl border-2 border-dashed border-zinc-300 dark:border-zinc-600 hover:border-green-500 text-zinc-400 hover:text-green-600 transition-all">
+                  <i class="fa fa-image text-base"></i><span class="text-[10px] font-black uppercase">Logo equipo</span>
+                </button>
+              </ng-template>
             </div>
             <div class="space-y-1.5">
-              <label class="text-[9px] font-black text-green-600 dark:text-green-500 uppercase tracking-widest ml-1">Imagen 2</label>
-              <input type="file" (change)="uploadImage($event, 2)"
-                class="w-full text-[10px] text-slate-500 dark:text-zinc-400
-                       file:bg-slate-200 dark:file:bg-zinc-800
-                       file:text-slate-700 dark:file:text-white
-                       file:border-none file:rounded-lg file:px-3 file:py-1.5 file:mr-2
-                       file:text-[10px] file:font-black file:uppercase file:cursor-pointer
-                       hover:file:bg-slate-300 dark:hover:file:bg-zinc-700 transition-all">
+              <label class="text-[11px] font-bold text-zinc-500 dark:text-zinc-400 block uppercase tracking-wider">Imagen 2</label>
+              <input type="file" id="fileInput2" class="sr-only" accept="image/jpeg,image/png" (change)="abrirCropper($event, 2)">
+              <div *ngIf="filePreviews[2]; else noFoto2Eq" class="relative rounded-xl overflow-hidden border border-green-500/40">
+                <img [src]="filePreviews[2]" class="w-full h-28 object-cover">
+                <div class="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent px-2 py-1.5 flex items-center justify-between">
+                  <button type="button" (click)="triggerInput(2)" class="text-[9px] text-white font-semibold bg-green-600/80 hover:bg-green-500 px-2 py-0.5 rounded transition-all"><i class="fa fa-pencil mr-1"></i>Cambiar</button>
+                  <div class="flex gap-1 shrink-0">
+                    <button type="button" (click)="rotarSlot(2, 'left')" class="w-6 h-6 rounded bg-black/50 text-white hover:bg-black/80 flex items-center justify-center transition-all"><i class="fa fa-rotate-left text-[9px]"></i></button>
+                    <button type="button" (click)="rotarSlot(2, 'right')" class="w-6 h-6 rounded bg-black/50 text-white hover:bg-black/80 flex items-center justify-center transition-all"><i class="fa fa-rotate-right text-[9px]"></i></button>
+                  </div>
+                </div>
+              </div>
+              <ng-template #noFoto2Eq>
+                <button type="button" (click)="triggerInput(2)" class="w-full flex items-center justify-center gap-2 py-3 rounded-xl border-2 border-dashed border-zinc-300 dark:border-zinc-600 hover:border-green-500 text-zinc-400 hover:text-green-600 transition-all">
+                  <i class="fa fa-image text-base"></i><span class="text-[10px] font-black uppercase">Imagen 2</span>
+                </button>
+              </ng-template>
             </div>
           </div>
-
-          <!-- Departamento / Ciudad -->
           <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div class="space-y-1.5">
-              <label class="text-[9px] font-black text-slate-500 dark:text-zinc-400 uppercase tracking-widest ml-1">
-                <i class="fa fa-map-marker text-green-500 mr-1"></i>Departamento
-              </label>
+              <label class="text-[11px] font-bold text-zinc-500 dark:text-zinc-400 block uppercase tracking-wider">Departamento</label>
               <div class="relative">
                 <select formControlName="fk_departamento"
                   (change)="onDepartamentoChange($any($event.target).value)"
-                  class="w-full rounded-xl px-4 py-3 bg-white dark:bg-zinc-900 text-slate-900 dark:text-white border border-slate-300 dark:border-zinc-700 focus:border-green-500 focus:outline-none focus:ring-1 focus:ring-green-500/20 transition-colors text-sm appearance-none cursor-pointer">
+                  class="w-full rounded-lg px-3 py-2.5 bg-white dark:bg-[#0c0c0e] text-zinc-900 dark:text-zinc-100 border border-zinc-300 dark:border-[#27272a] focus:border-green-500 focus:outline-none focus:ring-1 focus:ring-green-500/20 transition-colors text-sm appearance-none cursor-pointer">
                   <option [ngValue]="null">-- Seleccione --</option>
                   <option *ngFor="let dep of departamentos" [value]="dep.id">{{ dep.nombre }}</option>
                 </select>
-                <i class="fa fa-chevron-down absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 text-xs pointer-events-none"></i>
+                <i class="fa fa-chevron-down absolute right-3 top-1/2 -translate-y-1/2 text-zinc-400 text-xs pointer-events-none"></i>
               </div>
             </div>
             <div class="space-y-1.5">
-              <label class="text-[9px] font-black text-slate-500 dark:text-zinc-400 uppercase tracking-widest ml-1">
-                <i class="fa fa-building text-green-500 mr-1"></i>Ciudad / Municipio
-              </label>
+              <label class="text-[11px] font-bold text-zinc-500 dark:text-zinc-400 block uppercase tracking-wider">Ciudad / Municipio</label>
               <div class="relative">
                 <select formControlName="fk_ciudad"
                   [class.opacity-40]="!EquipoForm.get('fk_departamento')?.value"
                   [class.pointer-events-none]="!EquipoForm.get('fk_departamento')?.value"
-                  class="w-full rounded-xl px-4 py-3 bg-white dark:bg-zinc-900 text-slate-900 dark:text-white border border-slate-300 dark:border-zinc-700 focus:border-green-500 focus:outline-none focus:ring-1 focus:ring-green-500/20 transition-all text-sm appearance-none cursor-pointer">
+                  class="w-full rounded-lg px-3 py-2.5 bg-white dark:bg-[#0c0c0e] text-zinc-900 dark:text-zinc-100 border border-zinc-300 dark:border-[#27272a] focus:border-green-500 focus:outline-none focus:ring-1 focus:ring-green-500/20 transition-all text-sm appearance-none cursor-pointer">
                   <option [ngValue]="null">
                     {{ !EquipoForm.get('fk_departamento')?.value ? '← Primero seleccione departamento' : '-- Seleccione ciudad --' }}
                   </option>
                   <option *ngFor="let ciu of ciudades" [value]="ciu.id">{{ ciu.nombre }}</option>
                 </select>
-                <i *ngIf="!EquipoForm.get('fk_departamento')?.value" class="fa fa-lock absolute right-3 top-1/2 -translate-y-1/2 text-slate-300 dark:text-zinc-600 text-xs pointer-events-none"></i>
-                <i *ngIf="EquipoForm.get('fk_departamento')?.value" class="fa fa-chevron-down absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 text-xs pointer-events-none"></i>
+                <i *ngIf="!EquipoForm.get('fk_departamento')?.value" class="fa fa-lock absolute right-3 top-1/2 -translate-y-1/2 text-zinc-300 dark:text-zinc-600 text-xs pointer-events-none"></i>
+                <i *ngIf="EquipoForm.get('fk_departamento')?.value" class="fa fa-chevron-down absolute right-3 top-1/2 -translate-y-1/2 text-zinc-400 text-xs pointer-events-none"></i>
               </div>
             </div>
           </div>
-
-          <!-- Categorías disponibles -->
-          <div class="bg-slate-50 dark:bg-zinc-900/60 p-4 rounded-2xl border border-slate-200 dark:border-zinc-800">
-            <label class="block text-[9px] font-black text-green-600 dark:text-green-500 uppercase tracking-widest mb-3 text-center">Categorías Disponibles</label>
+          <div class="bg-zinc-50 dark:bg-zinc-900/60 p-4 rounded-xl border border-zinc-200 dark:border-zinc-800">
+            <label class="block text-[11px] font-bold text-green-600 dark:text-green-400 mb-3 text-center uppercase tracking-wider">Categorías disponibles</label>
             <div class="grid grid-cols-2 md:grid-cols-3 gap-2 max-h-32 overflow-y-auto pr-1 custom-scrollbar">
               <div *ngFor="let cat of categoriasDisponibles" (click)="toggleCategoria(cat.id)"
                 [ngClass]="categoriasSeleccionadas[cat.id]
-                  ? 'bg-green-600 text-white border-green-500 shadow-md shadow-green-600/20'
-                  : 'bg-white dark:bg-zinc-800 text-slate-600 dark:text-zinc-400 border-slate-200 dark:border-zinc-700 hover:border-green-500/60'"
-                class="flex items-center gap-2 p-2.5 rounded-xl border transition-all cursor-pointer select-none">
+                  ? 'bg-green-600 text-white border-green-500 shadow-sm'
+                  : 'bg-white dark:bg-zinc-800 text-zinc-600 dark:text-zinc-400 border-zinc-200 dark:border-zinc-700 hover:border-green-500/50'"
+                class="flex items-center gap-2 p-2.5 rounded-lg border transition-all cursor-pointer select-none">
                 <i [class]="categoriasSeleccionadas[cat.id] ? 'fa fa-check-square' : 'fa fa-square-o'" class="text-xs shrink-0"></i>
-                <span class="font-black text-[10px] uppercase truncate">{{ cat.nombre }}</span>
+                <span class="font-semibold text-[11px] truncate">{{ cat.nombre }}</span>
               </div>
             </div>
           </div>
-
-          <!-- Imágenes actuales -->
-          <div *ngIf="editForm && (equipoSelect.img1 || equipoSelect.img2)"
-            class="flex gap-4 justify-center bg-slate-50 dark:bg-zinc-900/40 p-4 rounded-2xl border border-slate-200 dark:border-zinc-800">
-            <div *ngIf="equipoSelect.img1" class="text-center">
-              <p class="text-[9px] text-slate-500 dark:text-zinc-500 font-black uppercase mb-1.5">Logo Actual</p>
-              <img [src]="pathIm + equipoSelect.img1"
-                class="w-16 h-16 object-contain rounded-xl border border-slate-200 dark:border-zinc-700 bg-white p-1 shadow-md">
-            </div>
-            <div *ngIf="equipoSelect.img2" class="text-center">
-              <p class="text-[9px] text-slate-500 dark:text-zinc-500 font-black uppercase mb-1.5">Imagen 2 Actual</p>
-              <img [src]="pathIm + equipoSelect.img2"
-                class="w-16 h-16 object-contain rounded-xl border border-slate-200 dark:border-zinc-700 bg-white p-1 shadow-md">
+          <!-- Carrusel fotos actuales (edición) -->
+          <div *ngIf="editForm && (equipoSelect.img1 || equipoSelect.img2)" class="mt-2">
+            <h4 class="text-center text-zinc-400 dark:text-zinc-500 text-[11px] font-semibold mb-3 uppercase tracking-wider">Fotos actuales</h4>
+            <div class="relative max-w-xs mx-auto">
+              <div id="carouselEq" class="carousel slide" data-bs-ride="carousel">
+                <div class="carousel-inner rounded-xl border-2 border-zinc-200 dark:border-[#27272a] shadow-lg overflow-hidden bg-zinc-100 dark:bg-black" style="aspect-ratio:4/3">
+                  <div class="carousel-item active h-full relative" *ngIf="equipoSelect.img1">
+                    <img [src]="carouselPreviews[1] || pathIm + equipoSelect.img1"
+                      (click)="openModal(carouselPreviews[1] || pathIm + equipoSelect.img1, equipoSelect.nombre)"
+                      data-bs-toggle="modal" data-bs-target="#eqFotoModal"
+                      class="w-full h-full object-contain cursor-pointer bg-white dark:bg-zinc-900" alt="Logo">
+                    <div class="absolute bottom-2 right-2 flex gap-1 z-10">
+                      <button type="button" (click)="rotarCarrusel(1, 'left')" class="w-7 h-7 rounded-lg bg-black/60 text-white hover:bg-black/90 flex items-center justify-center transition-all"><i class="fa fa-rotate-left text-xs"></i></button>
+                      <button type="button" (click)="rotarCarrusel(1, 'right')" class="w-7 h-7 rounded-lg bg-black/60 text-white hover:bg-black/90 flex items-center justify-center transition-all"><i class="fa fa-rotate-right text-xs"></i></button>
+                    </div>
+                    <span class="absolute top-2 left-2 text-[9px] font-bold bg-black/50 text-white px-2 py-0.5 rounded">Logo</span>
+                  </div>
+                  <div class="carousel-item h-full relative" *ngIf="equipoSelect.img2">
+                    <img [src]="carouselPreviews[2] || pathIm + equipoSelect.img2"
+                      (click)="openModal(carouselPreviews[2] || pathIm + equipoSelect.img2, equipoSelect.nombre)"
+                      data-bs-toggle="modal" data-bs-target="#eqFotoModal"
+                      class="w-full h-full object-contain cursor-pointer bg-white dark:bg-zinc-900" alt="Imagen 2">
+                    <div class="absolute bottom-2 right-2 flex gap-1 z-10">
+                      <button type="button" (click)="rotarCarrusel(2, 'left')" class="w-7 h-7 rounded-lg bg-black/60 text-white hover:bg-black/90 flex items-center justify-center transition-all"><i class="fa fa-rotate-left text-xs"></i></button>
+                      <button type="button" (click)="rotarCarrusel(2, 'right')" class="w-7 h-7 rounded-lg bg-black/60 text-white hover:bg-black/90 flex items-center justify-center transition-all"><i class="fa fa-rotate-right text-xs"></i></button>
+                    </div>
+                    <span class="absolute top-2 left-2 text-[9px] font-bold bg-black/50 text-white px-2 py-0.5 rounded">Imagen 2</span>
+                  </div>
+                </div>
+                <button *ngIf="equipoSelect.img1 && equipoSelect.img2"
+                  class="carousel-control-prev" type="button" data-bs-target="#carouselEq" data-bs-slide="prev">
+                  <span class="carousel-control-prev-icon bg-black/40 rounded-full p-2" aria-hidden="true"></span>
+                </button>
+                <button *ngIf="equipoSelect.img1 && equipoSelect.img2"
+                  class="carousel-control-next" type="button" data-bs-target="#carouselEq" data-bs-slide="next">
+                  <span class="carousel-control-next-icon bg-black/40 rounded-full p-2" aria-hidden="true"></span>
+                </button>
+              </div>
             </div>
           </div>
-
-          <!-- Botones -->
-          <div class="flex flex-col-reverse md:flex-row gap-3 pt-4 border-t border-slate-100 dark:border-[#303038]">
+          <div class="flex flex-col-reverse md:flex-row gap-3 pt-4 border-t border-zinc-100 dark:border-[#27272a]">
             <button type="button" (click)="cancel()"
-              class="w-full md:flex-1 bg-slate-100 dark:bg-zinc-800 hover:bg-slate-200 dark:hover:bg-zinc-700 text-slate-600 dark:text-zinc-400 hover:text-slate-900 dark:hover:text-white px-4 py-3 rounded-xl font-black uppercase text-[10px] tracking-widest transition-all">
+              class="w-full md:flex-1 bg-zinc-100 dark:bg-zinc-800 hover:bg-zinc-200 dark:hover:bg-zinc-700 text-zinc-600 dark:text-zinc-400 px-4 py-2.5 rounded-lg font-semibold text-sm transition-all">
               Cancelar
             </button>
             <button type="submit" [disabled]="!EquipoForm.valid"
-              class="w-full md:flex-[1.5] bg-green-600 hover:bg-green-700 dark:hover:bg-green-500 text-white px-4 py-3 rounded-xl font-black shadow-lg shadow-green-600/20 hover:-translate-y-0.5 active:translate-y-0 transition-all uppercase text-[10px] tracking-widest flex items-center justify-center gap-2 disabled:opacity-40 disabled:cursor-not-allowed disabled:transform-none">
-              <i class="fa fa-save"></i> Guardar Club
+              class="w-full md:flex-[1.5] bg-green-600 hover:bg-green-700 dark:hover:bg-green-500 text-white px-4 py-2.5 rounded-lg font-bold text-sm shadow-sm transition-all uppercase tracking-wide flex items-center justify-center gap-2 disabled:opacity-40 disabled:cursor-not-allowed">
+              <i class="fa fa-save text-xs"></i> Guardar club
             </button>
           </div>
-
-          <!-- Loading -->
-          <div *ngIf="isLoading" class="flex items-center justify-center gap-3 py-3">
-            <div class="w-5 h-5 border-2 border-green-500 border-t-transparent rounded-full animate-spin"></div>
-            <p class="text-green-600 dark:text-green-500 font-black text-[9px] uppercase tracking-widest animate-pulse">Procesando solicitud...</p>
+          <div *ngIf="isLoading" class="flex items-center justify-center gap-2 py-2">
+            <div class="w-4 h-4 border-2 border-green-500 border-t-transparent rounded-full animate-spin"></div>
+            <p class="text-green-600 dark:text-green-400 font-semibold text-xs">Procesando solicitud...</p>
           </div>
-
         </form>
       </div>
     </div>
   </div>
 
   <!-- ===================== VISTA CATEGORÍAS ===================== -->
-  <div class="w-full min-h-screen bg-slate-100 dark:bg-[#111114]" *ngIf="this.Valcategorias">
+  <div class="w-full min-h-screen bg-zinc-50 dark:bg-[#09090b]" *ngIf="this.Valcategorias">
     <div class="max-w-6xl mx-auto p-0 md:p-8">
-
-      <!-- Header categorías -->
-      <div class="bg-white dark:bg-[#1b1b1f] p-4 md:p-6 md:rounded-2xl border-b md:border border-slate-200 dark:border-[#303038] flex items-center gap-4 mb-0 md:mb-6 shrink-0">
+      <div class="bg-white dark:bg-[#111113] p-4 md:p-6 md:rounded-xl border-b md:border border-zinc-200 dark:border-[#27272a] flex items-center gap-4 mb-0 md:mb-6 shrink-0">
         <button (click)="this.Valcategorias=false"
-          class="shrink-0 bg-slate-100 dark:bg-zinc-800 hover:bg-green-600 hover:text-white text-slate-600 dark:text-zinc-300 w-10 h-10 rounded-xl flex items-center justify-center active:scale-90 transition-all border border-slate-200 dark:border-zinc-700">
+          class="shrink-0 bg-zinc-100 dark:bg-zinc-800 hover:bg-green-600 hover:text-white text-zinc-600 dark:text-zinc-300 w-9 h-9 rounded-lg flex items-center justify-center active:scale-90 transition-all border border-zinc-200 dark:border-zinc-700">
           <i class="fa fa-arrow-left text-sm"></i>
         </button>
         <div class="flex-1 min-w-0">
-          <h1 class="font-bebas text-2xl md:text-3xl text-slate-900 dark:text-white uppercase leading-none tracking-widest">Nómina del Club</h1>
-          <p class="text-[10px] text-green-600 dark:text-green-400 font-bold uppercase tracking-[0.25em] mt-0.5">Categorías · Jugadores inscritos</p>
+          <h1 class="text-xl font-black uppercase tracking-tight text-zinc-900 dark:text-zinc-50 leading-none">Nómina del Club</h1>
+          <p class="text-xs text-green-600 dark:text-green-400 font-semibold mt-0.5">Categorías · Jugadores inscritos</p>
         </div>
       </div>
-
-      <!-- Línea decorativa -->
-      <div class="flex items-center gap-3 my-4 px-6 md:px-0">
-        <div class="h-px bg-green-600 w-12"></div>
-        <div class="w-1.5 h-1.5 bg-green-600 rounded-full"></div>
-        <div class="h-px bg-slate-200 dark:bg-zinc-800 flex-1"></div>
-      </div>
-
-      <!-- Grid categorías -->
-      <div class="grid grid-cols-1 lg:grid-cols-2 gap-0 md:gap-6">
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-0 md:gap-6 mt-4 md:mt-0">
         <div *ngFor="let categoria of categoriasEquipo"
-          class="bg-white dark:bg-[#1b1b1f] md:rounded-2xl overflow-hidden border-b md:border border-slate-200 dark:border-[#303038] flex flex-col shadow-sm">
-
-          <!-- Header categoría -->
-          <div class="bg-slate-900 dark:bg-[#252529] p-4 flex justify-between items-center">
-            <h5 class="text-white font-oswald font-semibold text-sm uppercase tracking-wider">{{ categoria.nombre }}</h5>
+          class="bg-white dark:bg-[#111113] md:rounded-xl overflow-hidden border-b md:border border-zinc-200 dark:border-[#27272a] flex flex-col">
+          <div class="bg-zinc-900 dark:bg-[#0d0d0f] p-4 flex justify-between items-center">
+            <h5 class="text-zinc-100 font-black text-sm uppercase tracking-tight">{{ categoria.nombre }}</h5>
             <button (click)="abrirModalSeleccion(categoria)" data-bs-toggle="modal"
               data-bs-target="#modalSeleccionarJugador"
-              class="bg-green-600 hover:bg-green-500 text-white w-8 h-8 rounded-lg font-black text-lg flex items-center justify-center transition-all active:scale-125 shadow-lg shadow-green-600/20">+</button>
+              class="bg-green-600 hover:bg-green-500 text-white w-8 h-8 rounded-lg font-bold text-lg flex items-center justify-center transition-all active:scale-125 shadow-md shadow-green-600/20">+</button>
           </div>
-
-          <!-- Lista jugadores -->
           <div class="p-0">
             <div *ngIf="categoria.jugadores.length > 0; else noJugadores">
               <div *ngFor="let jugador of categoria.jugadores; let j = index"
-                class="p-4 flex flex-col items-center sm:flex-row sm:items-center gap-4 border-b border-slate-100 dark:border-[#303038] last:border-none text-center sm:text-left hover:bg-slate-50 dark:hover:bg-[#202024] transition-colors">
-
+                class="p-4 flex flex-col items-center sm:flex-row sm:items-center gap-4 border-b border-zinc-100 dark:border-[#27272a] last:border-none text-center sm:text-left hover:bg-green-50/40 dark:hover:bg-green-950/20 transition-colors">
                 <img [src]="pathIm + jugador.jugador_imagen"
-                  class="w-12 h-12 rounded-xl object-cover shadow-sm ring-2 ring-green-500/20">
-
+                  (click)="verImagen(pathIm + jugador.jugador_imagen)"
+                  class="w-10 h-10 rounded-lg object-cover ring-2 ring-green-500/20 cursor-pointer hover:scale-110 hover:ring-green-400/50 transition-all duration-200">
                 <div class="flex-1 min-w-0">
-                  <p class="font-oswald font-semibold uppercase text-sm text-slate-900 dark:text-white leading-tight break-words">{{ jugador.jugador_nombre }}</p>
-                  <p class="text-[9px] text-slate-500 dark:text-zinc-400 font-black uppercase mt-0.5">{{ jugador.nacimiento }} · {{ apiRest.calcularEdad(jugador.nacimiento) }} años</p>
+                  <p class="font-black text-sm text-zinc-900 dark:text-zinc-100 leading-tight break-words uppercase tracking-tight">{{ jugador.jugador_nombre }}</p>
+                  <p class="text-[11px] text-zinc-500 dark:text-zinc-400 mt-0.5">{{ jugador.nacimiento }} · {{ apiRest.calcularEdad(jugador.nacimiento) }} años</p>
                 </div>
-
                 <div class="flex items-center gap-2 mt-2 sm:mt-0">
-                  <span class="bg-indigo-50 dark:bg-indigo-500/10 text-indigo-700 dark:text-indigo-300 px-2.5 py-1 rounded-md text-[9px] font-black border border-indigo-100 dark:border-indigo-500/20 uppercase">{{ jugador.descrip }}</span>
+                  <span class="bg-indigo-50 dark:bg-indigo-500/10 text-indigo-700 dark:text-indigo-300 px-2 py-0.5 rounded text-[11px] font-semibold border border-indigo-100 dark:border-indigo-500/20">{{ jugador.descrip }}</span>
                   <button (click)="eliminarJugadorClub(jugador.jugador_id, jugador.fk_categoria, jugador.fk_club)"
-                    class="text-red-400 hover:text-red-600 dark:hover:text-red-400 p-1.5 transition-colors hover:bg-red-500/10 rounded-lg">
-                    <i class="fa fa-times-circle text-xl"></i>
+                    class="text-zinc-400 hover:text-red-500 dark:hover:text-red-400 p-1.5 transition-colors hover:bg-red-500/10 rounded-lg">
+                    <i class="fa fa-times-circle text-lg"></i>
                   </button>
                 </div>
               </div>
             </div>
             <ng-template #noJugadores>
-              <div class="p-12 text-center text-slate-300 dark:text-zinc-600 uppercase font-black text-[9px] tracking-[0.2em]">Sin jugadores inscritos</div>
+              <div class="p-10 text-center text-zinc-400 dark:text-zinc-600 text-xs font-medium">Sin jugadores inscritos</div>
             </ng-template>
           </div>
         </div>
@@ -467,29 +583,22 @@
 <!-- ===================== BOOTSTRAP MODAL SELECCIONAR JUGADOR ===================== -->
 <div class="modal fade" id="modalSeleccionarJugador" tabindex="-1" aria-hidden="true">
   <div class="modal-dialog modal-dialog-centered px-4">
-
-    <div class="modal-content bg-[#111111] border border-green-500/20 rounded-2xl shadow-2xl overflow-hidden">
-
-      <!-- Header modal -->
-      <div class="bg-green-600 p-6 flex justify-between items-center">
-        <h5 class="text-xl md:text-2xl font-bebas text-white uppercase tracking-wide">
+    <div class="modal-content bg-[#111113] border border-green-500/20 rounded-xl shadow-2xl overflow-hidden">
+      <div class="bg-green-600 p-5 flex justify-between items-center">
+        <h5 class="text-lg font-bold text-white">
           Inscripción de <span class="text-green-100">Jugador</span>
         </h5>
-        <button type="button" class="text-white/80 hover:text-white hover:scale-125 transition-transform p-2" data-bs-dismiss="modal">
-          <i class="fa fa-times text-xl"></i>
+        <button type="button" class="text-white/80 hover:text-white transition-colors p-2" data-bs-dismiss="modal">
+          <i class="fa fa-times text-lg"></i>
         </button>
       </div>
-
-      <!-- Body modal -->
-      <div class="p-8 space-y-6">
-
-        <div *ngIf="categoriaSeleccionada" class="bg-white/5 p-4 rounded-xl border border-white/10 border-l-4 border-l-green-500">
-          <span class="text-[9px] font-black text-green-400 uppercase tracking-widest block">Categoría Destino</span>
-          <h3 class="text-white text-lg font-oswald font-semibold uppercase tracking-tight mt-0.5">{{ categoriaSeleccionada.nombre }}</h3>
+      <div class="p-6 space-y-5">
+        <div *ngIf="categoriaSeleccionada" class="bg-white/5 p-4 rounded-lg border border-white/10 border-l-4 border-l-green-500">
+          <span class="text-[11px] font-semibold text-green-400 block">Categoría destino</span>
+          <h3 class="text-zinc-100 text-base font-bold mt-0.5">{{ categoriaSeleccionada.nombre }}</h3>
         </div>
-
-        <div class="space-y-3">
-          <label class="text-[10px] font-black text-green-400 uppercase tracking-[0.3em] ml-1">Buscar en Base de Datos</label>
+        <div class="space-y-2">
+          <label class="text-[11px] font-semibold text-green-400 block">Buscar en base de datos</label>
           <ng-select
             [items]="jugadoresDisponibles"
             bindLabel="busqueda"
@@ -498,37 +607,139 @@
             placeholder="Escriba nombre o identificación..."
             [searchable]="true"
             [clearable]="true"
-            class="custom-ng-select-green font-black"
+            class="custom-ng-select-green font-semibold"
             (change)="onSeleccionarJugador()">
-
             <ng-template ng-option-tmp let-item="item">
-              <div class="flex items-center gap-4 p-3 rounded-xl hover:bg-green-600 hover:text-white transition-all group border-b border-white/5">
-
+              <div class="flex items-center gap-3 p-2.5 rounded-lg hover:bg-green-600 hover:text-white transition-all group border-b border-white/5">
                 <img [src]="item.img1 ? pathIm + item.img1 : 'assets/img/nd.png'"
-                  class="w-12 h-12 rounded-xl object-cover bg-black border-2 border-white/10 group-hover:border-white/30 shadow-lg">
-
+                  class="w-10 h-10 rounded-lg object-cover bg-black border-2 border-white/10 group-hover:border-white/30">
                 <div class="flex flex-col">
-                  <span class="font-black uppercase text-[13px] tracking-tight text-white group-hover:text-white transition-colors">
-                    {{ item.nombre }}
-                  </span>
-                  <span class="text-[11px] font-mono opacity-60 text-white group-hover:text-white/80 transition-colors">
-                    ID: {{ item.identificacion }}
-                  </span>
+                  <span class="font-semibold text-sm text-zinc-100 group-hover:text-white transition-colors">{{ item.nombre }}</span>
+                  <span class="text-[11px] font-mono opacity-60 text-zinc-300 group-hover:text-white/80 transition-colors">ID: {{ item.identificacion }}</span>
                 </div>
               </div>
             </ng-template>
           </ng-select>
         </div>
-
         <button
-          class="w-full bg-green-600 hover:bg-green-500 text-white py-4 rounded-xl font-black uppercase text-sm tracking-[0.2em] shadow-xl shadow-green-600/20 active:scale-95 transition-all disabled:opacity-30 disabled:grayscale flex items-center justify-center gap-2"
+          class="w-full bg-green-600 hover:bg-green-500 text-white py-3 rounded-lg font-semibold text-sm shadow-lg shadow-green-600/20 active:scale-95 transition-all disabled:opacity-30 disabled:grayscale flex items-center justify-center gap-2"
           (click)="agregarJugadorSeleccionado()"
           [disabled]="!jugadorSeleccionadoId">
-          <i class="fa fa-check-circle text-lg"></i>
-          Confirmar Inscripción
+          <i class="fa fa-check-circle"></i>
+          Confirmar inscripción
         </button>
-
       </div>
     </div>
   </div>
+</div>
+
+<!-- ── MODAL: Foto equipo ──────────────────────────────────────── -->
+<div class="modal fade" id="eqFotoModal" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered modal-lg">
+    <div class="modal-content !rounded-2xl !overflow-hidden !shadow-2xl
+                !bg-white dark:!bg-[#111827]
+                !border !border-zinc-200 dark:!border-white/10">
+
+      <!-- Header -->
+      <div class="modal-header !p-5
+                  !bg-white dark:!bg-[#111827]
+                  !border-b !border-zinc-100 dark:!border-white/[.07]">
+        <div class="flex items-center gap-3">
+          <div class="w-1.5 h-7 bg-green-500 rounded-full flex-shrink-0"></div>
+          <h1 class="modal-title !text-sm !font-bold !tracking-wide !m-0
+                     !text-zinc-900 dark:!text-white">
+            {{ EquivoVisi }}
+          </h1>
+        </div>
+        <button type="button"
+          class="w-8 h-8 flex items-center justify-center rounded-lg border transition-all
+                 bg-zinc-100 border-zinc-200 text-zinc-500 hover:bg-zinc-200 hover:text-zinc-800
+                 dark:bg-white/10 dark:border-white/10 dark:text-white/60 dark:hover:bg-white/20 dark:hover:text-white"
+          data-bs-dismiss="modal" aria-label="Cerrar">
+          <i class="fa fa-times text-xs"></i>
+        </button>
+      </div>
+
+      <!-- Imagen -->
+      <div class="modal-body !p-4 !flex !justify-center !items-center
+                  !bg-zinc-50 dark:!bg-[#0f172a]">
+        <img *ngIf="imgVisi" [src]="imgVisi" alt="Vista previa"
+             class="max-h-[72vh] max-w-full object-contain rounded-xl shadow-2xl
+                    border border-zinc-200 dark:border-white/5">
+      </div>
+
+      <!-- Footer -->
+      <div class="modal-footer !p-4 !gap-2.5 !flex-nowrap
+                  !bg-white dark:!bg-[#111827]
+                  !border-t !border-zinc-100 dark:!border-white/[.07]">
+        <button type="button"
+          class="flex-1 py-2.5 rounded-lg text-xs font-semibold flex items-center justify-center gap-1.5 transition-all border
+                 bg-zinc-100 border-zinc-200 text-zinc-600 hover:bg-zinc-200
+                 dark:bg-white/5 dark:border-white/10 dark:text-white/50 dark:hover:bg-white/10 dark:hover:text-white"
+          data-bs-dismiss="modal">
+          <i class="fa fa-times text-[10px]"></i> Cerrar
+        </button>
+        <a *ngIf="imgVisi" [href]="imgVisi" target="_blank" download
+          class="flex-1 py-2.5 rounded-lg text-xs font-bold flex items-center justify-center gap-1.5
+                 bg-green-600 hover:bg-green-500 text-white shadow-lg shadow-green-600/20 transition-all">
+          <i class="fa fa-download text-[10px]"></i> Descargar
+        </a>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<!-- OVERLAY: Editor de imagen (cropper) -->
+<div *ngIf="cropperVisible"
+  class="fixed inset-0 z-[300] flex items-center justify-center bg-black/85 backdrop-blur-sm p-3">
+  <div class="bg-white dark:bg-[#111C35] rounded-2xl shadow-2xl border border-zinc-200 dark:border-white/10 w-full max-w-2xl flex flex-col overflow-hidden"
+    style="max-height:92vh">
+    <div class="px-5 py-3.5 border-b border-zinc-100 dark:border-white/8 flex items-center justify-between bg-zinc-50 dark:bg-[#162040] shrink-0">
+      <div class="flex items-center gap-2.5">
+        <div class="w-7 h-7 rounded-lg bg-green-500/10 border border-green-500/20 flex items-center justify-center">
+          <i class="fa fa-crop text-green-500 text-xs"></i>
+        </div>
+        <h3 class="text-sm font-bold text-zinc-900 dark:text-white">Editor de imagen</h3>
+      </div>
+      <button type="button" (click)="cerrarCropper()" class="w-7 h-7 flex items-center justify-center text-zinc-400 hover:text-zinc-900 dark:hover:text-white hover:bg-zinc-100 dark:hover:bg-white/10 rounded-lg transition-all">
+        <i class="fa fa-times"></i>
+      </button>
+    </div>
+    <div class="flex-1 overflow-hidden bg-zinc-900 flex items-center justify-center min-h-0">
+      <image-cropper #imageCropperRef [imageFile]="cropperImageFile" [maintainAspectRatio]="false"
+        [resizeToWidth]="1200" [format]="'jpeg'" [imageQuality]="92" [backgroundColor]="'#18181b'"
+        [transform]="cropperTransform" output="base64" style="max-height:55vh;width:100%">
+      </image-cropper>
+    </div>
+    <div class="px-5 py-4 border-t border-zinc-100 dark:border-white/8 bg-zinc-50 dark:bg-[#162040] shrink-0">
+      <div class="flex flex-wrap items-center gap-3">
+        <div class="flex items-center gap-2">
+          <span class="text-[9px] font-bold text-zinc-400 uppercase tracking-widest">Rotar</span>
+          <button type="button" (click)="cropperRotarLeft()" class="w-9 h-9 flex items-center justify-center rounded-xl bg-zinc-200 dark:bg-white/10 text-zinc-700 dark:text-white hover:bg-zinc-300 dark:hover:bg-white/20 transition-all"><i class="fa fa-rotate-left text-sm"></i></button>
+          <button type="button" (click)="cropperRotarRight()" class="w-9 h-9 flex items-center justify-center rounded-xl bg-zinc-200 dark:bg-white/10 text-zinc-700 dark:text-white hover:bg-zinc-300 dark:hover:bg-white/20 transition-all"><i class="fa fa-rotate-right text-sm"></i></button>
+        </div>
+        <div class="flex items-center gap-2 ml-auto">
+          <button type="button" (click)="cerrarCropper()" class="px-4 py-2 rounded-xl text-sm font-semibold text-zinc-600 dark:text-zinc-300 bg-zinc-200 dark:bg-white/10 hover:bg-zinc-300 dark:hover:bg-white/20 transition-all">Cancelar</button>
+          <button type="button" (click)="confirmarCrop()" class="px-5 py-2 rounded-xl text-sm font-bold text-white bg-green-500 hover:bg-green-600 transition-all flex items-center gap-2 shadow-md shadow-green-600/25">
+            <i class="fa fa-check text-xs"></i> Confirmar
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- OVERLAY: Preview imagen grande -->
+<div *ngIf="imgPreview"
+  class="fixed inset-0 z-[9999] flex items-center justify-center bg-black/90 backdrop-blur-sm"
+  (click)="cerrarImagen()">
+  <button type="button"
+    class="absolute top-4 right-4 w-10 h-10 bg-white/10 hover:bg-white/25 text-white rounded-full flex items-center justify-center text-lg transition-all border border-white/20"
+    (click)="cerrarImagen()">
+    <i class="fa fa-times"></i>
+  </button>
+  <img [src]="imgPreview"
+    class="max-w-[92vw] max-h-[88vh] object-contain rounded-2xl shadow-2xl border border-white/10"
+    (click)="$event.stopPropagation()">
 </div>

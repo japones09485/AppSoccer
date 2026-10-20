@@ -1,4 +1,5 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
+import { ImageCropperComponent, ImageTransform } from 'ngx-image-cropper';
 import Swal from 'sweetalert2';
 import { ApiService } from "../../services/api.service";
 import { CommonModule } from '@angular/common';
@@ -8,14 +9,14 @@ import { FormsModule } from '@angular/forms';
 import { PaginacionComponent } from '../paginacion/paginacion.component';
 import { NgSelectModule } from '@ng-select/ng-select';
 import { environment } from "../../../environments/environment";
-import { Modal } from 'bootstrap';
 import { Router } from '@angular/router';
+import { Modal } from 'bootstrap';
 
 
 
 @Component({
   selector: 'app-equipos',
-  imports: [CommonModule, ReactiveFormsModule, FormsModule,NgSelectModule,PaginacionComponent],
+  imports: [CommonModule, ReactiveFormsModule, FormsModule, NgSelectModule, PaginacionComponent, ImageCropperComponent],
   templateUrl: './equipos.component.html',
   styleUrl: './equipos.component.css'
 })
@@ -49,6 +50,11 @@ export class EquiposComponent implements OnInit {
   filtroNombre: string = '';
   filtroEmail: string = '';
   paginas = 0;
+  usuariosEquipoModal: any[] = [];
+  nombreEquipoModal: string = '';
+  enviandoIdUsuario: number | null = null;
+  cargandoCredenciales = false;
+  private modalCredenciales?: Modal;
   departamentos: any[] = [];
   ciudades: any[] = [];
   cargandoCiudades = false;
@@ -208,6 +214,7 @@ export class EquiposComponent implements OnInit {
         this.loadCiudades(+eq.departamento, +eq.ciudad);
       }
 
+      this.carouselPreviews = {};
       this.creando = true;
       this.editForm = true;
     });
@@ -242,23 +249,108 @@ export class EquiposComponent implements OnInit {
 
 
   openModal(path: String, equipo: String) {
-
     this.imgVisi = path;
     this.EquivoVisi = equipo;
-
-    const modalElement = document.getElementById('exampleModal');
-
-    // Verificar que el elemento existe
-    if (modalElement) {
-      const modal = new Modal(modalElement); // Solo se crea el modal si el elemento existe
-      modal.show();
-    } else {
-      console.error('Modal element not found!');
-    }
+    // data-bs-toggle en el elemento que dispara el click ya maneja el show
   }
   closeModal() {
     this.isModalOpen = false;
     this.modalImage = '';
+  }
+
+  imgPreview: string = '';
+  cropperVisible = false;
+  cropperSlot = 0;
+  cropperImageFile: File | undefined = undefined;
+  cropperTransform: ImageTransform = {};
+  filePreviews: { [key: number]: string } = {};
+  fileNames: { [key: number]: string } = {};
+  carouselPreviews: { [key: number]: string } = {};
+  @ViewChild('imageCropperRef') private imageCropperRef!: ImageCropperComponent;
+
+  verImagen(url: string) { this.imgPreview = url; }
+  cerrarImagen() { this.imgPreview = ''; }
+
+  rotarSlot(i: number, dir: 'left' | 'right') {
+    const src = this.filePreviews[i];
+    if (!src) return;
+    this.rotarBase64(src, dir === 'right' ? 90 : -90).then(rotated => {
+      this.filePreviews[i] = rotated;
+      const file = this.base64ToFile(rotated, this.fileNames[i] || `foto_${i}.jpg`);
+      this.frmGuardar.delete(String(i));
+      this.frmGuardar.append(String(i), file);
+    });
+  }
+
+  rotarCarrusel(imgNum: number, dir: 'left' | 'right') {
+    const key = `img${imgNum}` as keyof Equipos;
+    const src = this.carouselPreviews[imgNum] || (this.pathIm + (this.equipoSelect[key] as string));
+    this.rotarBase64(src, dir === 'right' ? 90 : -90).then(rotated => {
+      this.carouselPreviews[imgNum] = rotated;
+      const file = this.base64ToFile(rotated, `imagen_${imgNum}.jpg`);
+      this.frmGuardar.delete(String(imgNum));
+      this.frmGuardar.append(String(imgNum), file);
+    });
+  }
+
+  private rotarBase64(src: string, degrees: number): Promise<string> {
+    return new Promise(resolve => {
+      const img = new Image();
+      img.crossOrigin = 'anonymous';
+      img.onload = () => {
+        const swap = Math.abs(degrees) === 90 || Math.abs(degrees) === 270;
+        const canvas = document.createElement('canvas');
+        canvas.width  = swap ? img.height : img.width;
+        canvas.height = swap ? img.width  : img.height;
+        const ctx = canvas.getContext('2d')!;
+        ctx.translate(canvas.width / 2, canvas.height / 2);
+        ctx.rotate((degrees * Math.PI) / 180);
+        ctx.drawImage(img, -img.width / 2, -img.height / 2);
+        resolve(canvas.toDataURL('image/jpeg', 0.92));
+      };
+      img.src = src;
+    });
+  }
+  abrirCropper(ev: any, numFile: number) {
+    const file: File | undefined = ev.target?.files?.[0];
+    if (!file) return;
+    if (!file.type.startsWith('image/')) { this.uploadImage(ev, numFile); return; }
+    this.cropperSlot = numFile;
+    this.cropperImageFile = file;
+    this.cropperTransform = {};
+    this.fileNames[numFile] = file.name;
+    this.cropperVisible = true;
+  }
+  cropperRotarLeft()  { this.cropperTransform = { ...this.cropperTransform, rotate: (this.cropperTransform.rotate ?? 0) - 90 }; }
+  cropperRotarRight() { this.cropperTransform = { ...this.cropperTransform, rotate: (this.cropperTransform.rotate ?? 0) + 90 }; }
+  confirmarCrop() {
+    if (!this.imageCropperRef) return;
+    const result = this.imageCropperRef.crop('base64');
+    if (!result?.base64) return;
+    const slot = this.cropperSlot;
+    const fname = this.fileNames[slot] || `foto_${slot}.jpg`;
+    this.filePreviews[slot] = result.base64;
+    const file = this.base64ToFile(result.base64, fname);
+    this.frmGuardar.delete(String(slot));
+    this.frmGuardar.append(String(slot), file);
+    this.cerrarCropper();
+  }
+  cerrarCropper() {
+    this.cropperVisible = false;
+    this.cropperImageFile = undefined;
+    this.cropperTransform = {};
+    const input = document.getElementById(`fileInput${this.cropperSlot}`) as HTMLInputElement;
+    if (input) input.value = '';
+  }
+  triggerInput(n: number) { (document.getElementById(`fileInput${n}`) as HTMLInputElement)?.click(); }
+  private base64ToFile(dataUrl: string, filename: string): File {
+    const arr = dataUrl.split(',');
+    const mime = arr[0].match(/:(.*?);/)![1];
+    const bstr = atob(arr[1]);
+    let n = bstr.length;
+    const u8arr = new Uint8Array(n);
+    while (n--) u8arr[n] = bstr.charCodeAt(n);
+    return new File([u8arr], filename, { type: mime });
   }
 
 
@@ -349,6 +441,54 @@ export class EquiposComponent implements OnInit {
 
       });
 
+    }
+
+    abrirModalCredenciales(idEquipo: number, nombreEquipo: string) {
+      this.usuariosEquipoModal = [];
+      this.nombreEquipoModal = nombreEquipo;
+      this.enviandoIdUsuario = null;
+      this.cargandoCredenciales = true;
+
+      const el = document.getElementById('modalCredencialesEquipo');
+      if (el) {
+        this.modalCredenciales = Modal.getInstance(el) ?? new Modal(el);
+        this.modalCredenciales.show();
+      }
+
+      this.apiRest.getUsuariosEquipo(idEquipo).subscribe({
+        next: (res: any) => {
+          this.usuariosEquipoModal = res.usuarios || [];
+          this.cargandoCredenciales = false;
+        },
+        error: () => {
+          this.cargandoCredenciales = false;
+          Swal.fire('Error', 'No se pudo cargar los usuarios.', 'error');
+        },
+      });
+    }
+
+    enviarCredencialIndividual(idUsuario: number) {
+      this.enviandoIdUsuario = idUsuario;
+      this.apiRest.MailContra(idUsuario).subscribe({
+        next: (res: any) => {
+          this.enviandoIdUsuario = null;
+          Swal.fire({ toast: true, icon: 'success', title: '¡Enviado!',
+            position: 'top-end', showConfirmButton: false, timer: 2500, timerProgressBar: true });
+        },
+        error: () => {
+          this.enviandoIdUsuario = null;
+          Swal.fire('Error', 'No se pudo enviar.', 'error');
+        },
+      });
+    }
+
+    copiarCredencialIndividual(u: any) {
+      const texto = `usuario: ${u.usuario ?? ''}\npass: ${u.password ?? ''}`;
+      navigator.clipboard.writeText(texto).then(() => {
+        Swal.fire({ toast: true, icon: 'success', title: 'Copiado',
+          text: u.usuario, position: 'top-end', showConfirmButton: false,
+          timer: 1800, timerProgressBar: true });
+      });
     }
 
 

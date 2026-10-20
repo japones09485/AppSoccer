@@ -1,4 +1,4 @@
-import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { environment } from '../../environments/environment';
 import { User } from '../interfaces/interfaces';
@@ -30,17 +30,14 @@ export class ApiService {
   }
 
 
-  getUsuario(): any {
+  getUsuario(): User | null {
     const userStr = sessionStorage.getItem('user');
-    if (userStr) {
-      try {
-        return JSON.parse(userStr);
-      } catch (e) {
-        console.error('Error al parsear el usuario desde sessionStorage', e);
-        return null;
-      }
+    if (!userStr) return null;
+    try {
+      return JSON.parse(userStr) as User;
+    } catch {
+      return null;
     }
-    return null;
   }
 
 
@@ -161,6 +158,40 @@ export class ApiService {
 
   deleteUser(idUser: number) {
     return this.http.post(this.urlAPI + `Rest_api/deleteUser`, { idUser });
+  }
+
+  toggleEstadoUser(idUser: number, estado: number) {
+    return this.http.post(this.urlAPI + `Rest_api/toggleEstadoUser`, { idUser, estado });
+  }
+
+  cargarGruposExcel(
+    idTorneo: number,
+    grupos: { nombre: string; equipos: number[] }[],
+    fases: {
+      numFase: number;
+      prePartidos: {
+        grupoDestino: string;
+        tipoEq1: string;
+        grupoEq1: string;
+        posEq1: number;
+        tipoEq2: string;
+        grupoEq2: string;
+        posEq2: number;
+      }[];
+    }[],
+    programacion: {
+      idLocal: number;
+      nombreLocal: string;
+      idVisitante: number;
+      nombreVisitante: string;
+      fecha: string;
+      hora: string;
+      cancha: string;
+      juez: string;
+      delegado: string;
+    }[] = []
+  ) {
+    return this.http.post(this.urlAPI + `Rest_api/cargarGruposExcel`, { idTorneo, grupos, fases, programacion });
   }
 
   get_user_perfil(perfil: number) {
@@ -329,10 +360,6 @@ export class ApiService {
     return this.http.post(this.urlAPI + `Rest_api/deleteJuez`, { idJuez });
   }
 
-  get_Jueces_activos() {
-    return this.http.get(this.urlAPI + `Rest_api/get_All_jueces`);
-  }
-
   validarFase(IdTorneo: number, numFase: number) {
     return this.http.post(this.urlAPI + `Rest_api/validarFase`, { IdTorneo, numFase });
   }
@@ -419,6 +446,14 @@ export class ApiService {
     return this.http.post(this.urlAPI + `Rest_api/MailContra`, { IdUsuario });
   }
 
+  getUsuariosEquipo(IdEquipo: number) {
+    return this.http.post(this.urlAPI + `Rest_api/getUsuariosEquipo`, { IdEquipo });
+  }
+
+  MailCredencialesEquipo(IdEquipo: number) {
+    return this.http.post(this.urlAPI + `Rest_api/MailCredencialesEquipo`, { IdEquipo });
+  }
+
   guardarInscripcionJug(IdTorneo: number, IdPartido: number, IdEquipo: any, data: any) {
     return this.http.post(this.urlAPI + `Rest_api/guardarInscripcionJug`, { IdTorneo, IdPartido, IdEquipo, data });
   }
@@ -450,8 +485,11 @@ export class ApiService {
     return this.http.post(this.urlAPI + `Rest_api/InscribirJugadoresPartido`, { partido });
   }
 
-  cambiarEstadoPart(idTorneo: number, equipo: number, estadoActual: boolean) {
-    return this.http.post(this.urlAPI + `Rest_api/cambiarEstadoPart`, { idTorneo, equipo, estadoActual });
+  cambiarEstadoPart(idTorneo: number, equipo: number, estadoActual: boolean, max_jugadores?: number | null) {
+    return this.http.post(this.urlAPI + `Rest_api/cambiarEstadoPart`, { idTorneo, equipo, estadoActual, max_jugadores });
+  }
+  editMaxJugPart(idTorneo: number, equipo: number, max_jugadores: number | null) {
+    return this.http.post(this.urlAPI + `Rest_api/editMaxJugPart`, { idTorneo, equipo, max_jugadores });
   }
 
   get_jugadores_categoriasId(categoria: any, IdTorneo: any) {
@@ -524,17 +562,126 @@ export class ApiService {
     return this.http.post(this.urlAPI + `Ciudades_APi/get_ciudades_by_depto`, { fk_departamento });
   }
 
+  add_ciudad(data: { fk_departamento: number; nombre: string }) {
+    return this.http.post(this.urlAPI + `Ciudades_APi/add_ciudad`, data);
+  }
+
+  delete_ciudad(id: number) {
+    return this.http.post(this.urlAPI + `Ciudades_APi/delete_ciudad`, { id });
+  }
+
  // En api.service.ts
 
 getImagenJugador(image: string) {
-  // Agregamos un número aleatorio al final para "romper" la caché del navegador
-  const nocache = `?t=${new Date().getTime()}`;
-  const url = `${this.urlAPI}${image}${nocache}`;
-  console.log('url>>>'+url);
-  
-  
-  return this.http.get(url, { responseType: 'blob' });
+  return this.http.get(`${this.urlAPI}${image}`, { responseType: 'blob' });
 }
 
-  
+  // ── Formularios de inscripción ──────────────────────────────
+
+  get_all_formularios() {
+    return this.http.post(this.urlAPI + 'Rest_api/get_all_formularios', {});
+  }
+
+  get_formularios_activos() {
+    return this.http.post(this.urlAPI + 'Rest_api/get_formularios_activos', {});
+  }
+
+  get_formulario_by_id(id: number) {
+    return this.http.post(this.urlAPI + 'Rest_api/get_formulario_by_id', { id });
+  }
+
+  get_formulario_torneo(idTorneo: number) {
+    return this.http.post(this.urlAPI + 'Rest_api/get_formulario_torneo', { idTorneo });
+  }
+
+  crear_formulario(payload: any) {
+    return this.http.post(this.urlAPI + 'Rest_api/crear_formulario', payload);
+  }
+
+  update_formulario(payload: any) {
+    return this.http.post(this.urlAPI + 'Rest_api/update_formulario', payload);
+  }
+
+  toggle_activo_formulario(id: number, activo: number) {
+    return this.http.post(this.urlAPI + 'Rest_api/toggle_activo_formulario', { id, activo });
+  }
+
+  guardar_respuesta_formulario(fk_formulario: number, fk_torneo: number, fk_equipo: number, respuestas: string) {
+    return this.http.post(this.urlAPI + 'Rest_api/guardar_respuesta_formulario', { fk_formulario, fk_torneo, fk_equipo, respuestas });
+  }
+
+  get_respuesta_equipo_torneo(fk_formulario: number, fk_torneo: number, fk_equipo: number) {
+    return this.http.post(this.urlAPI + 'Rest_api/get_respuesta_equipo_torneo', { fk_formulario, fk_torneo, fk_equipo });
+  }
+
+  get_respuestas_torneo(fk_formulario: number, fk_torneo: number) {
+    return this.http.post(this.urlAPI + 'Rest_api/get_respuestas_torneo', { fk_formulario, fk_torneo });
+  }
+
+  delete_formulario(id: number) {
+    return this.http.post(this.urlAPI + 'Rest_api/delete_formulario', { id });
+  }
+
+  clonar_formulario(id: number, titulo: string) {
+    return this.http.post(this.urlAPI + 'Rest_api/clonar_formulario', { id, titulo });
+  }
+
+  add_campo_formulario(payload: any) {
+    return this.http.post(this.urlAPI + 'Rest_api/add_campo_formulario', payload);
+  }
+
+  update_campo_formulario(payload: any) {
+    return this.http.post(this.urlAPI + 'Rest_api/update_campo_formulario', payload);
+  }
+
+  swap_campo_orden(id_a: number, id_b: number, fk_formulario: number) {
+    return this.http.post(this.urlAPI + 'Rest_api/swap_campo_orden', { id_a, id_b, fk_formulario });
+  }
+
+  guardar_orden_campos(fk_formulario: number, orden: { id: number; orden: number }[]) {
+    return this.http.post(this.urlAPI + 'Rest_api/guardar_orden_campos', { fk_formulario, orden: JSON.stringify(orden) });
+  }
+
+  delete_campo_formulario(id: number, fk_formulario: number) {
+    return this.http.post(this.urlAPI + 'Rest_api/delete_campo_formulario', { id, fk_formulario });
+  }
+
+  get_formulario_publico(id: number) {
+    return this.http.post(this.urlAPI + 'Rest_api/get_formulario_publico', { id });
+  }
+
+  guardar_respuesta_publica(fk_formulario: number, email: string, respuestas: string, archivos: { [campoId: number]: File } = {}) {
+    const fd = new FormData();
+    fd.append('fk_formulario', String(fk_formulario));
+    fd.append('email', email);
+    fd.append('respuestas', respuestas);
+    for (const [campoId, file] of Object.entries(archivos)) {
+      fd.append('archivo_' + campoId, file, file.name);
+    }
+    return this.http.post(this.urlAPI + 'Rest_api/guardar_respuesta_publica', fd);
+  }
+
+  delete_respuesta_formulario(id: number) {
+    return this.http.post(this.urlAPI + 'Rest_api/delete_respuesta_formulario', { id });
+  }
+
+  upload_imagen_cabecera(id: number, file: File) {
+    const fd = new FormData();
+    fd.append('id', String(id));
+    fd.append('imagen', file, file.name);
+    return this.http.post(this.urlAPI + 'Rest_api/upload_imagen_cabecera', fd);
+  }
+
+  get_respuestas_formulario(id: number) {
+    return this.http.post(this.urlAPI + 'Rest_api/get_respuestas_formulario', { id });
+  }
+
+  get_archivo_base64(ruta: string) {
+    return this.http.post(this.urlAPI + 'Rest_api/get_archivo_base64', { ruta });
+  }
+
+  resetear_respuestas_publicas() {
+    return this.http.post(this.urlAPI + 'Rest_api/resetear_respuestas_publicas', {});
+  }
+
 }

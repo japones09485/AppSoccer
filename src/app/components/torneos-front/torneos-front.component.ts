@@ -40,8 +40,8 @@ export class TorneosFrontComponent implements OnInit {
 
   
   InfoTorneo(IdTorneo:number){
-   this.router.navigate(['/InfoT/'+IdTorneo]);
-  
+   this.router.navigate(['/InfoTorneo/'+IdTorneo]);
+
   }
 
     cerrarSesion(){

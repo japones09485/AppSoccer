@@ -12,34 +12,35 @@ import { JugadoresComponent } from './admin/jugadores/jugadores.component';
 import { EquiposComponent } from './admin/equipos/equipos.component';
 import { TorneosFrontComponent } from './components/torneos-front/torneos-front.component';
 import { EscanerComponent } from './components/escaner/escaner.component';
+import { GuardAutGuard } from './services/guard-aut.guard';
+import { FormBuilderPageComponent } from './admin/torneos/form-builder-page/form-builder-page.component';
+import { FormularioPublicoComponent } from './components/formulario-publico/formulario-publico.component';
+import { FormularioOkComponent } from './components/formulario-ok/formulario-ok.component';
 
-
+const auth = [GuardAutGuard];
 
 export const routes: Routes = [
-  
-   { path: 'home', component: HomeComponent },
-   { path: 'TorneosF', component: TorneosFrontComponent },
-  { path: 'admin', component: AdminComponent },
-  { path: 'inscripcion', component: InsJugadorComponent },
-   { path: 'inscripcionCl', component: InsClubComponent },
-  
-  { path: 'adminTemp', component: AdminTempComponent },
-  { path: 'InfoTorneo/:idTorneo', component: InfoTorneoComponent },
-  { path: 'InfoT/:idTorneo', component: InfoTComponent },
-  { path: 'Jugadores', component: JugadoresComponent },
-  { path: 'jugadores/:idTorneo/:idEquipo', component: JugadoresComponent },
-    { path: 'interfcam', component: EscanerComponent },
-  { path: 'Equipos', component: EquiposComponent },
-  //delegado de cancha
+  // Rutas públicas
+  { path: 'home',          component: HomeComponent },
+  { path: 'f/:idFormulario', component: FormularioPublicoComponent },
+  { path: 'formulario-ok',   component: FormularioOkComponent },
+  { path: 'TorneosF',     component: TorneosFrontComponent },
+  { path: 'admin',         component: AdminComponent },
+  { path: 'inscripcion',   component: InsJugadorComponent },
+  { path: 'inscripcionCl', component: InsClubComponent },
+  { path: 'DelegaCh',      component: DelegadoCanchaComponent },
 
-   { path: 'DelegaCh', component: DelegadoCanchaComponent },
+  // Rutas protegidas
+  { path: 'adminTemp',                        component: AdminTempComponent,        canActivate: auth },
+  { path: 'InfoTorneo/:idTorneo',             component: InfoTorneoComponent },
+  { path: 'InfoT/:idTorneo',                  component: InfoTComponent,            canActivate: auth },
+  { path: 'Jugadores',                        component: JugadoresComponent,        canActivate: auth },
+  { path: 'jugadores/:idTorneo/:idEquipo',    component: JugadoresComponent,        canActivate: auth },
+  { path: 'interfcam',                        component: EscanerComponent,          canActivate: auth },
+  { path: 'Equipos',                          component: EquiposComponent,          canActivate: auth },
+  { path: 'AdminEq',                          component: AdminEquipoComponent,      canActivate: auth },
+  { path: 'Formulario/:idFormulario',          component: FormBuilderPageComponent,  canActivate: auth },
 
-
-   //Administrador Club
-
-    { path: 'AdminEq', component: AdminEquipoComponent },
-    
-
-  { path: '', redirectTo: 'home', pathMatch: 'full' },
-  { path: '**', redirectTo: 'home' }
+  { path: '',   redirectTo: 'home', pathMatch: 'full' },
+  { path: '**', redirectTo: 'home' },
 ];

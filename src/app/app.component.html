@@ -1,2 +1,81 @@
 
 <router-outlet />
+
+<!-- ══ SKIN PICKER BACKDROP ══ -->
+<div *ngIf="skinPanelOpen" class="skin-backdrop" (click)="closeSkinPanel()"></div>
+
+<!-- ══ SKIN PICKER PANEL ══ -->
+<div *ngIf="skinPanelOpen" class="skin-panel animate-pop-in">
+
+  <!-- Header -->
+  <div class="skin-panel-hdr">
+    <span>Apariencia</span>
+    <button class="skin-panel-close" (click)="closeSkinPanel()" title="Cerrar">
+      <i class="fa fa-times"></i>
+    </button>
+  </div>
+
+  <div class="skin-panel-body">
+
+    <!-- ── CLÁSICO (fila especial con toggle claro/oscuro) ── -->
+    <div class="skin-section-label">Tema base</div>
+
+    <button class="skin-opt skin-opt-wide"
+      [class.skin-opt-active]="currentSkin === 'clasico'"
+      (click)="setSkin('clasico')">
+      <div class="skin-swatch">
+        <span style="background:#EEF2F7"></span>
+        <span style="background:#FFFFFF"></span>
+        <span style="background:#22C55E"></span>
+      </div>
+      <span class="skin-opt-name">Clásico</span>
+      <i *ngIf="currentSkin === 'clasico'" class="fa fa-check skin-check"></i>
+    </button>
+
+    <!-- Toggle claro/oscuro solo disponible en Clásico -->
+    <button *ngIf="isClasico" class="skin-mode-btn" (click)="toggleTheme()">
+      <i class="fa" [class.fa-sun-o]="isDark" [class.fa-moon-o]="!isDark"></i>
+      Modo {{ isDark ? 'oscuro activo — clic para claro' : 'claro activo — clic para oscuro' }}
+    </button>
+
+    <!-- ── SKINS DE FÚTBOL ── -->
+    <div class="skin-section-label" style="margin-top:10px">Skins de fútbol</div>
+
+    <div class="skin-grid">
+      <button *ngFor="let s of skins.slice(1)"
+        class="skin-opt"
+        [class.skin-opt-active]="currentSkin === s.id"
+        (click)="setSkin(s.id)">
+        <div class="skin-swatch">
+          <span [style.background]="s.colors[0]"></span>
+          <span [style.background]="s.colors[1]"></span>
+          <span [style.background]="s.colors[2]"></span>
+        </div>
+        <span class="skin-opt-name">{{ s.name }}</span>
+        <i *ngIf="currentSkin === s.id" class="fa fa-check skin-check"></i>
+      </button>
+    </div>
+
+  </div><!-- /skin-panel-body -->
+</div><!-- /skin-panel -->
+
+<!-- ══ BOTÓN SKIN PICKER (fijo, escritorio) ══ -->
+<button
+  class="skin-btn"
+  [class.skin-btn-open]="skinPanelOpen"
+  type="button"
+  (click)="toggleSkinPanel()"
+  title="Cambiar apariencia">
+  <i class="fa fa-paint-brush"></i>
+</button>
+
+<!-- ══ BOTÓN CLARO/OSCURO (solo visible en Clásico) ══ -->
+<button
+  class="bulb-global"
+  type="button"
+  (click)="toggleTheme()"
+  [title]="isDark ? 'Cambiar a modo claro' : 'Cambiar a modo oscuro'"
+  [class.bulb-lit]="!isDark"
+  [class.bulb-skin-hidden]="!isClasico">
+  <i class="fa" [class.fa-lightbulb-o]="!isDark" [class.fa-moon-o]="isDark"></i>
+</button>

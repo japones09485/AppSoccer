@@ -1,6 +1,5 @@
 import { Component, OnInit } from '@angular/core';
 import { Router, ActivatedRoute, RouterModule } from '@angular/router';
-import { NgModule } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { ApiService } from '../../../services/api.service';
 import { ThemeService } from '../../../services/theme.service';
@@ -22,6 +21,8 @@ import {
 } from '@angular/forms';
 import { environment } from '../../../../environments/environment';
 import Swal from 'sweetalert2';
+import * as XLSX from 'xlsx';
+import { saveAs } from 'file-saver';
 import { NgSelectModule } from '@ng-select/ng-select';
 import { CommonModule } from '@angular/common';
 import { FiltroPorNombrePipe } from '../../../filtro-por-nombre.pipe';
@@ -81,7 +82,6 @@ export class InfoTComponent implements OnInit {
   horaSeleccionada: string = '';
   canchaSeleccionada: number = 0;
   JuezSeleccionada: number = 0;
-  DelegadoSeleocionada: number = 0;
   partidoSeleccionado: any = null;
   alertCalendary: string = '';
   isSuccess: boolean = false;
@@ -208,7 +208,6 @@ export class InfoTComponent implements OnInit {
   partidoSeleccionadoResultado: any = null;
   filtroNombre: string = '';
   filtroEmail: string = '';
-  // Variable corregida (antes DelegadoSeleocionada)
   DelegadoSeleccionada: number | null = null;
 
   constructor(
@@ -225,88 +224,78 @@ export class InfoTComponent implements OnInit {
     this.VlParticipante = false;
     this.isSuccess = false;
 
-    this.usuario = this.apiRest.getUsuario();
+    this.usuario = this.apiRest.getUsuario()!;
 
     this.perfilUsuario = this.usuario ? this.usuario.perfil : 0;
-    console.log('Perfil de usuario:', this.perfilUsuario);
 
     this.acRouter.params.subscribe((param) => {
       this.idTorneo = param['idTorneo'];
+      this.cargarDatos();
+    });
+  }
 
-      this.apiRest.getById_Torneo(this.idTorneo).subscribe((res: any) => {
-        this.torneoSelect = res.torneo;
+  cargarDatos(): void {
+    this.apiRest.getById_Torneo(this.idTorneo).subscribe((res: any) => {
+      this.torneoSelect = res.torneo;
+      this.torneoSelect.control_edad = res.torneo.control_edad === 'true';
+      this.numero_fases = Number(this.torneoSelect.num_fases);
+    });
 
-        this.torneoSelect.control_edad = res.torneo.control_edad === 'true';
-        this.numero_fases = Number(this.torneoSelect.num_fases);
-      });
+    this.apiRest.GoleadorTorneo(this.idTorneo).subscribe((res: any) => {
+      this.goleadores = res.goleadores;
+    });
 
-      this.apiRest.GoleadorTorneo(this.idTorneo).subscribe((res: any) => {
-        this.goleadores = res.goleadores;
-      });
+    this.apiRest.VallaMenosVencidaTorneo(this.idTorneo).subscribe((res: any) => {
+      this.vallamn = res.vallas;
+    });
 
-      this.apiRest
-        .VallaMenosVencidaTorneo(this.idTorneo)
-        .subscribe((res: any) => {
-          this.vallamn = res.vallas;
-        });
+    this.apiRest.get_NameFases(this.idTorneo).subscribe((res: any) => {
+      this.nameFases = res.nameFases;
+    });
 
-      this.apiRest.get_NameFases(this.idTorneo).subscribe((res: any) => {
-        this.nameFases = res.nameFases;
-      });
+    this.apiRest.get_All_equipos().subscribe((res: any) => {
+      this.equipos = res.equipos;
+    });
 
-      this.apiRest.get_All_equipos().subscribe((res: any) => {
-        this.equipos = res.equipos;
-      });
+    this.apiRest.get_All_equipos_torneo(this.idTorneo).subscribe((res: any) => {
+      this.equiposTorneo = res.equiposTorneo;
+    });
 
-      this.apiRest
-        .get_All_equipos_torneo(this.idTorneo)
-        .subscribe((res: any) => {
-          this.equiposTorneo = res.equiposTorneo;
-          console.log('Equipos del torneo recargados:', this.equiposTorneo);
-        });
+    this.apiRest.getById_Grupos(this.idTorneo).subscribe((res: any) => {
+      this.grupos = res.grupos;
+      for (let i = 1; i <= 7; i++) {
+        this.gruposPorFase[i] = this.grupos.filter((g: any) => Number(g.fase) === i);
+      }
+      this.clafGeneral = res.general;
+      this.clafGeneralF1 = res.generalFase1;
+    });
 
-      this.apiRest.getById_Grupos(this.idTorneo).subscribe((res: any) => {
-        this.grupos = res.grupos;
+    this.apiRest.get_Calendary(this.idTorneo).subscribe((res: any) => {
+      this.calendarioData = res.calendarioData;
+      this.contCabezaGR = res.contCabezaGR;
+    });
 
-        for (let i = 1; i <= 7; i++) {
-          this.gruposPorFase[i] = this.grupos.filter(
-            (g: any) => Number(g.fase) === i,
-          );
-        }
+    this.apiRest.get_All_jueces().subscribe((res: any) => {
+      this.jueces = res.jueces;
+    });
 
-        this.clafGeneral = res.general;
-        this.clafGeneralF1 = res.generalFase1;
-      });
+    this.apiRest.get_user_perfil(3).subscribe((res: any) => {
+      this.Delegados = res.users;
+    });
 
-      this.apiRest.get_Calendary(this.idTorneo).subscribe((res: any) => {
-        this.calendarioData = res.calendarioData;
-        this.contCabezaGR = res.contCabezaGR;
-      });
+    this.apiRest.get_All_categorias_activas().subscribe((res: any) => {
+      this.categoriasDisponibles = res.categoriasDisponibles.map((cat: any) => ({
+        id: Number(cat.id),
+        nombre: cat.nombre,
+      }));
+    });
 
-      this.apiRest.get_Jueces_activos().subscribe((res: any) => {
-        this.jueces = res.jueces;
-      });
+    this.apiRest.getPrePartido(this.idTorneo).subscribe((res: any) => {
+      this.calendarioPre = res.calendarioPre;
+    });
 
-      this.apiRest.get_user_perfil(3).subscribe((res: any) => {
-        this.Delegados = res.users;
-      });
-
-      this.apiRest.get_All_categorias_activas().subscribe((res: any) => {
-        this.categoriasDisponibles = res.categoriasDisponibles.map(
-          (cat: any) => ({
-            id: Number(cat.id), // aquí convierto id a número
-            nombre: cat.nombre,
-          }),
-        );
-      });
-
-      this.apiRest.getPrePartido(this.idTorneo).subscribe((res: any) => {
-        this.calendarioPre = res.calendarioPre;
-      });
-
-      this.apiRest.get_All_canchas().subscribe((res: any) => {
-        this.canchas = res.canchas;
-      });
+    this.apiRest.get_All_canchas().subscribe((res: any) => {
+      this.canchas = res.canchas;
     });
   }
 
@@ -379,6 +368,18 @@ export class InfoTComponent implements OnInit {
 
   gruposFase1(fase: number): Grupos[] {
     return this.grupos.filter((g) => g.fase === fase);
+  }
+
+  getGruposFase(fase: number): Grupos[] {
+    return this.grupos.filter((g: any) => Number(g.fase) === fase);
+  }
+
+  getTotalEquiposFase(fase: number): number {
+    return this.getGruposFase(fase).reduce((sum: number, g: any) => sum + (g.detalle?.length || 0), 0);
+  }
+
+  range(n: number): number[] {
+    return Array.from({ length: Math.max(0, +n || 0) }, (_, i) => i);
   }
 
   actualizarOpciones() {
@@ -591,13 +592,14 @@ export class InfoTComponent implements OnInit {
     this.apiRest
       .jugadoresEquipoTorneo(this.torneoSelect.id, equipo, this.idPartidoSelect)
       .subscribe((res: any) => {
+        const sortNombre = (a: any, b: any) => a.nombre.localeCompare(b.nombre);
         if (SelecEquipo == 1) {
           this.equipo1 = equipo;
-          this.jugadoresEq1 = res.jugadores;
+          this.jugadoresEq1 = (res.jugadores || []).sort(sortNombre);
           this.tarjetasEq1 = res.tarjetas;
         } else if (SelecEquipo == 2) {
           this.equipo2 = equipo;
-          this.jugadoresEq2 = res.jugadores;
+          this.jugadoresEq2 = (res.jugadores || []).sort(sortNombre);
           this.tarjetasEq2 = res.tarjetas;
         }
       });
@@ -657,6 +659,56 @@ export class InfoTComponent implements OnInit {
     return index;
   }
 
+  getAnotador(equipo: number, index: number): any {
+    const id = equipo === 1 ? this.anotadoresEq1[index] : this.anotadoresEq2[index];
+    const jugadores = equipo === 1 ? this.jugadoresEq1 : this.jugadoresEq2;
+    return jugadores?.find((j: any) => j.id === id) || null;
+  }
+
+  setAnotador(equipo: number, index: number, jugador: any) {
+    if (jugador?.sancionR === 1) {
+      Swal.fire({
+        icon: 'error',
+        title: '🟥 Jugador no disponible',
+        html: `<b>${jugador.nombre}</b> tiene una <strong>tarjeta roja activa</strong> y no puede participar en este partido.`,
+        confirmButtonText: 'Entendido',
+        confirmButtonColor: '#ef4444'
+      });
+      if (equipo === 1) {
+        this.anotadoresEq1 = [...this.anotadoresEq1];
+        this.anotadoresEq1[index] = null;
+      } else {
+        this.anotadoresEq2 = [...this.anotadoresEq2];
+        this.anotadoresEq2[index] = null;
+      }
+      return;
+    }
+    if (equipo === 1) {
+      this.anotadoresEq1[index] = jugador?.id ?? null;
+    } else {
+      this.anotadoresEq2[index] = jugador?.id ?? null;
+    }
+  }
+
+  getTarjeta(tipo: 'amarillaEq1'|'amarillaEq2'|'rojaEq1'|'rojaEq2', index: number): any {
+    const map: any = {
+      amarillaEq1: [this.tarjetasAmarillasEq1, this.jugadoresEq1],
+      amarillaEq2: [this.tarjetasAmarillasEq2, this.jugadoresEq2],
+      rojaEq1:     [this.tarjetasRojasEq1,     this.jugadoresEq1],
+      rojaEq2:     [this.tarjetasRojasEq2,     this.jugadoresEq2],
+    };
+    const [arr, jugadores] = map[tipo];
+    return jugadores?.find((j: any) => j.id === arr[index]) || null;
+  }
+
+  setTarjeta(tipo: 'amarillaEq1'|'amarillaEq2'|'rojaEq1'|'rojaEq2', index: number, jugador: any) {
+    const id = jugador?.id ?? null;
+    if (tipo === 'amarillaEq1') this.tarjetasAmarillasEq1[index] = id;
+    else if (tipo === 'amarillaEq2') this.tarjetasAmarillasEq2[index] = id;
+    else if (tipo === 'rojaEq1')     this.tarjetasRojasEq1[index] = id;
+    else if (tipo === 'rojaEq2')     this.tarjetasRojasEq2[index] = id;
+  }
+
   guardarResultadoP(partidoId: number, idTorneo: number, grupo: string): void {
     if (this.estadoSwitch) {
       const errores: string[] = [];
@@ -714,6 +766,13 @@ export class InfoTComponent implements OnInit {
       }
 
       if (
+        this.cantidadRojasEq2 > 0 &&
+        this.tarjetasRojasEq2.some((id) => !id)
+      ) {
+        errores.push('Faltan jugadores para tarjetas rojas del equipo 2.');
+      }
+
+      if (
         this.Ampliacion == 'S' &&
         this.penaltisEq1 == '' &&
         this.penaltisEq2 == ''
@@ -725,7 +784,6 @@ export class InfoTComponent implements OnInit {
 
       // Mostrar errores si hay y detener
       if (errores.length > 0) {
-        this.resetearFormularioResul();
         Swal.fire({
           icon: 'error',
           title: 'Errores encontrados',
@@ -800,9 +858,14 @@ export class InfoTComponent implements OnInit {
         reverseButtons: true,
       }).then((result) => {
         if (result.isConfirmed) {
-          this.apiRest.guardarResultadoP(resultado).subscribe((res: any) => {
-            Swal.fire(res.msj);
-            this.calendarioData = res.calendarioData;
+          this.apiRest.guardarResultadoP(resultado).subscribe({
+            next: (res: any) => {
+              Swal.fire(res.msj);
+              this.calendarioData = res.calendarioData;
+            },
+            error: () => {
+              Swal.fire({ icon: 'error', title: 'Error', text: 'No se pudo guardar el resultado. Intenta de nuevo.' });
+            }
           });
         }
       });
@@ -872,9 +935,14 @@ export class InfoTComponent implements OnInit {
         reverseButtons: true,
       }).then((result) => {
         if (result.isConfirmed) {
-          this.apiRest.guardarResultadoP(resultado).subscribe((res: any) => {
-            Swal.fire(res.msj);
-            this.calendarioData = res.calendarioData;
+          this.apiRest.guardarResultadoP(resultado).subscribe({
+            next: (res: any) => {
+              Swal.fire(res.msj);
+              this.calendarioData = res.calendarioData;
+            },
+            error: () => {
+              Swal.fire({ icon: 'error', title: 'Error', text: 'No se pudo guardar el resultado. Intenta de nuevo.' });
+            }
           });
         }
       });
@@ -887,28 +955,49 @@ export class InfoTComponent implements OnInit {
     idTorneo: string,
     fase: number,
   ) {
-    if (estado != 2) {
+    if (estado == 0) {
       Swal.fire(
         'Para validar el resultado debe ingresar primero el resultado.',
       );
-    } else if (estado == 2) {
+    } else {
       Swal.fire({
-        title: '¿Deseas validar el resultado resultado del partido?',
+        title: '¿Deseas validar el resultado del partido?',
         text: 'Una vez guardado, no podrás modificarlo.',
         icon: 'warning',
         showCancelButton: true,
-        confirmButtonText: 'Sí, guardar',
+        confirmButtonText: 'Sí, validar',
         cancelButtonText: 'Cancelar',
         reverseButtons: true,
       }).then((result) => {
-        this.apiRest
-          .ValidarResultado(IdPartido, idTorneo, fase)
-          .subscribe((res: any) => {
-            Swal.fire(res.msj);
-            this.calendarioData = res.calendarioData;
-            this.grupos = res.grupos;
-            this.clafGeneral = res.general;
+        if (result.isConfirmed) {
+          Swal.fire({
+            title: 'Validando resultado...',
+            text: 'Por favor espera',
+            allowOutsideClick: false,
+            allowEscapeKey: false,
+            showConfirmButton: false,
+            didOpen: () => Swal.showLoading(),
           });
+          this.apiRest
+            .ValidarResultado(IdPartido, idTorneo, fase)
+            .subscribe({
+              next: (res: any) => {
+                this.calendarioData = res.calendarioData;
+                this.grupos = res.grupos;
+                this.clafGeneral = res.general;
+                Swal.fire({
+                  icon: 'success',
+                  title: '¡Resultado validado!',
+                  text: res.msj,
+                  timer: 2000,
+                  showConfirmButton: false,
+                });
+              },
+              error: () => {
+                Swal.fire({ icon: 'error', title: 'Error', text: 'No se pudo validar. Intenta de nuevo.' });
+              },
+            });
+        }
       });
     }
   }
@@ -1012,12 +1101,12 @@ export class InfoTComponent implements OnInit {
                   buscarNombre(Number(g.fk_jugador), jugadores1),
                 ),
               amarillas: (partido.amarillas || [])
-                .filter((a: any) => a.fk_equipo === equipo1Id)
+                .filter((a: any) => Number(a.fk_equipo) === Number(equipo1Id))
                 .map((a: any) =>
                   buscarNombre(Number(a.fk_jugador), jugadores1),
                 ),
               rojas: (partido.rojas || [])
-                .filter((r: any) => r.fk_equipo === equipo1Id)
+                .filter((r: any) => Number(r.fk_equipo) === Number(equipo1Id))
                 .map((r: any) =>
                   buscarNombre(Number(r.fk_jugador), jugadores1),
                 ),
@@ -1041,12 +1130,12 @@ export class InfoTComponent implements OnInit {
                   buscarNombre(Number(g.fk_jugador), jugadores2),
                 ),
               amarillas: (partido.amarillas || [])
-                .filter((a: any) => a.fk_equipo === equipo2Id)
+                .filter((a: any) => Number(a.fk_equipo) === Number(equipo2Id))
                 .map((a: any) =>
                   buscarNombre(Number(a.fk_jugador), jugadores2),
                 ),
               rojas: (partido.rojas || [])
-                .filter((r: any) => r.fk_equipo === equipo2Id)
+                .filter((r: any) => Number(r.fk_equipo) === Number(equipo2Id))
                 .map((r: any) =>
                   buscarNombre(Number(r.fk_jugador), jugadores2),
                 ),
@@ -1079,9 +1168,8 @@ export class InfoTComponent implements OnInit {
         this.apiRest
           .validarFase(this.idTorneo, numFase)
           .subscribe((res1: any) => {
-            // this.calendarioData = res1.calendarioData;
             if (res1.success == true) {
-              window.location.reload();
+              this.cargarDatos();
             } else {
               Swal.fire(res1.msj);
               this.isLoading = false;
@@ -1244,7 +1332,7 @@ export class InfoTComponent implements OnInit {
         if (res.success) {
           Swal.fire(res.msj);
           this.nombreGrupoEdit = '';
-          this.ngOnInit();
+          this.cargarDatos();
         }
       });
   }
@@ -1307,7 +1395,7 @@ export class InfoTComponent implements OnInit {
     this.fechaSeleccionada = '';
     this.horaSeleccionada = '';
     this.JuezSeleccionada = 0;
-    this.DelegadoSeleocionada = 0;
+    this.DelegadoSeleccionada = 0;
   }
 
   resetProgramacionPre(idPre: number) {
@@ -1316,7 +1404,7 @@ export class InfoTComponent implements OnInit {
     this.fechaSeleccionada = '';
     this.horaSeleccionada = '';
     this.JuezSeleccionada = 0;
-    this.DelegadoSeleocionada = 0;
+    this.DelegadoSeleccionada = 0;
   }
 
   guardarNPartido() {
@@ -1377,12 +1465,12 @@ export class InfoTComponent implements OnInit {
             this.horaSeleccionada,
             this.JuezSeleccionada,
             this.canchaSeleccionada,
-            this.DelegadoSeleocionada,
+            this.DelegadoSeleccionada ?? 0,
           )
           .subscribe((res1: any) => {
             if (res1.success === true) {
               Swal.fire(res1.msj);
-              window.location.reload();
+              this.cargarDatos();
             }
             this.isLoading = false;
           });
@@ -1417,7 +1505,7 @@ export class InfoTComponent implements OnInit {
             this.horaSeleccionada,
             this.JuezSeleccionada,
             this.canchaSeleccionada,
-            this.DelegadoSeleocionada,
+            this.DelegadoSeleccionada ?? 0,
           )
           .subscribe((res1: any) => {
             if (res1.success === true) {
@@ -1438,10 +1526,13 @@ export class InfoTComponent implements OnInit {
 
   AnularPartido(idPartido: number, IdTorneo: number, estado: number) {
     Swal.fire({
-      title:
-        '¿Desea Anular este partido del torneo, tenga en cuenta que no se registrara resultados?',
+      icon: 'warning',
+      title: '¿Anular partido?',
+      html: `<p style="font-size:13px;color:#555">Al anular este partido <b>se eliminará del torneo</b> y <b>no se tomará en cuenta para las estadísticas</b>.<br><br>Si los equipos deben volver a enfrentarse, deberá crear el partido nuevamente.</p>`,
       showDenyButton: true,
-      confirmButtonText: 'Sí',
+      confirmButtonText: 'Sí, anular',
+      denyButtonText: 'Cancelar',
+      confirmButtonColor: '#e11d48',
     }).then((result) => {
       if (result.isConfirmed) {
         this.isLoading = true;
@@ -1450,8 +1541,13 @@ export class InfoTComponent implements OnInit {
           .AnularPartido(idPartido, IdTorneo, estado)
           .subscribe((res1: any) => {
             if (res1.success === true) {
-              Swal.fire(res1.msj);
-
+              Swal.fire({
+                icon: 'success',
+                title: 'Partido anulado',
+                text: 'El partido fue anulado y no se contará en las estadísticas del torneo.',
+                timer: 2500,
+                showConfirmButton: false,
+              });
               this.apiRest
                 .get_Calendary(this.idTorneo)
                 .subscribe((res: any) => {
@@ -1459,7 +1555,7 @@ export class InfoTComponent implements OnInit {
                   this.router.navigate(['/InfoT', this.idTorneo]);
                 });
             } else {
-              Swal.fire(res1.msj);
+              Swal.fire({ icon: 'error', title: 'Error', text: res1.msj });
             }
           });
       }
@@ -1468,10 +1564,12 @@ export class InfoTComponent implements OnInit {
 
   ActivarPartido(idPartido: number, IdTorneo: number, estado: number) {
     Swal.fire({
-      title:
-        '¿Desea Anular este partido del torneo, tenga en cuenta que no se registrara resultados?',
+      icon: 'question',
+      title: '¿Reactivar partido?',
+      text: 'El partido volverá a estar activo en el torneo.',
       showDenyButton: true,
-      confirmButtonText: 'Sí',
+      confirmButtonText: 'Sí, reactivar',
+      denyButtonText: 'Cancelar',
     }).then((result) => {
       if (result.isConfirmed) {
         this.isLoading = true;
@@ -1480,8 +1578,12 @@ export class InfoTComponent implements OnInit {
           .AnularPartido(idPartido, IdTorneo, estado)
           .subscribe((res1: any) => {
             if (res1.success === true) {
-              Swal.fire(res1.msj);
-
+              Swal.fire({
+                icon: 'success',
+                title: 'Partido reactivado',
+                timer: 2000,
+                showConfirmButton: false,
+              });
               this.apiRest
                 .get_Calendary(this.idTorneo)
                 .subscribe((res: any) => {
@@ -1498,9 +1600,760 @@ export class InfoTComponent implements OnInit {
     this.router.navigate(['/home']);
   }
 
-  tipoResul() {
-    console.log(this.Ampliacion);
+  irAlHome() {
+    this.router.navigate(['/home']);
   }
+
+  irADelegaCh() {
+    this.router.navigate(['/DelegaCh']);
+  }
+
+  async descargarExcelEquipos() {
+    const t = this.torneoSelect;
+    if (!t) return;
+
+    const ExcelJSModule = await import('exceljs');
+    const ExcelJS = (ExcelJSModule as any).default ?? ExcelJSModule;
+    const nombreTorneo = t.nombre || 'Torneo';
+    const categoriaNombre = this.getNombreCategoria(String(t.categoria));
+    const numFases = Number(t.num_fases) || 1;
+    const gruposFase1 = this.grupos.filter((g: any) => Number(g.fase) === 1);
+    const equiposActivos = this.equiposTorneo.filter((eq: any) => eq.estado === true);
+    const wb = new ExcelJS.Workbook();
+
+    const hdr = (row: any, bgArgb: string) => {
+      row.height = 22;
+      row.eachCell({ includeEmpty: true }, (c: any) => {
+        c.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: bgArgb } };
+        c.font = { bold: true, color: { argb: 'FFFFFFFF' }, size: 10, name: 'Calibri' };
+        c.alignment = { vertical: 'middle', horizontal: 'center' };
+      });
+    };
+    const dat = (row: any, even: boolean, hl: number[] = []) => {
+      row.height = 18;
+      row.eachCell({ includeEmpty: true }, (c: any, col: number) => {
+        const h = hl.includes(col);
+        c.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: h ? 'FFFFF3CD' : (even ? 'FFF3F4F6' : 'FFFFFFFF') } };
+        c.font = { size: 10, name: 'Calibri', bold: h };
+        c.alignment = { vertical: 'middle', horizontal: h ? 'center' : 'left' };
+      });
+    };
+
+    const sec = (ws: any, label: string) => {
+      const r = ws.addRow([label]);
+      r.height = 16;
+      r.eachCell({ includeEmpty: true }, (c: any) => {
+        c.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: 'FFE8EDF8' } };
+        c.font = { bold: true, italic: true, size: 9, name: 'Calibri', color: { argb: 'FF1F3864' } };
+        c.alignment = { vertical: 'middle', horizontal: 'left' };
+      });
+    };
+
+    // TORNEO
+    const wsTorneo = wb.addWorksheet('TORNEO');
+    wsTorneo.columns = [{ width: 28 }, { width: 50 }];
+    hdr(wsTorneo.addRow(['CAMPO', 'VALOR']), 'FF1F3864');
+    sec(wsTorneo, '▸ Información básica');
+    [['NOMBRE', t.nombre || ''], ['DESCRIPCION', t.descripcion || ''],
+     ['CATEGORIA', categoriaNombre], ['CONTROL EDAD', t.control_edad ? 'Si' : 'No'],
+    ].forEach((r, i) => dat(wsTorneo.addRow(r), i % 2 === 0));
+    sec(wsTorneo, '▸ Fechas');
+    [['FECHA INICIO', t.fecha_inicio || ''], ['FECHA FIN', t.fecha_fin || ''],
+     ['FECHA LIMITE NOMINA', t.fecha_limite || ''],
+    ].forEach((r, i) => dat(wsTorneo.addRow(r), i % 2 === 0));
+    sec(wsTorneo, '▸ Configuración');
+    [['MAX JUGADORES', t.numero_maximo_jug || ''], ['NUM FASES', t.num_fases || ''],
+    ].forEach((r, i) => dat(wsTorneo.addRow(r), i % 2 === 0));
+    sec(wsTorneo, '▸ Grupos por fase');
+    for (let f = 1; f <= numFases; f++) {
+      const cnt = this.grupos.filter((g: any) => Number(g.fase) === f).length;
+      dat(wsTorneo.addRow([`GRUPOS FASE ${f}`, cnt]), (f - 1) % 2 === 0);
+    }
+
+    // EQUIPOS
+    const wsEq = wb.addWorksheet('EQUIPOS');
+    wsEq.columns = [{ width: 50 }, { width: 10 }];
+    hdr(wsEq.addRow(['NOMBRE EQUIPO', 'ID']), 'FF1D4ED8');
+    equiposActivos.forEach((eq: any, i: number) => {
+      const row = wsEq.addRow([eq.nombre || '', Number(eq.id)]);
+      dat(row, i % 2 === 0);
+      row.getCell(2).alignment = { horizontal: 'center', vertical: 'middle' };
+    });
+
+    // CANCHAS
+    const wsCanchas = wb.addWorksheet('CANCHAS');
+    wsCanchas.columns = [{ width: 10 }, { width: 40 }, { width: 30 }];
+    hdr(wsCanchas.addRow(['ID', 'NOMBRE', 'DESCRIPCION']), 'FF0F766E');
+    (this.canchas || []).forEach((c: any, i: number) => {
+      const row = wsCanchas.addRow([Number(c.id), c.nombre || '', c.descripcion || '']);
+      dat(row, i % 2 === 0);
+      row.getCell(1).alignment = { horizontal: 'center', vertical: 'middle' };
+    });
+
+    // JUECES
+    const wsJueces = wb.addWorksheet('JUECES');
+    wsJueces.columns = [{ width: 10 }, { width: 35 }, { width: 20 }];
+    hdr(wsJueces.addRow(['ID', 'NOMBRE', 'IDENTIFICACION']), 'FFBE123C');
+    (this.jueces || []).forEach((j: any, i: number) => {
+      const row = wsJueces.addRow([Number(j.id), j.nombre || '', j.identificacion || '']);
+      dat(row, i % 2 === 0);
+      row.getCell(1).alignment = { horizontal: 'center', vertical: 'middle' };
+    });
+
+    // DELEGADOS
+    const wsDels = wb.addWorksheet('DELEGADOS');
+    wsDels.columns = [{ width: 10 }, { width: 35 }];
+    hdr(wsDels.addRow(['ID', 'NOMBRE']), 'FF4338CA');
+    (this.Delegados || []).forEach((d: any, i: number) => {
+      const row = wsDels.addRow([Number(d.id), d.nombre || '']);
+      dat(row, i % 2 === 0);
+      row.getCell(1).alignment = { horizontal: 'center', vertical: 'middle' };
+    });
+
+    // GRUPO sheets (vacíos)
+    for (const grupo of gruposFase1) {
+      const ws = wb.addWorksheet(`GRUPO ${grupo.nombre}`);
+      ws.columns = [{ width: 50 }, { width: 10 }];
+      hdr(ws.addRow(['NOMBRE EQUIPO', 'ID']), 'FF059669');
+      for (let i = 0; i < 10; i++) dat(ws.addRow(['', '']), i % 2 === 0);
+    }
+
+    // FASE 1 (vacía — consultar pestañas CANCHAS, JUECES, DELEGADOS para los IDs)
+    const wsF1 = wb.addWorksheet('FASE 1');
+    wsF1.columns = [
+      { width: 13 }, { width: 32 }, { width: 15 }, { width: 32 },
+      { width: 22 }, { width: 14 }, { width: 13 }, { width: 13 }, { width: 13 },
+    ];
+    hdr(wsF1.addRow(['ID_LOCAL ★', 'NOMBRE_LOCAL', 'ID_VISITANTE ★', 'NOMBRE_VISITANTE',
+      'FECHA (AAAA-MM-DD)', 'HORA (HH:MM)', 'ID_CANCHA', 'ID_JUEZ', 'ID_DELEGADO']), 'FFD97706');
+    for (let i = 0; i < 20; i++) dat(wsF1.addRow(['', '', '', '', '', '', '', '', '']), i % 2 === 0, [1, 3]);
+
+    // FASE 2+ (vacíos)
+    for (let fase = 2; fase <= numFases; fase++) {
+      const ws = wb.addWorksheet(`FASE ${fase}`);
+      ws.columns = [{ width: 18 }, { width: 20 }, { width: 14 }, { width: 16 }, { width: 4 }, { width: 20 }, { width: 14 }, { width: 16 }];
+      hdr(ws.addRow(['GRUPO_DESTINO', 'TIPO_EQ1', 'GRUPO_EQ1', 'POSICION_EQ1', '', 'TIPO_EQ2', 'GRUPO_EQ2', 'POSICION_EQ2']), 'FF7C3AED');
+      for (let i = 0; i < 10; i++) dat(ws.addRow(['', '', '', '', '', '', '', '']), i % 2 === 0);
+    }
+
+    const buffer = await wb.xlsx.writeBuffer();
+    saveAs(new Blob([buffer], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' }), `Plantilla_${nombreTorneo}.xlsx`);
+  }
+
+  async descargarExcelEquiposLleno() {
+    const t = this.torneoSelect;
+    if (!t) return;
+
+    const activos = this.equiposTorneo.filter((eq: any) => eq.estado === true);
+    if (activos.length === 0) {
+      Swal.fire({
+        icon: 'warning',
+        title: 'Sin equipos activos',
+        text: 'Debes activar al menos un equipo en "Equipos Participantes" antes de descargar la plantilla de ejemplo.',
+        confirmButtonColor: '#10b981'
+      });
+      return;
+    }
+
+    const ExcelJSModule = await import('exceljs');
+    const ExcelJS = (ExcelJSModule as any).default ?? ExcelJSModule;
+    const nombreTorneo = t.nombre || 'Torneo';
+    const categoriaNombre = this.getNombreCategoria(String(t.categoria));
+    const numFases = Number(t.num_fases) || 1;
+    const gruposFase1 = this.grupos.filter((g: any) => Number(g.fase) === 1);
+    const nGrupos = gruposFase1.length || 1;
+    const equiposActivos2 = this.equiposTorneo.filter((eq: any) => eq.estado === true);
+    const equiposMezclados = [...equiposActivos2].sort(() => Math.random() - 0.5);
+    const wb = new ExcelJS.Workbook();
+
+    const hdr = (row: any, bgArgb: string) => {
+      row.height = 22;
+      row.eachCell({ includeEmpty: true }, (c: any) => {
+        c.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: bgArgb } };
+        c.font = { bold: true, color: { argb: 'FFFFFFFF' }, size: 10, name: 'Calibri' };
+        c.alignment = { vertical: 'middle', horizontal: 'center' };
+      });
+    };
+    const dat = (row: any, even: boolean, hl: number[] = []) => {
+      row.height = 18;
+      row.eachCell({ includeEmpty: true }, (c: any, col: number) => {
+        const h = hl.includes(col);
+        c.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: h ? 'FFFFF3CD' : (even ? 'FFF3F4F6' : 'FFFFFFFF') } };
+        c.font = { size: 10, name: 'Calibri', bold: h };
+        c.alignment = { vertical: 'middle', horizontal: h ? 'center' : 'left' };
+      });
+    };
+
+    const sec2 = (ws: any, label: string) => {
+      const r = ws.addRow([label]);
+      r.height = 16;
+      r.eachCell({ includeEmpty: true }, (c: any) => {
+        c.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: 'FFE8EDF8' } };
+        c.font = { bold: true, italic: true, size: 9, name: 'Calibri', color: { argb: 'FF1F3864' } };
+        c.alignment = { vertical: 'middle', horizontal: 'left' };
+      });
+    };
+
+    // TORNEO
+    const wsTorneo = wb.addWorksheet('TORNEO');
+    wsTorneo.columns = [{ width: 28 }, { width: 50 }];
+    hdr(wsTorneo.addRow(['CAMPO', 'VALOR']), 'FF1F3864');
+    sec2(wsTorneo, '▸ Información básica');
+    [['NOMBRE', t.nombre || ''], ['DESCRIPCION', t.descripcion || ''],
+     ['CATEGORIA', categoriaNombre], ['CONTROL EDAD', t.control_edad ? 'Si' : 'No'],
+    ].forEach((r, i) => dat(wsTorneo.addRow(r), i % 2 === 0));
+    sec2(wsTorneo, '▸ Fechas');
+    [['FECHA INICIO', t.fecha_inicio || ''], ['FECHA FIN', t.fecha_fin || ''],
+     ['FECHA LIMITE NOMINA', t.fecha_limite || ''],
+    ].forEach((r, i) => dat(wsTorneo.addRow(r), i % 2 === 0));
+    sec2(wsTorneo, '▸ Configuración');
+    [['MAX JUGADORES', t.numero_maximo_jug || ''], ['NUM FASES', t.num_fases || ''],
+    ].forEach((r, i) => dat(wsTorneo.addRow(r), i % 2 === 0));
+    sec2(wsTorneo, '▸ Grupos por fase');
+    for (let f = 1; f <= numFases; f++) {
+      const cnt = this.grupos.filter((g: any) => Number(g.fase) === f).length;
+      dat(wsTorneo.addRow([`GRUPOS FASE ${f}`, cnt]), (f - 1) % 2 === 0);
+    }
+
+    // EQUIPOS
+    const wsEq = wb.addWorksheet('EQUIPOS');
+    wsEq.columns = [{ width: 50 }, { width: 10 }];
+    hdr(wsEq.addRow(['NOMBRE EQUIPO', 'ID']), 'FF1D4ED8');
+    equiposActivos2.forEach((eq: any, i: number) => {
+      const row = wsEq.addRow([eq.nombre || '', Number(eq.id)]);
+      dat(row, i % 2 === 0);
+      row.getCell(2).alignment = { horizontal: 'center', vertical: 'middle' };
+    });
+
+    // CANCHAS
+    const wsCanchas2 = wb.addWorksheet('CANCHAS');
+    wsCanchas2.columns = [{ width: 10 }, { width: 40 }, { width: 30 }];
+    hdr(wsCanchas2.addRow(['ID', 'NOMBRE', 'DESCRIPCION']), 'FF0F766E');
+    (this.canchas || []).forEach((c: any, i: number) => {
+      const row = wsCanchas2.addRow([Number(c.id), c.nombre || '', c.descripcion || '']);
+      dat(row, i % 2 === 0);
+      row.getCell(1).alignment = { horizontal: 'center', vertical: 'middle' };
+    });
+
+    // JUECES
+    const wsJueces2 = wb.addWorksheet('JUECES');
+    wsJueces2.columns = [{ width: 10 }, { width: 35 }, { width: 20 }];
+    hdr(wsJueces2.addRow(['ID', 'NOMBRE', 'IDENTIFICACION']), 'FFBE123C');
+    (this.jueces || []).forEach((j: any, i: number) => {
+      const row = wsJueces2.addRow([Number(j.id), j.nombre || '', j.identificacion || '']);
+      dat(row, i % 2 === 0);
+      row.getCell(1).alignment = { horizontal: 'center', vertical: 'middle' };
+    });
+
+    // DELEGADOS
+    const wsDels2 = wb.addWorksheet('DELEGADOS');
+    wsDels2.columns = [{ width: 10 }, { width: 35 }];
+    hdr(wsDels2.addRow(['ID', 'NOMBRE']), 'FF4338CA');
+    (this.Delegados || []).forEach((d: any, i: number) => {
+      const row = wsDels2.addRow([Number(d.id), d.nombre || '']);
+      dat(row, i % 2 === 0);
+      row.getCell(1).alignment = { horizontal: 'center', vertical: 'middle' };
+    });
+
+    // GRUPO sheets con equipos distribuidos al azar
+    for (let gi = 0; gi < gruposFase1.length; gi++) {
+      const grupo = gruposFase1[gi];
+      const teamsSel = equiposMezclados.filter((_: any, idx: number) => idx % nGrupos === gi);
+      const ws = wb.addWorksheet(`GRUPO ${grupo.nombre}`);
+      ws.columns = [{ width: 50 }, { width: 10 }];
+      hdr(ws.addRow(['NOMBRE EQUIPO', 'ID']), 'FF059669');
+      teamsSel.forEach((eq: any, i: number) => {
+        const row = ws.addRow([eq.nombre || '', Number(eq.id)]);
+        dat(row, i % 2 === 0);
+        row.getCell(2).alignment = { horizontal: 'center', vertical: 'middle' };
+      });
+    }
+
+    // FASE 1: round-robin con IDs reales + fecha/hora/cancha/juez/delegado de ejemplo
+    const wsF1 = wb.addWorksheet('FASE 1');
+    wsF1.columns = [
+      { width: 13 }, { width: 32 }, { width: 15 }, { width: 32 },
+      { width: 22 }, { width: 14 }, { width: 13 }, { width: 13 }, { width: 13 },
+    ];
+    hdr(wsF1.addRow(['ID_LOCAL ★', 'NOMBRE_LOCAL', 'ID_VISITANTE ★', 'NOMBRE_VISITANTE',
+      'FECHA (AAAA-MM-DD)', 'HORA (HH:MM)', 'ID_CANCHA', 'ID_JUEZ', 'ID_DELEGADO']), 'FFD97706');
+    const horas = ['08:00', '10:00', '14:00', '16:00', '18:00'];
+    const fechaBase = t.fecha_inicio ? String(t.fecha_inicio) : new Date().toISOString().slice(0, 10);
+    const nCanchas = (this.canchas || []).length;
+    const nJueces  = (this.jueces || []).length;
+    const nDels    = (this.Delegados || []).length;
+    let f1Idx = 0;
+    for (let gi = 0; gi < gruposFase1.length; gi++) {
+      const teamsSel = equiposMezclados.filter((_: any, idx: number) => idx % nGrupos === gi);
+      for (let a = 0; a < teamsSel.length; a++) {
+        for (let b = a + 1; b < teamsSel.length; b++) {
+          const idCancha = nCanchas > 0 ? Number(this.canchas[f1Idx % nCanchas].id) : '';
+          const idJuez   = nJueces  > 0 ? Number(this.jueces[f1Idx % nJueces].id)   : '';
+          const idDel    = nDels    > 0 ? Number(this.Delegados[f1Idx % nDels].id)   : '';
+          const row = wsF1.addRow([
+            Number(teamsSel[a].id), teamsSel[a].nombre || '',
+            Number(teamsSel[b].id), teamsSel[b].nombre || '',
+            fechaBase, horas[f1Idx % horas.length],
+            idCancha, idJuez, idDel,
+          ]);
+          dat(row, f1Idx % 2 === 0, [1, 3]);
+          f1Idx++;
+        }
+      }
+    }
+
+    // FASE 2+ con cruces de ejemplo
+    for (let fase = 2; fase <= numFases; fase++) {
+      const ws = wb.addWorksheet(`FASE ${fase}`);
+      ws.columns = [{ width: 18 }, { width: 20 }, { width: 14 }, { width: 16 }, { width: 4 }, { width: 20 }, { width: 14 }, { width: 16 }];
+      hdr(ws.addRow(['GRUPO_DESTINO', 'TIPO_EQ1', 'GRUPO_EQ1', 'POSICION_EQ1', '', 'TIPO_EQ2', 'GRUPO_EQ2', 'POSICION_EQ2']), 'FF7C3AED');
+      const gruposDest = this.grupos.filter((g: any) => Number(g.fase) === fase);
+      const gruposSrc  = this.grupos.filter((g: any) => Number(g.fase) === fase - 1);
+      let pairIdx = 0, puestoRcl = 4;
+      gruposDest.forEach((dest: any, i: number) => {
+        const s1 = gruposSrc[pairIdx * 2];
+        const s2 = gruposSrc[pairIdx * 2 + 1];
+        const tipo1 = s1 ? 'Grupo' : 'Reclasificacion', grp1 = s1 ? s1.nombre : 'RCL', pos1 = s1 ? (pairIdx % 4) + 1 : puestoRcl++;
+        const tipo2 = s2 ? 'Grupo' : 'Reclasificacion', grp2 = s2 ? s2.nombre : 'RCL', pos2 = s2 ? ((pairIdx + 1) % 4) + 1 : puestoRcl++;
+        pairIdx++;
+        dat(ws.addRow([dest.nombre, tipo1, grp1, pos1, '', tipo2, grp2, pos2]), i % 2 === 0);
+      });
+    }
+
+    const buffer = await wb.xlsx.writeBuffer();
+    saveAs(new Blob([buffer], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' }), `Ejemplo_${nombreTorneo}.xlsx`);
+  }
+
+  cargarGruposDesdeExcel(event: Event) {
+    const input = event.target as HTMLInputElement;
+    if (!input.files?.length) return;
+    const file = input.files[0];
+
+    const idsElegibles = new Map<number, string>(
+      this.equiposTorneo.filter((eq: any) => eq.estado === true)
+        .map((eq: any) => [Number(eq.id), eq.nombre as string])
+    );
+
+    // Mapa nombre-grupo → id, por fase
+    const gruposPorFase = (fase: number) =>
+      new Map<string, number>(
+        this.grupos
+          .filter((g: any) => Number(g.fase) === fase)
+          .map((g: any) => [String(g.nombre).toUpperCase(), Number(g.id)])
+      );
+
+    const parseTipo = (val: string): 'grupo' | 'recla' | null => {
+      const v = val.trim().toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, '');
+      if (v === 'grupo') return 'grupo';
+      if (v === 'reclasificacion') return 'recla';
+      return null;
+    };
+
+    const parsePos = (tipo: 'grupo' | 'recla', val: string): number | null => {
+      const v = String(val).trim().toLowerCase();
+      // Número directo (formato nuevo y preferido)
+      const n = parseInt(v);
+      if (!isNaN(n) && n >= 1) return n;
+      // Compatibilidad con formato texto anterior
+      if (tipo === 'grupo') {
+        const map: Record<string, number> = { primero: 1, segundo: 2, tercero: 3, cuarto: 4 };
+        return map[v] ?? null;
+      }
+      const m = v.match(/^puesto\s+(\d+)$/);
+      return m ? parseInt(m[1]) : null;
+    };
+
+    type PrePartido = {
+      grupoDestino: string;
+      tipoEq1: 'grupo' | 'recla';
+      grupoEq1: string;
+      posEq1: number;
+      tipoEq2: 'grupo' | 'recla';
+      grupoEq2: string;
+      posEq2: number;
+    };
+
+    type ProgPartido = {
+      idLocal: number;
+      nombreLocal: string;
+      idVisitante: number;
+      nombreVisitante: string;
+      fecha: string;
+      hora: string;
+      cancha: string;
+      juez: string;
+      delegado: string;
+    };
+
+    const reader = new FileReader();
+    reader.onload = (e: any) => {
+      const data = new Uint8Array(e.target.result);
+      const wb = XLSX.read(data, { type: 'array' });
+
+      const grupos: { nombre: string; equipos: number[] }[] = [];
+      const fases: { numFase: number; prePartidos: PrePartido[] }[] = [];
+      const programacion: ProgPartido[] = [];
+      const errores: string[] = [];
+      const idsUsados = new Set<number>();
+
+      for (const sheetName of wb.SheetNames) {
+        const upper = sheetName.toUpperCase().trim();
+
+        // ── GRUPO sheets ────────────────────────────────────────────────────────
+        if (upper.startsWith('GRUPO')) {
+          const ws = wb.Sheets[sheetName];
+          const rows = XLSX.utils.sheet_to_json(ws, { header: 1 }) as any[][];
+          const headerRow = rows.find((r) => r.some((c) => String(c).toUpperCase() === 'ID'));
+          if (!headerRow) {
+            errores.push(`Hoja "${sheetName}": no se encontró la columna ID.`);
+            continue;
+          }
+          const idColIdx = headerRow.findIndex((c) => String(c).toUpperCase() === 'ID');
+          const headerRowIdx = rows.indexOf(headerRow);
+          const equiposGrupo: number[] = [];
+
+          for (let i = headerRowIdx + 1; i < rows.length; i++) {
+            const idVal = rows[i][idColIdx];
+            if (idVal === undefined || idVal === null || idVal === '') continue;
+            const id = Number(idVal);
+            if (isNaN(id)) {
+              errores.push(`Hoja "${sheetName}" fila ${i + 1}: "${idVal}" no es un ID numérico válido.`);
+              continue;
+            }
+            if (!idsElegibles.has(id)) {
+              errores.push(`Hoja "${sheetName}" fila ${i + 1}: ID ${id} no está en la lista de equipos elegibles de este torneo.`);
+              continue;
+            }
+            if (idsUsados.has(id)) {
+              errores.push(`Hoja "${sheetName}" fila ${i + 1}: El equipo "${idsElegibles.get(id)}" (ID ${id}) ya fue asignado a otro grupo.`);
+              continue;
+            }
+            idsUsados.add(id);
+            equiposGrupo.push(id);
+          }
+          if (equiposGrupo.length > 0) grupos.push({ nombre: sheetName, equipos: equiposGrupo });
+        }
+
+        // ── FASE sheets (fase 2+; FASE 1 se maneja más abajo como programación) ──
+        const faseMatch = upper.match(/^FASE\s+(\d+)$/);
+        if (faseMatch && parseInt(faseMatch[1]) >= 2) {
+          const numFase = parseInt(faseMatch[1]);
+
+          const ws = wb.Sheets[sheetName];
+          const rows = XLSX.utils.sheet_to_json(ws, { header: 1 }) as any[][];
+
+          const headerRow = rows.find((r) =>
+            r.some((c) => /GRUPO_DESTINO|TIPO_EQ1/i.test(String(c)))
+          );
+          if (!headerRow) {
+            errores.push(`Hoja "${sheetName}": no se encontró la fila de encabezados (GRUPO_DESTINO, TIPO_EQ1, ...).`);
+            continue;
+          }
+          const headerRowIdx = rows.indexOf(headerRow);
+
+          const colIdx = (name: string) =>
+            headerRow.findIndex((c) => String(c).toUpperCase().trim() === name);
+
+          const iDest  = colIdx('GRUPO_DESTINO');
+          const iTipo1 = colIdx('TIPO_EQ1');
+          const iGrp1  = colIdx('GRUPO_EQ1');
+          const iPos1  = colIdx('POSICION_EQ1');
+          const iTipo2 = colIdx('TIPO_EQ2');
+          const iGrp2  = colIdx('GRUPO_EQ2');
+          const iPos2  = colIdx('POSICION_EQ2');
+
+          const missing = ['GRUPO_DESTINO','TIPO_EQ1','GRUPO_EQ1','POSICION_EQ1','TIPO_EQ2','GRUPO_EQ2','POSICION_EQ2']
+            .filter((_, i) => [iDest, iTipo1, iGrp1, iPos1, iTipo2, iGrp2, iPos2][i] === -1);
+          if (missing.length > 0) {
+            errores.push(`Hoja "${sheetName}": faltan columnas: ${missing.join(', ')}.`);
+            continue;
+          }
+
+          const destMap = gruposPorFase(numFase);
+          const srcMap  = gruposPorFase(numFase - 1);
+          const srcNames = [...srcMap.keys()].join(', ');
+          const destNames = [...destMap.keys()].join(', ');
+
+          const prePartidos: PrePartido[] = [];
+
+          for (let i = headerRowIdx + 1; i < rows.length; i++) {
+            const row = rows[i];
+            const destRaw  = String(row[iDest]  ?? '').trim();
+            const tipo1Raw = String(row[iTipo1] ?? '').trim();
+            const grp1Raw  = String(row[iGrp1]  ?? '').trim();
+            const pos1Raw  = String(row[iPos1]  ?? '').trim();
+            const tipo2Raw = String(row[iTipo2] ?? '').trim();
+            const grp2Raw  = String(row[iGrp2]  ?? '').trim();
+            const pos2Raw  = String(row[iPos2]  ?? '').trim();
+
+            if (!destRaw && !tipo1Raw && !tipo2Raw) continue; // fila vacía
+
+            let rowOk = true;
+
+            if (!destRaw) {
+              errores.push(`Hoja "${sheetName}" fila ${i + 1}: GRUPO_DESTINO está vacío.`); rowOk = false;
+            } else if (!destMap.has(destRaw.toUpperCase())) {
+              errores.push(`Hoja "${sheetName}" fila ${i + 1}: GRUPO_DESTINO "${destRaw}" no es válido para Fase ${numFase}. Válidos: ${destNames}.`); rowOk = false;
+            }
+
+            const tipo1 = parseTipo(tipo1Raw);
+            if (!tipo1) {
+              errores.push(`Hoja "${sheetName}" fila ${i + 1}: TIPO_EQ1 "${tipo1Raw}" no válido. Use "Grupo" o "Reclasificacion".`); rowOk = false;
+            }
+
+            const tipo2 = parseTipo(tipo2Raw);
+            if (!tipo2) {
+              errores.push(`Hoja "${sheetName}" fila ${i + 1}: TIPO_EQ2 "${tipo2Raw}" no válido. Use "Grupo" o "Reclasificacion".`); rowOk = false;
+            }
+
+            if (tipo1) {
+              if (tipo1 === 'grupo' && !srcMap.has(grp1Raw.toUpperCase())) {
+                errores.push(`Hoja "${sheetName}" fila ${i + 1}: GRUPO_EQ1 "${grp1Raw}" no es un grupo de Fase ${numFase - 1}. Válidos: ${srcNames}.`); rowOk = false;
+              } else if (tipo1 === 'recla' && grp1Raw.toUpperCase() !== 'RCL') {
+                errores.push(`Hoja "${sheetName}" fila ${i + 1}: GRUPO_EQ1 debe ser "RCL" cuando TIPO_EQ1 es Reclasificacion.`); rowOk = false;
+              }
+              const posEq1 = parsePos(tipo1, pos1Raw);
+              if (posEq1 === null) {
+                const hint = tipo1 === 'grupo' ? 'Primero, Segundo, Tercero, Cuarto' : 'Puesto 4, Puesto 5, ...';
+                errores.push(`Hoja "${sheetName}" fila ${i + 1}: POSICION_EQ1 "${pos1Raw}" no válido. Use: ${hint}.`); rowOk = false;
+              }
+            }
+
+            if (tipo2) {
+              if (tipo2 === 'grupo' && !srcMap.has(grp2Raw.toUpperCase())) {
+                errores.push(`Hoja "${sheetName}" fila ${i + 1}: GRUPO_EQ2 "${grp2Raw}" no es un grupo de Fase ${numFase - 1}. Válidos: ${srcNames}.`); rowOk = false;
+              } else if (tipo2 === 'recla' && grp2Raw.toUpperCase() !== 'RCL') {
+                errores.push(`Hoja "${sheetName}" fila ${i + 1}: GRUPO_EQ2 debe ser "RCL" cuando TIPO_EQ2 es Reclasificacion.`); rowOk = false;
+              }
+              const posEq2 = parsePos(tipo2, pos2Raw);
+              if (posEq2 === null) {
+                const hint = tipo2 === 'grupo' ? 'Primero, Segundo, Tercero, Cuarto' : 'Puesto 4, Puesto 5, ...';
+                errores.push(`Hoja "${sheetName}" fila ${i + 1}: POSICION_EQ2 "${pos2Raw}" no válido. Use: ${hint}.`); rowOk = false;
+              }
+            }
+
+            if (rowOk && tipo1 && tipo2) {
+              prePartidos.push({
+                grupoDestino: destRaw,
+                tipoEq1: tipo1,
+                grupoEq1: tipo1 === 'recla' ? 'RCL' : grp1Raw,
+                posEq1: parsePos(tipo1, pos1Raw)!,
+                tipoEq2: tipo2,
+                grupoEq2: tipo2 === 'recla' ? 'RCL' : grp2Raw,
+                posEq2: parsePos(tipo2, pos2Raw)!,
+              });
+            }
+          }
+
+          if (prePartidos.length > 0) fases.push({ numFase, prePartidos });
+          else if (errores.length === 0) {
+            errores.push(`Hoja "${sheetName}": no se encontraron enfrentamientos válidos. Revisa que las filas de datos estén completas.`);
+          }
+        }
+
+        // ── FASE 1 sheet: programación de partidos ───────────────────────────────
+        if (upper === 'FASE 1') {
+          const ws = wb.Sheets[sheetName];
+          const rows = XLSX.utils.sheet_to_json(ws, { header: 1 }) as any[][];
+          const headerRow = rows.find((r) =>
+            r.some((c) => /ID_LOCAL|ID_VISITANTE/i.test(String(c)))
+          );
+          if (!headerRow) {
+            errores.push(`Hoja "FASE 1": no se encontró la fila de encabezados (ID_LOCAL, NOMBRE_LOCAL, ID_VISITANTE, NOMBRE_VISITANTE, FECHA, HORA, ID_CANCHA, ID_JUEZ, ID_DELEGADO).`);
+          } else {
+            const headerRowIdx = rows.indexOf(headerRow);
+            const normalizeH = (c: any) => String(c).toUpperCase().trim().replace(/[^A-Z0-9_]/g, '');
+            const colIdx = (name: string) =>
+              headerRow.findIndex((c) => normalizeH(c).startsWith(name));
+            const iIdLocal      = colIdx('ID_LOCAL');
+            const iNomLocal     = colIdx('NOMBRE_LOCAL');
+            const iIdVis        = colIdx('ID_VISITANTE');
+            const iNomVis       = colIdx('NOMBRE_VISITANTE');
+            const iFecha        = colIdx('FECHA');
+            const iHora         = colIdx('HORA');
+            const iCancha   = colIdx('ID_CANCHA') >= 0 ? colIdx('ID_CANCHA') : colIdx('CANCHA');
+            const iJuez     = colIdx('ID_JUEZ')   >= 0 ? colIdx('ID_JUEZ')   : colIdx('JUEZ');
+            const iDelegado = colIdx('ID_DELEGADO') >= 0 ? colIdx('ID_DELEGADO') : colIdx('DELEGADO');
+
+            for (let i = headerRowIdx + 1; i < rows.length; i++) {
+              const row = rows[i];
+              const idLocalRaw = row[iIdLocal];
+              const idVisRaw   = row[iIdVis];
+              if ((idLocalRaw === undefined || idLocalRaw === '') && (idVisRaw === undefined || idVisRaw === '')) continue;
+
+              const idLocal = Number(idLocalRaw);
+              const idVis   = Number(idVisRaw);
+
+              if (isNaN(idLocal) || idLocal <= 0) {
+                errores.push(`Hoja "FASE 1" fila ${i + 1}: ID_LOCAL "${idLocalRaw}" no es un número válido.`);
+                continue;
+              }
+              if (isNaN(idVis) || idVis <= 0) {
+                errores.push(`Hoja "FASE 1" fila ${i + 1}: ID_VISITANTE "${idVisRaw}" no es un número válido.`);
+                continue;
+              }
+              if (!idsElegibles.has(idLocal)) {
+                errores.push(`Hoja "FASE 1" fila ${i + 1}: ID_LOCAL ${idLocal} no está en los equipos de este torneo.`);
+                continue;
+              }
+              if (!idsElegibles.has(idVis)) {
+                errores.push(`Hoja "FASE 1" fila ${i + 1}: ID_VISITANTE ${idVis} no está en los equipos de este torneo.`);
+                continue;
+              }
+              programacion.push({
+                idLocal,
+                nombreLocal:     String(row[iNomLocal]  ?? idsElegibles.get(idLocal) ?? '').trim(),
+                idVisitante:     idVis,
+                nombreVisitante: String(row[iNomVis]    ?? idsElegibles.get(idVis)   ?? '').trim(),
+                fecha:    String(row[iFecha]    ?? '').trim(),
+                hora:     String(row[iHora]     ?? '').trim(),
+                cancha:   String(row[iCancha]   ?? '').trim(),
+                juez:     String(row[iJuez]     ?? '').trim(),
+                delegado: iDelegado >= 0 ? String(row[iDelegado] ?? '').trim() : '',
+              });
+            }
+          }
+        }
+      }
+
+      input.value = '';
+
+      if (errores.length > 0) {
+        Swal.fire({
+          title: `Errores en el archivo (${errores.length})`,
+          html:
+            '<ul style="text-align:left;font-size:12px;max-height:320px;overflow:auto;margin:0;padding-left:16px">' +
+            errores.map((err) => `<li style="margin-bottom:4px">${err}</li>`).join('') +
+            '</ul>',
+          icon: 'error',
+          confirmButtonText: 'Cerrar y corregir',
+          width: '760px',
+        });
+        return;
+      }
+
+      if (grupos.length === 0) {
+        Swal.fire('Sin datos de grupos', 'No se encontraron hojas "GRUPO X" con equipos asignados.', 'warning');
+        return;
+      }
+
+      const totalPartidos = grupos.reduce(
+        (acc, g) => acc + (g.equipos.length * (g.equipos.length - 1)) / 2,
+        0
+      );
+      const gruposRows = grupos
+        .map((g) => {
+          const names = g.equipos.map((id) => idsElegibles.get(id) || `ID ${id}`).join(', ');
+          return `<tr>
+            <td style="padding:7px 12px;font-weight:700;color:#1f2937;white-space:nowrap;vertical-align:top;border-bottom:1px solid #f3f4f6">${g.nombre}</td>
+            <td style="padding:7px 12px;color:#374151;border-bottom:1px solid #f3f4f6;line-height:1.5;text-align:left">${names}</td>
+            <td style="padding:7px 12px;font-weight:700;color:#059669;text-align:center;border-bottom:1px solid #f3f4f6;white-space:nowrap">${g.equipos.length} eq.</td>
+          </tr>`;
+        })
+        .join('');
+
+      const fasesRows = fases
+        .map((f) => `<tr>
+          <td style="padding:7px 12px;font-weight:700;color:#1f2937;white-space:nowrap;border-bottom:1px solid #f3f4f6">Fase ${f.numFase}</td>
+          <td style="padding:7px 12px;color:#374151;border-bottom:1px solid #f3f4f6;text-align:left">${f.prePartidos.length} enfrentamiento(s) configurados</td>
+        </tr>`)
+        .join('');
+
+      const fasesSection = fases.length > 0 ? `
+        <div style="margin-top:16px">
+          <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px">
+            <span style="width:4px;height:16px;background:#7c3aed;border-radius:2px;display:inline-block;flex-shrink:0"></span>
+            <span style="font-weight:700;font-size:12px;color:#1f2937;text-transform:uppercase;letter-spacing:.05em">Fases</span>
+          </div>
+          <table style="width:100%;border-collapse:collapse;font-size:13px;border-radius:10px;overflow:hidden;border:1px solid #ede9fe">
+            <thead>
+              <tr style="background:#7c3aed">
+                <th style="padding:8px 12px;text-align:left;color:white;font-size:11px;text-transform:uppercase;letter-spacing:.06em">Fase</th>
+                <th style="padding:8px 12px;text-align:left;color:white;font-size:11px;text-transform:uppercase;letter-spacing:.06em">Cruces</th>
+              </tr>
+            </thead>
+            <tbody>${fasesRows}</tbody>
+          </table>
+        </div>` : '';
+
+      const progSection = programacion.length > 0 ? `
+        <div style="margin-top:12px;background:#eff6ff;border:1px solid #bfdbfe;border-radius:10px;padding:11px 14px;display:flex;align-items:center;gap:10px">
+          <span style="font-size:18px">📅</span>
+          <span style="color:#1e40af;font-weight:700;font-size:13px">${programacion.length} partido(s) con programación (fecha, hora, cancha, juez)</span>
+        </div>` : '';
+
+      Swal.fire({
+        title: 'Confirmar carga masiva',
+        html: `
+          <div style="text-align:left;font-size:13px;max-height:460px;overflow-y:auto;padding-right:2px">
+            <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px">
+              <span style="width:4px;height:16px;background:#059669;border-radius:2px;display:inline-block;flex-shrink:0"></span>
+              <span style="font-weight:700;font-size:12px;color:#1f2937;text-transform:uppercase;letter-spacing:.05em">Grupos — Fase 1</span>
+            </div>
+            <table style="width:100%;border-collapse:collapse;font-size:13px;border-radius:10px;overflow:hidden;border:1px solid #bbf7d0">
+              <thead>
+                <tr style="background:#059669">
+                  <th style="padding:8px 12px;text-align:left;color:white;font-size:11px;text-transform:uppercase;letter-spacing:.06em">Grupo</th>
+                  <th style="padding:8px 12px;text-align:left;color:white;font-size:11px;text-transform:uppercase;letter-spacing:.06em">Equipos</th>
+                  <th style="padding:8px 12px;text-align:center;color:white;font-size:11px;text-transform:uppercase;letter-spacing:.06em">#</th>
+                </tr>
+              </thead>
+              <tbody>${gruposRows}</tbody>
+            </table>
+            ${fasesSection}
+            ${progSection}
+            <div style="margin-top:14px;background:#ecfdf5;border:1px solid #6ee7b7;border-radius:10px;padding:11px 14px;display:flex;align-items:center;gap:10px">
+              <span style="font-size:18px">⚽</span>
+              <span style="color:#065f46;font-weight:700;font-size:13px">${totalPartidos} partidos de Fase 1 se generarán automáticamente</span>
+            </div>
+            <div style="margin-top:8px;background:#fffbeb;border:1px solid #fcd34d;border-radius:10px;padding:10px 14px;display:flex;align-items:flex-start;gap:8px">
+              <span style="font-size:14px;margin-top:1px">⚠️</span>
+              <span style="color:#92400e;font-size:12px">Los grupos, resultados y estadísticas actuales del torneo serán <strong>borrados</strong> y reemplazados con este archivo.</span>
+            </div>
+          </div>`,
+        icon: 'question',
+        showCancelButton: true,
+        confirmButtonText: 'Confirmar y cargar',
+        cancelButtonText: 'Cancelar',
+        confirmButtonColor: '#10b981',
+        width: '760px',
+      }).then((result) => {
+        if (result.isConfirmed) {
+          Swal.fire({
+            title: 'Procesando carga...',
+            html: `
+              <div style="display:flex;flex-direction:column;align-items:center;gap:14px;padding:10px 0">
+                <div style="font-size:13px;color:#6b7280;display:flex;flex-direction:column;gap:6px;text-align:left;width:100%;max-width:320px">
+                  <div style="display:flex;align-items:center;gap:8px"><span style="font-size:16px">🗑️</span><span>Borrando grupos y resultados anteriores</span></div>
+                  <div style="display:flex;align-items:center;gap:8px"><span style="font-size:16px">👥</span><span>Creando grupos y asignando equipos</span></div>
+                  <div style="display:flex;align-items:center;gap:8px"><span style="font-size:16px">📅</span><span>Generando partidos de Fase 1</span></div>
+                  <div style="display:flex;align-items:center;gap:8px"><span style="font-size:16px">🔗</span><span>Configurando cruces de fases siguientes</span></div>
+                </div>
+                <p style="font-size:11px;color:#9ca3af;margin:0">Por favor espera, no cierres esta ventana...</p>
+              </div>`,
+            allowOutsideClick: false,
+            allowEscapeKey: false,
+            showConfirmButton: false,
+            didOpen: () => Swal.showLoading(),
+          });
+          this.apiRest.cargarGruposExcel(this.idTorneo, grupos, fases, programacion).subscribe({
+            next: (res: any) => {
+              if (res.success) {
+                Swal.fire({ title: '¡Carga exitosa!', html: res.msj, icon: 'success' });
+                this.cargarDatos();
+              } else {
+                Swal.fire('Error en el servidor', res.msj, 'error');
+              }
+            },
+            error: () => Swal.fire('Error', 'No se pudo conectar con el servidor.', 'error'),
+          });
+        }
+      });
+    };
+    reader.readAsArrayBuffer(file);
+  }
+
+  tipoResul() {}
 
   VerTitulares(IdPartido: number) {
     this.idPartidoSelect = IdPartido;
@@ -1616,43 +2469,84 @@ export class InfoTComponent implements OnInit {
   }
 
   cambiarEstadoPart(equipoId: number, estadoActual: any): void {
-    const msj = estadoActual
-      ? '¿Desea excluir este equipo del torneo?'
-      : '¿Desea incluir este equipo en el torneo?';
+    const ejecutarCambio = (maxJugadores?: number | null) => {
+      this.isLoading = true;
+      this.apiRest
+        .cambiarEstadoPart(this.idTorneo, equipoId, estadoActual, maxJugadores)
+        .subscribe({
+          next: (res: any) => {
+            Swal.fire({ toast: true, position: 'top-end', icon: 'success', title: res.msj, showConfirmButton: false, timer: 2500 });
+            this.apiRest.get_All_equipos_torneo(this.idTorneo).subscribe({
+              next: (res: any) => { this.equiposTorneo = res.equiposTorneo; },
+              error: (err) => { console.error('Error al cargar equipos', err); },
+              complete: () => { this.isLoading = false; },
+            });
+          },
+          error: (err) => {
+            console.error('Error al cambiar estado', err);
+            this.isLoading = false;
+          },
+        });
+    };
 
+    if (estadoActual) {
+      Swal.fire({
+        title: '¿Excluir este equipo del torneo?',
+        icon: 'warning',
+        showDenyButton: true,
+        confirmButtonText: 'Sí, excluir',
+        denyButtonText: 'Cancelar',
+      }).then((result) => { if (result.isConfirmed) ejecutarCambio(); });
+    } else {
+      const maxGlobal = this.torneoSelect?.numero_maximo_jug ?? '';
+      Swal.fire({
+        title: 'Activar equipo en el torneo',
+        html: `
+          <p style="font-size:13px;color:#64748b;margin-bottom:16px;">Define el máximo de jugadores permitidos para este equipo en esta edición.</p>
+          <label style="display:block;font-size:10px;font-weight:900;color:#10b981;text-transform:uppercase;letter-spacing:.1em;text-align:left;margin-bottom:6px;">Máx. Jugadores</label>
+          <input id="swal-max-jug" type="number" min="1" max="200"
+            class="swal2-input" style="margin:0;width:100%"
+            placeholder="Ej. ${maxGlobal || 20}" value="${maxGlobal}">
+          <p style="font-size:10px;color:#94a3b8;margin-top:8px;text-align:left;">Dejar vacío para usar el límite global del torneo (${maxGlobal || '—'}).</p>`,
+        focusConfirm: false,
+        showDenyButton: true,
+        confirmButtonText: 'Activar',
+        denyButtonText: 'Cancelar',
+        preConfirm: () => {
+          const val = (document.getElementById('swal-max-jug') as HTMLInputElement)?.value?.trim();
+          return val ? parseInt(val, 10) : null;
+        }
+      }).then((result) => {
+        if (result.isConfirmed) ejecutarCambio(result.value);
+      });
+    }
+  }
+
+  editarMaxJug(eq: any): void {
     Swal.fire({
-      title: msj,
+      title: 'Editar Máx. Jugadores',
+      html: `
+        <p style="font-size:12px;color:#64748b;margin-bottom:14px;">Equipo: <strong>${eq.nombre}</strong></p>
+        <label style="display:block;font-size:10px;font-weight:900;color:#10b981;text-transform:uppercase;letter-spacing:.1em;text-align:left;margin-bottom:6px;">Máx. Jugadores</label>
+        <input id="swal-edit-max" type="number" min="1" max="200"
+          class="swal2-input" style="margin:0;width:100%"
+          placeholder="Ej. 20" value="${eq.max_jugadores ?? ''}">`,
+      focusConfirm: false,
       showDenyButton: true,
-      confirmButtonText: 'Sí',
-      denyButtonText: 'No',
+      confirmButtonText: 'Guardar',
+      denyButtonText: 'Cancelar',
+      preConfirm: () => {
+        const val = (document.getElementById('swal-edit-max') as HTMLInputElement)?.value?.trim();
+        return val ? parseInt(val, 10) : null;
+      }
     }).then((result) => {
       if (result.isConfirmed) {
-        this.isLoading = true;
-
-        this.apiRest
-          .cambiarEstadoPart(this.idTorneo, equipoId, estadoActual)
-          .subscribe({
-            next: (res: any) => {
-              Swal.fire(res.msj);
-
-              // Recargar equipos
-              this.apiRest.get_All_equipos_torneo(this.idTorneo).subscribe({
-                next: (res: any) => {
-                  this.equiposTorneo = res.equiposTorneo;
-                },
-                error: (err) => {
-                  console.error('Error al cargar equipos', err);
-                },
-                complete: () => {
-                  this.isLoading = false;
-                },
-              });
-            },
-            error: (err) => {
-              console.error('Error al cambiar estado', err);
-              this.isLoading = false;
-            },
-          });
+        this.apiRest.editMaxJugPart(this.idTorneo, eq.id, result.value).subscribe({
+          next: (res: any) => {
+            eq.max_jugadores = result.value;
+            Swal.fire({ toast: true, position: 'top-end', icon: 'success', title: res.msj, showConfirmButton: false, timer: 2000 });
+          }
+        });
       }
     });
   }
@@ -1679,11 +2573,16 @@ export class InfoTComponent implements OnInit {
           },
           complete: () => {
             this.isLoading = false;
-            this.ngOnInit(); // recarga los datos al final
+            this.cargarDatos();
           },
         });
       }
     });
+  }
+
+  get equiposTorneoVista(): Equipos[] {
+    if (Number(this.perfilUsuario) === 1) return this.equiposTorneo;
+    return this.equiposTorneo.filter((eq: any) => !!eq.estado);
   }
 
   JugadoresParticipante(IdEquipo: number) {
@@ -1713,7 +2612,7 @@ export class InfoTComponent implements OnInit {
         this.calendarioData = res.calendarioData;
         Swal.fire(res.msj);
         this.isLoading = false;
-        this.ngOnInit();
+        this.cargarDatos();
       });
   }
 
@@ -1796,12 +2695,6 @@ export class InfoTComponent implements OnInit {
       return;
     }
 
-    console.log('partido:', this.idPartidoD);
-    console.log('Guardar dirección para el equipo:', idEquipo);
-    console.log('Entrenador seleccionado:', entrenadorId);
-    console.log('Delegado seleccionado:', delegadoId);
-    console.log('Asistente seleccionado:', asistenteId);
-
     // Llamada al backend solo si hay alguno seleccionado
     this.apiRest
       .guardarDireccion(
@@ -1837,9 +2730,7 @@ export class InfoTComponent implements OnInit {
   }
 
   abrirImagen(imgUrl: string) {
-    if (!imgUrl) return; // evita abrir modal con imagen vacía
-
-    console.log(imgUrl);
+    if (!imgUrl) return;
 
     this.imagenSeleccionada = imgUrl;
 
@@ -1867,7 +2758,7 @@ export class InfoTComponent implements OnInit {
       .cambiarEquipoTr(this.idTorneo, this.equipoSelect, idEquipo)
       .subscribe((res: any) => {
         Swal.fire(res.msj);
-        this.ngOnInit(); // refresca datos si es necesario
+        this.cargarDatos();
       });
   }
 
@@ -2095,18 +2986,15 @@ export class InfoTComponent implements OnInit {
 
   aplicarFiltros(IdTorneo:any) {
 
-    console.log(IdTorneo);
   const nombre = this.filtroNombre?.toLowerCase() || '';
   const email = this.filtroEmail?.toLowerCase() || '';
   const IdT = IdTorneo;
 
   this.apiRest.get_All_equipos_torneoFilt(nombre,email,IdT).subscribe((res: any) => {
       this.equiposTorneo = res.equiposTorneo;
-     
+
   });
 
 }
-
-
 
 }

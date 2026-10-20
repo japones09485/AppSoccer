@@ -202,10 +202,9 @@ export class InfoTorneoComponent implements OnInit {
     this.VlParticipante = false;
     this.isSuccess = false;
 
-    this.usuario = this.apiRest.getUsuario();
+    this.usuario = this.apiRest.getUsuario()!;
 
     this.perfilUsuario = this.usuario ? this.usuario.perfil : 0;
-    console.log('Perfil de usuario:', this.perfilUsuario);
 
     this.acRouter.params.subscribe((param) => {
       this.idTorneo = param['idTorneo'];
@@ -239,7 +238,6 @@ export class InfoTorneoComponent implements OnInit {
         .get_All_equipos_torneo(this.idTorneo)
         .subscribe((res: any) => {
           this.equiposTorneo = res.equiposTorneo;
-          console.log('Equipos del torneo recargados:', this.equiposTorneo);
         });
 
       this.apiRest.getById_Grupos(this.idTorneo).subscribe((res: any) => {
@@ -260,7 +258,7 @@ export class InfoTorneoComponent implements OnInit {
         this.contCabezaGR = res.contCabezaGR;
       });
 
-      this.apiRest.get_Jueces_activos().subscribe((res: any) => {
+      this.apiRest.get_All_jueces().subscribe((res: any) => {
         this.jueces = res.jueces;
       });
 
@@ -450,19 +448,9 @@ export class InfoTorneoComponent implements OnInit {
   }
 
   opMenu(opc: number) {
-    if (opc == 1) {
-      this.VlInfo = true;
-      this.VlCalif = false;
-      this.VlParticipante = false;
-    } else if (opc == 2) {
-      this.VlCalif = true;
-      this.VlInfo = false;
-      this.VlParticipante = false;
-    } else if (opc == 3) {
-      this.VlInfo = false;
-      this.VlCalif = false;
-      this.VlParticipante = true;
-    }
+    this.VlInfo        = opc === 1;
+    this.VlCalif       = opc === 2;
+    this.VlParticipante = opc === 3;
   }
 
   calendarioPartidos(tipoCalendary: string) {

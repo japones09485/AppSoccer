@@ -6,7 +6,7 @@
 .custom-scrollbar::-webkit-scrollbar { width: 4px; }
 .custom-scrollbar::-webkit-scrollbar-thumb { background: #10b981; border-radius: 10px; }
 
-/* Estilos para NG-SELECT Cyber */
+/* Estilos para NG-SELECT */
 ::ng-deep .custom-ng-select .ng-select-container {
   @apply bg-white border-none rounded-2xl py-4 px-6 text-slate-900 font-black shadow-2xl !important;
 }
@@ -19,11 +19,12 @@
   @apply border-b border-white/5 !important;
 }
 
-/* Spinner Girando */
-.balon-girando {
-  animation: spin 2s linear infinite;
-}
+/* Spinner */
+.balon-girando { animation: spin 2s linear infinite; }
 @keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
 
-/* Fix para Inputs de Formulario (Texto Oscuro) */
+/* Fix inputs */
 input::placeholder { color: #94a3b8; font-weight: normal; }
+
+/* Sport Card – aspect ratio para la tarjeta del club */
+.sc-card-ratio { aspect-ratio: 2.5 / 3.5; }

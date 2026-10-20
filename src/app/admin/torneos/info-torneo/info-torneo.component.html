@@ -43,6 +43,12 @@
                 </a>
               </li>
 
+              <li class="nav-item" *ngIf="(this.perfilUsuario == 1 || this.perfilUsuario == 3)">
+                <a class="nav-link text-success hover-success" (click)="opMenu(4)">
+                  <i class="bi bi-ui-checks me-1"></i> Formulario inscripción
+                </a>
+              </li>
+
             </ul>
 
             <!-- Botón cerrar sesión alineado a la derecha -->
@@ -122,7 +128,7 @@
                 <ul class="list-group list-group-flush">
                   <li class="list-group-item d-flex justify-content-between">
                     <span>Nombre</span>
-                    <strong>{{ torneoSelect?.nombre }}</strong>
+                    <strong>{{ torneoSelect.nombre }}</strong>
                   </li>
                   <li class="list-group-item d-flex justify-content-between align-items-start">
                     <span>Descripción</span>
@@ -130,13 +136,13 @@
 
                       {{
                       mostrarDescripcionCompleta
-                      ? torneoSelect?.descripcion
-                      : ((torneoSelect?.descripcion || '') | slice:0:300) + ((torneoSelect?.descripcion?.length || 0)
+                      ? torneoSelect.descripcion
+                      : ((torneoSelect.descripcion || '') | slice:0:300) + ((torneoSelect.descripcion.length || 0)
                       > 300 ? '...' : '')
                       }}
 
                       <br>
-                      <a href="javascript:void(0)" *ngIf="(torneoSelect?.descripcion?.length || 0) > 300"
+                      <a href="javascript:void(0)" *ngIf="(torneoSelect.descripcion.length || 0) > 300"
                         (click)="mostrarDescripcionCompleta = !mostrarDescripcionCompleta">
                         {{ mostrarDescripcionCompleta ? 'Leer menos' : 'Leer más' }}
                       </a>
@@ -144,11 +150,11 @@
                   </li>
                   <li class="list-group-item d-flex justify-content-between">
                     <span>Inicio</span>
-                    <strong>{{ torneoSelect?.fecha_inicio }}</strong>
+                    <strong>{{ torneoSelect.fecha_inicio }}</strong>
                   </li>
                   <li class="list-group-item d-flex justify-content-between">
                     <span>Fin</span>
-                    <strong>{{ torneoSelect?.fecha_fin }}</strong>
+                    <strong>{{ torneoSelect.fecha_fin }}</strong>
 
                   </li>
                 </ul>
@@ -1365,6 +1371,34 @@
           </div>
 
 
+          <!-- TOP SCORER DESTACADO -->
+          <div class="top-scorer-card" *ngIf="goleadores && goleadores.length > 0">
+            <div class="top-scorer-crown">🏆</div>
+            <img [src]="pathIm + goleadores[0].img1" class="top-scorer-photo"
+              data-bs-toggle="modal" data-bs-target="#topScorerModal"
+              title="Ver foto">
+            <div class="top-scorer-info">
+              <div class="top-scorer-label">Goleador del torneo</div>
+              <div class="top-scorer-name">{{ goleadores[0].nombre }}</div>
+              <div class="top-scorer-goals">⚽ {{ goleadores[0].total_goles }} goles</div>
+            </div>
+            <img [src]="pathIm + goleadores[0].imgeq" class="top-scorer-team-logo" title="Equipo">
+          </div>
+
+          <!-- Lightbox foto goleador -->
+          <div class="modal fade lightbox-modal" id="topScorerModal" tabindex="-1" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered">
+              <div class="modal-content bg-transparent border-0 shadow-none">
+                <div class="modal-body text-center p-2 position-relative">
+                  <button type="button" class="btn-close btn-close-white position-absolute top-0 end-0 m-3"
+                    data-bs-dismiss="modal"></button>
+                  <img *ngIf="goleadores && goleadores.length > 0" [src]="pathIm + goleadores[0].img1"
+                    class="img-fluid rounded-3" style="max-height:80vh">
+                </div>
+              </div>
+            </div>
+          </div>
+
           <div class="card shadow-sm p-3 rounded ">
             <h5 class="text-white bg-success p-2 rounded text-center">Goleadores</h5>
             <div class="table-responsive">
@@ -1392,17 +1426,31 @@
                     <col style="width: 120px;"> <!-- Equipo -->
                   </colgroup>
                   <tbody>
-                    <tr *ngFor="let gol of goleadores" [title]="gol.nombre">
+                    <tr *ngFor="let gol of goleadores; let gi = index" [title]="gol.nombre"
+                      [class.gol-row-highlight]="gi === 0">
                       <td>
                         <img [src]="pathIm + gol.img1" class="rounded-circle border mb-1"
-                          style="width: 30px; height: 30px; object-fit: cover;" />
+                          style="width: 36px; height: 36px; object-fit: cover; cursor:pointer;"
+                          data-bs-toggle="modal" [attr.data-bs-target]="'#golFotoModal' + gi"
+                          title="Ver foto" />
                         <br>
-                        <small>{{ gol.nombre }}</small>
+                        <small class="fw-semibold">{{ gi === 0 ? '🏆 ' : '' }}{{ gol.nombre }}</small>
+                        <!-- Lightbox foto jugador -->
+                        <div class="modal fade lightbox-modal" [id]="'golFotoModal' + gi" tabindex="-1" aria-hidden="true">
+                          <div class="modal-dialog modal-dialog-centered">
+                            <div class="modal-content bg-transparent border-0 shadow-none">
+                              <div class="modal-body text-center p-2 position-relative">
+                                <button type="button" class="btn-close btn-close-white position-absolute top-0 end-0 m-3" data-bs-dismiss="modal"></button>
+                                <img [src]="pathIm + gol.img1" class="img-fluid rounded-3" style="max-height:80vh">
+                              </div>
+                            </div>
+                          </div>
+                        </div>
                       </td>
-                      <td>{{ gol.total_goles }}</td>
+                      <td class="fw-bold">{{ gol.total_goles }}</td>
                       <td>
                         <img [src]="pathIm + gol.imgeq" class="rounded-circle border mb-1"
-                          style="width: 30px; height: 30px; object-fit: cover;" />
+                          style="width: 32px; height: 32px; object-fit: cover;" />
                       </td>
                     </tr>
                   </tbody>
@@ -1545,276 +1593,259 @@
 
       <div *ngFor="let fase of calendarioData | keyvalue" class="mb-5">
 
-        <h3 class="text-white bg-primary p-2 rounded text-center m-3">
-          {{ nameFase(+fase.key) }}
-        </h3>
+        <div class="phase-header-pro m-3">
+          <span>⚽</span> {{ nameFase(+fase.key) }}
+        </div>
 
 
         <div *ngFor="let grupo of (fase.value | keyvalue)" class="mb-5">
 
 
 
-          <h4 class="mb-3 text-center">
-            <button *ngIf="this.perfilUsuario == 1" (click)="NuevoPartido(grupo)" type="button" class="btn btn-info m-2"
+          <div class="group-header-pro">
+            <button *ngIf="this.perfilUsuario == 1" (click)="NuevoPartido(grupo)" type="button"
+              class="mbtn mbtn-activate" style="font-size:.7rem;padding:2px 8px;"
               title="Agregar Partido"><i class="fa fa-plus"></i></button>
-            Grupo {{ grupo.key }}
-          </h4>
+            <span>Grupo {{ grupo.key }}</span>
+          </div>
 
-          <div class="table-responsive">
-            <table class="table table-bordered table-striped table-hover text-center align-middle">
-              <thead class="table-dark">
-                <tr>
-                  <th></th>
-                  <th>Codigo partido #</th>
-                  <th>Equipo 1</th>
-                  <th>Gl E1</th>
-                  <th>Equipo 2</th>
-                  <th>Gl E2</th>
-                  <th>Fecha</th>
-                  <th>Cancha</th>
-                  <th>Estado</th>
-                  <th *ngIf="this.perfilUsuario == 1 || this.perfilUsuario == 3">Acción</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr *ngFor="let partido of (grupo.value | ensureArray)">
+          <div class="matches-container">
+            <div class="match-card-pro" *ngFor="let partido of (grupo.value | ensureArray)">
 
-                  <td class="bg-success accion-columna">
+                  <!-- Status + ID bar -->
+                  <div class="match-meta-bar">
+                    <span class="match-code">Partido #{{ partido.id }}</span>
+                    <span class="mbadge mbadge-0" *ngIf="partido.estado == 0">Sin programar</span>
+                    <span class="mbadge mbadge-1" *ngIf="partido.estado == 1">Programado</span>
+                    <span class="mbadge mbadge-2" *ngIf="partido.estado == 2">Registrado</span>
+                    <span class="mbadge mbadge-3" *ngIf="partido.estado == 3">Aprobado ✓</span>
+                    <span class="mbadge mbadge-4" *ngIf="partido.estado == 4">Anulado</span>
+                  </div>
 
+                  <!-- Fixture: teams + score -->
+                  <div class="match-fixture">
+                    <div class="mteam mteam-left">
+                      <img [src]="pathIm + partido.foto_eq1" class="mteam-logo"
+                        (click)="VerResultados(partido)" data-bs-toggle="modal"
+                        [attr.data-bs-target]="partido.estado > 1 ? '#Info' + partido.id : null"
+                        [style.cursor]="partido.estado > 1 ? 'pointer' : 'default'"
+                        title="{{ partido.estado > 1 ? 'Ver resultado' : partido.name_eq_1 }}">
+                      <span class="mteam-name">{{ partido.name_eq_1 }}</span>
+                    </div>
+                    <div class="match-score-box">
+                      <span class="mscore" [class.mscore-win]="(partido.resultado?.resul_equipo1 || 0) > (partido.resultado?.resul_equipo2 || 0)">
+                        {{ partido.resultado?.resul_equipo1 ?? '-' }}
+                      </span>
+                      <span class="msep">:</span>
+                      <span class="mscore" [class.mscore-win]="(partido.resultado?.resul_equipo2 || 0) > (partido.resultado?.resul_equipo1 || 0)">
+                        {{ partido.resultado?.resul_equipo2 ?? '-' }}
+                      </span>
+                    </div>
+                    <div class="mteam mteam-right">
+                      <img [src]="pathIm + partido.foto_eq2" class="mteam-logo"
+                        (click)="VerResultados(partido)" data-bs-toggle="modal"
+                        [attr.data-bs-target]="partido.estado > 1 ? '#Info' + partido.id : null"
+                        [style.cursor]="partido.estado > 1 ? 'pointer' : 'default'"
+                        title="{{ partido.estado > 1 ? 'Ver resultado' : partido.name_eq_2 }}">
+                      <span class="mteam-name">{{ partido.name_eq_2 }}</span>
+                    </div>
+                  </div>
 
-                    <!-- Botón Inscribir jugadores -->
-                    <!--
-                    <button type="button" (click)="InscribirJugadoresPartido(partido)"
-                            *ngIf="(usuario?.perfil == 1 || usuario?.perfil == 3) && partido.estado != 3"
-                            class="btn btn-warning m-1" title="Inscribir jugadores">
-                      <i class="fa fa-plus"> . </i> <i class="fa fa-users"></i>
-                    </button>
-                    -->
+                  <!-- Schedule strip -->
+                  <div class="match-info-strip">
+                    <span *ngIf="partido.fecha">📅 {{ partido.fecha }}</span>
+                    <span *ngIf="partido.hora">⏰ {{ partido.hora }}</span>
+                    <span *ngIf="partido.cancha">📍 {{ getNombreCancha(partido.cancha) }}</span>
+                    <span *ngIf="!partido.fecha && !partido.hora && !partido.cancha" class="text-muted fst-italic">Sin programar</span>
+                  </div>
 
-
-
+                  <!-- Actions -->
+                  <div class="match-actions-row">
                     <!-- Botón ver resultados -->
-                    <button type="button" (click)="VerResultados(partido)" *ngIf="partido.estado >1 "
-                      class="btn btn-danger m-1" title="Resultado partido" data-bs-toggle="modal"
+                    <button type="button" (click)="VerResultados(partido)" *ngIf="partido.estado > 1"
+                      class="mbtn mbtn-view" title="Ver resultado" data-bs-toggle="modal"
                       [attr.data-bs-target]="'#Info' + partido.id">
-                      <i class="fa fa-search"></i>
+                      <i class="fa fa-search"></i> Ver resultado
                     </button>
 
 
                     <button type="button" (click)="VerTitulares(partido.id)"
-                      *ngIf="torneoSelect?.estado == 1 && usuario && usuario.fk_equipo && (partido.fk_equipo1 == usuario.fk_equipo || partido.fk_equipo2 == usuario.fk_equipo)"
-                      class="btn btn-warning m-1" title="jugadores titulares" data-bs-toggle="modal"
+                      *ngIf="torneoSelect.estado == 1 && usuario && usuario.fk_equipo && (partido.fk_equipo1 == usuario.fk_equipo || partido.fk_equipo2 == usuario.fk_equipo)"
+                      class="mbtn mbtn-team" title="Jugadores titulares" data-bs-toggle="modal"
                       [attr.data-bs-target]="'#modalVerJugadores'">
-                      <i class="fa fa-users"></i>
+                      <i class="fa fa-users"></i> Titulares
                     </button>
 
-
-
                     <button type="button" (click)="VerTitularesPartido(partido.id)"
-                      *ngIf="(usuario?.perfil == 1 || usuario?.perfil == 3)" class="btn btn-info m-1"
-                      title="jugadores partido" data-bs-toggle="modal" [attr.data-bs-target]="'#modalVerJugadoresIns'">
+                      *ngIf="(usuario?.perfil == 1 || usuario?.perfil == 3)" class="mbtn mbtn-team"
+                      title="Jugadores partido" data-bs-toggle="modal" [attr.data-bs-target]="'#modalVerJugadoresIns'">
                       <i class="fa fa-users"></i>
                     </button>
 
                     <button type="button" (click)="direccionTecnicaP(partido.id)"
                       *ngIf="(usuario?.perfil == 1 || usuario?.perfil == 2 || usuario?.perfil == 3)"
-                      class="btn btn-primary m-1" title="Direccion Tecnica" data-bs-toggle="modal"
+                      class="mbtn mbtn-team" title="Dirección Técnica" data-bs-toggle="modal"
                       [attr.data-bs-target]="'#modalDireccion'">
-                      <i class="fa fa-users"></i>
+                      <i class="fa fa-clipboard"></i>
                     </button>
 
 
-                    <!-- Modal info resultados -->
+                    <!-- Modal info resultados — estilo betting app -->
                     <div class="modal fade" [id]="'Info' + partido.id" tabindex="-1"
-                      [attr.aria-labelledby]="'calenModalLabel' + partido.id" aria-hidden="true">
-                      <div class="modal-dialog modal-lg">
-                        <div class="modal-content">
+                      [attr.aria-labelledby]="'InfoLabel' + partido.id" aria-hidden="true">
+                      <div class="modal-dialog modal-lg modal-dialog-centered">
+                        <div class="modal-content match-modal-pro">
 
-                          <!-- Modal Header -->
-                          <div class="modal-header flex-column align-items-center">
-                            <h3 class="text-center text-success w-100">Resultados partido</h3>
-                            <button type="button" class="btn-close position-absolute end-0 top-0 m-2"
+                          <!-- Scoreboard header -->
+                          <div class="match-modal-header">
+                            <button type="button" class="match-modal-close btn-close btn-close-white"
                               data-bs-dismiss="modal" aria-label="Close"></button>
+                            <div class="match-modal-scoreboard" *ngIf="ResultadosEq1 && ResultadosEq2">
+                              <div class="modal-team">
+                                <img [src]="pathIm + ResultadosEq1.foto" class="modal-team-logo"
+                                  data-bs-dismiss="modal" data-bs-toggle="modal"
+                                  [attr.data-bs-target]="'#imgModal' + partido.id + 'eq1'"
+                                  title="Ver foto en grande">
+                                <span class="modal-team-name">{{ ResultadosEq1.nombre }}</span>
+                              </div>
+                              <div class="modal-score-center">
+                                <div class="modal-score-display">
+                                  <span [class.score-winner]="ResultadosEq1.resultado.goles > ResultadosEq2.resultado.goles">
+                                    {{ ResultadosEq1.resultado.goles }}
+                                  </span>
+                                  <span class="modal-score-dash">—</span>
+                                  <span [class.score-winner]="ResultadosEq2.resultado.goles > ResultadosEq1.resultado.goles">
+                                    {{ ResultadosEq2.resultado.goles }}
+                                  </span>
+                                </div>
+                                <div class="modal-finished-label">Resultado final</div>
+                                <div class="modal-penalties" *ngIf="ResultadosEq1.resultado.ampli_penaltis == 'S'">
+                                  Definido por penaltis
+                                </div>
+                              </div>
+                              <div class="modal-team">
+                                <img [src]="pathIm + ResultadosEq2.foto" class="modal-team-logo"
+                                  data-bs-dismiss="modal" data-bs-toggle="modal"
+                                  [attr.data-bs-target]="'#imgModal' + partido.id + 'eq2'"
+                                  title="Ver foto en grande">
+                                <span class="modal-team-name">{{ ResultadosEq2.nombre }}</span>
+                              </div>
+                            </div>
                           </div>
 
-                          <!-- Modal Body -->
-                          <div class="modal-body">
+                          <!-- Events body -->
+                          <div class="match-modal-events p-0" *ngIf="ResultadosEq1 && ResultadosEq2">
+                            <div class="match-events-grid">
 
-                            <div class="container mt-4" *ngIf="ResultadosEq1 && ResultadosEq2">
-                              <div class="row">
-                                <!-- Equipo 1 -->
-                                <div class="col-md-6">
-                                  <div class="card border-success mb-4 shadow">
-                                    <div class="card-header bg-success text-white text-center fw-bold">
-                                      {{ ResultadosEq1.nombre }}
-                                    </div>
-                                    <div class="card-body text-center">
-                                      <img [src]="pathIm + ResultadosEq1.foto" alt="Foto equipo 1"
-                                        class="img-fluid rounded mb-3" style="max-height: 100px;">
-
-                                      <p><strong>Goles:</strong> {{ ResultadosEq1.resultado.goles }}</p>
-                                      <p><strong>Juego limpio:</strong> {{ ResultadosEq1.resultado.juego_limpio }}</p>
-
-                                      <!-- Goles -->
-                                      <div *ngIf="ResultadosEq1.goles.length > 0" class="mb-4 border-top pt-3">
-                                        <h6 class="text-success"><i class="fas fa-futbol"></i> Goleadores</h6>
-                                        <ul class="list-group">
-                                          <li *ngFor="let nombre of ResultadosEq1.goles" class="list-group-item">
-                                            ⚽ {{ nombre }}
-                                          </li>
-                                        </ul>
-                                      </div>
-
-                                      <!-- Ampliacion -->
-                                      <p><strong>Ampliacion por penaltis:</strong> {{
-                                        this.ResultadosEq1.resultado.ampli_penaltis }}</p>
-
-
-                                      <!-- Tarjetas -->
-                                      <div *ngIf="ResultadosEq1.amarillas.length > 0 || ResultadosEq1.rojas.length > 0"
-                                        class="border-top pt-3">
-
-                                        <div *ngIf="ResultadosEq1.amarillas.length > 0">
-                                          <strong class="text-warning">Amarillas:</strong>
-                                          <ul class="list-group mb-2">
-                                            <li *ngFor="let nombre of ResultadosEq1.amarillas" class="list-group-item">
-                                              🟨 {{ nombre }}
-                                            </li>
-                                          </ul>
-                                        </div>
-
-                                        <div *ngIf="ResultadosEq1.rojas.length > 0">
-                                          <strong class="text-danger">Rojas:</strong>
-                                          <ul class="list-group">
-                                            <li *ngFor="let nombre of ResultadosEq1.rojas" class="list-group-item">
-                                              🟥 {{ nombre }}
-                                            </li>
-                                          </ul>
-                                        </div>
-                                      </div>
-                                    </div>
+                              <!-- EQ1 events -->
+                              <div class="events-col events-left">
+                                <div class="event-section" *ngIf="ResultadosEq1.goles?.length > 0">
+                                  <div class="event-type-label">⚽ Goles</div>
+                                  <div class="event-item" *ngFor="let nombre of ResultadosEq1.goles">
+                                    <span class="event-name">{{ nombre }}</span>
+                                    <span class="event-icon">⚽</span>
                                   </div>
                                 </div>
-
-                                <!-- Equipo 2 -->
-                                <div class="col-md-6">
-                                  <div class="card border-primary mb-4 shadow">
-                                    <div class="card-header bg-primary text-white text-center fw-bold">
-                                      {{ ResultadosEq2.nombre }}
-                                    </div>
-                                    <div class="card-body text-center">
-                                      <img [src]="pathIm + ResultadosEq2.foto" alt="Foto equipo 2"
-                                        class="img-fluid rounded mb-3" style="max-height: 100px;">
-
-                                      <p><strong>Goles:</strong> {{ ResultadosEq2.resultado.goles }}</p>
-                                      <p><strong>Juego limpio:</strong> {{ ResultadosEq2.resultado.juego_limpio }}</p>
-
-                                      <!-- Goles -->
-                                      <div *ngIf="ResultadosEq2.goles.length > 0" class="mb-4 border-top pt-3">
-                                        <h6 class="text-primary"><i class="fas fa-futbol"></i> Goleadores</h6>
-                                        <ul class="list-group">
-                                          <li *ngFor="let nombre of ResultadosEq2.goles" class="list-group-item">
-                                            ⚽ {{ nombre }}
-                                          </li>
-                                        </ul>
-                                      </div>
-
-                                      <!-- Ampliacion -->
-                                      <p><strong>Ampliacion por penaltis:</strong> {{
-                                        this.ResultadosEq1.resultado.ampli_penaltis }}</p>
-
-                                      <!-- Tarjetas -->
-                                      <div *ngIf="ResultadosEq2.amarillas.length > 0 || ResultadosEq2.rojas.length > 0"
-                                        class="border-top pt-3">
-                                        <h6 class="text-warning"><i class="fas fa-square"></i> Tarjetas</h6>
-
-                                        <div *ngIf="ResultadosEq2.amarillas.length > 0">
-                                          <strong class="text-warning">Amarillas:</strong>
-                                          <ul class="list-group mb-2">
-                                            <li *ngFor="let nombre of ResultadosEq2.amarillas" class="list-group-item">
-                                              🟨 {{ nombre }}
-                                            </li>
-                                          </ul>
-                                        </div>
-
-                                        <div *ngIf="ResultadosEq2.rojas.length > 0">
-                                          <strong class="text-danger">Rojas:</strong>
-                                          <ul class="list-group">
-                                            <li *ngFor="let nombre of ResultadosEq2.rojas" class="list-group-item">
-                                              🟥 {{ nombre }}
-                                            </li>
-                                          </ul>
-                                        </div>
-                                      </div>
-                                    </div>
+                                <div class="event-section" *ngIf="ResultadosEq1.amarillas?.length > 0">
+                                  <div class="event-type-label">Amarillas</div>
+                                  <div class="event-item" *ngFor="let nombre of ResultadosEq1.amarillas">
+                                    <span class="event-name">{{ nombre }}</span>
+                                    <span class="event-icon">🟨</span>
                                   </div>
+                                </div>
+                                <div class="event-section" *ngIf="ResultadosEq1.rojas?.length > 0">
+                                  <div class="event-type-label">Rojas</div>
+                                  <div class="event-item" *ngFor="let nombre of ResultadosEq1.rojas">
+                                    <span class="event-name">{{ nombre }}</span>
+                                    <span class="event-icon">🟥</span>
+                                  </div>
+                                </div>
+                                <div class="event-section-empty"
+                                  *ngIf="ResultadosEq1.goles?.length == 0 && ResultadosEq1.amarillas?.length == 0 && ResultadosEq1.rojas?.length == 0">
+                                  Sin eventos registrados
+                                </div>
+                              </div>
+
+                              <div class="events-divider"></div>
+
+                              <!-- EQ2 events -->
+                              <div class="events-col events-right">
+                                <div class="event-section" *ngIf="ResultadosEq2.goles?.length > 0">
+                                  <div class="event-type-label">Goles ⚽</div>
+                                  <div class="event-item event-item-right" *ngFor="let nombre of ResultadosEq2.goles">
+                                    <span class="event-icon">⚽</span>
+                                    <span class="event-name">{{ nombre }}</span>
+                                  </div>
+                                </div>
+                                <div class="event-section" *ngIf="ResultadosEq2.amarillas?.length > 0">
+                                  <div class="event-type-label">Amarillas</div>
+                                  <div class="event-item event-item-right" *ngFor="let nombre of ResultadosEq2.amarillas">
+                                    <span class="event-icon">🟨</span>
+                                    <span class="event-name">{{ nombre }}</span>
+                                  </div>
+                                </div>
+                                <div class="event-section" *ngIf="ResultadosEq2.rojas?.length > 0">
+                                  <div class="event-type-label">Rojas</div>
+                                  <div class="event-item event-item-right" *ngFor="let nombre of ResultadosEq2.rojas">
+                                    <span class="event-icon">🟥</span>
+                                    <span class="event-name">{{ nombre }}</span>
+                                  </div>
+                                </div>
+                                <div class="event-section-empty"
+                                  *ngIf="ResultadosEq2.goles?.length == 0 && ResultadosEq2.amarillas?.length == 0 && ResultadosEq2.rojas?.length == 0">
+                                  Sin eventos registrados
                                 </div>
                               </div>
                             </div>
 
-
-
+                            <!-- Fair play footer -->
+                            <div class="match-extra-info">
+                              <span>🏅 Juego limpio: {{ ResultadosEq1.resultado.juego_limpio }} — {{ ResultadosEq2.resultado.juego_limpio }}</span>
+                            </div>
                           </div>
 
+                          <div class="text-center py-4" *ngIf="!ResultadosEq1 || !ResultadosEq2">
+                            <div class="spinner-border text-success"></div>
+                          </div>
 
                         </div>
                       </div>
                     </div>
 
-                  </td>
+                    <!-- Photo lightboxes (click en logo → ampliar) -->
+                    <div class="modal fade lightbox-modal" [id]="'imgModal' + partido.id + 'eq1'" tabindex="-1" aria-hidden="true">
+                      <div class="modal-dialog modal-dialog-centered">
+                        <div class="modal-content bg-transparent border-0 shadow-none">
+                          <div class="modal-body text-center p-2 position-relative">
+                            <button type="button" class="btn-close btn-close-white position-absolute top-0 end-0 m-3"
+                              data-bs-dismiss="modal"></button>
+                            <img [src]="pathIm + ResultadosEq1?.foto" class="img-fluid rounded-3" style="max-height:80vh">
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="modal fade lightbox-modal" [id]="'imgModal' + partido.id + 'eq2'" tabindex="-1" aria-hidden="true">
+                      <div class="modal-dialog modal-dialog-centered">
+                        <div class="modal-content bg-transparent border-0 shadow-none">
+                          <div class="modal-body text-center p-2 position-relative">
+                            <button type="button" class="btn-close btn-close-white position-absolute top-0 end-0 m-3"
+                              data-bs-dismiss="modal"></button>
+                            <img [src]="pathIm + ResultadosEq2?.foto" class="img-fluid rounded-3" style="max-height:80vh">
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div><!-- /match-actions-row -->
 
+                  <!-- Admin action buttons (Programar, Resultado, Validar, etc.) -->
+                  <ng-container *ngIf="this.perfilUsuario == 1 || this.perfilUsuario == 3">
+                    <div class="match-actions-row" style="border-top:none;padding-top:0;">
 
-                  <td>
-                    {{ partido.id }}
-                  </td>
-
-                  <td class="bg-success text-center">
-                    <img [src]="pathIm + partido.foto_eq1" alt=""
-                      style="width: 40px; height: 40px; object-fit: cover; border-radius: 50%;">
-                    {{ partido.name_eq_1 }}
-                  </td>
-
-                  <td class="bg-danger text-center">{{ partido.resultado?.resul_equipo1 || '-' }}</td>
-
-                  <td class="bg-success text-center">
-                    <img [src]="pathIm + partido.foto_eq2" alt=""
-                      style="width: 40px; height: 40px; object-fit: cover; border-radius: 50%;">
-                    {{ partido.name_eq_2 }}
-                  </td>
-
-                  <td class="bg-danger text-center">{{ partido.resultado?.resul_equipo2 || '-' }}</td>
-
-                  <td class="bg-success text-center">
-                    {{ (partido.fecha && partido.hora) ? (partido.fecha + ' - ' + partido.hora) : '-' }}
-                  </td>
-
-                  <td class="bg-success text-center">{{ getNombreCancha(partido.cancha) || '-' }}</td>
-
-                  <td class="bg-secondary" *ngIf="partido.estado == 0">
-                    -
-                  </td>
-                  <td class="bg-success" *ngIf="partido.estado == 1">
-                    Programado
-                  </td>
-                  <td class="bg-primary" *ngIf="partido.estado == 2">
-                    Registrado
-                  </td>
-                  <td class="bg-warning" *ngIf="partido.estado == 3">
-                    Aprobado
-                  </td>
-                  <td class="bg-danger" *ngIf="partido.estado == 4">
-                    Anulado
-                  </td>
-
-                  <td class="bg-success accion-columna" *ngIf="this.perfilUsuario == 1 || this.perfilUsuario == 3 ">
-                    <!-- Botones de acciones, modales, etc. -->
-
-
-                    <!-- Botón que abre el modal (solo si partido.estado == 0) -->
-                    <button *ngIf="partido.estado < 2 && this.perfilUsuario != 0 " (click)="resetProgramacion()"
-                      type="button" class="btn btn-warning" data-bs-toggle="modal"
+                    <!-- Botón Programar -->
+                    <button *ngIf="partido.estado < 2 && this.perfilUsuario != 0" (click)="resetProgramacion()"
+                      type="button" class="mbtn mbtn-schedule" data-bs-toggle="modal"
                       [attr.data-bs-target]="'#calenModal' + partido.id">
-                      <i class="fa fa-calendar"></i>
+                      <i class="fa fa-calendar"></i> Programar
                     </button>
 
                     <!-- Modal programacion -->
@@ -1890,10 +1921,10 @@
                     </div>
 
 
-                    <button type="button" *ngIf="partido.estado <=2 && this.perfilUsuario != 0 "
-                      class="btn btn-danger m-1" data-bs-toggle="modal" (click)="resetearFormularioResul()"
+                    <button type="button" *ngIf="partido.estado <= 2 && this.perfilUsuario != 0"
+                      class="mbtn mbtn-result" data-bs-toggle="modal" (click)="resetearFormularioResul()"
                       [attr.data-bs-target]="'#Resultado' + partido.id">
-                      <i class="fa fa-calendar"></i> Resultado
+                      <i class="fa fa-pencil"></i> Resultado
                     </button>
 
                     <!-- Modal resultado -->
@@ -2197,33 +2228,33 @@
                     </div>
 
                     <button type="button" *ngIf="partido.estado != 3 && this.perfilUsuario != 0"
-                      (click)="ValidarResultado(partido.id, partido.estado, partido.fk_torneo,partido.fase)"
-                      class="btn btn-danger m-1">
-                      <i class="fa fa-check"></i> Validar Resultado
+                      (click)="ValidarResultado(partido.id, partido.estado, partido.fk_torneo, partido.fase)"
+                      class="mbtn mbtn-validate">
+                      <i class="fa fa-check"></i> Validar
                     </button>
 
                     <button type="button" *ngIf="partido.estado == 3 && this.perfilUsuario == 1"
                       (click)="ReversarResultado(partido.id, partido.estado, partido.fk_torneo)"
-                      class="btn btn-warning m-1">
-                      <i class="fa fa-check"></i> Reversar Resultado
+                      class="mbtn mbtn-reverse">
+                      <i class="fa fa-undo"></i> Reversar
                     </button>
 
                     <button type="button" *ngIf="partido.estado < 3 && this.perfilUsuario == 1"
-                      (click)="AnularPartido(partido.id, partido.fk_torneo,4) " class="btn btn-danger m-1">
-                      <i class="fa fa-close"></i> Anular Partido
+                      (click)="AnularPartido(partido.id, partido.fk_torneo, 4)" class="mbtn mbtn-cancel">
+                      <i class="fa fa-times"></i> Anular
                     </button>
 
                     <button type="button" *ngIf="partido.estado == 4 && this.perfilUsuario == 1"
-                      (click)="ActivarPartido(partido.id, partido.fk_torneo,0)" class="btn btn-info m-1">
-                      <i class="fa fa-plus"></i> Activar Partido
+                      (click)="ActivarPartido(partido.id, partido.fk_torneo, 0)" class="mbtn mbtn-activate">
+                      <i class="fa fa-plus"></i> Activar
                     </button>
 
-                  </td>
-                </tr>
-              </tbody>
-            </table>
-          </div>
-        </div>
+                    </div><!-- /match-actions-row admin -->
+                  </ng-container><!-- /ng-container perfilUsuario -->
+
+            </div><!-- /match-card-pro -->
+          </div><!-- /matches-container -->
+        </div><!-- /grupo ngFor -->
 
         <!-- BOTÓN POR FASE -->
         <div class="d-flex justify-content-center">

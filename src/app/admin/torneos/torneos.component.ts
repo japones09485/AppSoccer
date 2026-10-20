@@ -1,4 +1,6 @@
-import { Component, OnInit, ViewChild, ElementRef } from '@angular/core';
+import { Component, OnInit, OnDestroy, ViewChild, ElementRef, DestroyRef, inject } from '@angular/core';
+import { ImageCropperComponent, ImageTransform } from 'ngx-image-cropper';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import Swal from 'sweetalert2';
 import { Router } from '@angular/router';
 import { ApiService } from "../../services/api.service";
@@ -13,11 +15,11 @@ import { FormsModule } from '@angular/forms';
 
 @Component({
   selector: 'app-torneos',
-  imports: [CommonModule, ReactiveFormsModule, FormsModule, PaginacionComponent, NgOptimizedImage],
+  imports: [CommonModule, ReactiveFormsModule, FormsModule, PaginacionComponent, NgOptimizedImage, ImageCropperComponent],
   templateUrl: './torneos.component.html',
   styleUrl: './torneos.component.css'
 })
-export class TorneosComponent implements OnInit {
+export class TorneosComponent implements OnInit, OnDestroy {
 
   torneos: Torneos[] = [];
   torneoSelect !: Torneos;
@@ -47,50 +49,49 @@ export class TorneosComponent implements OnInit {
   cargando: boolean = false;
   archivoSeleccionado: File | null = null;
 
+  private readonly destroyRef = inject(DestroyRef);
+
   constructor(private apiRest: ApiService,
     private fb: FormBuilder,
     private router: Router
   ) { }
 
   ngOnInit(): void {
-
     this.initForm();
     this.loadCategorias();
     this.creando = false;
     this.apiRest.get_All_torneos()
-      .subscribe((res: any) => {
-        this.torneos = res.torneos;
-        this.paginas = res.cant_paginas;
-
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe({
+        next: (res: any) => {
+          this.torneos = res.torneos;
+          this.paginas = res.cant_paginas;
+        },
+        error: () => Swal.fire('Error al cargar los torneos')
       });
   }
 
   sigPag(pag: number) {
-
-
-    this.apiRest.get_All_torneos(pag)
-      .subscribe((res: any) => {
+    this.apiRest.get_All_torneos(pag).subscribe({
+      next: (res: any) => {
         this.torneos = res.torneos;
         this.paginas = res.cant_paginas;
-
-      });
-
+      },
+      error: () => Swal.fire('Error al cargar la página')
+    });
   }
 
-    // Al cargar categorías, conviértelo a número:
-    loadCategorias() {
-        this.apiRest.get_All_categorias_activas().subscribe((res: any) => {
-
-          this.categoriasDisponibles = res.categoriasDisponibles.map((cat: any) => ({
-            id: Number(cat.id),   // aquí convierto id a número
-            nombre: cat.nombre
-          }));
-
-
-        });
-
-      }
-
+  loadCategorias() {
+    this.apiRest.get_All_categorias_activas().subscribe({
+      next: (res: any) => {
+        this.categoriasDisponibles = res.categoriasDisponibles.map((cat: any) => ({
+          id: Number(cat.id),
+          nombre: cat.nombre
+        }));
+      },
+      error: () => Swal.fire('Error al cargar categorías')
+    });
+  }
 
   initForm() {
     this.TorneoForm = this.fb.group({
@@ -111,7 +112,7 @@ export class TorneosComponent implements OnInit {
       InfoJugadores: [''],
       num_gruposF7: [''],
       categoria: ['',],
-      Rninas: ['',]
+      Rninas: ['',],
 
     });
   }
@@ -121,27 +122,36 @@ export class TorneosComponent implements OnInit {
     this.creando = true;
   }
 
-    saveTorneo() {
-
-      this.frmGuardar.append('data', JSON.stringify(this.TorneoForm.value));
-      this.frmGuardar.append('operacion', this.operation);
-      this.frmGuardar.append('idEdit', JSON.stringify(this.idEdit));
-
-
-      this.isLoading = true;
-      this.apiRest.addTorneo(this.frmGuardar)
-        .subscribe((data: any) => {
-          if (data.success == true) {
-            this.torneos = data.torneos;
-            Swal.fire(data.msj);
-            this.isLoading = false;
-            this.initForm();
-            this.creando = false;
-
-          }
-
-        });
+  saveTorneo() {
+    if (this.TorneoForm.invalid) {
+      this.TorneoForm.markAllAsTouched();
+      return;
     }
+
+    this.frmGuardar.set('data', JSON.stringify(this.TorneoForm.value));
+    this.frmGuardar.set('operacion', this.operation);
+    this.frmGuardar.set('idEdit', JSON.stringify(this.idEdit));
+
+    this.isLoading = true;
+    this.apiRest.addTorneo(this.frmGuardar).subscribe({
+      next: (data: any) => {
+        this.isLoading = false;
+        if (data.success == true) {
+          this.torneos = data.torneos;
+          Swal.fire(data.msj);
+          this.initForm();
+          this.creando = false;
+          this.frmGuardar = new FormData();
+        } else {
+          Swal.fire(data.msj || 'Error al guardar el torneo');
+        }
+      },
+      error: () => {
+        this.isLoading = false;
+        Swal.fire('Error de conexión. Intenta de nuevo.');
+      }
+    });
+  }
 
   deleteTorneo(id: number) {
 
@@ -168,12 +178,15 @@ export class TorneosComponent implements OnInit {
   editTorneo(id: number) {
     this.idEdit = id;
     this.operation = 'edit';
+    this.frmGuardar = new FormData();
+    this.filePreviews = {};
+    this.fileNames = {};
+    this.currentSlide = 0;
     this.apiRest.getById_Torneo(id)
       .subscribe((res: any) => {
 
 
         this.torneoSelect = res.torneo;
-        console.log(this.torneoSelect);
 
         this.cantFase = this.torneoSelect.num_fases as number;
         this.controlEdad = this.torneoSelect.control_edad ?? false;
@@ -216,16 +229,61 @@ export class TorneosComponent implements OnInit {
   uploadImage(ev: any, numFile: number) {
     const inputFile = ev.target as HTMLInputElement;
     if (inputFile.files && inputFile.files.length > 0) {
-      // Agregar el archivo al formulario
       this.frmGuardar.append(`${numFile}`, inputFile.files[0]);
-
-      // Obtener el label asociado y actualizar su texto
       const fileName = inputFile.files[0].name;
       const labelElement = document.getElementById(`labelFile${numFile}`);
-      if (labelElement) {
-        labelElement.textContent = fileName;
-      }
+      if (labelElement) labelElement.textContent = fileName;
     }
+  }
+
+  cropperVisible = false;
+  cropperSlot = 0;
+  cropperImageFile: File | undefined = undefined;
+  cropperTransform: ImageTransform = {};
+  filePreviews: { [key: number]: string } = {};
+  fileNames: { [key: number]: string } = {};
+  @ViewChild('imageCropperRef2') private imageCropperRef2!: ImageCropperComponent;
+
+  abrirCropper(ev: any, numFile: number) {
+    const file: File | undefined = ev.target?.files?.[0];
+    if (!file) return;
+    if (!file.type.startsWith('image/')) { this.uploadImage(ev, numFile); return; }
+    this.cropperSlot = numFile;
+    this.cropperImageFile = file;
+    this.cropperTransform = {};
+    this.fileNames[numFile] = file.name;
+    this.cropperVisible = true;
+  }
+  cropperRotarLeft()  { this.cropperTransform = { ...this.cropperTransform, rotate: (this.cropperTransform.rotate ?? 0) - 90 }; }
+  cropperRotarRight() { this.cropperTransform = { ...this.cropperTransform, rotate: (this.cropperTransform.rotate ?? 0) + 90 }; }
+  confirmarCrop() {
+    if (!this.imageCropperRef2) return;
+    const result = this.imageCropperRef2.crop('base64');
+    if (!result?.base64) return;
+    const slot = this.cropperSlot;
+    const fname = this.fileNames[slot] || `foto_${slot}.jpg`;
+    this.filePreviews[slot] = result.base64;
+    const file = this.base64ToFile(result.base64, fname);
+    this.frmGuardar.delete(String(slot));
+    this.frmGuardar.append(String(slot), file);
+    this.cerrarCropper();
+  }
+  cerrarCropper() {
+    this.cropperVisible = false;
+    this.cropperImageFile = undefined;
+    this.cropperTransform = {};
+    const input = document.getElementById(`fileInput${this.cropperSlot}`) as HTMLInputElement;
+    if (input) input.value = '';
+  }
+  triggerInput(n: number) { (document.getElementById(`fileInput${n}`) as HTMLInputElement)?.click(); }
+  private base64ToFile(dataUrl: string, filename: string): File {
+    const arr = dataUrl.split(',');
+    const mime = arr[0].match(/:(.*?);/)![1];
+    const bstr = atob(arr[1]);
+    let n = bstr.length;
+    const u8arr = new Uint8Array(n);
+    while (n--) u8arr[n] = bstr.charCodeAt(n);
+    return new File([u8arr], filename, { type: mime });
   }
 
   onControlEdadChange(event: any): void {
@@ -256,7 +314,6 @@ export class TorneosComponent implements OnInit {
     this.router.navigate(['/InfoT/'+InfoTorneo]); // Reemplaza con tu ruta
   }
 
-
   getNombreCategoria(idCategoria: string | undefined): string {
     const id = Number(idCategoria);
     if (!idCategoria || isNaN(id)) {
@@ -277,8 +334,6 @@ export class TorneosComponent implements OnInit {
             Swal.fire(res.msj);
 
       });
-    console.log('Nuevo estado:', nuevoEstado, 'para:', tr);
-    // Aquí puedes agregar llamada al backend si lo necesitas
   }
 
 
@@ -341,7 +396,6 @@ prevSlide() {
   this.currentSlide = this.currentSlide === 0 ? 1 : 0;
 }
 
-// Asegúrate de detener el slider cuando se cierre el componente
 ngOnDestroy() {
   this.stopAutoSlider();
 }

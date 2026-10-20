@@ -47,6 +47,7 @@ export class InsJugadorComponent implements OnInit {
   imageBase64: string = '';
   imageURL: string = '';
   archivosSeleccionados: { [key: number]: string } = {};
+  previewUrls: { [key: number]: string } = {};
   procesandoImagenes: boolean = false;
 
   constructor(
@@ -75,10 +76,9 @@ export class InsJugadorComponent implements OnInit {
     });
     // Limpiar FormData y los inputs de archivo residuales
     this.frmGuardar = new FormData();
+    this.previewUrls = {};
     for (let i = 1; i <= 4; i++) {
-      const inputElem = document.getElementById(
-        `image${i}`,
-      ) as HTMLInputElement;
+      const inputElem = document.getElementById(`image${i}`) as HTMLInputElement;
       if (inputElem) inputElem.value = '';
       delete this.archivosSeleccionados[i];
     }
@@ -106,8 +106,8 @@ export class InsJugadorComponent implements OnInit {
       // IMPORTANTE: Usamos .set para que si el usuario cambia la foto, se sobreescriba y no se duplique
       this.frmGuardar.set(this.currentFileNum.toString(), file);
 
-      this.archivosSeleccionados[this.currentFileNum] =
-        '✓ Imagen lista y optimizada';
+      this.archivosSeleccionados[this.currentFileNum] = '✓ Imagen lista y optimizada';
+      this.previewUrls[this.currentFileNum] = URL.createObjectURL(imgBlob);
       this.showCropper = false;
       this.croppedImageBlob = null;
 
@@ -126,6 +126,26 @@ export class InsJugadorComponent implements OnInit {
       Swal.fire('Atención', 'Complete los campos obligatorios', 'warning');
       return;
     }
+
+    // Confirmación fecha de nacimiento
+    const rawDate = this.JugadorForm.get('fch_nacimiento')?.value;
+    const [y, m, d] = (rawDate || '').split('-');
+    const fechaLegible = rawDate ? `${d}/${m}/${y}` : '(no ingresada)';
+
+    const confirmFecha = await Swal.fire({
+      icon: 'question',
+      title: '📅 Confirma tu fecha de nacimiento',
+      html: `<p style="font-size:15px;margin:8px 0 4px;">¿La fecha de nacimiento que ingresaste es correcta?</p>
+             <p style="font-size:22px;font-weight:900;color:#0f1c2e;margin:10px 0;">${fechaLegible}</p>
+             <p style="font-size:12px;color:#ef4444;margin:0;">⚠️ Una fecha incorrecta puede causar problemas en el torneo.</p>`,
+      confirmButtonText: 'Sí, es correcta',
+      denyButtonText: 'No, corregir',
+      showDenyButton: true,
+      confirmButtonColor: '#10b981',
+      denyButtonColor: '#ef4444',
+    });
+
+    if (!confirmFecha.isConfirmed) return;
 
     // Confirmación de términos (SweetAlert)
     const result = await Swal.fire({

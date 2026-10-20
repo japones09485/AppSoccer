@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
 import Swal from 'sweetalert2';
 import { ApiService } from "../../services/api.service";
 import { CommonModule } from '@angular/common';
@@ -10,10 +10,11 @@ import { Modal } from 'bootstrap';
 import { Router, ActivatedRoute } from '@angular/router';
 import { EscanerComponent } from '../../components/escaner/escaner.component';
 import { DatosCedula } from '../../services/cedula-parser.service';
+import { ImageCropperComponent, ImageTransform } from 'ngx-image-cropper';
 
 @Component({
   selector: 'app-jugadores',
-  imports: [CommonModule, ReactiveFormsModule, FormsModule, PaginacionComponent, EscanerComponent],
+  imports: [CommonModule, ReactiveFormsModule, FormsModule, PaginacionComponent, EscanerComponent, ImageCropperComponent],
   templateUrl: './jugadores.component.html',
   styleUrl: './jugadores.component.css'
 })
@@ -58,6 +59,13 @@ export class JugadoresComponent implements OnInit {
   fileNames: { [key: number]: string } = {};
   carouselPreviews: { [key: number]: string } = {};
   mostrarCamara: boolean = false;
+
+  // ── Editor de imagen (recorte + rotación) ──
+  cropperVisible = false;
+  cropperSlot = 0;
+  cropperImageFile: File | undefined = undefined;
+  cropperTransform: ImageTransform = {};
+  @ViewChild('imageCropperRef') private imageCropperRef!: ImageCropperComponent;
   cameraSlot: number = 0;
   private mediaStream: MediaStream | null = null;
   departamentos: any[] = [];
@@ -113,7 +121,8 @@ export class JugadoresComponent implements OnInit {
     this.ciudades = [];
     if (!idDepto) return;
     this.apiRest.get_ciudades_by_departamento(idDepto).subscribe((res: any) => {
-      this.ciudades = res.ciudades || [];
+      this.ciudades = (res.ciudades || []).sort((a: any, b: any) =>
+        a.nombre.localeCompare(b.nombre, 'es'));
       if (selectedCiudad) {
         this.JugadorForm.patchValue({ fk_ciudad: String(selectedCiudad) }, { emitEvent: false });
       }
@@ -213,8 +222,15 @@ export class JugadoresComponent implements OnInit {
                 ⚠️&nbsp; ${res.msj}
               </div>
             </div>`,
-          confirmButtonText: 'Entendido',
-          confirmButtonColor: '#ef4444',
+          confirmButtonText: '✏️ Editar jugador',
+          confirmButtonColor: '#16a34a',
+          showDenyButton: true,
+          denyButtonText: 'Cerrar',
+          denyButtonColor: '#374151',
+        }).then(result => {
+          if (result.isConfirmed && jug.id) {
+            this.editJugador(jug.id);
+          }
         });
         return;
       }
@@ -252,6 +268,24 @@ export class JugadoresComponent implements OnInit {
   saveJugador() {
     const idTorneo = this.route.snapshot.paramMap.get('idTorneo');
     const idEquipo = this.route.snapshot.paramMap.get('idEquipo');
+
+    const rawDate = this.JugadorForm.get('fch_nacimiento')?.value;
+    const [y, m, d] = (rawDate || '').split('-');
+    const fechaLegible = rawDate ? `${d}/${m}/${y}` : '(no ingresada)';
+
+    Swal.fire({
+      icon: 'question',
+      title: '📅 Confirma la fecha de nacimiento',
+      html: `<p style="font-size:15px;margin:8px 0 4px;">¿La fecha de nacimiento ingresada es correcta?</p>
+             <p style="font-size:22px;font-weight:900;color:#0f1c2e;margin:10px 0;">${fechaLegible}</p>
+             <p style="font-size:12px;color:#ef4444;margin:0;">⚠️ Una fecha incorrecta puede causar problemas en el torneo.</p>`,
+      confirmButtonText: 'Sí, es correcta',
+      denyButtonText: 'No, corregir',
+      showDenyButton: true,
+      confirmButtonColor: '#10b981',
+      denyButtonColor: '#ef4444',
+    }).then((confirm) => {
+      if (!confirm.isConfirmed) return;
 
     Swal.fire({
       title: "Aviso importante",
@@ -298,6 +332,7 @@ export class JugadoresComponent implements OnInit {
           });
       }
     });
+    }); // cierre confirmación fecha nacimiento
 
 
 
@@ -626,6 +661,61 @@ export class JugadoresComponent implements OnInit {
     (document.getElementById(`fileInput${i}`) as HTMLInputElement)?.click();
   }
 
+  // ── Cropper: abrir desde input de archivo ──
+  abrirCropper(ev: any, numFile: number) {
+    const file: File | undefined = ev.target?.files?.[0];
+    if (!file) return;
+
+    // No-imagen (PDF, etc.) → flujo original sin editor
+    if (!file.type.startsWith('image/')) {
+      this.uploadImage(ev, numFile);
+      return;
+    }
+
+    this.cropperSlot      = numFile;
+    this.cropperImageFile = file ?? undefined;
+    this.cropperTransform = {};
+    this.fileNames[numFile] = file.name;
+    this.cropperVisible = true;
+  }
+
+  // ── Cropper: abrir desde captura de cámara ──
+  abrirCropperDesdeBase64(base64: string, slot: number) {
+    const fname = `foto_soporte_${slot}.jpg`;
+    this.cropperSlot      = slot;
+    this.cropperImageFile = this.base64ToFile(base64, fname);
+    this.cropperTransform = {};
+    this.fileNames[slot]  = fname;
+    this.cropperVisible   = true;
+  }
+
+  cropperRotarLeft()  { this.cropperTransform = { ...this.cropperTransform, rotate: (this.cropperTransform.rotate ?? 0) - 90 }; }
+  cropperRotarRight() { this.cropperTransform = { ...this.cropperTransform, rotate: (this.cropperTransform.rotate ?? 0) + 90 }; }
+
+  confirmarCrop() {
+    if (!this.imageCropperRef) return;
+    // crop('base64') es síncrono en ngx-image-cropper v9
+    const result = this.imageCropperRef.crop('base64');
+    if (!result || !result.base64) return;
+
+    const slot  = this.cropperSlot;
+    const fname = this.fileNames[slot] || `foto_${slot}.jpg`;
+    const b64   = result.base64;
+
+    this.filePreviews[slot] = b64;
+    const file = this.base64ToFile(b64, fname);
+    this.frmGuardar.delete(String(slot));
+    this.frmGuardar.append(String(slot), file);
+
+    this.cerrarCropper();
+  }
+
+  cerrarCropper() {
+    this.cropperVisible   = false;
+    this.cropperImageFile = undefined;
+    this.cropperTransform = {};
+  }
+
   abrirCamara(i: number) {
     this.cameraSlot = i;
     this.mostrarCamara = true;
@@ -652,18 +742,10 @@ export class JugadoresComponent implements OnInit {
     canvas.width = video.videoWidth;
     canvas.height = video.videoHeight;
     canvas.getContext('2d')?.drawImage(video, 0, 0);
-    canvas.toBlob(blob => {
-      if (!blob) return;
-      const file = new File([blob], `foto_soporte_${this.cameraSlot}.jpg`, { type: 'image/jpeg' });
-      this.frmGuardar.append(`${this.cameraSlot}`, file);
-      this.fileNames[this.cameraSlot] = file.name;
-      const reader = new FileReader();
-      reader.onload = (e: any) => { this.filePreviews[this.cameraSlot] = e.target.result; };
-      reader.readAsDataURL(file);
-      const lbl = document.getElementById(`labelFile${this.cameraSlot}`);
-      if (lbl) lbl.textContent = file.name;
-      this.cerrarCamara();
-    }, 'image/jpeg', 0.92);
+    const base64 = canvas.toDataURL('image/jpeg', 0.92);
+    this.cerrarCamara();
+    // Abrir editor (recorte + rotación) con la foto capturada
+    this.abrirCropperDesdeBase64(base64, this.cameraSlot);
   }
 
   cerrarCamara() {

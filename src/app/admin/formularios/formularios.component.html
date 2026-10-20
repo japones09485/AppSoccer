@@ -1,0 +1,420 @@
+<div class="min-h-screen bg-zinc-50 dark:bg-[#09090b] antialiased">
+
+  <!-- HEADER -->
+  <div class="relative overflow-hidden bg-white dark:bg-[#080f09] border-b border-zinc-200 dark:border-green-950/80 px-6 py-8">
+    <div class="absolute right-0 top-0 h-full w-[38%] bg-gradient-to-br from-green-600 to-green-800 [clip-path:polygon(16%_0%,100%_0%,100%_100%,0%_100%)]">
+      <span class="absolute left-[58%] -translate-x-1/2 top-[36%] -translate-y-1/2 text-[3.5rem] leading-none opacity-[0.14] select-none pointer-events-none">📋</span>
+      <span class="absolute left-[58%] -translate-x-1/2 top-[66%] -translate-y-1/2 text-[2.3rem] font-black text-white/[0.22] leading-none tracking-tighter whitespace-nowrap select-none pointer-events-none">FORMULARIOS</span>
+    </div>
+    <div class="relative z-10 max-w-[62%]">
+      <div class="inline-flex items-center gap-2 bg-green-600/10 border border-green-600/25 text-green-700 dark:text-green-400 text-[9px] font-bold tracking-[0.2em] uppercase px-3 py-1.5 rounded-full mb-3">
+        <span class="w-1.5 h-1.5 rounded-full bg-green-500 animate-pulse"></span>
+        Gestión de formularios
+      </div>
+      <h1 class="text-4xl sm:text-5xl font-black tracking-tight uppercase leading-none text-zinc-900 dark:text-white">
+        FORMU<span class="text-green-600 dark:text-green-400">LARIOS</span>
+      </h1>
+      <div class="w-10 h-[3px] bg-green-600 rounded-full mt-3 mb-2"></div>
+      <p class="text-zinc-500 dark:text-zinc-400 text-xs sm:text-sm">Crea formularios de inscripción reutilizables.</p>
+    </div>
+  </div>
+
+  <!-- TOOLBAR -->
+  <div class="bg-white dark:bg-[#111113] border-b border-zinc-100 dark:border-[#1c1c1f] px-4 py-3 flex items-center justify-end gap-2">
+    <button (click)="abrirModalCopiar()"
+      class="inline-flex items-center gap-1.5 border border-zinc-200 dark:border-[#303038] bg-white dark:bg-[#1b1b1f] text-zinc-700 dark:text-zinc-300 hover:border-sky-400 hover:text-sky-600 px-3 py-2 rounded-lg font-bold text-xs sm:text-sm transition-all">
+      <i class="fa fa-copy"></i>
+      <span class="hidden sm:inline">Copiar formulario</span>
+    </button>
+    <button (click)="creando = !creando"
+      class="inline-flex items-center gap-1.5 bg-green-600 hover:bg-green-700 text-white px-3 py-2 rounded-lg font-bold text-xs sm:text-sm transition-all shadow-sm">
+      <i [class]="creando ? 'fa fa-times' : 'fa fa-plus'"></i>
+      <span class="hidden sm:inline">{{ creando ? 'Cancelar' : 'Nuevo formulario' }}</span>
+      <span class="sm:hidden">{{ creando ? 'Cancelar' : 'Nuevo' }}</span>
+    </button>
+  </div>
+
+  <div class="max-w-4xl mx-auto px-3 sm:px-6 py-5 space-y-3">
+
+    <!-- PANEL CREAR -->
+    <div *ngIf="creando" class="bg-white dark:bg-[#1b1b1f] rounded-2xl border border-green-300 dark:border-green-500/40 p-4 shadow-sm">
+      <p class="text-[10px] font-black uppercase tracking-widest text-green-600 dark:text-green-400 mb-3">Nuevo formulario</p>
+      <div class="flex flex-col sm:flex-row gap-2">
+        <input [(ngModel)]="nuevoNombre" (keyup.enter)="crear()" autofocus
+          class="flex-1 bg-zinc-50 dark:bg-[#111113] border border-zinc-200 dark:border-[#303038] rounded-xl px-4 py-2.5 text-sm text-zinc-900 dark:text-white outline-none focus:border-green-400 transition-colors"
+          placeholder="Ej: Formulario Copa Élite 2026...">
+        <button (click)="crear()" [disabled]="guardando"
+          class="px-5 py-2.5 bg-green-600 hover:bg-green-700 disabled:opacity-50 text-white text-sm font-bold rounded-xl shadow shadow-green-600/25 transition-all flex items-center justify-center gap-2">
+          <i [class]="guardando ? 'fa fa-spinner fa-spin' : 'fa fa-arrow-right'"></i>
+          {{ guardando ? 'Creando...' : 'Crear y editar' }}
+        </button>
+      </div>
+    </div>
+
+    <!-- CARGANDO -->
+    <div *ngIf="cargando" class="flex items-center justify-center py-20">
+      <i class="fa fa-spinner fa-spin text-3xl text-zinc-400"></i>
+    </div>
+
+    <!-- SIN FORMULARIOS -->
+    <div *ngIf="!cargando && formularios.length === 0 && !creando"
+      class="bg-white dark:bg-[#1b1b1f] rounded-2xl border border-zinc-200 dark:border-[#303038] p-12 text-center">
+      <div class="w-14 h-14 bg-green-50 dark:bg-green-500/10 rounded-2xl flex items-center justify-center mx-auto mb-4">
+        <i class="fa fa-wpforms text-2xl text-green-500"></i>
+      </div>
+      <p class="text-sm font-bold text-zinc-700 dark:text-white mb-1">Sin formularios creados</p>
+      <p class="text-xs text-zinc-500 dark:text-zinc-400">Crea el primero con "+ Nuevo formulario".</p>
+    </div>
+
+    <!-- LISTA -->
+    <div *ngIf="!cargando && formularios.length > 0"
+      class="bg-white dark:bg-[#1b1b1f] rounded-2xl border border-zinc-200 dark:border-[#303038] overflow-hidden divide-y divide-zinc-100 dark:divide-[#303038]">
+
+      <div *ngFor="let f of formularios" class="p-4 hover:bg-zinc-50 dark:hover:bg-[#202024] transition-colors">
+
+        <!-- Fila superior: icono + info + toggle -->
+        <div class="flex items-center gap-3">
+          <div class="w-9 h-9 rounded-xl flex-shrink-0 flex items-center justify-center"
+            [ngClass]="f.activo ? 'bg-green-50 dark:bg-green-500/10' : 'bg-zinc-100 dark:bg-[#2a2a2e]'">
+            <i class="fa fa-wpforms"
+              [ngClass]="f.activo ? 'text-green-600 dark:text-green-400' : 'text-zinc-400 dark:text-zinc-500'"></i>
+          </div>
+          <div class="flex-1 min-w-0">
+            <p class="text-sm font-bold text-zinc-900 dark:text-white truncate">{{ f.titulo }}</p>
+            <div class="flex items-center gap-2 mt-0.5 flex-wrap">
+              <span class="text-[10px] text-zinc-400 dark:text-zinc-500">
+                <i class="fa fa-th-list mr-1"></i>{{ f.num_campos ?? 0 }} bloque{{ (f.num_campos ?? 0) !== 1 ? 's' : '' }}
+              </span>
+              <label class="relative inline-flex items-center cursor-pointer" (click)="$event.stopPropagation()">
+                <input type="checkbox" [checked]="f.activo" (change)="toggleActivo(f)" class="sr-only peer">
+                <div class="w-7 h-4 bg-zinc-200 dark:bg-zinc-700 rounded-full peer peer-checked:bg-green-500 transition-colors"></div>
+                <div class="absolute left-0.5 top-0.5 w-3 h-3 bg-white rounded-full transition-transform peer-checked:translate-x-3 shadow"></div>
+              </label>
+              <span class="text-[10px] font-bold uppercase"
+                [ngClass]="f.activo ? 'text-green-600 dark:text-green-400' : 'text-zinc-400 dark:text-zinc-500'">
+                {{ f.activo ? 'Activo' : 'Inactivo' }}
+              </span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Botones abajo, en fila que se wrap si es necesario -->
+        <div class="flex flex-wrap items-center gap-1.5 mt-3 ml-12">
+          <button (click)="verResultados(f)"
+            class="inline-flex items-center gap-1 px-2.5 py-1.5 rounded-lg border border-zinc-200 dark:border-[#303038] text-[11px] font-bold text-zinc-600 dark:text-zinc-300 hover:text-violet-600 hover:border-violet-300 hover:bg-violet-50 dark:hover:bg-violet-500/10 transition-all">
+            <i class="fa fa-bar-chart"></i> <span>Resultados</span>
+          </button>
+          <button (click)="copiarLink(f)"
+            class="inline-flex items-center gap-1 px-2.5 py-1.5 rounded-lg border border-zinc-200 dark:border-[#303038] text-[11px] font-bold text-zinc-600 dark:text-zinc-300 hover:text-sky-600 hover:border-sky-300 hover:bg-sky-50 dark:hover:bg-sky-500/10 transition-all">
+            <i class="fa fa-link"></i> <span>Copiar link</span>
+          </button>
+          <button (click)="editar(f.id)"
+            class="inline-flex items-center gap-1 px-2.5 py-1.5 rounded-lg border border-zinc-200 dark:border-[#303038] text-[11px] font-bold text-zinc-600 dark:text-zinc-300 hover:text-green-600 hover:border-green-300 hover:bg-green-50 dark:hover:bg-green-500/10 transition-all">
+            <i class="fa fa-pencil"></i> <span>Editar</span>
+          </button>
+          <button (click)="eliminar(f)"
+            class="inline-flex items-center gap-1 px-2.5 py-1.5 rounded-lg border border-zinc-200 dark:border-[#303038] text-[11px] font-bold text-zinc-600 dark:text-zinc-300 hover:text-rose-600 hover:border-rose-300 hover:bg-rose-50 dark:hover:bg-rose-500/10 transition-all">
+            <i class="fa fa-trash-o"></i> <span>Eliminar</span>
+          </button>
+        </div>
+
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════════════════════════════ -->
+<!-- MODAL COPIAR                                                           -->
+<!-- ══════════════════════════════════════════════════════════════════════ -->
+<div *ngIf="modalCopiar" class="fixed inset-0 z-50 flex items-end sm:items-center justify-center sm:p-4" (click)="cerrarModalCopiar()">
+  <div class="absolute inset-0 bg-black/50 backdrop-blur-sm"></div>
+  <div class="relative bg-white dark:bg-[#1b1b1f] rounded-t-2xl sm:rounded-2xl shadow-2xl w-full sm:max-w-lg overflow-hidden" (click)="$event.stopPropagation()">
+
+    <div class="flex items-center justify-between px-5 py-4 border-b border-zinc-100 dark:border-[#303038]">
+      <div>
+        <p class="text-[10px] font-black uppercase tracking-widest text-sky-600 dark:text-sky-400 mb-0.5">Duplicar formulario</p>
+        <h3 class="text-base font-black text-zinc-900 dark:text-white">Copiar formulario</h3>
+      </div>
+      <button (click)="cerrarModalCopiar()" class="w-8 h-8 flex items-center justify-center rounded-xl text-zinc-400 hover:text-zinc-700 hover:bg-zinc-100 dark:hover:bg-[#2a2a2e] transition-colors">
+        <i class="fa fa-times"></i>
+      </button>
+    </div>
+
+    <div class="p-5 space-y-4">
+      <div>
+        <p class="text-[10px] font-black uppercase tracking-widest text-zinc-400 mb-2">1. Selecciona el formulario a copiar</p>
+        <div class="border border-zinc-200 dark:border-[#303038] rounded-xl overflow-hidden divide-y divide-zinc-100 dark:divide-[#303038] max-h-48 overflow-y-auto">
+          <button *ngFor="let f of formularios" type="button" (click)="seleccionarOrigen(f)"
+            class="w-full flex items-center gap-3 px-4 py-3 text-left transition-all"
+            [ngClass]="origenSeleccionado?.id === f.id ? 'bg-sky-50 dark:bg-sky-500/10' : 'hover:bg-zinc-50 dark:hover:bg-[#202024]'">
+            <div class="w-4 h-4 rounded-full border-2 flex-shrink-0 flex items-center justify-center"
+              [ngClass]="origenSeleccionado?.id === f.id ? 'border-sky-500' : 'border-zinc-300 dark:border-zinc-600'">
+              <div *ngIf="origenSeleccionado?.id === f.id" class="w-2 h-2 rounded-full bg-sky-500"></div>
+            </div>
+            <div class="flex-1 min-w-0">
+              <p class="text-sm font-semibold text-zinc-800 dark:text-white truncate">{{ f.titulo }}</p>
+              <p class="text-[10px] text-zinc-400">{{ f.num_campos ?? 0 }} bloques · <span [ngClass]="f.activo ? 'text-green-500' : ''">{{ f.activo ? 'Activo' : 'Inactivo' }}</span></p>
+            </div>
+          </button>
+        </div>
+      </div>
+      <div>
+        <label class="block text-[10px] font-black uppercase tracking-widest text-zinc-400 mb-2">2. Nombre del nuevo formulario</label>
+        <input [(ngModel)]="nombreCopia" (keyup.enter)="confirmarCopia()"
+          class="w-full bg-zinc-50 dark:bg-[#111113] border border-zinc-200 dark:border-[#303038] rounded-xl px-4 py-2.5 text-sm text-zinc-900 dark:text-white outline-none focus:border-sky-400 transition-colors"
+          placeholder="Escribe un nombre único...">
+      </div>
+    </div>
+
+    <div class="flex gap-2 px-5 py-4 border-t border-zinc-100 dark:border-[#303038]">
+      <button (click)="cerrarModalCopiar()" class="flex-1 px-4 py-2.5 text-sm font-bold text-zinc-500 hover:text-zinc-800 hover:bg-zinc-100 dark:hover:bg-[#2a2a2e] rounded-xl transition-colors">Cancelar</button>
+      <button (click)="confirmarCopia()" [disabled]="copiando || !origenSeleccionado || !nombreCopia.trim()"
+        class="flex-1 px-4 py-2.5 bg-sky-600 hover:bg-sky-700 disabled:opacity-50 disabled:cursor-not-allowed text-white text-sm font-bold rounded-xl transition-all flex items-center justify-center gap-2">
+        <i [class]="copiando ? 'fa fa-spinner fa-spin' : 'fa fa-copy'"></i>
+        {{ copiando ? 'Copiando...' : 'Copiar' }}
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════════════════════════════ -->
+<!-- MODAL RESULTADOS                                                       -->
+<!-- ══════════════════════════════════════════════════════════════════════ -->
+<div *ngIf="modalResultados" class="fixed inset-0 z-50 flex items-end sm:items-center justify-center sm:p-4" (click)="cerrarResultados()">
+  <div class="absolute inset-0 bg-black/60 backdrop-blur-sm"></div>
+
+  <div class="relative bg-white dark:bg-[#1b1b1f] rounded-t-2xl sm:rounded-2xl shadow-2xl w-full sm:max-w-2xl flex flex-col" style="max-height: 92vh;" (click)="$event.stopPropagation()">
+
+    <!-- Header -->
+    <div class="flex items-center gap-3 px-4 py-3.5 border-b border-zinc-100 dark:border-[#303038] flex-shrink-0">
+      <button *ngIf="respuestaDetalle" (click)="volverListado()"
+        class="w-8 h-8 flex-shrink-0 flex items-center justify-center rounded-xl text-zinc-400 hover:text-violet-600 hover:bg-violet-50 dark:hover:bg-violet-500/10 transition-colors">
+        <i class="fa fa-arrow-left"></i>
+      </button>
+      <div class="flex-1 min-w-0">
+        <p class="text-[10px] font-black uppercase tracking-widest text-violet-600 dark:text-violet-400 mb-0.5 truncate">
+          {{ respuestaDetalle ? respuestaDetalle.email : (respuestasResultados.length + ' respuesta' + (respuestasResultados.length !== 1 ? 's' : '')) }}
+        </p>
+        <h3 class="text-sm font-black text-zinc-900 dark:text-white truncate">{{ formularioResultados?.titulo }}</h3>
+      </div>
+      <div class="flex items-center gap-1.5 flex-shrink-0">
+        <button *ngIf="!respuestaDetalle && respuestasResultados.length > 0" (click)="exportarExcel()"
+          class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold transition-all">
+          <i class="fa fa-file-excel-o"></i>
+          <span class="hidden sm:inline">Excel</span>
+        </button>
+        <button *ngIf="respuestaDetalle" (click)="descargarPDF(respuestaDetalle)"
+          class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-rose-600 hover:bg-rose-700 text-white text-xs font-bold transition-all">
+          <i class="fa fa-file-pdf-o"></i>
+          <span class="hidden sm:inline">PDF</span>
+        </button>
+        <button (click)="cerrarResultados()"
+          class="w-8 h-8 flex items-center justify-center rounded-xl text-zinc-400 hover:text-zinc-700 dark:hover:text-white hover:bg-zinc-100 dark:hover:bg-[#2a2a2e] transition-colors">
+          <i class="fa fa-times"></i>
+        </button>
+      </div>
+    </div>
+
+    <!-- Body -->
+    <div class="flex-1 overflow-y-auto">
+
+      <!-- Cargando -->
+      <div *ngIf="cargandoResultados" class="flex items-center justify-center py-14">
+        <i class="fa fa-spinner fa-spin text-3xl text-zinc-300"></i>
+      </div>
+
+      <!-- Sin respuestas -->
+      <div *ngIf="!cargandoResultados && !respuestaDetalle && respuestasResultados.length === 0" class="text-center py-14 px-6">
+        <div class="w-14 h-14 bg-violet-50 dark:bg-violet-500/10 rounded-2xl flex items-center justify-center mx-auto mb-4">
+          <i class="fa fa-inbox text-2xl text-violet-400"></i>
+        </div>
+        <p class="text-sm font-bold text-zinc-700 dark:text-white mb-1">Sin respuestas aún</p>
+        <p class="text-xs text-zinc-400">Nadie ha diligenciado este formulario todavía.</p>
+      </div>
+
+      <!-- ── LISTADO (tarjetas) ── -->
+      <div *ngIf="!cargandoResultados && !respuestaDetalle && respuestasResultados.length > 0"
+        class="p-3 space-y-2">
+
+        <div *ngFor="let r of respuestasResultados; let i = index"
+          class="bg-zinc-50 dark:bg-[#111113] border border-zinc-100 dark:border-[#303038] rounded-xl p-3.5 flex items-center gap-3">
+
+          <!-- Número -->
+          <span class="w-7 h-7 flex-shrink-0 bg-violet-100 dark:bg-violet-500/20 text-violet-700 dark:text-violet-300 text-xs font-black rounded-lg flex items-center justify-center">
+            {{ i + 1 }}
+          </span>
+
+          <!-- Info -->
+          <div class="flex-1 min-w-0">
+            <p class="text-sm font-bold text-zinc-800 dark:text-white truncate">{{ r.email }}</p>
+            <p class="text-[10px] text-zinc-400 mt-0.5">{{ r.created_at | date:'dd/MM/yyyy · HH:mm' }}</p>
+          </div>
+
+          <!-- Acciones -->
+          <div class="flex items-center gap-1.5 flex-shrink-0">
+            <button (click)="verDetalle(r)"
+              class="w-8 h-8 flex items-center justify-center rounded-lg border border-zinc-200 dark:border-[#303038] text-zinc-500 dark:text-zinc-400 hover:text-violet-600 hover:border-violet-300 hover:bg-violet-50 dark:hover:bg-violet-500/10 transition-all"
+              title="Ver detalle">
+              <i class="fa fa-eye text-sm"></i>
+            </button>
+            <button (click)="descargarPDF(r)"
+              class="w-8 h-8 flex items-center justify-center rounded-lg border border-zinc-200 dark:border-[#303038] text-zinc-500 dark:text-zinc-400 hover:text-rose-600 hover:border-rose-300 hover:bg-rose-50 dark:hover:bg-rose-500/10 transition-all"
+              title="Descargar PDF">
+              <i class="fa fa-file-pdf-o text-sm"></i>
+            </button>
+            <button (click)="eliminarRespuesta(r)"
+              class="w-8 h-8 flex items-center justify-center rounded-lg border border-zinc-200 dark:border-[#303038] text-zinc-500 dark:text-zinc-400 hover:text-rose-600 hover:border-rose-300 hover:bg-rose-50 dark:hover:bg-rose-500/10 transition-all"
+              title="Eliminar respuesta">
+              <i class="fa fa-trash-o text-sm"></i>
+            </button>
+          </div>
+
+        </div>
+
+        <p class="text-[10px] text-zinc-400 text-center pt-1">
+          {{ respuestasResultados.length }} respuesta{{ respuestasResultados.length !== 1 ? 's' : '' }} en total
+        </p>
+      </div>
+
+      <!-- ── DETALLE ── -->
+      <div *ngIf="!cargandoResultados && respuestaDetalle" class="p-4 space-y-2.5">
+
+        <p class="text-[10px] text-zinc-400 flex items-center gap-1.5 mb-1">
+          <i class="fa fa-calendar-o"></i>
+          {{ respuestaDetalle.created_at | date:'EEEE d MMMM yyyy · HH:mm' }}
+        </p>
+
+        <!-- Email -->
+        <div class="bg-violet-50 dark:bg-violet-500/10 border border-violet-200 dark:border-violet-500/30 rounded-xl p-4">
+          <p class="text-[10px] font-black uppercase tracking-widest text-violet-500 mb-1">
+            <i class="fa fa-envelope-o mr-1"></i>Correo electrónico
+          </p>
+          <p class="text-sm font-bold text-violet-900 dark:text-violet-200 break-all">{{ respuestaDetalle.email }}</p>
+        </div>
+
+        <!-- Campos -->
+        <ng-container *ngFor="let c of camposResultados">
+
+          <!-- Info -->
+          <div *ngIf="c.tipo === 'info'" class="bg-sky-50 dark:bg-sky-500/10 border border-sky-200 dark:border-sky-500/30 rounded-xl p-4">
+            <p class="text-xs font-bold text-sky-700 dark:text-sky-300">{{ c.label }}</p>
+            <p *ngIf="c.descripcion" class="text-[11px] text-sky-600/80 dark:text-sky-400/70 mt-1 leading-relaxed">{{ c.descripcion }}</p>
+          </div>
+
+          <!-- Otros campos -->
+          <div *ngIf="c.tipo !== 'info'" class="bg-zinc-50 dark:bg-[#111113] border border-zinc-100 dark:border-[#303038] rounded-xl p-4">
+
+            <p class="text-[10px] font-black uppercase tracking-widest mb-2.5 flex items-center gap-1.5 text-zinc-400">
+              <i class="fa" [ngClass]="{
+                'fa-pencil':         c.tipo === 'texto',
+                'fa-dot-circle-o':   c.tipo === 'radio',
+                'fa-check-square-o': c.tipo === 'checkbox',
+                'fa-paperclip':      c.tipo === 'archivo',
+                'fa-handshake-o':    c.tipo === 'terms'
+              }"></i>
+              {{ c.label }}
+            </p>
+
+            <!-- ARCHIVO: imagen inline o link de descarga -->
+            <ng-container *ngIf="c.tipo === 'archivo'">
+              <ng-container *ngIf="respuestaDetalle.respuestas?.[c.id] as archVal">
+
+                <!-- Es imagen con src disponible → mostrar inline + lightbox al hacer clic -->
+                <div *ngIf="isImage(archVal) && getImgSrc(archVal) as imgSrc" class="space-y-2">
+                  <div class="rounded-xl overflow-hidden border border-zinc-200 dark:border-[#303038] bg-white dark:bg-[#0d0d0f] cursor-zoom-in"
+                    (click)="abrirImagen(imgSrc)">
+                    <img [src]="imgSrc" [alt]="archVal.nombre" class="w-full max-h-64 object-contain">
+                  </div>
+                  <p class="text-[10px] text-zinc-400 flex items-center gap-1">
+                    <i class="fa fa-search-plus"></i> Toca la imagen para ampliarla
+                  </p>
+                  <a *ngIf="getRuta(archVal)" [href]="getRuta(archVal)" target="_blank" rel="noopener"
+                    class="inline-flex items-center gap-1 text-[11px] text-zinc-400 hover:text-sky-500 transition-colors">
+                    <i class="fa fa-external-link text-[10px]"></i> {{ archVal.nombre }}
+                  </a>
+                </div>
+
+                <!-- Imagen sin src (solo nombre, upload falló) -->
+                <div *ngIf="isImage(archVal) && !getImgSrc(archVal)" class="flex items-center gap-2">
+                  <i class="fa fa-image text-zinc-300 text-2xl"></i>
+                  <span class="text-sm text-zinc-500 break-all">{{ archVal.nombre }}</span>
+                </div>
+
+                <!-- No es imagen → link descarga -->
+                <a *ngIf="!isImage(archVal) && getRuta(archVal)"
+                  [href]="getRuta(archVal)" target="_blank" rel="noopener"
+                  class="inline-flex items-center gap-1.5 text-sm font-semibold text-sky-600 dark:text-sky-400 hover:underline break-all">
+                  <i class="fa fa-download text-xs flex-shrink-0"></i> {{ archVal.nombre ?? 'Ver archivo' }}
+                </a>
+
+                <!-- No imagen, sin ruta -->
+                <p *ngIf="!isImage(archVal) && !getRuta(archVal)" class="text-sm text-zinc-500 break-all">
+                  <i class="fa fa-file text-zinc-300 mr-1"></i>{{ archVal.nombre }}
+                </p>
+
+              </ng-container>
+              <p *ngIf="!respuestaDetalle.respuestas?.[c.id]" class="text-sm text-zinc-400 italic">— Sin archivo</p>
+            </ng-container>
+
+            <!-- CHECKBOX -->
+            <ng-container *ngIf="c.tipo === 'checkbox'">
+              <div *ngIf="respuestaDetalle.respuestas?.[c.id]?.length; else sinValor">
+                <span *ngFor="let op of respuestaDetalle.respuestas[c.id]"
+                  class="inline-block bg-violet-100 dark:bg-violet-500/20 text-violet-700 dark:text-violet-300 text-xs font-bold px-2 py-0.5 rounded-full mr-1 mb-1">
+                  {{ op }}
+                </span>
+              </div>
+            </ng-container>
+
+            <!-- RADIO -->
+            <ng-container *ngIf="c.tipo === 'radio'">
+              <p *ngIf="respuestaDetalle.respuestas?.[c.id]; else sinValor"
+                class="text-sm font-semibold text-zinc-800 dark:text-white flex items-center gap-2">
+                <span class="w-2.5 h-2.5 rounded-full bg-violet-500 flex-shrink-0"></span>
+                {{ respuestaDetalle.respuestas[c.id] }}
+              </p>
+            </ng-container>
+
+            <!-- TERMS -->
+            <ng-container *ngIf="c.tipo === 'terms'">
+              <span *ngIf="respuestaDetalle.respuestas?.[c.id] === true || respuestaDetalle.respuestas?.[c.id] === 'true'"
+                class="inline-flex items-center gap-1.5 text-sm font-bold text-emerald-600 dark:text-emerald-400">
+                <i class="fa fa-check-circle"></i> Aceptado
+              </span>
+              <span *ngIf="!respuestaDetalle.respuestas?.[c.id]" class="text-sm text-zinc-400 italic">— No aceptado</span>
+            </ng-container>
+
+            <!-- TEXTO -->
+            <ng-container *ngIf="c.tipo === 'texto'">
+              <p *ngIf="respuestaDetalle.respuestas?.[c.id]; else sinValor"
+                class="text-sm text-zinc-800 dark:text-white leading-relaxed whitespace-pre-wrap break-words">
+                {{ respuestaDetalle.respuestas[c.id] }}
+              </p>
+            </ng-container>
+
+            <ng-template #sinValor>
+              <p class="text-sm text-zinc-400 italic">— Sin respuesta</p>
+            </ng-template>
+          </div>
+
+        </ng-container>
+
+        <!-- Espacio inferior para que el último campo no quede pegado al borde -->
+        <div class="h-4"></div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════════════════════════════ -->
+<!-- LIGHTBOX                                                               -->
+<!-- ══════════════════════════════════════════════════════════════════════ -->
+<div *ngIf="imagenAmpliada" class="fixed inset-0 z-[60] flex items-center justify-center p-4 cursor-zoom-out" (click)="cerrarImagen()">
+  <div class="absolute inset-0 bg-black/92 backdrop-blur-md"></div>
+  <button class="absolute top-3 right-3 z-10 w-10 h-10 flex items-center justify-center rounded-xl bg-white/10 hover:bg-white/25 text-white text-lg transition-colors">
+    <i class="fa fa-times"></i>
+  </button>
+  <img [src]="imagenAmpliada" class="relative z-10 max-w-full max-h-full rounded-xl object-contain shadow-2xl" (click)="$event.stopPropagation()">
+</div>
